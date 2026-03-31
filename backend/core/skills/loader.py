@@ -87,7 +87,8 @@ class SkillLoader:
         self,
         builtin_path: Optional[str] = None,
         personal_path: Optional[str] = None,
-        project_paths: Optional[List[str]] = None
+        project_paths: Optional[List[str]] = None,
+        workspace_paths: Optional[List[str]] = None,
     ):
         """
         Initialize loader with skill discovery paths.
@@ -100,6 +101,7 @@ class SkillLoader:
         self.builtin_path = builtin_path or self._default_builtin_path()
         self.personal_path = personal_path or self._default_personal_path()
         self.project_paths = project_paths or []
+        self.workspace_paths = workspace_paths or self._default_workspace_paths()
 
     def _default_builtin_path(self) -> str:
         """Get default path for built-in skills."""
@@ -110,6 +112,14 @@ class SkillLoader:
         """Get default path for personal skills."""
         home = Path.home()
         return str(home / ".langconfig" / "skills")
+
+    def _default_workspace_paths(self) -> List[str]:
+        """Get workspace skill paths for the current repository."""
+        repo_root = Path(__file__).resolve().parents[4]
+        return [
+            str(repo_root / ".claude" / "skills"),
+            str(repo_root / "shared" / "skills"),
+        ]
 
     def discover_all(self) -> List[SkillDiscoveryResult]:
         """
@@ -135,6 +145,17 @@ class SkillLoader:
                     skill_path=skill_dir,
                     source_type="personal"
                 ))
+
+        # Workspace skills (Claude/shared skills inside the repo)
+        for workspace_path in self.workspace_paths:
+            if os.path.exists(workspace_path):
+                project_root = str(Path(workspace_path).parent.parent)
+                for skill_dir in self._find_skill_dirs(workspace_path):
+                    discovered.append(SkillDiscoveryResult(
+                        skill_path=skill_dir,
+                        source_type="project",
+                        project_path=project_root,
+                    ))
 
         # Project skills
         for project_path in self.project_paths:

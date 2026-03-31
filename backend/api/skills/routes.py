@@ -10,7 +10,7 @@ Provides REST endpoints for managing modular, context-aware skills
 that agents can automatically invoke or users can trigger explicitly.
 """
 
-from fastapi import APIRouter, HTTPException, Query, Depends
+from fastapi import APIRouter, HTTPException, Query, Depends, Response
 from typing import List, Optional, Dict, Any
 from pydantic import BaseModel, Field
 from sqlalchemy.orm import Session
@@ -19,7 +19,7 @@ import logging
 
 from db.database import get_db
 from core.skills.registry import get_skill_registry
-from models.skill import Skill, SkillExecution
+from models.skill import Skill, SkillExecution, SkillSourceType
 
 logger = logging.getLogger(__name__)
 
@@ -147,12 +147,21 @@ def _skill_to_detail_response(skill: Skill) -> SkillDetailResponse:
     )
 
 
+def _apply_registry_warning_headers(response: Response, registry) -> None:
+    """Expose degraded-mode registry warnings to clients."""
+    warnings = registry.warnings
+    if warnings:
+        response.headers["X-Skills-Degraded"] = "true" if registry.degraded_mode else "false"
+        response.headers["X-Skills-Warning"] = " | ".join(warnings)
+
+
 # =============================================================================
 # Skill Endpoints
 # =============================================================================
 
 @router.get("", response_model=List[SkillResponse])
 async def list_skills(
+    response: Response,
     source_type: Optional[str] = Query(None, description="Filter by source: builtin, personal, project"),
     tag: Optional[str] = Query(None, description="Filter by tag"),
     search: Optional[str] = Query(None, description="Search by name/description")
@@ -169,6 +178,7 @@ async def list_skills(
 
     if not registry.is_initialized:
         await registry.initialize()
+    _apply_registry_warning_headers(response, registry)
 
     # Apply filters
     if tag:
@@ -184,7 +194,7 @@ async def list_skills(
 
 
 @router.get("/summary")
-async def get_skills_summary():
+async def get_skills_summary(response: Response):
     """
     Get a summary of available skills.
 
@@ -194,6 +204,7 @@ async def get_skills_summary():
 
     if not registry.is_initialized:
         await registry.initialize()
+    _apply_registry_warning_headers(response, registry)
 
     skills = registry.list_all()
 
@@ -219,12 +230,13 @@ async def get_skills_summary():
 
 
 @router.get("/{skill_id}", response_model=SkillDetailResponse)
-async def get_skill(skill_id: str):
+async def get_skill(skill_id: str, response: Response):
     """Get detailed information for a specific skill."""
     registry = get_skill_registry()
 
     if not registry.is_initialized:
         await registry.initialize()
+    _apply_registry_warning_headers(response, registry)
 
     skill = registry.get_skill(skill_id)
 

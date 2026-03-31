@@ -7,7 +7,7 @@
 
 import { useState, useEffect } from 'react';
 import { useSearchParams } from 'react-router-dom';
-import { Search, Plus, Trash2, Edit, Download, Copy, Upload, Sparkles, Code, Database, Terminal, X, Save, BookOpen, Tag, Clock, TrendingUp, Settings } from 'lucide-react';
+import { Search, Plus, Trash2, Edit, Download, Copy, Upload, Sparkles, Code, Database, Terminal, X, Save, BookOpen, Tag, Clock, TrendingUp, Settings, AlertTriangle } from 'lucide-react';
 import DeepAgentBuilder from './DeepAgentBuilder';
 import SkillBuilderModal from './SkillBuilderModal';
 import CustomToolBuilder from '../../tools/ui/CustomToolBuilder';
@@ -2841,6 +2841,7 @@ const AgentLoadouts = () => {
   // Skills state
   const [skills, setSkills] = useState<Skill[]>([]);
   const [skillSearchQuery, setSkillSearchQuery] = useState('');
+  const [skillsWarning, setSkillsWarning] = useState<string | null>(null);
   const [rightPanelTab, setRightPanelTab] = useState<'tools' | 'skills'>('tools');
   const [showSkillBuilder, setShowSkillBuilder] = useState(false);
 
@@ -2927,11 +2928,15 @@ const AgentLoadouts = () => {
     try {
       const res = await apiClient.get('/api/skills', { signal });
       setSkills(res.data || []);
+      const warningHeader = res.headers?.['x-skills-warning'];
+      setSkillsWarning(typeof warningHeader === 'string' && warningHeader.trim() ? warningHeader : null);
     } catch (e) {
       // Ignore abort/cancel errors (AbortError for fetch, CanceledError for axios)
       if (e instanceof Error && (e.name === 'AbortError' || e.name === 'CanceledError')) {
         return;
       }
+      setSkills([]);
+      setSkillsWarning('Failed to load skills from the backend. This can happen if the skill registry database sync is unavailable.');
       console.error('[AgentLoadouts] Failed to load skills:', e);
     }
   };
@@ -3293,8 +3298,8 @@ const AgentLoadouts = () => {
 
           {/* Agents List */}
           <div className="flex-1 overflow-y-auto">
-            <div className="px-4 py-3">
-              <div className="flex items-center justify-between mb-3">
+                <div className="px-4 py-3">
+                  <div className="flex items-center justify-between mb-3">
                 <div className="flex items-center gap-2">
                   <h3 className="text-sm font-semibold" style={{ color: 'var(--color-text-primary)' }}>
                     Agents
@@ -3319,12 +3324,12 @@ const AgentLoadouts = () => {
                   <Plus size={14} />
                   New Agent
                 </button>
-              </div>
+                  </div>
 
-              {loading ? (
-                <div className="text-center py-8 text-sm" style={{ color: 'var(--color-text-muted)' }}>
-                  Loading...
-                </div>
+                  {loading ? (
+                    <div className="text-center py-8 text-sm" style={{ color: 'var(--color-text-muted)' }}>
+                      Loading...
+                    </div>
               ) : filteredAgents.length === 0 ? (
                 <div className="text-center py-8 px-4">
                   <span className="material-symbols-outlined text-3xl mb-2 block" style={{ color: 'var(--color-text-muted)' }}>
@@ -3992,8 +3997,8 @@ Focus on writing maintainable, reliable tests that catch real issues.`,
           <div className="flex-1 overflow-y-auto">
             {rightPanelTab === 'tools' ? (
               /* Tools List */
-              <div className="px-4 py-3">
-                <div className="flex items-center justify-between mb-3">
+                <div className="px-4 py-3">
+                  <div className="flex items-center justify-between mb-3">
                   <div className="flex items-center gap-2">
                     <h3 className="text-sm font-semibold" style={{ color: 'var(--color-text-primary)' }}>
                       Custom Tools
@@ -4020,9 +4025,23 @@ Focus on writing maintainable, reliable tests that catch real issues.`,
                     <Plus size={14} />
                     New Tool
                   </button>
-                </div>
+                  </div>
 
-                {loading ? (
+                  {skillsWarning && (
+                    <div
+                      className="mb-3 rounded-lg border px-3 py-2 text-xs flex items-start gap-2"
+                      style={{
+                        borderColor: 'rgba(217, 119, 6, 0.28)',
+                        backgroundColor: 'rgba(245, 158, 11, 0.10)',
+                        color: 'var(--color-text-primary)',
+                      }}
+                    >
+                      <AlertTriangle size={14} className="mt-0.5 shrink-0" />
+                      <span>{skillsWarning}</span>
+                    </div>
+                  )}
+
+                  {loading ? (
                   <div className="text-center py-8 text-sm" style={{ color: 'var(--color-text-muted)' }}>
                     Loading...
                   </div>

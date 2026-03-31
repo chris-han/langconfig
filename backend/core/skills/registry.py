@@ -51,6 +51,8 @@ class SkillRegistry:
         self._loader = SkillLoader()
         self._initialized = False
         self._lock = asyncio.Lock()
+        self._warnings: List[str] = []
+        self._degraded_mode = False
 
     @classmethod
     def get_instance(cls) -> 'SkillRegistry':
@@ -79,6 +81,8 @@ class SkillRegistry:
                 return len(self._skills)
 
             logger.info("Initializing skill registry...")
+            self._warnings.clear()
+            self._degraded_mode = False
 
             # Update loader with project paths
             if project_paths:
@@ -89,17 +93,19 @@ class SkillRegistry:
 
             # Load and index each skill
             loaded_count = 0
+            db_sync_available = True
             async with AsyncSessionLocal() as session:
                 for discovery in discovered:
-                    success = await self._load_and_index_skill(
-                        session,
+                    success, db_sync_available = await self._load_and_index_skill(
+                        session if db_sync_available else None,
                         discovery.skill_path,
                         discovery.source_type,
                         discovery.project_path
                     )
                     if success:
                         loaded_count += 1
-                await session.commit()
+                if db_sync_available:
+                    await session.commit()
 
             self._initialized = True
             logger.info(f"Skill registry initialized with {loaded_count} skills")
@@ -107,22 +113,26 @@ class SkillRegistry:
 
     async def _load_and_index_skill(
         self,
-        session: AsyncSession,
+        session: Optional[AsyncSession],
         skill_dir: str,
         source_type: str,
         project_path: Optional[str]
-    ) -> bool:
+    ) -> tuple[bool, bool]:
         """
         Load a skill from filesystem and sync to database.
 
-        Returns True if skill was successfully loaded.
+        Returns tuple of (loaded_successfully, db_sync_still_available).
         """
         parsed = self._loader.load_skill(skill_dir)
         if not parsed:
             logger.error(f"Failed to parse skill from {skill_dir}")
-            return False
+            return False, session is not None
 
         logger.info(f"Parsed skill '{parsed.skill_id}' from {skill_dir}")
+
+        if session is None:
+            self._index_parsed_skill(parsed, source_type)
+            return True, False
 
         try:
             # Check if skill exists in database
@@ -169,23 +179,74 @@ class SkillRegistry:
                 session.add(skill)
                 logger.debug(f"Created new skill '{parsed.skill_id}'")
 
-            # Index in memory
-            self._skills[parsed.skill_id] = skill
-
-            # Build tag index
-            for tag in parsed.tags:
-                tag_lower = tag.lower()
-                if tag_lower not in self._by_tag:
-                    self._by_tag[tag_lower] = set()
-                self._by_tag[tag_lower].add(parsed.skill_id)
-
-            return True
+            self._index_skill(skill)
+            return True, True
 
         except Exception as e:
-            import traceback
-            logger.error(f"Failed to index skill '{parsed.skill_id}': {e}")
-            logger.error(traceback.format_exc())
-            return False
+            logger.warning(
+                "Skill registry DB sync failed for '%s': %s. Falling back to filesystem-only indexing.",
+                parsed.skill_id,
+                e,
+            )
+            self._degraded_mode = True
+            if self._is_db_connection_exhaustion_error(e):
+                self._record_warning(
+                    "Skills are loaded in degraded mode because the database connection pool is exhausted "
+                    "(`too many clients already`). Showing filesystem-discovered skills only."
+                )
+            else:
+                self._record_warning(
+                    "Skills are loaded in degraded mode because database sync failed. "
+                    "Showing filesystem-discovered skills only."
+                )
+            self._index_parsed_skill(parsed, source_type)
+            return True, False
+
+    def _index_parsed_skill(self, parsed: ParsedSkill, source_type: str) -> Skill:
+        """Create an in-memory skill object from parsed filesystem data."""
+        now = datetime.utcnow()
+        skill = Skill(
+            skill_id=parsed.skill_id,
+            name=parsed.name,
+            description=parsed.description,
+            version=parsed.version,
+            author=parsed.author,
+            source_type=SkillSourceType(source_type),
+            source_path=parsed.source_path,
+            tags=parsed.tags,
+            triggers=parsed.triggers,
+            allowed_tools=parsed.allowed_tools,
+            required_context=parsed.required_context,
+            instructions=parsed.instructions,
+            examples=parsed.examples,
+            file_modified_at=parsed.file_modified_at,
+            indexed_at=now,
+            created_at=now,
+            updated_at=now,
+            usage_count=0,
+            avg_success_rate=1.0,
+        )
+        self._index_skill(skill)
+        return skill
+
+    def _index_skill(self, skill: Skill) -> None:
+        """Index a skill object in memory and update tag lookups."""
+        self._skills[skill.skill_id] = skill
+        for tag in skill.tags or []:
+            tag_lower = tag.lower()
+            if tag_lower not in self._by_tag:
+                self._by_tag[tag_lower] = set()
+            self._by_tag[tag_lower].add(skill.skill_id)
+
+    @staticmethod
+    def _is_db_connection_exhaustion_error(error: Exception) -> bool:
+        """Detect the common connection-pool exhaustion failure mode."""
+        return "too many clients already" in str(error).lower()
+
+    def _record_warning(self, warning: str) -> None:
+        """Store a warning once so callers can surface degraded-mode messages."""
+        if warning not in self._warnings:
+            self._warnings.append(warning)
 
     def get_skill(self, skill_id: str) -> Optional[Skill]:
         """Get skill by ID."""
@@ -521,6 +582,16 @@ class SkillRegistry:
     def skill_count(self) -> int:
         """Get number of registered skills."""
         return len(self._skills)
+
+    @property
+    def warnings(self) -> List[str]:
+        """Get current registry warnings."""
+        return list(self._warnings)
+
+    @property
+    def degraded_mode(self) -> bool:
+        """Whether the registry is serving skills without DB sync guarantees."""
+        return self._degraded_mode
 
 
 # Singleton accessor
