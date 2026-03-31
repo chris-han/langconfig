@@ -13,6 +13,7 @@ import LocalModelsSettings from "../features/settings/ui/LocalModelsSettings";
 import LocalWorkspaceSettings from "../features/settings/ui/LocalWorkspaceSettings";
 import ModelDefaultsSettings from '../features/settings/ui/ModelDefaultsSettings';
 import SettingsSection, { SettingsInput } from '../features/settings/ui/SettingsSection';
+import { ADDITIONAL_PROVIDER_CATALOG } from '../lib/modelProviders';
 
 export default function SettingsView() {
   const [currentCategory, setCurrentCategory] = useState<SettingsCategory>('general');
@@ -25,21 +26,33 @@ export default function SettingsView() {
     openai: '',
     azureOpenAI: '',
     google: '',
+    openrouter: '',
+    fireworks: '',
+    baseten: '',
   });
   const [apiKeyStatus, setApiKeyStatus] = useState({
     anthropic: false,
     openai: false,
     azureOpenAI: false,
     google: false,
+    openrouter: false,
+    fireworks: false,
+    baseten: false,
   });
   const [apiKeyVisibility, setApiKeyVisibility] = useState({
     anthropic: false,
     openai: false,
     azureOpenAI: false,
     google: false,
+    openrouter: false,
+    fireworks: false,
+    baseten: false,
   });
   const [apiKeySaving, setApiKeySaving] = useState(false);
   const [apiKeySaveMessage, setApiKeySaveMessage] = useState<string | null>(null);
+  const [providerConfigSaving, setProviderConfigSaving] = useState(false);
+  const [providerConfigSaveMessage, setProviderConfigSaveMessage] = useState<string | null>(null);
+  const [providerToAdd, setProviderToAdd] = useState('openrouter');
 
   // Theme state
   const [currentTheme, setCurrentTheme] = useState<ThemeName>('dark');
@@ -93,6 +106,12 @@ export default function SettingsView() {
     azureOpenAIEmbeddingDimensions: number;
     chunkSize: number;
     chunkOverlap: number;
+  }
+
+  interface AdditionalProviderConfig {
+    enabled: boolean;
+    baseUrl: string;
+    models: string[];
   }
 
   // Local Models state - initialize with safe defaults so the page can render even if one endpoint fails
@@ -149,6 +168,7 @@ export default function SettingsView() {
     chunkSize: 1000,
     chunkOverlap: 200
   });
+  const [providerConfigs, setProviderConfigs] = useState<Record<string, AdditionalProviderConfig>>({});
 
   useEffect(() => {
     const abortController = new AbortController();
@@ -172,6 +192,9 @@ export default function SettingsView() {
         openai: keys.find((k: any) => k.provider === 'openai')?.is_set || false,
         azureOpenAI: keys.find((k: any) => k.provider === 'azure_openai')?.is_set || false,
         google: keys.find((k: any) => k.provider === 'google')?.is_set || false,
+        openrouter: keys.find((k: any) => k.provider === 'openrouter')?.is_set || false,
+        fireworks: keys.find((k: any) => k.provider === 'fireworks')?.is_set || false,
+        baseten: keys.find((k: any) => k.provider === 'baseten')?.is_set || false,
       });
       // Keep input fields empty - user types new key to update
       setApiKeys({
@@ -179,6 +202,9 @@ export default function SettingsView() {
         openai: '',
         azureOpenAI: '',
         google: '',
+        openrouter: '',
+        fireworks: '',
+        baseten: '',
       });
 
       // Load general settings
@@ -258,6 +284,7 @@ export default function SettingsView() {
           chunkSize: settingsData.chunk_size || 1000,
           chunkOverlap: settingsData.chunk_overlap || 200
         });
+        setProviderConfigs(settingsData.provider_configs || {});
       } catch (error) {
         console.error('Failed to load RAG settings:', error);
       }
@@ -360,6 +387,40 @@ export default function SettingsView() {
     const theme = themes[themeName];
     applyTheme(theme);
     setCurrentTheme(themeName);
+  };
+
+  const handleSaveAdditionalProviders = async () => {
+    setProviderConfigSaving(true);
+    setProviderConfigSaveMessage(null);
+    try {
+      const providerApiKeys: Record<string, string> = {};
+      if (apiKeys.openrouter) providerApiKeys.openrouter_api_key = apiKeys.openrouter;
+      if (apiKeys.fireworks) providerApiKeys.fireworks_api_key = apiKeys.fireworks;
+      if (apiKeys.baseten) providerApiKeys.baseten_api_key = apiKeys.baseten;
+
+      if (Object.keys(providerApiKeys).length > 0) {
+        await apiClient.setApiKeys(providerApiKeys);
+        setApiKeyStatus({
+          ...apiKeyStatus,
+          openrouter: apiKeyStatus.openrouter || !!apiKeys.openrouter,
+          fireworks: apiKeyStatus.fireworks || !!apiKeys.fireworks,
+          baseten: apiKeyStatus.baseten || !!apiKeys.baseten,
+        });
+      }
+
+      await apiClient.updateSettings({
+        provider_configs: providerConfigs,
+      });
+
+      setProviderConfigSaveMessage('Provider settings saved successfully!');
+      setTimeout(() => setProviderConfigSaveMessage(null), 3000);
+    } catch (error) {
+      console.error('Failed to save provider settings:', error);
+      setProviderConfigSaveMessage('Failed to save provider settings. Please try again.');
+      setTimeout(() => setProviderConfigSaveMessage(null), 5000);
+    } finally {
+      setProviderConfigSaving(false);
+    }
   };
 
   const renderCategoryContent = () => {
@@ -753,7 +814,7 @@ export default function SettingsView() {
           <div>
             <SettingsSection
               title="API Keys & Providers"
-              description="Configure your AI provider API keys. These are required for agent execution. Keys are encrypted and stored in the database."
+              description="Configure your AI provider API keys. These are required for agent execution. Keys are stored in the database."
               icon="key"
             >
               <div className="space-y-4">
@@ -1044,6 +1105,202 @@ export default function SettingsView() {
                   </div>
                 </div>
 
+                <div className="rounded-lg border border-gray-200 dark:border-border-dark p-4 space-y-4 bg-gray-50/60 dark:bg-panel-dark/60">
+                  <div className="flex items-center justify-between gap-3">
+                    <div>
+                      <h3 className="text-sm font-semibold" style={{ color: 'var(--color-text-primary)' }}>
+                        Additional Model Providers
+                      </h3>
+                      <p className="text-xs mt-1" style={{ color: 'var(--color-text-muted)' }}>
+                        Add OpenAI-compatible providers for DeepAgents model routing. This covers providers like OpenRouter, Fireworks, and Baseten while Ollama remains under Local Models.
+                      </p>
+                    </div>
+                    <div className="flex items-center gap-2">
+                      <select
+                        value={providerToAdd}
+                        onChange={(e) => setProviderToAdd(e.target.value)}
+                        className="px-3 py-2 text-sm border border-gray-300 dark:border-border-dark rounded-lg focus:outline-none focus:ring-2 focus:ring-primary"
+                        style={{
+                          backgroundColor: 'var(--color-input-background)',
+                          color: 'var(--color-text-primary)'
+                        }}
+                      >
+                        {Object.entries(ADDITIONAL_PROVIDER_CATALOG)
+                          .filter(([providerKey]) => !providerConfigs[providerKey])
+                          .map(([providerKey, providerMeta]) => (
+                            <option key={providerKey} value={providerKey}>
+                              {providerMeta.label}
+                            </option>
+                          ))}
+                      </select>
+                      <button
+                        type="button"
+                        onClick={() => {
+                          const providerMeta = ADDITIONAL_PROVIDER_CATALOG[providerToAdd];
+                          if (!providerMeta || providerConfigs[providerToAdd]) return;
+                          setProviderConfigs({
+                            ...providerConfigs,
+                            [providerToAdd]: {
+                              enabled: true,
+                              baseUrl: providerMeta.baseUrl,
+                              models: providerMeta.placeholderModels,
+                            },
+                          });
+                        }}
+                        disabled={!ADDITIONAL_PROVIDER_CATALOG[providerToAdd] || !!providerConfigs[providerToAdd]}
+                        className="px-3 py-2 text-sm font-medium bg-primary text-white rounded-lg hover:bg-primary/90 transition-colors disabled:opacity-50"
+                      >
+                        Add Provider
+                      </button>
+                    </div>
+                  </div>
+
+                  {Object.keys(providerConfigs).length === 0 ? (
+                    <p className="text-xs" style={{ color: 'var(--color-text-muted)' }}>
+                      No additional providers configured yet.
+                    </p>
+                  ) : (
+                    <div className="space-y-4">
+                      {Object.entries(providerConfigs).map(([providerKey, providerConfig]) => {
+                        const providerMeta = ADDITIONAL_PROVIDER_CATALOG[providerKey];
+                        return (
+                          <div key={providerKey} className="rounded-lg border border-gray-200 dark:border-border-dark p-4 space-y-3">
+                            <div className="flex items-start justify-between gap-3">
+                              <div>
+                                <h4 className="text-sm font-semibold" style={{ color: 'var(--color-text-primary)' }}>
+                                  {providerMeta?.label || providerKey}
+                                </h4>
+                                <p className="text-xs mt-1" style={{ color: 'var(--color-text-muted)' }}>
+                                  Models from this provider will appear in the Agent model picker once the API key and model list are saved.
+                                </p>
+                              </div>
+                              <button
+                                type="button"
+                                onClick={() => {
+                                  const nextConfigs = { ...providerConfigs };
+                                  delete nextConfigs[providerKey];
+                                  setProviderConfigs(nextConfigs);
+                                }}
+                                className="px-3 py-2 text-xs font-medium border border-red-200 rounded-lg text-red-600 hover:bg-red-50 dark:hover:bg-red-900/20"
+                              >
+                                Remove
+                              </button>
+                            </div>
+
+                            <label className="flex items-center gap-2">
+                              <input
+                                type="checkbox"
+                                checked={providerConfig.enabled}
+                                onChange={(e) => setProviderConfigs({
+                                  ...providerConfigs,
+                                  [providerKey]: { ...providerConfig, enabled: e.target.checked },
+                                })}
+                                className="w-4 h-4 text-primary bg-white dark:bg-background-dark border-gray-300 dark:border-border-dark rounded focus:ring-2 focus:ring-primary"
+                              />
+                              <span className="text-sm font-medium" style={{ color: 'var(--color-text-primary)' }}>
+                                Enabled
+                              </span>
+                            </label>
+
+                            <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                              <div className="md:col-span-2">
+                                <label className="text-xs font-medium" style={{ color: 'var(--color-text-muted)' }}>
+                                  API Key
+                                </label>
+                                <div className="mt-1 flex items-stretch gap-2">
+                                  <input
+                                    type={apiKeyVisibility[providerKey as keyof typeof apiKeyVisibility] ? 'text' : 'password'}
+                                    value={apiKeys[providerKey as keyof typeof apiKeys]}
+                                    onChange={(e) => setApiKeys({ ...apiKeys, [providerKey]: e.target.value })}
+                                    placeholder={apiKeyStatus[providerKey as keyof typeof apiKeyStatus] ? 'Enter new key to replace existing' : `${providerMeta?.label || providerKey} API key`}
+                                    className="w-full px-3 py-2 text-sm border border-gray-300 dark:border-border-dark rounded-lg focus:outline-none focus:ring-2 focus:ring-primary font-mono"
+                                    style={{
+                                      backgroundColor: 'var(--color-input-background)',
+                                      color: 'var(--color-text-primary)'
+                                    }}
+                                  />
+                                  <button
+                                    type="button"
+                                    onClick={() => setApiKeyVisibility({ ...apiKeyVisibility, [providerKey]: !apiKeyVisibility[providerKey as keyof typeof apiKeyVisibility] })}
+                                    className="px-3 py-2 text-sm border border-gray-300 dark:border-border-dark rounded-lg hover:bg-gray-50 dark:hover:bg-panel-dark/80 transition-colors"
+                                    style={{ color: 'var(--color-text-primary)' }}
+                                  >
+                                    {apiKeyVisibility[providerKey as keyof typeof apiKeyVisibility] ? 'Hide' : 'Show'}
+                                  </button>
+                                </div>
+                                <p className="text-xs mt-1" style={{ color: 'var(--color-text-muted)' }}>
+                                  {apiKeyStatus[providerKey as keyof typeof apiKeyStatus] ? 'Configured. Enter a new key to replace the stored one.' : 'Required to activate this provider in model selection.'}
+                                </p>
+                              </div>
+
+                              <div className="md:col-span-2">
+                                <label className="text-xs font-medium" style={{ color: 'var(--color-text-muted)' }}>
+                                  Base URL
+                                </label>
+                                <input
+                                  type="url"
+                                  value={providerConfig.baseUrl}
+                                  onChange={(e) => setProviderConfigs({
+                                    ...providerConfigs,
+                                    [providerKey]: { ...providerConfig, baseUrl: e.target.value },
+                                  })}
+                                  className="mt-1 w-full px-3 py-2 text-sm border border-gray-300 dark:border-border-dark rounded-lg focus:outline-none focus:ring-2 focus:ring-primary"
+                                  style={{
+                                    backgroundColor: 'var(--color-input-background)',
+                                    color: 'var(--color-text-primary)'
+                                  }}
+                                />
+                              </div>
+
+                              <div className="md:col-span-2">
+                                <label className="text-xs font-medium" style={{ color: 'var(--color-text-muted)' }}>
+                                  Models
+                                </label>
+                                <textarea
+                                  value={(providerConfig.models || []).join('\n')}
+                                  onChange={(e) => setProviderConfigs({
+                                    ...providerConfigs,
+                                    [providerKey]: {
+                                      ...providerConfig,
+                                      models: e.target.value.split('\n').map((model) => model.trim()).filter(Boolean),
+                                    },
+                                  })}
+                                  rows={3}
+                                  placeholder={(providerMeta?.placeholderModels || []).join('\n')}
+                                  className="mt-1 w-full px-3 py-2 text-sm border border-gray-300 dark:border-border-dark rounded-lg focus:outline-none focus:ring-2 focus:ring-primary font-mono"
+                                  style={{
+                                    backgroundColor: 'var(--color-input-background)',
+                                    color: 'var(--color-text-primary)'
+                                  }}
+                                />
+                                <p className="text-xs mt-1" style={{ color: 'var(--color-text-muted)' }}>
+                                  One model per line. These models will appear under the selected provider in agent configuration.
+                                </p>
+                              </div>
+                            </div>
+                          </div>
+                        );
+                      })}
+                    </div>
+                  )}
+
+                  <div className="flex items-center gap-3">
+                    <button
+                      type="button"
+                      onClick={handleSaveAdditionalProviders}
+                      disabled={providerConfigSaving}
+                      className="px-4 py-2 text-sm font-medium bg-primary text-white rounded-lg hover:bg-primary/90 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                    >
+                      {providerConfigSaving ? 'Saving...' : 'Save Additional Providers'}
+                    </button>
+                    {providerConfigSaveMessage && (
+                      <span className={`text-sm ${providerConfigSaveMessage.includes('successfully') ? 'text-green-600 dark:text-green-400' : 'text-amber-600 dark:text-amber-400'}`}>
+                        {providerConfigSaveMessage}
+                      </span>
+                    )}
+                  </div>
+                </div>
+
                 {/* Save Button and Status */}
                 <div className="pt-4 border-t border-gray-200 dark:border-border-dark">
                   <div className="flex items-center gap-3">
@@ -1072,6 +1329,9 @@ export default function SettingsView() {
                             openai: apiKeyStatus.openai || !!apiKeys.openai,
                             azureOpenAI: apiKeyStatus.azureOpenAI || !!apiKeys.azureOpenAI,
                             google: apiKeyStatus.google || !!apiKeys.google,
+                            openrouter: apiKeyStatus.openrouter,
+                            fireworks: apiKeyStatus.fireworks,
+                            baseten: apiKeyStatus.baseten,
                           });
                           setApiKeySaveMessage('API keys saved successfully!');
                           setTimeout(() => setApiKeySaveMessage(null), 3000);

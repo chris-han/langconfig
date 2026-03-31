@@ -509,6 +509,7 @@ class APIClient {
     azure_openai_embedding_dimensions?: number | null;
     chunk_size?: number;
     chunk_overlap?: number;
+    provider_configs?: Record<string, Record<string, any>>;
   }) {
     return this.client.patch('/api/settings/', data);
   }
@@ -524,6 +525,9 @@ class APIClient {
     google_api_key?: string;
     cohere_api_key?: string;
     replicate_api_key?: string;
+    openrouter_api_key?: string;
+    fireworks_api_key?: string;
+    baseten_api_key?: string;
   }) {
     return this.client.post('/api/settings/api-keys', data);
   }

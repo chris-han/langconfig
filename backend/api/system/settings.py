@@ -23,6 +23,9 @@ class APIKeySet(BaseModel):
     google_api_key: Optional[str] = None
     cohere_api_key: Optional[str] = None
     replicate_api_key: Optional[str] = None
+    openrouter_api_key: Optional[str] = None
+    fireworks_api_key: Optional[str] = None
+    baseten_api_key: Optional[str] = None
 
 
 class APIKeyResponse(BaseModel):
@@ -43,6 +46,7 @@ class SettingsUpdate(BaseModel):
     chunk_size: Optional[int] = None
     chunk_overlap: Optional[int] = None
     storage_path: Optional[str] = None
+    provider_configs: Optional[Dict[str, Dict[str, object]]] = None
 
 
 class SettingsResponse(BaseModel):
@@ -57,6 +61,7 @@ class SettingsResponse(BaseModel):
     chunk_size: int
     chunk_overlap: int
     storage_path: str
+    provider_configs: Dict[str, Dict[str, object]]
 
 
 class GeneralSettings(BaseModel):
@@ -136,6 +141,7 @@ def get_or_create_settings(db: Session) -> SettingsModel:
             "chunk_size": settings.chunk_size if settings.chunk_size is not None else 1000,
             "chunk_overlap": settings.chunk_overlap if settings.chunk_overlap is not None else 200,
             "storage_path": settings.storage_path or get_default_storage_path(),
+            "provider_configs": settings.provider_configs or {},
         }
         dirty = False
         for field_name, value in updates.items():
@@ -162,7 +168,7 @@ from services.encryption import encryption_service
 async def set_api_keys(keys: APIKeySet, db: Session = Depends(get_db)):
     """Set API keys (stored encrypted in PostgreSQL)"""
     settings = get_or_create_settings(db)
-    api_keys = settings.api_keys or {}
+    api_keys = dict(settings.api_keys or {})
 
     if keys.openai_api_key:
         api_keys["openai"] = encryption_service.encrypt(keys.openai_api_key)
@@ -176,6 +182,12 @@ async def set_api_keys(keys: APIKeySet, db: Session = Depends(get_db)):
         api_keys["cohere"] = encryption_service.encrypt(keys.cohere_api_key)
     if keys.replicate_api_key:
         api_keys["replicate"] = encryption_service.encrypt(keys.replicate_api_key)
+    if keys.openrouter_api_key:
+        api_keys["openrouter"] = encryption_service.encrypt(keys.openrouter_api_key)
+    if keys.fireworks_api_key:
+        api_keys["fireworks"] = encryption_service.encrypt(keys.fireworks_api_key)
+    if keys.baseten_api_key:
+        api_keys["baseten"] = encryption_service.encrypt(keys.baseten_api_key)
 
     settings.api_keys = api_keys
     db.commit()
@@ -188,7 +200,7 @@ async def get_api_keys(db: Session = Depends(get_db)):
     """Get masked API keys status"""
     settings = get_or_create_settings(db)
     api_keys = settings.api_keys or {}
-    providers = ["openai", "azure_openai", "anthropic", "google", "cohere", "replicate"]
+    providers = ["openai", "azure_openai", "anthropic", "google", "cohere", "replicate", "openrouter", "fireworks", "baseten"]
 
     results = []
     for provider in providers:
@@ -260,11 +272,11 @@ async def get_available_models(db: Session = Depends(get_db)):
 @router.delete("/api-keys/{provider}")
 async def delete_api_key(provider: str, db: Session = Depends(get_db)):
     """Delete an API key"""
-    if provider not in ["openai", "azure_openai", "anthropic", "google", "cohere", "replicate"]:
+    if provider not in ["openai", "azure_openai", "anthropic", "google", "cohere", "replicate", "openrouter", "fireworks", "baseten"]:
         raise HTTPException(status_code=400, detail="Invalid provider")
 
     settings = get_or_create_settings(db)
-    api_keys = settings.api_keys or {}
+    api_keys = dict(settings.api_keys or {})
 
     if provider in api_keys:
         del api_keys[provider]
@@ -290,7 +302,8 @@ async def get_settings(db: Session = Depends(get_db)):
         azure_openai_embedding_dimensions=settings.azure_openai_embedding_dimensions,
         chunk_size=settings.chunk_size,
         chunk_overlap=settings.chunk_overlap,
-        storage_path=settings.storage_path or get_default_storage_path()
+        storage_path=settings.storage_path or get_default_storage_path(),
+        provider_configs=settings.provider_configs or {}
     )
 
 
@@ -318,7 +331,8 @@ async def update_settings(settings_update: SettingsUpdate, db: Session = Depends
         azure_openai_embedding_dimensions=settings.azure_openai_embedding_dimensions,
         chunk_size=settings.chunk_size,
         chunk_overlap=settings.chunk_overlap,
-        storage_path=settings.storage_path or get_default_storage_path()
+        storage_path=settings.storage_path or get_default_storage_path(),
+        provider_configs=settings.provider_configs or {}
     )
 
 
@@ -338,6 +352,7 @@ async def reset_settings(db: Session = Depends(get_db)):
     settings.chunk_size = 1000
     settings.chunk_overlap = 200
     settings.storage_path = get_default_storage_path()
+    settings.provider_configs = {}
 
     db.commit()
     return {"message": "Settings reset to defaults"}
@@ -348,10 +363,29 @@ async def list_available_models(db: Session = Depends(get_db)):
     """List available AI models (cloud + validated local models)"""
     settings = get_or_create_settings(db)
     api_keys = settings.api_keys or {}
+    provider_configs = settings.provider_configs or {}
     available = []
 
-    # Get all models from the ModelChoice enum (single source of truth)
-    available = [m.value for m in ModelChoice]
+    builtin_provider_models = {
+        "openai": [m.value for m in ModelChoice if m.value.startswith("gpt-") or m.value.startswith("o")],
+        "anthropic": [m.value for m in ModelChoice if m.value.startswith("claude-")],
+        "google": [m.value for m in ModelChoice if m.value.startswith("gemini-")],
+    }
+
+    for provider_name, provider_models in builtin_provider_models.items():
+        if api_keys.get(provider_name):
+            available.extend(provider_models)
+
+    for provider_name in ["openrouter", "fireworks", "baseten"]:
+        provider_config = provider_configs.get(provider_name) or {}
+        if not isinstance(provider_config, dict):
+            continue
+        if not provider_config.get("enabled") or not api_keys.get(provider_name):
+            continue
+
+        for model_name in provider_config.get("models") or []:
+            if isinstance(model_name, str) and model_name.strip():
+                available.append(f"{provider_name}:{model_name.strip()}")
 
     # Local models (validated only)
     from models.local_model import LocalModel

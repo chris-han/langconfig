@@ -69,6 +69,9 @@ def get_api_key_from_db(key_name: str) -> Optional[str]:
             "google_api_key": "google",
             "cohere_api_key": "cohere",
             "replicate_api_key": "replicate",
+            "openrouter_api_key": "openrouter",
+            "fireworks_api_key": "fireworks",
+            "baseten_api_key": "baseten",
         }
         provider = provider_map.get(key_name)
 
@@ -98,6 +101,24 @@ def get_api_key_from_db(key_name: str) -> Optional[str]:
     return env_key
 
 
+def get_provider_configs_from_db() -> dict:
+    try:
+        from db.database import SessionLocal
+        from sqlalchemy import text
+
+        with SessionLocal() as db:
+            result = db.execute(
+                text("SELECT provider_configs FROM settings WHERE id = 1")
+            ).fetchone()
+
+            if result and result[0]:
+                return dict(result[0])
+    except Exception:
+        pass
+
+    return {}
+
+
 class Settings(BaseSettings):
     """Application settings with dual-source API key support"""
 
@@ -125,6 +146,11 @@ class Settings(BaseSettings):
             env_fallback: Optional environment variable name to check
         """
         return get_api_key_from_db(key_name)
+
+    def get_provider_config(self, provider_name: str) -> dict:
+        provider_configs = get_provider_configs_from_db()
+        provider_config = provider_configs.get(provider_name) or {}
+        return provider_config if isinstance(provider_config, dict) else {}
 
     @property
     def OPENAI_API_KEY(self) -> Optional[str]:

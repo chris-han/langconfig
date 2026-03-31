@@ -15,6 +15,7 @@ import apiClient, { ConflictErrorClass } from '../../../lib/api-client';
 import ConflictDialog from '../../workflows/ui/ConflictDialog';
 import { useNotification } from '../../../hooks/useNotification';
 import { useAvailableModels } from '../../../hooks/useAvailableModels';
+import { findModelForProvider, getProviderDisplayName, getProviderKeyForModel, groupModelsByProvider } from '../../../lib/modelProviders';
 
 interface Agent {
   id: number;
@@ -116,6 +117,14 @@ const AgentConfigView = ({ agent, onSave, onDelete, onClose }: AgentConfigViewPr
 
   // Fetch available models
   const { models: availableModelsList, isLoading: isModelsLoading } = useAvailableModels();
+  const providerGroups = groupModelsByProvider(availableModelsList);
+  const selectedModelOption = config.model
+    ? availableModelsList.find((model) => model.id === config.model)
+    : undefined;
+  const selectedProviderKey = selectedModelOption
+    ? getProviderKeyForModel(selectedModelOption)
+    : providerGroups[0]?.key || '';
+  const selectedProviderModels = providerGroups.find((group) => group.key === selectedProviderKey)?.models || [];
 
   // Update config when agent changes
   useEffect(() => {
@@ -124,6 +133,24 @@ const AgentConfigView = ({ agent, onSave, onDelete, onClose }: AgentConfigViewPr
     setAgentDescription(agent.description);
     setCustomGuardrails(agent.config?.guardrails || null);
   }, [agent]);
+
+  useEffect(() => {
+    if (isModelsLoading || providerGroups.length === 0) {
+      return;
+    }
+
+    const hasCurrentModel = !!config.model && availableModelsList.some((model) => model.id === config.model);
+    if (hasCurrentModel) {
+      return;
+    }
+
+    const fallbackModel = providerGroups[0]?.models[0];
+    if (!fallbackModel || fallbackModel.id === config.model) {
+      return;
+    }
+
+    setConfig((prev: any) => ({ ...prev, model: fallbackModel.id }));
+  }, [availableModelsList, config.model, isModelsLoading, providerGroups]);
 
   // Fetch default guardrails
   useEffect(() => {
@@ -562,6 +589,39 @@ print(result)
                 <div className="flex items-center gap-3">
                   <div className="flex flex-col gap-1">
                     <label className="text-xs font-medium" style={{ color: 'var(--color-text-muted)' }}>
+                      Provider
+                    </label>
+                    <select
+                      value={selectedProviderKey}
+                      onChange={(e) => {
+                        const nextModel = findModelForProvider(providerGroups, e.target.value, config.model);
+                        setConfig({ ...config, model: nextModel?.id || '' });
+                      }}
+                      className="px-3 py-2 border border-gray-200 dark:border-border-dark bg-white dark:bg-panel-dark rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-primary disabled:opacity-50"
+                      disabled={isModelsLoading}
+                      style={{
+                        color: 'var(--color-text-primary)',
+                        minWidth: '160px'
+                      }}
+                    >
+                      {providerGroups.length > 0 ? (
+                        providerGroups.map((group) => (
+                          <option key={group.key} value={group.key}>
+                            {getProviderDisplayName(group.key)}
+                          </option>
+                        ))
+                      ) : (
+                        <>
+                          <option value="openai">OpenAI</option>
+                          <option value="anthropic">Anthropic</option>
+                          <option value="google">Google</option>
+                        </>
+                      )}
+                    </select>
+                  </div>
+
+                  <div className="flex flex-col gap-1">
+                    <label className="text-xs font-medium" style={{ color: 'var(--color-text-muted)' }}>
                       Model
                     </label>
                     <select
@@ -574,26 +634,13 @@ print(result)
                         minWidth: '200px'
                       }}
                     >
-                      {availableModelsList.length > 0 ? (
+                      {selectedProviderModels.length > 0 ? (
                         <>
-                          {/* Cloud Models */}
-                          <optgroup label="Cloud Models">
-                            {availableModelsList.filter(m => m.type === 'cloud').map(model => (
-                              <option key={model.id} value={model.id}>
-                                {model.name}
-                              </option>
-                            ))}
-                          </optgroup>
-                          {/* Local Models */}
-                          {availableModelsList.some(m => m.type === 'local') && (
-                            <optgroup label="Local Models">
-                              {availableModelsList.filter(m => m.type === 'local').map(model => (
-                                <option key={model.id} value={model.id}>
-                                  {model.name}
-                                </option>
-                              ))}
-                            </optgroup>
-                          )}
+                          {selectedProviderModels.map(model => (
+                            <option key={model.id} value={model.id}>
+                              {model.name}
+                            </option>
+                          ))}
                         </>
                       ) : (
                         <>

@@ -117,6 +117,7 @@ DEFAULT_AGENT_GUARDRAILS = """
 
 # Legacy alias for backward compatibility
 REASONING_FRAMEWORK = DEFAULT_AGENT_GUARDRAILS
+OPENAI_COMPATIBLE_PROVIDER_PREFIXES = {"openrouter", "fireworks", "baseten"}
 
 class AgentFactory:
     """
@@ -1145,9 +1146,38 @@ You have been equipped with the following tools: {', '.join(tool_names)}
         """
         logger.debug(f"Initializing LLM instance for model: {model_name}")
         streaming = config.get("streaming", True)  # Enable by default for SSE streaming
+        provider_prefix = None
+        provider_model_name = model_name
+
+        if ":" in model_name:
+            provider_prefix, provider_model_name = model_name.split(":", 1)
+
+        if provider_prefix in OPENAI_COMPATIBLE_PROVIDER_PREFIXES:
+            provider_api_key = settings.get_api_key(f"{provider_prefix}_api_key")
+            provider_config = settings.get_provider_config(provider_prefix)
+            provider_base_url = provider_config.get("base_url")
+
+            if not provider_api_key:
+                raise ValueError(f"{provider_prefix.upper()} API key is required for model {model_name}")
+            if not provider_base_url:
+                raise ValueError(
+                    f"Provider '{provider_prefix}' is missing base_url configuration in Settings → API Keys & Providers."
+                )
+
+            return ChatOpenAI(
+                model=provider_model_name,
+                base_url=provider_base_url,
+                api_key=provider_api_key,
+                temperature=temperature,
+                max_tokens=max_tokens,
+                streaming=streaming,
+            )
+
+        if provider_prefix in {"openai", "anthropic", "google"}:
+            model_name = provider_model_name
 
         # --- OpenAI/GPT Models ---
-        if model_name.startswith("gpt"):
+        if model_name.startswith("gpt") or model_name.startswith("o"):
             if not settings.OPENAI_API_KEY:
                 raise ValueError(f"OPENAI_API_KEY is required for model {model_name}")
 

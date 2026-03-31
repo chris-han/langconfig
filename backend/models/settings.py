@@ -24,6 +24,7 @@ class Settings(Base):
     # API Keys (encrypted in production)
     # Note: Should be moved to OS keychain via Tauri for security
     api_keys = Column(JSON, default=dict)  # {"openai": "sk-...", "anthropic": "sk-ant-..."}
+    provider_configs = Column(JSON, default=dict)  # {"openrouter": {"enabled": true, "base_url": "...", "models": []}}
 
     # General Settings
     app_name = Column(String, default="LangConfig")

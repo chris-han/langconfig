@@ -8,6 +8,7 @@
 import { useState, useEffect, useCallback } from 'react';
 import { apiClient } from '@/lib/api-client';
 import type { LocalModel } from '@/types/api';
+import { inferProviderKeyFromModelId, getProviderDisplayName } from '@/lib/modelProviders';
 
 /**
  * Hook for fetching available models (cloud + local)
@@ -83,10 +84,14 @@ export function useAvailableModels(
       // Updated December 16, 2025
       const modelDisplayNames: Record<string, { name: string; provider: string }> = {
         // OpenAI - GPT-5 Series (Current)
+        'gpt-5.4': { name: 'GPT-5.4', provider: 'openai' },
         'gpt-5.2': { name: 'GPT-5.2', provider: 'OpenAI' },
         'gpt-5.1': { name: 'GPT-5.1', provider: 'OpenAI' },
         'gpt-4o': { name: 'GPT-4o', provider: 'OpenAI' },
         'gpt-4o-mini': { name: 'GPT-4o Mini', provider: 'OpenAI' },
+        'gpt-4.1': { name: 'GPT-4.1', provider: 'OpenAI' },
+        'o4-mini': { name: 'o4-mini', provider: 'OpenAI' },
+        'o3': { name: 'o3', provider: 'OpenAI' },
 
         // Anthropic - Claude 4.5 (Current)
         'claude-opus-4-5': { name: 'Claude Opus 4.5', provider: 'Anthropic' },
@@ -95,6 +100,8 @@ export function useAvailableModels(
 
         // Google - Gemini 3 (Current)
         'gemini-3-pro-preview': { name: 'Gemini 3 Pro', provider: 'Google' },
+        'gemini-3-flash-preview': { name: 'Gemini 3 Flash', provider: 'Google' },
+        'gemini-3.1-pro-preview': { name: 'Gemini 3.1 Pro', provider: 'Google' },
 
         // Google - Gemini 2.5
         'gemini-2.0-flash': { name: 'Gemini 2.0 Flash', provider: 'Google' },
@@ -106,13 +113,16 @@ export function useAvailableModels(
       const cloudModelOptions: ModelOption[] = availableModels
         .filter((modelId: string) => !modelId.startsWith('local-'))
         .map((modelId: string) => {
-          const modelInfo = modelDisplayNames[modelId];
+          const prefixed = modelId.includes(':');
+          const lookupId = prefixed ? modelId.split(':', 2)[1] : modelId;
+          const providerKey = inferProviderKeyFromModelId(modelId);
+          const modelInfo = modelDisplayNames[lookupId];
 
           if (modelInfo) {
             return {
               id: modelId,
               name: modelInfo.name,
-              provider: modelInfo.provider,
+              provider: providerKey,
               type: 'cloud' as const
             };
           }
@@ -120,8 +130,8 @@ export function useAvailableModels(
           // Fallback for unknown models
           return {
             id: modelId,
-            name: modelId,
-            provider: 'Unknown',
+            name: prefixed ? lookupId : modelId,
+            provider: providerKey === 'unknown' ? 'unknown' : getProviderDisplayName(providerKey),
             type: 'cloud' as const
           };
         });

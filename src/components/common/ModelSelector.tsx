@@ -7,6 +7,7 @@
 
 import { useEffect } from 'react';
 import { useAvailableModels } from '@/hooks/useAvailableModels';
+import { findModelForProvider, getProviderKeyForModel, groupModelsByProvider } from '@/lib/modelProviders';
 
 /**
  * ModelSelector Component
@@ -62,6 +63,12 @@ export default function ModelSelector({
     onlyValidated,
     refreshInterval: autoRefresh ? 30000 : undefined
   });
+  const providerGroups = groupModelsByProvider(includeLocal ? models : cloudModels);
+  const selectedModelOption = (includeLocal ? models : cloudModels).find((model) => model.id === value);
+  const selectedProviderKey = selectedModelOption
+    ? getProviderKeyForModel(selectedModelOption)
+    : providerGroups[0]?.key || '';
+  const selectedProviderModels = providerGroups.find((group) => group.key === selectedProviderKey)?.models || [];
 
   // Log error if models fail to load
   useEffect(() => {
@@ -80,56 +87,51 @@ export default function ModelSelector({
         </label>
       )}
 
-      {/* Select Dropdown */}
-      <select
-        value={value}
-        onChange={(e) => onChange(e.target.value)}
-        disabled={disabled || isLoading}
-        onMouseDown={(e) => e.stopPropagation()}
-        onWheel={(e) => e.stopPropagation()}
-        className="px-3 py-2 border border-gray-300 dark:border-border-dark rounded-lg focus:outline-none focus:ring-2 focus:ring-primary disabled:opacity-50 disabled:cursor-not-allowed"
-        style={{
-          backgroundColor: 'var(--color-input-background)',
-          color: 'var(--color-text-primary)'
-        }}
-      >
-        {/* Placeholder */}
-        <option value="" disabled>
-          {isLoading ? 'Loading models...' : placeholder}
-        </option>
+      <div className="grid grid-cols-2 gap-2">
+        <select
+          value={selectedProviderKey}
+          onChange={(e) => {
+            const nextModel = findModelForProvider(providerGroups, e.target.value);
+            onChange(nextModel?.id || '');
+          }}
+          disabled={disabled || isLoading}
+          className="px-3 py-2 border border-gray-300 dark:border-border-dark rounded-lg focus:outline-none focus:ring-2 focus:ring-primary disabled:opacity-50 disabled:cursor-not-allowed"
+          style={{
+            backgroundColor: 'var(--color-input-background)',
+            color: 'var(--color-text-primary)'
+          }}
+        >
+          <option value="" disabled>{isLoading ? 'Loading providers...' : 'Select provider'}</option>
+          {providerGroups.map((group) => (
+            <option key={group.key} value={group.key}>{group.label}</option>
+          ))}
+        </select>
 
-        {/* Cloud Models Group */}
-        {cloudModels.length > 0 && (
-          <optgroup label="Cloud Models">
-            {cloudModels.map((model) => (
-              <option key={model.id} value={model.id}>
-                {showProviderLabels
-                  ? `${model.name} (${model.provider.charAt(0).toUpperCase() + model.provider.slice(1)})`
-                  : model.name}
-              </option>
-            ))}
-          </optgroup>
-        )}
-
-        {/* Local Models Group */}
-        {includeLocal && localModels.length > 0 && (
-          <optgroup label="Local Models">
-            {localModels.map((model) => (
-              <option key={model.id} value={model.id}>
-                {model.name}
-                {model.is_validated === false && ' [Not Validated]'}
-              </option>
-            ))}
-          </optgroup>
-        )}
-
-        {/* No models available */}
-        {!isLoading && models.length === 0 && (
+        <select
+          value={value}
+          onChange={(e) => onChange(e.target.value)}
+          disabled={disabled || isLoading || selectedProviderModels.length === 0}
+          onMouseDown={(e) => e.stopPropagation()}
+          onWheel={(e) => e.stopPropagation()}
+          className="px-3 py-2 border border-gray-300 dark:border-border-dark rounded-lg focus:outline-none focus:ring-2 focus:ring-primary disabled:opacity-50 disabled:cursor-not-allowed"
+          style={{
+            backgroundColor: 'var(--color-input-background)',
+            color: 'var(--color-text-primary)'
+          }}
+        >
           <option value="" disabled>
-            No models available
+            {isLoading ? 'Loading models...' : placeholder}
           </option>
-        )}
-      </select>
+          {selectedProviderModels.map((model) => (
+            <option key={model.id} value={model.id}>
+              {showProviderLabels ? model.name : model.name}
+            </option>
+          ))}
+          {!isLoading && selectedProviderModels.length === 0 && (
+            <option value="" disabled>No models available</option>
+          )}
+        </select>
+      </div>
 
       {/* Description */}
       {description && (
@@ -171,41 +173,54 @@ export function ModelSelectorInline({
     includeLocal,
     onlyValidated
   });
+  const availableModels = includeLocal ? models : cloudModels;
+  const providerGroups = groupModelsByProvider(availableModels);
+  const selectedModelOption = availableModels.find((model) => model.id === value);
+  const selectedProviderKey = selectedModelOption
+    ? getProviderKeyForModel(selectedModelOption)
+    : providerGroups[0]?.key || '';
+  const selectedProviderModels = providerGroups.find((group) => group.key === selectedProviderKey)?.models || [];
 
   return (
-    <select
-      value={value}
-      onChange={(e) => onChange(e.target.value)}
-      disabled={disabled || isLoading}
-      onMouseDown={(e) => e.stopPropagation()}
-      onWheel={(e) => e.stopPropagation()}
-      className={`w-full px-3 py-2 border border-gray-300 dark:border-border-dark rounded-lg focus:outline-none focus:ring-2 focus:ring-primary disabled:opacity-50 ${className}`}
-      style={{
-        backgroundColor: 'var(--color-input-background)',
-        color: 'var(--color-text-primary)'
-      }}
-    >
-      <option value="">{isLoading ? 'Loading...' : 'Select model'}</option>
+    <div className={`grid grid-cols-2 gap-2 ${className}`}>
+      <select
+        value={selectedProviderKey}
+        onChange={(e) => {
+          const nextModel = findModelForProvider(providerGroups, e.target.value);
+          onChange(nextModel?.id || '');
+        }}
+        disabled={disabled || isLoading}
+        className="w-full px-3 py-2 border border-gray-300 dark:border-border-dark rounded-lg focus:outline-none focus:ring-2 focus:ring-primary disabled:opacity-50"
+        style={{
+          backgroundColor: 'var(--color-input-background)',
+          color: 'var(--color-text-primary)'
+        }}
+      >
+        <option value="">{isLoading ? 'Loading...' : 'Provider'}</option>
+        {providerGroups.map((group) => (
+          <option key={group.key} value={group.key}>{group.label}</option>
+        ))}
+      </select>
 
-      {cloudModels.length > 0 && (
-        <optgroup label="Cloud Models">
-          {cloudModels.map((model) => (
-            <option key={model.id} value={model.id}>
-              {model.name}
-            </option>
-          ))}
-        </optgroup>
-      )}
-
-      {includeLocal && localModels.length > 0 && (
-        <optgroup label="Local Models">
-          {localModels.map((model) => (
-            <option key={model.id} value={model.id}>
-              {model.name}
-            </option>
-          ))}
-        </optgroup>
-      )}
-    </select>
+      <select
+        value={value}
+        onChange={(e) => onChange(e.target.value)}
+        disabled={disabled || isLoading || selectedProviderModels.length === 0}
+        onMouseDown={(e) => e.stopPropagation()}
+        onWheel={(e) => e.stopPropagation()}
+        className="w-full px-3 py-2 border border-gray-300 dark:border-border-dark rounded-lg focus:outline-none focus:ring-2 focus:ring-primary disabled:opacity-50"
+        style={{
+          backgroundColor: 'var(--color-input-background)',
+          color: 'var(--color-text-primary)'
+        }}
+      >
+        <option value="">{isLoading ? 'Loading...' : 'Select model'}</option>
+        {selectedProviderModels.map((model) => (
+          <option key={model.id} value={model.id}>
+            {model.name}
+          </option>
+        ))}
+      </select>
+    </div>
   );
 }
