@@ -92,6 +92,7 @@ export function useAvailableModels(
         'gpt-4.1': { name: 'GPT-4.1', provider: 'OpenAI' },
         'o4-mini': { name: 'o4-mini', provider: 'OpenAI' },
         'o3': { name: 'o3', provider: 'OpenAI' },
+        'kimi-for-coding': { name: 'kimi-for-coding', provider: 'kimi-for-coding' },
 
         // Anthropic - Claude 4.5 (Current)
         'claude-opus-4-5': { name: 'Claude Opus 4.5', provider: 'Anthropic' },

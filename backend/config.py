@@ -72,6 +72,7 @@ def get_api_key_from_db(key_name: str) -> Optional[str]:
             "openrouter_api_key": "openrouter",
             "fireworks_api_key": "fireworks",
             "baseten_api_key": "baseten",
+            "kimi_api_key": "kimi",
         }
         provider = provider_map.get(key_name)
 

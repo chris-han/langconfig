@@ -528,6 +528,7 @@ class APIClient {
     openrouter_api_key?: string;
     fireworks_api_key?: string;
     baseten_api_key?: string;
+    kimi_api_key?: string;
   }) {
     return this.client.post('/api/settings/api-keys', data);
   }

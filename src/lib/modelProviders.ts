@@ -16,6 +16,11 @@ export const ADDITIONAL_PROVIDER_CATALOG: Record<string, { label: string; baseUr
     baseUrl: 'https://inference.baseten.co/v1',
     placeholderModels: ['openai/gpt-4.1'],
   },
+  kimi: {
+    label: 'kimi-for-coding',
+    baseUrl: 'https://api.kimi.com/coding/v1',
+    placeholderModels: ['kimi-for-coding'],
+  },
 };
 
 const BUILTIN_PROVIDER_LABELS: Record<string, string> = {

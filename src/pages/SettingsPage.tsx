@@ -29,6 +29,17 @@ export default function SettingsView() {
     openrouter: '',
     fireworks: '',
     baseten: '',
+    kimi: '',
+  });
+  const [storedMaskedApiKeys, setStoredMaskedApiKeys] = useState({
+    anthropic: '',
+    openai: '',
+    azureOpenAI: '',
+    google: '',
+    openrouter: '',
+    fireworks: '',
+    baseten: '',
+    kimi: '',
   });
   const [apiKeyStatus, setApiKeyStatus] = useState({
     anthropic: false,
@@ -38,6 +49,7 @@ export default function SettingsView() {
     openrouter: false,
     fireworks: false,
     baseten: false,
+    kimi: false,
   });
   const [apiKeyVisibility, setApiKeyVisibility] = useState({
     anthropic: false,
@@ -47,6 +59,7 @@ export default function SettingsView() {
     openrouter: false,
     fireworks: false,
     baseten: false,
+    kimi: false,
   });
   const [apiKeySaving, setApiKeySaving] = useState(false);
   const [apiKeySaveMessage, setApiKeySaveMessage] = useState<string | null>(null);
@@ -112,6 +125,9 @@ export default function SettingsView() {
     enabled: boolean;
     baseUrl: string;
     models: string[];
+    reasoningEffort?: string;
+    temperature?: number;
+    maxTokens?: number;
   }
 
   // Local Models state - initialize with safe defaults so the page can render even if one endpoint fails
@@ -170,6 +186,35 @@ export default function SettingsView() {
   });
   const [providerConfigs, setProviderConfigs] = useState<Record<string, AdditionalProviderConfig>>({});
 
+  const normalizeProviderConfigs = (rawConfigs: Record<string, any> | undefined | null): Record<string, AdditionalProviderConfig> => {
+    const entries = Object.entries(rawConfigs || {});
+    return Object.fromEntries(entries.map(([providerKey, rawValue]) => {
+      const value = rawValue && typeof rawValue === 'object' ? rawValue : {};
+      return [providerKey, {
+        enabled: value.enabled !== false,
+        baseUrl: value.baseUrl || value.base_url || '',
+        models: Array.isArray(value.models) ? value.models : [],
+        reasoningEffort: value.reasoningEffort || value.reasoning_effort || '',
+        temperature: typeof value.temperature === 'number' ? value.temperature : undefined,
+        maxTokens: typeof value.maxTokens === 'number' ? value.maxTokens : (typeof value.max_tokens === 'number' ? value.max_tokens : undefined),
+      }];
+    }));
+  };
+
+  const serializeProviderConfigs = (configs: Record<string, AdditionalProviderConfig>) => {
+    return Object.fromEntries(Object.entries(configs).map(([providerKey, providerConfig]) => [
+      providerKey,
+      {
+        enabled: providerConfig.enabled,
+        base_url: providerConfig.baseUrl,
+        models: providerConfig.models,
+        ...(providerConfig.reasoningEffort ? { reasoning_effort: providerConfig.reasoningEffort } : {}),
+        ...(typeof providerConfig.temperature === 'number' ? { temperature: providerConfig.temperature } : {}),
+        ...(typeof providerConfig.maxTokens === 'number' ? { max_tokens: providerConfig.maxTokens } : {}),
+      }
+    ]));
+  };
+
   useEffect(() => {
     const abortController = new AbortController();
 
@@ -187,6 +232,16 @@ export default function SettingsView() {
       // Load API keys status (don't load masked keys into inputs!)
       const keysResponse = await apiClient.getApiKeys();
       const keys = keysResponse.data || [];
+      const maskedApiKeys = {
+        anthropic: keys.find((k: any) => k.provider === 'anthropic')?.masked_key || '',
+        openai: keys.find((k: any) => k.provider === 'openai')?.masked_key || '',
+        azureOpenAI: keys.find((k: any) => k.provider === 'azure_openai')?.masked_key || '',
+        google: keys.find((k: any) => k.provider === 'google')?.masked_key || '',
+        openrouter: keys.find((k: any) => k.provider === 'openrouter')?.masked_key || '',
+        fireworks: keys.find((k: any) => k.provider === 'fireworks')?.masked_key || '',
+        baseten: keys.find((k: any) => k.provider === 'baseten')?.masked_key || '',
+        kimi: keys.find((k: any) => k.provider === 'kimi')?.masked_key || '',
+      };
       setApiKeyStatus({
         anthropic: keys.find((k: any) => k.provider === 'anthropic')?.is_set || false,
         openai: keys.find((k: any) => k.provider === 'openai')?.is_set || false,
@@ -195,17 +250,10 @@ export default function SettingsView() {
         openrouter: keys.find((k: any) => k.provider === 'openrouter')?.is_set || false,
         fireworks: keys.find((k: any) => k.provider === 'fireworks')?.is_set || false,
         baseten: keys.find((k: any) => k.provider === 'baseten')?.is_set || false,
+        kimi: keys.find((k: any) => k.provider === 'kimi')?.is_set || false,
       });
-      // Keep input fields empty - user types new key to update
-      setApiKeys({
-        anthropic: '',
-        openai: '',
-        azureOpenAI: '',
-        google: '',
-        openrouter: '',
-        fireworks: '',
-        baseten: '',
-      });
+      setStoredMaskedApiKeys(maskedApiKeys);
+      setApiKeys(maskedApiKeys);
 
       // Load general settings
       try {
@@ -284,7 +332,7 @@ export default function SettingsView() {
           chunkSize: settingsData.chunk_size || 1000,
           chunkOverlap: settingsData.chunk_overlap || 200
         });
-        setProviderConfigs(settingsData.provider_configs || {});
+        setProviderConfigs(normalizeProviderConfigs(settingsData.provider_configs));
       } catch (error) {
         console.error('Failed to load RAG settings:', error);
       }
@@ -383,6 +431,53 @@ export default function SettingsView() {
     }, 1000); // 1 second debounce
   }, [apiKeys, generalSettings, ragSettings, localModelsSettings, workspaceSettings, modelDefaultsSettings]);
 
+  const isStoredMaskedValue = (providerKey: keyof typeof apiKeys) =>
+    !!storedMaskedApiKeys[providerKey] && apiKeys[providerKey] === storedMaskedApiKeys[providerKey];
+
+  const getApiKeyInputType = (providerKey: keyof typeof apiKeys) =>
+    isStoredMaskedValue(providerKey) ? 'password' : (apiKeyVisibility[providerKey] ? 'text' : 'password');
+
+  const providerApiKeyMap: Record<keyof typeof apiKeys, string> = {
+    anthropic: 'anthropic',
+    openai: 'openai',
+    azureOpenAI: 'azure_openai',
+    google: 'google',
+    openrouter: 'openrouter',
+    fireworks: 'fireworks',
+    baseten: 'baseten',
+    kimi: 'kimi',
+  };
+
+  const clearStoredApiKey = async (
+    providerKey: keyof typeof apiKeys,
+    section: 'built-in' | 'provider'
+  ) => {
+    try {
+      await apiClient.deleteApiKey(providerApiKeyMap[providerKey]);
+      setApiKeys((prev) => ({ ...prev, [providerKey]: '' }));
+      setStoredMaskedApiKeys((prev) => ({ ...prev, [providerKey]: '' }));
+      setApiKeyStatus((prev) => ({ ...prev, [providerKey]: false }));
+      setApiKeyVisibility((prev) => ({ ...prev, [providerKey]: false }));
+
+      if (section === 'built-in') {
+        setApiKeySaveMessage('API key cleared successfully!');
+        setTimeout(() => setApiKeySaveMessage(null), 3000);
+      } else {
+        setProviderConfigSaveMessage('Provider key cleared successfully!');
+        setTimeout(() => setProviderConfigSaveMessage(null), 3000);
+      }
+    } catch (error) {
+      console.error('Failed to clear API key:', error);
+      if (section === 'built-in') {
+        setApiKeySaveMessage('Failed to clear API key. Please try again.');
+        setTimeout(() => setApiKeySaveMessage(null), 5000);
+      } else {
+        setProviderConfigSaveMessage('Failed to clear provider key. Please try again.');
+        setTimeout(() => setProviderConfigSaveMessage(null), 5000);
+      }
+    }
+  };
+
   const handleThemeChange = (themeName: ThemeName) => {
     const theme = themes[themeName];
     applyTheme(theme);
@@ -394,22 +489,26 @@ export default function SettingsView() {
     setProviderConfigSaveMessage(null);
     try {
       const providerApiKeys: Record<string, string> = {};
-      if (apiKeys.openrouter) providerApiKeys.openrouter_api_key = apiKeys.openrouter;
-      if (apiKeys.fireworks) providerApiKeys.fireworks_api_key = apiKeys.fireworks;
-      if (apiKeys.baseten) providerApiKeys.baseten_api_key = apiKeys.baseten;
+      if (apiKeys.azureOpenAI && apiKeys.azureOpenAI !== storedMaskedApiKeys.azureOpenAI) providerApiKeys.azure_openai_api_key = apiKeys.azureOpenAI;
+      if (apiKeys.openrouter && apiKeys.openrouter !== storedMaskedApiKeys.openrouter) providerApiKeys.openrouter_api_key = apiKeys.openrouter;
+      if (apiKeys.fireworks && apiKeys.fireworks !== storedMaskedApiKeys.fireworks) providerApiKeys.fireworks_api_key = apiKeys.fireworks;
+      if (apiKeys.baseten && apiKeys.baseten !== storedMaskedApiKeys.baseten) providerApiKeys.baseten_api_key = apiKeys.baseten;
+      if (apiKeys.kimi && apiKeys.kimi !== storedMaskedApiKeys.kimi) providerApiKeys.kimi_api_key = apiKeys.kimi;
 
       if (Object.keys(providerApiKeys).length > 0) {
         await apiClient.setApiKeys(providerApiKeys);
         setApiKeyStatus({
           ...apiKeyStatus,
+          azureOpenAI: apiKeyStatus.azureOpenAI || !!apiKeys.azureOpenAI,
           openrouter: apiKeyStatus.openrouter || !!apiKeys.openrouter,
           fireworks: apiKeyStatus.fireworks || !!apiKeys.fireworks,
           baseten: apiKeyStatus.baseten || !!apiKeys.baseten,
+          kimi: apiKeyStatus.kimi || !!apiKeys.kimi,
         });
       }
 
       await apiClient.updateSettings({
-        provider_configs: providerConfigs,
+        provider_configs: serializeProviderConfigs(providerConfigs),
       });
 
       setProviderConfigSaveMessage('Provider settings saved successfully!');
@@ -837,7 +936,7 @@ export default function SettingsView() {
                   </div>
                   <div className="flex items-stretch gap-2">
                     <input
-                      type={apiKeyVisibility.anthropic ? 'text' : 'password'}
+                      type={getApiKeyInputType('anthropic')}
                       value={apiKeys.anthropic}
                       onChange={(e) => setApiKeys({ ...apiKeys, anthropic: e.target.value })}
                       placeholder={apiKeyStatus.anthropic ? "Enter new key to replace existing" : "sk-ant-..."}
@@ -850,11 +949,21 @@ export default function SettingsView() {
                     <button
                       type="button"
                       onClick={() => setApiKeyVisibility({ ...apiKeyVisibility, anthropic: !apiKeyVisibility.anthropic })}
+                      disabled={isStoredMaskedValue('anthropic')}
                       className="px-3 py-2 text-sm border border-gray-300 dark:border-border-dark rounded-lg hover:bg-gray-50 dark:hover:bg-panel-dark/80 transition-colors"
                       style={{ color: 'var(--color-text-primary)' }}
                     >
-                      {apiKeyVisibility.anthropic ? 'Hide' : 'Show'}
+                      {isStoredMaskedValue('anthropic') ? 'Stored' : (apiKeyVisibility.anthropic ? 'Hide' : 'Show')}
                     </button>
+                    {apiKeyStatus.anthropic && (
+                      <button
+                        type="button"
+                        onClick={() => clearStoredApiKey('anthropic', 'built-in')}
+                        className="px-3 py-2 text-sm border border-red-200 rounded-lg text-red-600 hover:bg-red-50 dark:hover:bg-red-900/20 transition-colors"
+                      >
+                        Clear
+                      </button>
+                    )}
                   </div>
                   <p className="text-xs mt-1" style={{ color: 'var(--color-text-muted)' }}>
                     Required for Claude models (claude-sonnet-4-5, claude-haiku-4-5, etc.)
@@ -880,7 +989,7 @@ export default function SettingsView() {
                   </div>
                   <div className="flex items-stretch gap-2">
                     <input
-                      type={apiKeyVisibility.openai ? 'text' : 'password'}
+                      type={getApiKeyInputType('openai')}
                       value={apiKeys.openai}
                       onChange={(e) => setApiKeys({ ...apiKeys, openai: e.target.value })}
                       placeholder={apiKeyStatus.openai ? "Enter new key to replace existing" : "sk-..."}
@@ -893,11 +1002,21 @@ export default function SettingsView() {
                     <button
                       type="button"
                       onClick={() => setApiKeyVisibility({ ...apiKeyVisibility, openai: !apiKeyVisibility.openai })}
+                      disabled={isStoredMaskedValue('openai')}
                       className="px-3 py-2 text-sm border border-gray-300 dark:border-border-dark rounded-lg hover:bg-gray-50 dark:hover:bg-panel-dark/80 transition-colors"
                       style={{ color: 'var(--color-text-primary)' }}
                     >
-                      {apiKeyVisibility.openai ? 'Hide' : 'Show'}
+                      {isStoredMaskedValue('openai') ? 'Stored' : (apiKeyVisibility.openai ? 'Hide' : 'Show')}
                     </button>
+                    {apiKeyStatus.openai && (
+                      <button
+                        type="button"
+                        onClick={() => clearStoredApiKey('openai', 'built-in')}
+                        className="px-3 py-2 text-sm border border-red-200 rounded-lg text-red-600 hover:bg-red-50 dark:hover:bg-red-900/20 transition-colors"
+                      >
+                        Clear
+                      </button>
+                    )}
                   </div>
                   <p className="text-xs mt-1" style={{ color: 'var(--color-text-muted)' }}>
                     Required for GPT models (gpt-4o, gpt-4o-mini, gpt-4-turbo, etc.)
@@ -923,7 +1042,7 @@ export default function SettingsView() {
                   </div>
                   <div className="flex items-stretch gap-2">
                     <input
-                      type={apiKeyVisibility.google ? 'text' : 'password'}
+                      type={getApiKeyInputType('google')}
                       value={apiKeys.google}
                       onChange={(e) => setApiKeys({ ...apiKeys, google: e.target.value })}
                       placeholder={apiKeyStatus.google ? "Enter new key to replace existing" : "AIza..."}
@@ -936,173 +1055,96 @@ export default function SettingsView() {
                     <button
                       type="button"
                       onClick={() => setApiKeyVisibility({ ...apiKeyVisibility, google: !apiKeyVisibility.google })}
+                      disabled={isStoredMaskedValue('google')}
                       className="px-3 py-2 text-sm border border-gray-300 dark:border-border-dark rounded-lg hover:bg-gray-50 dark:hover:bg-panel-dark/80 transition-colors"
                       style={{ color: 'var(--color-text-primary)' }}
                     >
-                      {apiKeyVisibility.google ? 'Hide' : 'Show'}
+                      {isStoredMaskedValue('google') ? 'Stored' : (apiKeyVisibility.google ? 'Hide' : 'Show')}
                     </button>
+                    {apiKeyStatus.google && (
+                      <button
+                        type="button"
+                        onClick={() => clearStoredApiKey('google', 'built-in')}
+                        className="px-3 py-2 text-sm border border-red-200 rounded-lg text-red-600 hover:bg-red-50 dark:hover:bg-red-900/20 transition-colors"
+                      >
+                        Clear
+                      </button>
+                    )}
                   </div>
                   <p className="text-xs mt-1" style={{ color: 'var(--color-text-muted)' }}>
                     Required for Gemini models (gemini-2.5-pro, gemini-2.5-flash, etc.)
                   </p>
                 </div>
 
-                {/* Azure OpenAI */}
-                <div>
-                  <div className="flex items-center gap-2 mb-1">
-                    <label className="text-sm font-medium" style={{ color: 'var(--color-text-primary)' }}>
-                      Azure OpenAI API Key
-                    </label>
-                    {apiKeyStatus.azureOpenAI ? (
-                      <span className="inline-flex items-center gap-1 px-2 py-0.5 text-xs font-medium bg-green-100 dark:bg-green-500/20 text-green-700 dark:text-green-400 rounded-full">
-                        <span className="material-symbols-outlined text-xs">check_circle</span>
-                        Configured
-                      </span>
-                    ) : (
-                      <span className="inline-flex items-center gap-1 px-2 py-0.5 text-xs font-medium bg-gray-100 dark:bg-gray-500/20 text-gray-600 dark:text-gray-400 rounded-full">
-                        Not set
+                <div className="pt-2">
+                  <div className="flex items-center gap-3">
+                    <button
+                      onClick={async () => {
+                        // Only save keys that have been entered (non-empty)
+                        const keysToSave: Record<string, string> = {};
+                        if (apiKeys.anthropic && apiKeys.anthropic !== storedMaskedApiKeys.anthropic) keysToSave.anthropic_api_key = apiKeys.anthropic;
+                        if (apiKeys.openai && apiKeys.openai !== storedMaskedApiKeys.openai) keysToSave.openai_api_key = apiKeys.openai;
+                        if (apiKeys.google && apiKeys.google !== storedMaskedApiKeys.google) keysToSave.google_api_key = apiKeys.google;
+
+                        if (Object.keys(keysToSave).length === 0) {
+                          setApiKeySaveMessage('Enter at least one API key to save');
+                          setTimeout(() => setApiKeySaveMessage(null), 3000);
+                          return;
+                        }
+
+                        setApiKeySaving(true);
+                        setApiKeySaveMessage(null);
+                        try {
+                          await apiClient.setApiKeys(keysToSave);
+                          // Update status for saved keys
+                          setApiKeyStatus({
+                            anthropic: apiKeyStatus.anthropic || !!apiKeys.anthropic,
+                            openai: apiKeyStatus.openai || !!apiKeys.openai,
+                            google: apiKeyStatus.google || !!apiKeys.google,
+                            azureOpenAI: apiKeyStatus.azureOpenAI,
+                            openrouter: apiKeyStatus.openrouter,
+                            fireworks: apiKeyStatus.fireworks,
+                            baseten: apiKeyStatus.baseten,
+                            kimi: apiKeyStatus.kimi,
+                          });
+                          setApiKeySaveMessage('API keys saved successfully!');
+                          setTimeout(() => setApiKeySaveMessage(null), 3000);
+                        } catch (error) {
+                          console.error('Failed to save API keys:', error);
+                          setApiKeySaveMessage('Failed to save API keys. Please try again.');
+                          setTimeout(() => setApiKeySaveMessage(null), 5000);
+                        } finally {
+                          setApiKeySaving(false);
+                        }
+                      }}
+                      disabled={apiKeySaving || (
+                        (!apiKeys.anthropic || apiKeys.anthropic === storedMaskedApiKeys.anthropic)
+                        && (!apiKeys.openai || apiKeys.openai === storedMaskedApiKeys.openai)
+                        && (!apiKeys.google || apiKeys.google === storedMaskedApiKeys.google)
+                      )}
+                      className="px-4 py-2 text-sm font-medium bg-primary text-white rounded-lg hover:bg-primary/90 transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2"
+                    >
+                      {apiKeySaving ? (
+                        <>
+                          <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+                          Saving...
+                        </>
+                      ) : (
+                        <>
+                          <span className="material-symbols-outlined text-base">save</span>
+                          Save API Keys
+                        </>
+                      )}
+                    </button>
+                    {apiKeySaveMessage && (
+                      <span className={`text-sm ${apiKeySaveMessage.includes('successfully') ? 'text-green-600 dark:text-green-400' : 'text-amber-600 dark:text-amber-400'}`}>
+                        {apiKeySaveMessage}
                       </span>
                     )}
                   </div>
-                  <div className="flex items-stretch gap-2">
-                    <input
-                      type={apiKeyVisibility.azureOpenAI ? 'text' : 'password'}
-                      value={apiKeys.azureOpenAI}
-                      onChange={(e) => setApiKeys({ ...apiKeys, azureOpenAI: e.target.value })}
-                      placeholder={apiKeyStatus.azureOpenAI ? "Enter new key to replace existing" : "Azure OpenAI key"}
-                      className="w-full px-3 py-2 text-sm border border-gray-300 dark:border-border-dark rounded-lg focus:outline-none focus:ring-2 focus:ring-primary font-mono"
-                      style={{
-                        backgroundColor: 'var(--color-input-background)',
-                        color: 'var(--color-text-primary)'
-                      }}
-                    />
-                    <button
-                      type="button"
-                      onClick={() => setApiKeyVisibility({ ...apiKeyVisibility, azureOpenAI: !apiKeyVisibility.azureOpenAI })}
-                      className="px-3 py-2 text-sm border border-gray-300 dark:border-border-dark rounded-lg hover:bg-gray-50 dark:hover:bg-panel-dark/80 transition-colors"
-                      style={{ color: 'var(--color-text-primary)' }}
-                    >
-                      {apiKeyVisibility.azureOpenAI ? 'Hide' : 'Show'}
-                    </button>
-                  </div>
-                  <p className="text-xs mt-1" style={{ color: 'var(--color-text-muted)' }}>
-                    Used for Azure OpenAI embedding/runtime auth. When set, it overrides the shared OpenAI key for Azure calls.
+                  <p className="text-xs mt-2" style={{ color: 'var(--color-text-muted)' }}>
+                    Saves the built-in API keys above. Azure OpenAI and other provider-specific keys are saved with `Save Additional Providers`.
                   </p>
-                </div>
-
-                <div className="rounded-lg border border-gray-200 dark:border-border-dark p-4 space-y-3 bg-gray-50/60 dark:bg-panel-dark/60">
-                  <div className="flex items-center gap-2">
-                    <span className="material-symbols-outlined text-base" style={{ color: 'var(--color-primary)' }}>
-                      settings
-                    </span>
-                    <h3 className="text-sm font-semibold" style={{ color: 'var(--color-text-primary)' }}>
-                      Azure OpenAI Provider Configuration
-                    </h3>
-                  </div>
-                  <p className="text-xs leading-relaxed" style={{ color: 'var(--color-text-muted)' }}>
-                    These provider settings are stored in the database and used by the Azure embedding/runtime path. Changes here are saved through the same settings contract as the General RAG Configuration section.
-                  </p>
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-                    <div>
-                      <label className="text-xs font-medium" style={{ color: 'var(--color-text-muted)' }}>
-                        Embedding Model
-                      </label>
-                      <select
-                        value={ragSettings.embeddingModel}
-                        onChange={(e) => {
-                          setRagSettings({ ...ragSettings, embeddingModel: e.target.value });
-                          autoSave('general');
-                        }}
-                        className="mt-1 w-full px-3 py-2 text-sm border border-gray-300 dark:border-border-dark rounded-lg focus:outline-none focus:ring-2 focus:ring-primary"
-                        style={{
-                          backgroundColor: 'var(--color-input-background)',
-                          color: 'var(--color-text-primary)'
-                        }}
-                      >
-                        <option value="text-embedding-3-small">text-embedding-3-small</option>
-                        <option value="text-embedding-3-large">text-embedding-3-large</option>
-                        <option value="text-embedding-ada-002">text-embedding-ada-002</option>
-                      </select>
-                    </div>
-                    <div>
-                      <label className="text-xs font-medium" style={{ color: 'var(--color-text-muted)' }}>
-                        API Version
-                      </label>
-                      <input
-                        type="text"
-                        value={ragSettings.azureOpenAIApiVersion}
-                        onChange={(e) => {
-                          setRagSettings({ ...ragSettings, azureOpenAIApiVersion: e.target.value });
-                          autoSave('general');
-                        }}
-                        className="mt-1 w-full px-3 py-2 text-sm border border-gray-300 dark:border-border-dark rounded-lg focus:outline-none focus:ring-2 focus:ring-primary"
-                        style={{
-                          backgroundColor: 'var(--color-input-background)',
-                          color: 'var(--color-text-primary)'
-                        }}
-                      />
-                    </div>
-                    <div className="md:col-span-2">
-                      <label className="text-xs font-medium" style={{ color: 'var(--color-text-muted)' }}>
-                        Azure Endpoint
-                      </label>
-                      <input
-                        type="url"
-                        value={ragSettings.azureOpenAIEndpoint}
-                        onChange={(e) => {
-                          setRagSettings({ ...ragSettings, azureOpenAIEndpoint: e.target.value });
-                          autoSave('general');
-                        }}
-                        placeholder="https://your-resource.openai.azure.com/"
-                        className="mt-1 w-full px-3 py-2 text-sm border border-gray-300 dark:border-border-dark rounded-lg focus:outline-none focus:ring-2 focus:ring-primary"
-                        style={{
-                          backgroundColor: 'var(--color-input-background)',
-                          color: 'var(--color-text-primary)'
-                        }}
-                      />
-                    </div>
-                    <div>
-                      <label className="text-xs font-medium" style={{ color: 'var(--color-text-muted)' }}>
-                        Embedding Deployment
-                      </label>
-                      <input
-                        type="text"
-                        value={ragSettings.azureOpenAIEmbeddingDeployment}
-                        onChange={(e) => {
-                          setRagSettings({ ...ragSettings, azureOpenAIEmbeddingDeployment: e.target.value });
-                          autoSave('general');
-                        }}
-                        placeholder="text-embedding-3-small"
-                        className="mt-1 w-full px-3 py-2 text-sm border border-gray-300 dark:border-border-dark rounded-lg focus:outline-none focus:ring-2 focus:ring-primary"
-                        style={{
-                          backgroundColor: 'var(--color-input-background)',
-                          color: 'var(--color-text-primary)'
-                        }}
-                      />
-                    </div>
-                    <div>
-                      <label className="text-xs font-medium" style={{ color: 'var(--color-text-muted)' }}>
-                        Embedding Dimensions
-                      </label>
-                      <input
-                        type="number"
-                        value={ragSettings.azureOpenAIEmbeddingDimensions}
-                        onChange={(e) => {
-                          setRagSettings({
-                            ...ragSettings,
-                            azureOpenAIEmbeddingDimensions: Math.max(1, Number(e.target.value) || 1),
-                          });
-                          autoSave('general');
-                        }}
-                        min={1}
-                        className="mt-1 w-full px-3 py-2 text-sm border border-gray-300 dark:border-border-dark rounded-lg focus:outline-none focus:ring-2 focus:ring-primary"
-                        style={{
-                          backgroundColor: 'var(--color-input-background)',
-                          color: 'var(--color-text-primary)'
-                        }}
-                      />
-                    </div>
-                  </div>
                 </div>
 
                 <div className="rounded-lg border border-gray-200 dark:border-border-dark p-4 space-y-4 bg-gray-50/60 dark:bg-panel-dark/60">
@@ -1112,7 +1154,7 @@ export default function SettingsView() {
                         Additional Model Providers
                       </h3>
                       <p className="text-xs mt-1" style={{ color: 'var(--color-text-muted)' }}>
-                        Add OpenAI-compatible providers for DeepAgents model routing. This covers providers like OpenRouter, Fireworks, and Baseten while Ollama remains under Local Models.
+                        Configure provider-specific routing surfaces beyond the built-in shared keys. This covers Azure OpenAI, OpenRouter, Fireworks, Baseten, and kimi-for-coding while Ollama remains under Local Models.
                       </p>
                     </div>
                     <div className="flex items-center gap-2">
@@ -1144,6 +1186,9 @@ export default function SettingsView() {
                               enabled: true,
                               baseUrl: providerMeta.baseUrl,
                               models: providerMeta.placeholderModels,
+                              reasoningEffort: providerToAdd === 'kimi' ? 'medium' : undefined,
+                              temperature: providerToAdd === 'kimi' ? 0.0 : undefined,
+                              maxTokens: providerToAdd === 'kimi' ? 32768 : undefined,
                             },
                           });
                         }}
@@ -1152,6 +1197,172 @@ export default function SettingsView() {
                       >
                         Add Provider
                       </button>
+                    </div>
+                  </div>
+
+                  <div className="rounded-lg border border-gray-200 dark:border-border-dark p-4 space-y-3">
+                    <div className="flex items-center gap-2">
+                      <span className="material-symbols-outlined text-base" style={{ color: 'var(--color-primary)' }}>
+                        settings
+                      </span>
+                      <h3 className="text-sm font-semibold" style={{ color: 'var(--color-text-primary)' }}>
+                        Azure OpenAI Provider Configuration
+                      </h3>
+                    </div>
+                    <p className="text-xs leading-relaxed" style={{ color: 'var(--color-text-muted)' }}>
+                      Azure OpenAI is managed as a provider-specific configuration. The API key is saved with `Save Additional Providers`, while endpoint and embedding settings remain DB-backed and autosave through the shared settings contract.
+                    </p>
+                    <div>
+                      <div className="flex items-center gap-2 mb-1">
+                        <label className="text-sm font-medium" style={{ color: 'var(--color-text-primary)' }}>
+                          Azure OpenAI API Key
+                        </label>
+                        {apiKeyStatus.azureOpenAI ? (
+                          <span className="inline-flex items-center gap-1 px-2 py-0.5 text-xs font-medium bg-green-100 dark:bg-green-500/20 text-green-700 dark:text-green-400 rounded-full">
+                            <span className="material-symbols-outlined text-xs">check_circle</span>
+                            Configured
+                          </span>
+                        ) : (
+                          <span className="inline-flex items-center gap-1 px-2 py-0.5 text-xs font-medium bg-gray-100 dark:bg-gray-500/20 text-gray-600 dark:text-gray-400 rounded-full">
+                            Not set
+                          </span>
+                        )}
+                      </div>
+                      <div className="flex items-stretch gap-2">
+                        <input
+                          type={getApiKeyInputType('azureOpenAI')}
+                          value={apiKeys.azureOpenAI}
+                          onChange={(e) => setApiKeys({ ...apiKeys, azureOpenAI: e.target.value })}
+                          placeholder={apiKeyStatus.azureOpenAI ? "Enter new key to replace existing" : "Azure OpenAI key"}
+                          className="w-full px-3 py-2 text-sm border border-gray-300 dark:border-border-dark rounded-lg focus:outline-none focus:ring-2 focus:ring-primary font-mono"
+                          style={{
+                            backgroundColor: 'var(--color-input-background)',
+                            color: 'var(--color-text-primary)'
+                          }}
+                        />
+                        <button
+                          type="button"
+                          onClick={() => setApiKeyVisibility({ ...apiKeyVisibility, azureOpenAI: !apiKeyVisibility.azureOpenAI })}
+                          disabled={isStoredMaskedValue('azureOpenAI')}
+                          className="px-3 py-2 text-sm border border-gray-300 dark:border-border-dark rounded-lg hover:bg-gray-50 dark:hover:bg-panel-dark/80 transition-colors"
+                          style={{ color: 'var(--color-text-primary)' }}
+                        >
+                          {isStoredMaskedValue('azureOpenAI') ? 'Stored' : (apiKeyVisibility.azureOpenAI ? 'Hide' : 'Show')}
+                        </button>
+                        {apiKeyStatus.azureOpenAI && (
+                          <button
+                            type="button"
+                            onClick={() => clearStoredApiKey('azureOpenAI', 'provider')}
+                            className="px-3 py-2 text-sm border border-red-200 rounded-lg text-red-600 hover:bg-red-50 dark:hover:bg-red-900/20 transition-colors"
+                          >
+                            Clear
+                          </button>
+                        )}
+                      </div>
+                      <p className="text-xs mt-1" style={{ color: 'var(--color-text-muted)' }}>
+                        Used for Azure OpenAI embedding/runtime auth. When set, it overrides the shared OpenAI key for Azure calls.
+                      </p>
+                    </div>
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                      <div>
+                        <label className="text-xs font-medium" style={{ color: 'var(--color-text-muted)' }}>
+                          Embedding Model
+                        </label>
+                        <select
+                          value={ragSettings.embeddingModel}
+                          onChange={(e) => {
+                            setRagSettings({ ...ragSettings, embeddingModel: e.target.value });
+                            autoSave('general');
+                          }}
+                          className="mt-1 w-full px-3 py-2 text-sm border border-gray-300 dark:border-border-dark rounded-lg focus:outline-none focus:ring-2 focus:ring-primary"
+                          style={{
+                            backgroundColor: 'var(--color-input-background)',
+                            color: 'var(--color-text-primary)'
+                          }}
+                        >
+                          <option value="text-embedding-3-small">text-embedding-3-small</option>
+                          <option value="text-embedding-3-large">text-embedding-3-large</option>
+                          <option value="text-embedding-ada-002">text-embedding-ada-002</option>
+                        </select>
+                      </div>
+                      <div>
+                        <label className="text-xs font-medium" style={{ color: 'var(--color-text-muted)' }}>
+                          API Version
+                        </label>
+                        <input
+                          type="text"
+                          value={ragSettings.azureOpenAIApiVersion}
+                          onChange={(e) => {
+                            setRagSettings({ ...ragSettings, azureOpenAIApiVersion: e.target.value });
+                            autoSave('general');
+                          }}
+                          className="mt-1 w-full px-3 py-2 text-sm border border-gray-300 dark:border-border-dark rounded-lg focus:outline-none focus:ring-2 focus:ring-primary"
+                          style={{
+                            backgroundColor: 'var(--color-input-background)',
+                            color: 'var(--color-text-primary)'
+                          }}
+                        />
+                      </div>
+                      <div className="md:col-span-2">
+                        <label className="text-xs font-medium" style={{ color: 'var(--color-text-muted)' }}>
+                          Azure Endpoint
+                        </label>
+                        <input
+                          type="url"
+                          value={ragSettings.azureOpenAIEndpoint}
+                          onChange={(e) => {
+                            setRagSettings({ ...ragSettings, azureOpenAIEndpoint: e.target.value });
+                            autoSave('general');
+                          }}
+                          placeholder="https://your-resource.openai.azure.com/"
+                          className="mt-1 w-full px-3 py-2 text-sm border border-gray-300 dark:border-border-dark rounded-lg focus:outline-none focus:ring-2 focus:ring-primary"
+                          style={{
+                            backgroundColor: 'var(--color-input-background)',
+                            color: 'var(--color-text-primary)'
+                          }}
+                        />
+                      </div>
+                      <div>
+                        <label className="text-xs font-medium" style={{ color: 'var(--color-text-muted)' }}>
+                          Embedding Deployment
+                        </label>
+                        <input
+                          type="text"
+                          value={ragSettings.azureOpenAIEmbeddingDeployment}
+                          onChange={(e) => {
+                            setRagSettings({ ...ragSettings, azureOpenAIEmbeddingDeployment: e.target.value });
+                            autoSave('general');
+                          }}
+                          placeholder="text-embedding-3-small"
+                          className="mt-1 w-full px-3 py-2 text-sm border border-gray-300 dark:border-border-dark rounded-lg focus:outline-none focus:ring-2 focus:ring-primary"
+                          style={{
+                            backgroundColor: 'var(--color-input-background)',
+                            color: 'var(--color-text-primary)'
+                          }}
+                        />
+                      </div>
+                      <div>
+                        <label className="text-xs font-medium" style={{ color: 'var(--color-text-muted)' }}>
+                          Embedding Dimensions
+                        </label>
+                        <input
+                          type="number"
+                          value={ragSettings.azureOpenAIEmbeddingDimensions}
+                          onChange={(e) => {
+                            setRagSettings({
+                              ...ragSettings,
+                              azureOpenAIEmbeddingDimensions: Math.max(1, Number(e.target.value) || 1),
+                            });
+                            autoSave('general');
+                          }}
+                          min={1}
+                          className="mt-1 w-full px-3 py-2 text-sm border border-gray-300 dark:border-border-dark rounded-lg focus:outline-none focus:ring-2 focus:ring-primary"
+                          style={{
+                            backgroundColor: 'var(--color-input-background)',
+                            color: 'var(--color-text-primary)'
+                          }}
+                        />
+                      </div>
                     </div>
                   </div>
 
@@ -1202,14 +1413,14 @@ export default function SettingsView() {
                               </span>
                             </label>
 
-                            <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                              <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
                               <div className="md:col-span-2">
                                 <label className="text-xs font-medium" style={{ color: 'var(--color-text-muted)' }}>
                                   API Key
                                 </label>
                                 <div className="mt-1 flex items-stretch gap-2">
                                   <input
-                                    type={apiKeyVisibility[providerKey as keyof typeof apiKeyVisibility] ? 'text' : 'password'}
+                                    type={getApiKeyInputType(providerKey as keyof typeof apiKeys)}
                                     value={apiKeys[providerKey as keyof typeof apiKeys]}
                                     onChange={(e) => setApiKeys({ ...apiKeys, [providerKey]: e.target.value })}
                                     placeholder={apiKeyStatus[providerKey as keyof typeof apiKeyStatus] ? 'Enter new key to replace existing' : `${providerMeta?.label || providerKey} API key`}
@@ -1222,11 +1433,23 @@ export default function SettingsView() {
                                   <button
                                     type="button"
                                     onClick={() => setApiKeyVisibility({ ...apiKeyVisibility, [providerKey]: !apiKeyVisibility[providerKey as keyof typeof apiKeyVisibility] })}
+                                    disabled={isStoredMaskedValue(providerKey as keyof typeof apiKeys)}
                                     className="px-3 py-2 text-sm border border-gray-300 dark:border-border-dark rounded-lg hover:bg-gray-50 dark:hover:bg-panel-dark/80 transition-colors"
                                     style={{ color: 'var(--color-text-primary)' }}
                                   >
-                                    {apiKeyVisibility[providerKey as keyof typeof apiKeyVisibility] ? 'Hide' : 'Show'}
+                                    {isStoredMaskedValue(providerKey as keyof typeof apiKeys)
+                                      ? 'Stored'
+                                      : (apiKeyVisibility[providerKey as keyof typeof apiKeyVisibility] ? 'Hide' : 'Show')}
                                   </button>
+                                  {apiKeyStatus[providerKey as keyof typeof apiKeyStatus] && (
+                                    <button
+                                      type="button"
+                                      onClick={() => clearStoredApiKey(providerKey as keyof typeof apiKeys, 'provider')}
+                                      className="px-3 py-2 text-sm border border-red-200 rounded-lg text-red-600 hover:bg-red-50 dark:hover:bg-red-900/20 transition-colors"
+                                    >
+                                      Clear
+                                    </button>
+                                  )}
                                 </div>
                                 <p className="text-xs mt-1" style={{ color: 'var(--color-text-muted)' }}>
                                   {apiKeyStatus[providerKey as keyof typeof apiKeyStatus] ? 'Configured. Enter a new key to replace the stored one.' : 'Required to activate this provider in model selection.'}
@@ -1277,6 +1500,74 @@ export default function SettingsView() {
                                   One model per line. These models will appear under the selected provider in agent configuration.
                                 </p>
                               </div>
+
+                              {providerKey === 'kimi' && (
+                                <>
+                                  <div>
+                                    <label className="text-xs font-medium" style={{ color: 'var(--color-text-muted)' }}>
+                                      Reasoning Effort
+                                    </label>
+                                    <select
+                                      value={providerConfig.reasoningEffort || 'medium'}
+                                      onChange={(e) => setProviderConfigs({
+                                        ...providerConfigs,
+                                        [providerKey]: { ...providerConfig, reasoningEffort: e.target.value },
+                                      })}
+                                      className="mt-1 w-full px-3 py-2 text-sm border border-gray-300 dark:border-border-dark rounded-lg focus:outline-none focus:ring-2 focus:ring-primary"
+                                      style={{
+                                        backgroundColor: 'var(--color-input-background)',
+                                        color: 'var(--color-text-primary)'
+                                      }}
+                                    >
+                                      <option value="low">low</option>
+                                      <option value="medium">medium</option>
+                                      <option value="high">high</option>
+                                    </select>
+                                  </div>
+
+                                  <div>
+                                    <label className="text-xs font-medium" style={{ color: 'var(--color-text-muted)' }}>
+                                      Default Temperature
+                                    </label>
+                                    <input
+                                      type="number"
+                                      step="0.1"
+                                      min="0"
+                                      max="1"
+                                      value={providerConfig.temperature ?? 0}
+                                      onChange={(e) => setProviderConfigs({
+                                        ...providerConfigs,
+                                        [providerKey]: { ...providerConfig, temperature: Number(e.target.value) },
+                                      })}
+                                      className="mt-1 w-full px-3 py-2 text-sm border border-gray-300 dark:border-border-dark rounded-lg focus:outline-none focus:ring-2 focus:ring-primary"
+                                      style={{
+                                        backgroundColor: 'var(--color-input-background)',
+                                        color: 'var(--color-text-primary)'
+                                      }}
+                                    />
+                                  </div>
+
+                                  <div>
+                                    <label className="text-xs font-medium" style={{ color: 'var(--color-text-muted)' }}>
+                                      Default Max Tokens
+                                    </label>
+                                    <input
+                                      type="number"
+                                      min="1"
+                                      value={providerConfig.maxTokens ?? 32768}
+                                      onChange={(e) => setProviderConfigs({
+                                        ...providerConfigs,
+                                        [providerKey]: { ...providerConfig, maxTokens: Number(e.target.value) },
+                                      })}
+                                      className="mt-1 w-full px-3 py-2 text-sm border border-gray-300 dark:border-border-dark rounded-lg focus:outline-none focus:ring-2 focus:ring-primary"
+                                      style={{
+                                        backgroundColor: 'var(--color-input-background)',
+                                        color: 'var(--color-text-primary)'
+                                      }}
+                                    />
+                                  </div>
+                                </>
+                              )}
                             </div>
                           </div>
                         );
@@ -1299,73 +1590,8 @@ export default function SettingsView() {
                       </span>
                     )}
                   </div>
-                </div>
-
-                {/* Save Button and Status */}
-                <div className="pt-4 border-t border-gray-200 dark:border-border-dark">
-                  <div className="flex items-center gap-3">
-                    <button
-                      onClick={async () => {
-                        // Only save keys that have been entered (non-empty)
-                        const keysToSave: Record<string, string> = {};
-                        if (apiKeys.anthropic) keysToSave.anthropic_api_key = apiKeys.anthropic;
-                        if (apiKeys.openai) keysToSave.openai_api_key = apiKeys.openai;
-                        if (apiKeys.azureOpenAI) keysToSave.azure_openai_api_key = apiKeys.azureOpenAI;
-                        if (apiKeys.google) keysToSave.google_api_key = apiKeys.google;
-
-                        if (Object.keys(keysToSave).length === 0) {
-                          setApiKeySaveMessage('Enter at least one API key to save');
-                          setTimeout(() => setApiKeySaveMessage(null), 3000);
-                          return;
-                        }
-
-                        setApiKeySaving(true);
-                        setApiKeySaveMessage(null);
-                        try {
-                          await apiClient.setApiKeys(keysToSave);
-                          // Update status for saved keys
-                          setApiKeyStatus({
-                            anthropic: apiKeyStatus.anthropic || !!apiKeys.anthropic,
-                            openai: apiKeyStatus.openai || !!apiKeys.openai,
-                            azureOpenAI: apiKeyStatus.azureOpenAI || !!apiKeys.azureOpenAI,
-                            google: apiKeyStatus.google || !!apiKeys.google,
-                            openrouter: apiKeyStatus.openrouter,
-                            fireworks: apiKeyStatus.fireworks,
-                            baseten: apiKeyStatus.baseten,
-                          });
-                          setApiKeySaveMessage('API keys saved successfully!');
-                          setTimeout(() => setApiKeySaveMessage(null), 3000);
-                        } catch (error) {
-                          console.error('Failed to save API keys:', error);
-                          setApiKeySaveMessage('Failed to save API keys. Please try again.');
-                          setTimeout(() => setApiKeySaveMessage(null), 5000);
-                        } finally {
-                          setApiKeySaving(false);
-                        }
-                      }}
-                      disabled={apiKeySaving || (!apiKeys.anthropic && !apiKeys.openai && !apiKeys.azureOpenAI && !apiKeys.google)}
-                      className="px-4 py-2 text-sm font-medium bg-primary text-white rounded-lg hover:bg-primary/90 transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2"
-                    >
-                      {apiKeySaving ? (
-                        <>
-                          <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
-                          Saving...
-                        </>
-                      ) : (
-                        <>
-                          <span className="material-symbols-outlined text-base">save</span>
-                          Save API Keys
-                        </>
-                      )}
-                    </button>
-                    {apiKeySaveMessage && (
-                      <span className={`text-sm ${apiKeySaveMessage.includes('successfully') ? 'text-green-600 dark:text-green-400' : 'text-amber-600 dark:text-amber-400'}`}>
-                        {apiKeySaveMessage}
-                      </span>
-                    )}
-                  </div>
-                  <p className="text-xs mt-2" style={{ color: 'var(--color-text-muted)' }}>
-                    Only non-empty fields will be saved. Leave a field empty to keep the existing key.
+                  <p className="text-xs" style={{ color: 'var(--color-text-muted)' }}>
+                    Saves the Azure OpenAI provider key plus any additional-provider config and keys entered in those provider cards. No separate `Save API Keys` click is needed for providers in this section.
                   </p>
                 </div>
               </div>

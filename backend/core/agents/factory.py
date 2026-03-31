@@ -22,7 +22,7 @@ This replaces the disconnected flow where agents were created without their conf
 import logging
 from typing import Dict, Any, List, Optional, Tuple, Sequence
 from datetime import datetime
-from langchain_openai import ChatOpenAI
+from langchain_openai import AzureChatOpenAI, ChatOpenAI
 from langchain_anthropic import ChatAnthropic
 from langchain_google_genai import ChatGoogleGenerativeAI
 from langchain_core.tools import BaseTool, StructuredTool
@@ -117,7 +117,7 @@ DEFAULT_AGENT_GUARDRAILS = """
 
 # Legacy alias for backward compatibility
 REASONING_FRAMEWORK = DEFAULT_AGENT_GUARDRAILS
-OPENAI_COMPATIBLE_PROVIDER_PREFIXES = {"openrouter", "fireworks", "baseten"}
+OPENAI_COMPATIBLE_PROVIDER_PREFIXES = {"openrouter", "fireworks", "baseten", "kimi"}
 
 class AgentFactory:
     """
@@ -1152,6 +1152,33 @@ You have been equipped with the following tools: {', '.join(tool_names)}
         if ":" in model_name:
             provider_prefix, provider_model_name = model_name.split(":", 1)
 
+        if provider_prefix == "azure_openai":
+            azure_api_key = settings.AZURE_OPENAI_API_KEY
+            azure_endpoint = (settings.AZURE_OPENAI_ENDPOINT or "").strip()
+            azure_api_version = settings.AZURE_OPENAI_API_VERSION or "2024-05-01-preview"
+            azure_deployment = provider_model_name.strip()
+
+            if not azure_api_key:
+                raise ValueError(f"AZURE_OPENAI_API_KEY is required for model {model_name}")
+            if not azure_endpoint:
+                raise ValueError(
+                    "Azure OpenAI provider is missing endpoint configuration in Settings → API Keys & Providers."
+                )
+            if not azure_deployment:
+                raise ValueError(
+                    "Azure OpenAI provider is missing deployment configuration in Settings → API Keys & Providers."
+                )
+
+            return AzureChatOpenAI(
+                azure_deployment=azure_deployment,
+                azure_endpoint=azure_endpoint,
+                openai_api_version=azure_api_version,
+                api_key=azure_api_key,
+                temperature=temperature,
+                max_tokens=max_tokens,
+                streaming=streaming,
+            )
+
         if provider_prefix in OPENAI_COMPATIBLE_PROVIDER_PREFIXES:
             provider_api_key = settings.get_api_key(f"{provider_prefix}_api_key")
             provider_config = settings.get_provider_config(provider_prefix)
@@ -1164,14 +1191,26 @@ You have been equipped with the following tools: {', '.join(tool_names)}
                     f"Provider '{provider_prefix}' is missing base_url configuration in Settings → API Keys & Providers."
                 )
 
-            return ChatOpenAI(
-                model=provider_model_name,
-                base_url=provider_base_url,
-                api_key=provider_api_key,
-                temperature=temperature,
-                max_tokens=max_tokens,
-                streaming=streaming,
-            )
+            chat_openai_kwargs = {
+                "model": provider_model_name,
+                "base_url": provider_base_url,
+                "api_key": provider_api_key,
+                "temperature": temperature,
+                "max_tokens": max_tokens,
+                "streaming": streaming,
+            }
+
+            if provider_prefix == "kimi":
+                # Kimi coding API expects Roo Code style client headers.
+                chat_openai_kwargs["default_headers"] = {
+                    "User-Agent": "RooCode/1.0.0",
+                    "X-Client-Name": "roo-code",
+                }
+                reasoning_effort = provider_config.get("reasoning_effort")
+                if isinstance(reasoning_effort, str) and reasoning_effort.strip():
+                    chat_openai_kwargs["extra_body"] = {"reasoning_effort": reasoning_effort.strip()}
+
+            return ChatOpenAI(**chat_openai_kwargs)
 
         if provider_prefix in {"openai", "anthropic", "google"}:
             model_name = provider_model_name

@@ -2661,7 +2661,7 @@ const AgentLoadouts = () => {
         config
       };
 
-      if (editingAgent) {
+      if (editingAgent && editingAgent.id > 0) {
         await apiClient.updateDeepAgent(editingAgent.id, { config });
         showSuccess('Agent updated successfully!');
       } else {
@@ -3215,6 +3215,7 @@ const AgentLoadouts = () => {
                             config: {
                               name: 'Code Generator',
                               description: 'Generate, refactor, and document code with filesystem tools and GitHub integration',
+                              category: 'Development',
                               model: 'claude-3-5-sonnet-20241022',
                               temperature: 0.3,
                               system_prompt: `You are an expert software engineer and code generator. Your role is to:
@@ -3227,7 +3228,7 @@ const AgentLoadouts = () => {
 6. Integrate with GitHub for version control operations
 
 Always explain your code changes and provide context for your decisions.`,
-                              mcp_tools: ['read_file', 'write_file', 'ls', 'edit_file', 'glob', 'grep'],
+                              native_tools: ['read_file', 'write_file', 'ls', 'edit_file', 'glob', 'grep'],
                               enable_memory: true,
                               enable_rag: false,
                               enable_model_routing: false,
@@ -3272,6 +3273,7 @@ Always explain your code changes and provide context for your decisions.`,
                             config: {
                               name: 'Research Assistant',
                               description: 'Gather information from the web, synthesize findings, and generate comprehensive reports',
+                              category: 'Research',
                               model: 'claude-3-5-sonnet-20241022',
                               temperature: 0.7,
                               system_prompt: `You are an expert research assistant specializing in information gathering and synthesis. Your role is to:
@@ -3284,7 +3286,7 @@ Always explain your code changes and provide context for your decisions.`,
 6. Verify information accuracy and credibility
 
 Always provide balanced perspectives and acknowledge uncertainties when appropriate.`,
-                              mcp_tools: ['web_search', 'web_fetch'],
+                              native_tools: ['web_search', 'web_fetch'],
                               enable_memory: true,
                               enable_rag: true,
                               enable_model_routing: false,
@@ -3329,6 +3331,7 @@ Always provide balanced perspectives and acknowledge uncertainties when appropri
                             config: {
                               name: 'Testing Agent',
                               description: 'Write and execute tests, analyze coverage, and identify edge cases',
+                              category: 'Testing',
                               model: 'claude-3-5-sonnet-20241022',
                               temperature: 0.4,
                               system_prompt: `You are an expert QA engineer and testing specialist. Your role is to:
@@ -3341,7 +3344,7 @@ Always provide balanced perspectives and acknowledge uncertainties when appropri
 6. Provide clear test documentation and assertions
 
 Focus on writing maintainable, reliable tests that catch real issues.`,
-                              mcp_tools: ['read_file', 'write_file', 'ls', 'edit_file', 'glob', 'grep'],
+                              native_tools: ['read_file', 'write_file', 'ls', 'edit_file', 'glob', 'grep'],
                               enable_memory: true,
                               enable_rag: false,
                               enable_model_routing: false,
