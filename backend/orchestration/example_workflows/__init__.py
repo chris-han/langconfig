@@ -10,6 +10,16 @@ This module contains featured example workflows that users can load,
 study, modify, and execute as templates for their own workflows.
 """
 
-from .deep_research import DeepResearchStrategy
+from orchestration.journal_workflow import (
+    JournalWorkflowRunner,
+    process_journal_entry,
+    JournalEntryState,
+    JournalMood,
+)
 
-__all__ = ['DeepResearchStrategy']
+__all__ = [
+    'JournalWorkflowRunner',
+    'process_journal_entry',
+    'JournalEntryState',
+    'JournalMood',
+]

@@ -70,6 +70,7 @@ from services.conversation_context import ConversationContextService
 logger = logging.getLogger(__name__)
 
 router = APIRouter(prefix="/api/chat", tags=["chat"])
+CHAT_DEEPAGENT_RECURSION_LIMIT = 120
 
 
 # =============================================================================
@@ -94,6 +95,14 @@ def make_json_safe(obj):
             return obj
         except (TypeError, ValueError):
             return None
+
+
+def build_chat_agent_context(message: str, supplemental_context: str = "") -> str:
+    """Build concise runtime context for chat-created DeepAgents."""
+    parts = [f"Current user task:\n{message.strip()}"]
+    if supplemental_context and supplemental_context.strip():
+        parts.append(f"Supporting context:\n{supplemental_context.strip()}")
+    return "\n\n".join(parts)
 
 
 # =============================================================================
@@ -307,7 +316,7 @@ async def send_message(
                 config=config,
                 project_id=0,  # Not tied to a project
                 task_id=0,  # Not tied to a task
-                context="",
+                context=build_chat_agent_context(request.message),
                 mcp_manager=None,  # Would be injected in production
                 vector_store=None
             )
@@ -321,7 +330,10 @@ async def send_message(
         # The checkpointer automatically loads and saves conversation history
         result = agent_instance.invoke(
             {"messages": [new_message]},
-            config={"configurable": {"thread_id": session.session_id}}
+            config={
+                "configurable": {"thread_id": session.session_id},
+                "recursion_limit": CHAT_DEEPAGENT_RECURSION_LIMIT,
+            }
         )
 
         # Extract response
@@ -540,7 +552,7 @@ async def send_message_stream(
                         config=config,
                         project_id=project_id or 0,
                         task_id=0,
-                        context=all_context,  # Inject RAG context
+                        context=build_chat_agent_context(request.message, all_context),
                         mcp_manager=None,
                         vector_store=None
                     )
@@ -565,7 +577,7 @@ async def send_message_stream(
                     config={
                         "configurable": {"thread_id": session_id},
                         "callbacks": [event_handler],
-                        "recursion_limit": 500  # Increased from default 25 for complex tool chains
+                        "recursion_limit": CHAT_DEEPAGENT_RECURSION_LIMIT,
                     },
                     version="v2"
                 ):

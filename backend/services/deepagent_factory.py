@@ -11,6 +11,7 @@ with LangConfig's existing agent factory infrastructure.
 """
 
 import logging
+from pathlib import Path
 from typing import Dict, Any, List, Optional, Tuple
 from langchain_core.tools import BaseTool
 from langgraph.graph.state import CompiledStateGraph
@@ -27,6 +28,32 @@ from core.middleware.deep import DeepAgentsMiddlewareFactory
 from core.agents.factory import AgentFactory
 
 logger = logging.getLogger(__name__)
+
+DEEPAGENT_EXECUTION_CONTRACT_PROMPT_ID = "deepagent_execution_contract"
+DEEPAGENT_EXECUTION_CONTRACT_PROMPT_PATH = (
+    Path(__file__).resolve().parents[1] / "prompts" / "deepagent" / "execution_contract.md"
+)
+
+
+def load_deepagent_execution_contract_prompt() -> str:
+    """Load the file-backed DeepAgent execution contract prompt."""
+    if not DEEPAGENT_EXECUTION_CONTRACT_PROMPT_PATH.exists():
+        raise FileNotFoundError(
+            "Missing prompt asset for "
+            f"{DEEPAGENT_EXECUTION_CONTRACT_PROMPT_ID}: expected file at "
+            f"{DEEPAGENT_EXECUTION_CONTRACT_PROMPT_PATH}"
+        )
+    return DEEPAGENT_EXECUTION_CONTRACT_PROMPT_PATH.read_text(encoding="utf-8")
+
+
+def compose_deepagent_system_prompt(base_system_prompt: str, context: str = "") -> str:
+    """Compose the final DeepAgent system prompt with auditable execution guidance."""
+    prompt_template = load_deepagent_execution_contract_prompt()
+    runtime_context = context.strip() if context and context.strip() else "No additional runtime context provided."
+    return prompt_template.format(
+        base_system_prompt=base_system_prompt.strip(),
+        runtime_context=runtime_context,
+    )
 
 
 class DeepAgentFactory:
@@ -111,6 +138,7 @@ class DeepAgentFactory:
             f"(model={config.model}, middleware={len(config.middleware)}, "
             f"subagents={len(config.subagents)})"
         )
+        composed_system_prompt = compose_deepagent_system_prompt(config.system_prompt, context)
 
         # Setup observability callbacks (Langfuse, etc.)
         callbacks = await DeepAgentFactory._setup_callbacks(project_id, task_id)
@@ -227,7 +255,7 @@ class DeepAgentFactory:
             agent_kwargs = {
                 "model": resolved_model,
                 "tools": all_tools,
-                "system_prompt": config.system_prompt,
+                "system_prompt": composed_system_prompt,
                 "middleware": middleware_instances if middleware_instances else None,
                 "subagents": subagents_config if subagents_config else None,
                 "checkpointer": checkpointer,
@@ -598,7 +626,7 @@ class DeepAgentFactory:
             "model": config.model,
             "temperature": config.temperature,
             "max_tokens": config.max_tokens,
-            "system_prompt": config.system_prompt,
+            "system_prompt": compose_deepagent_system_prompt(config.system_prompt, context),
             "native_tools": config.native_tools,
             "cli_tools": config.cli_tools,
             "custom_tools": config.custom_tools,

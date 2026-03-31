@@ -1984,16 +1984,7 @@ Continue:""")
                         subagents=raw_subagents,
                     )
 
-                    # Build context with completion criteria
-                    context_with_criteria = ""
-                    if query:
-                        context_with_criteria = f"""Task: {query}
-
-CRITICAL - STOP CONDITIONS:
-You MUST stop executing once you have completed the task and provided your output.
-Do NOT continue iterating after your final response.
-Do NOT loop or repeat actions unnecessarily.
-When your work is complete, deliver the final result and END."""
+                    context_with_criteria = query.strip() if query else ""
 
                     # Create DeepAgent
                     logger.info(f"[{display_name}] Creating DeepAgent with:")
@@ -2054,8 +2045,8 @@ When your work is complete, deliver the final result and END."""
                         "metadata": {"node_id": node_id},
                         # Also add as tag for fallback lookup
                         "tags": [node_id],
-                        # RECURSION LIMIT: Default 300 accounts for middleware overhead (~6 steps per iteration)
-                        "recursion_limit": agent_config.get("recursion_limit", 300)
+                        # DeepAgents can drift after file creation; keep the default budget tighter unless overridden.
+                        "recursion_limit": agent_config.get("recursion_limit", 120 if use_deepagents else 300)
                     }
 
                     # Combine callbacks from parent workflow AND agent factory
