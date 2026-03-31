@@ -16,6 +16,7 @@ import ConflictDialog from '../../workflows/ui/ConflictDialog';
 import { useNotification } from '../../../hooks/useNotification';
 import { useAvailableModels } from '../../../hooks/useAvailableModels';
 import { findModelForProvider, getProviderDisplayName, getProviderKeyForModel, groupModelsByProvider } from '../../../lib/modelProviders';
+import PythonCodeEditor from '../../../components/common/PythonCodeEditor';
 
 interface Agent {
   id: number;
@@ -1315,6 +1316,20 @@ print(result)
                   Copy
                 </button>
                 <button
+                  onClick={() => setGeneratedCode(generateLangChainCode())}
+                  className="px-3 py-1.5 rounded-lg text-xs font-medium flex items-center gap-1.5 transition-all"
+                  style={{
+                    backgroundColor: 'rgba(255, 255, 255, 0.16)',
+                    border: '1px solid rgba(255, 255, 255, 0.3)',
+                    color: 'white',
+                    textShadow: '0 1px 2px rgba(0, 0, 0, 0.15)'
+                  }}
+                  onMouseEnter={(e) => e.currentTarget.style.backgroundColor = 'rgba(255, 255, 255, 0.24)'}
+                  onMouseLeave={(e) => e.currentTarget.style.backgroundColor = 'rgba(255, 255, 255, 0.16)'}
+                >
+                  Reset
+                </button>
+                <button
                   onClick={() => setShowCodeModal(false)}
                   className="p-2 transition-all text-white/90 hover:text-white hover:bg-white/15 rounded-lg"
                   style={{ textShadow: '0 1px 2px rgba(0, 0, 0, 0.15)' }}
@@ -1327,21 +1342,17 @@ print(result)
 
             {/* Modal Content */}
             <div className="flex-1 overflow-y-auto p-4">
-              <pre className="text-xs font-mono whitespace-pre-wrap" style={{
-                backgroundColor: 'var(--color-background-dark)',
-                color: 'var(--color-text-primary)',
-                padding: '16px',
-                borderRadius: '8px',
-                border: '1px solid var(--color-border-dark)'
-              }}>
-                {generatedCode}
-              </pre>
+              <PythonCodeEditor
+                value={generatedCode}
+                onChange={setGeneratedCode}
+                minHeight="520px"
+              />
             </div>
 
             {/* Modal Footer */}
             <div className="p-4 border-t" style={{ borderTopColor: 'var(--color-border-dark)' }}>
               <p className="text-xs" style={{ color: 'var(--color-text-muted)' }}>
-                This code represents the LangChain/LangGraph configuration for this agent. Copy and use it in your Python projects.
+                This editor supports Python syntax highlighting and LangChain-aware completions. Press Ctrl-Space for suggestions, then copy the version you want to keep.
               </p>
             </div>
           </div>
