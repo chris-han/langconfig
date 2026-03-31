@@ -17,6 +17,36 @@ env_path = os.path.join(os.path.dirname(os.path.dirname(__file__)), ".env")
 load_dotenv(env_path)
 
 
+def _optional_int_env(name: str) -> Optional[int]:
+    value = os.getenv(name)
+    if value is None or value == "":
+        return None
+    return int(value)
+
+
+def get_setting_value_from_db(column_name: str) -> Optional[str]:
+    """
+    Get a settings column value from the single-row settings table.
+
+    Priority: Database > None
+    """
+    try:
+        from db.database import SessionLocal
+        from sqlalchemy import text
+
+        with SessionLocal() as db:
+            result = db.execute(
+                text(f"SELECT {column_name} FROM settings WHERE id = 1")
+            ).fetchone()
+
+            if result and result[0] is not None:
+                return str(result[0])
+    except Exception:
+        pass
+
+    return None
+
+
 def get_api_key_from_db(key_name: str) -> Optional[str]:
     """
     Get API key from database (settings page).
@@ -34,6 +64,7 @@ def get_api_key_from_db(key_name: str) -> Optional[str]:
         # e.g., "openai_api_key" -> "openai"
         provider_map = {
             "openai_api_key": "openai",
+            "azure_openai_api_key": "azure_openai",
             "anthropic_api_key": "anthropic",
             "google_api_key": "google",
             "cohere_api_key": "cohere",
@@ -110,6 +141,35 @@ class Settings(BaseSettings):
         """Get Google/Gemini API key from database or .env"""
         return self.get_api_key("google_api_key") or os.getenv("GEMINI_API_KEY")
 
+    @property
+    def AZURE_OPENAI_API_KEY(self) -> Optional[str]:
+        """Get Azure OpenAI API key from DB/env, falling back to shared OpenAI key when reused."""
+        return self.get_api_key("azure_openai_api_key") or os.getenv("AZURE_OPENAI_API_KEY") or self.OPENAI_API_KEY
+
+    @property
+    def AZURE_OPENAI_ENDPOINT(self) -> Optional[str]:
+        return get_setting_value_from_db("azure_openai_endpoint") or os.getenv("AZURE_OPENAI_ENDPOINT")
+
+    @property
+    def AZURE_OPENAI_API_VERSION(self) -> str:
+        return get_setting_value_from_db("azure_openai_api_version") or os.getenv("AZURE_OPENAI_API_VERSION", "2024-05-01-preview")
+
+    @property
+    def AZURE_OPENAI_EMBEDDING_DEPLOYMENT(self) -> Optional[str]:
+        return get_setting_value_from_db("azure_openai_embedding_deployment") or os.getenv("AZURE_OPENAI_EMBEDDING_DEPLOYMENT")
+
+    @property
+    def AZURE_OPENAI_EMBEDDING_DIMENSIONS(self) -> Optional[int]:
+        db_value = get_setting_value_from_db("azure_openai_embedding_dimensions")
+        if db_value:
+            return int(db_value)
+        env_value = os.getenv("AZURE_OPENAI_EMBEDDING_DIMENSIONS")
+        return int(env_value) if env_value else None
+
+    @property
+    def EMBEDDING_MODEL(self) -> str:
+        return get_setting_value_from_db("embedding_model") or os.getenv("EMBEDDING_MODEL", self.embedding_model)
+
     # Keep lowercase versions for backward compatibility
     @property
     def openai_api_key(self) -> Optional[str]:
@@ -152,6 +212,10 @@ class Settings(BaseSettings):
 
     # Embeddings
     embedding_model: str = "text-embedding-3-small"
+    azure_openai_endpoint: Optional[str] = os.getenv("AZURE_OPENAI_ENDPOINT")
+    azure_openai_api_version: str = os.getenv("AZURE_OPENAI_API_VERSION", "2024-05-01-preview")
+    azure_openai_embedding_deployment: Optional[str] = os.getenv("AZURE_OPENAI_EMBEDDING_DEPLOYMENT")
+    azure_openai_embedding_dimensions: Optional[int] = _optional_int_env("AZURE_OPENAI_EMBEDDING_DIMENSIONS")
 
     # RAG
     chunk_size: int = 1000

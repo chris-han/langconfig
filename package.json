@@ -10,6 +10,7 @@
     "tauri": "tauri",
     "start:docker": "docker-compose up -d postgres",
     "start:backend": "cd backend && uvicorn main:app --reload --port 8765",
+    "start:backend:minimal-import": "cd backend && uvicorn minimal_import_app:app --reload --port 8766",
     "start:all": "npm run start:docker && concurrently --names \"BACKEND,FRONTEND\" -c \"bgBlue,bgGreen\" \"npm run start:backend\" \"npm run dev\""
   },
   "dependencies": {

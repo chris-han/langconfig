@@ -503,6 +503,10 @@ class APIClient {
     default_temperature?: number;
     max_tokens?: number;
     embedding_model?: string;
+    azure_openai_endpoint?: string | null;
+    azure_openai_api_version?: string;
+    azure_openai_embedding_deployment?: string | null;
+    azure_openai_embedding_dimensions?: number | null;
     chunk_size?: number;
     chunk_overlap?: number;
   }) {
@@ -515,6 +519,7 @@ class APIClient {
 
   async setApiKeys(data: {
     openai_api_key?: string;
+    azure_openai_api_key?: string;
     anthropic_api_key?: string;
     google_api_key?: string;
     cohere_api_key?: string;

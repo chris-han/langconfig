@@ -115,6 +115,29 @@ Frontend runs at: `http://localhost:1420`
 
 Open your browser to `http://localhost:1420`
 
+### Minimal Import Contract Mode
+
+Use this mode when you only need to validate `.langconfig` import compatibility without waiting for the full LangConfig backend dependency stack.
+
+**Start Docker dependencies:**
+```bash
+npm run start:docker
+```
+
+**Start the minimal import backend:**
+```bash
+npm run start:backend:minimal-import
+```
+
+This launches a lightweight FastAPI backend at: `http://127.0.0.1:8766`
+
+Supported use cases:
+- `.langconfig` import contract validation
+- project and workflow listing for imported fixtures
+- Semantier-to-LangConfig local handoff testing
+
+This mode intentionally does **not** provide the full LangConfig runtime surface. It is a supported contract-testing utility, not a replacement for the main backend on `:8765`.
+
 ### Desktop App Mode (Advanced)
 
 Requires **Rust** ([Install](https://rustup.rs/))

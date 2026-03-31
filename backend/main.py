@@ -245,6 +245,8 @@ app.add_middleware(
         "http://127.0.0.1:1420",  # localhost IP equivalent
         "http://localhost:5173",  # Vite dev server
         "http://127.0.0.1:5173",  # Vite dev server IP equivalent
+        "http://localhost:19001",  # Current LangConfig dev server
+        "http://127.0.0.1:19001",  # Current LangConfig dev server IP equivalent
     ],
     allow_credentials=True,
     allow_methods=["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"],

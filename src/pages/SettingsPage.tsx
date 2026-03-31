@@ -23,11 +23,13 @@ export default function SettingsView() {
   const [apiKeys, setApiKeys] = useState({
     anthropic: '',
     openai: '',
+    azureOpenAI: '',
     google: '',
   });
   const [apiKeyStatus, setApiKeyStatus] = useState({
     anthropic: false,
     openai: false,
+    azureOpenAI: false,
     google: false,
   });
   const [apiKeySaving, setApiKeySaving] = useState(false);
@@ -79,6 +81,10 @@ export default function SettingsView() {
 
   interface RagSettings {
     embeddingModel: string;
+    azureOpenAIEndpoint: string;
+    azureOpenAIApiVersion: string;
+    azureOpenAIEmbeddingDeployment: string;
+    azureOpenAIEmbeddingDimensions: number;
     chunkSize: number;
     chunkOverlap: number;
   }
@@ -128,12 +134,14 @@ export default function SettingsView() {
       setApiKeyStatus({
         anthropic: keys.find((k: any) => k.provider === 'anthropic')?.is_set || false,
         openai: keys.find((k: any) => k.provider === 'openai')?.is_set || false,
+        azureOpenAI: keys.find((k: any) => k.provider === 'azure_openai')?.is_set || false,
         google: keys.find((k: any) => k.provider === 'google')?.is_set || false,
       });
       // Keep input fields empty - user types new key to update
       setApiKeys({
         anthropic: '',
         openai: '',
+        azureOpenAI: '',
         google: '',
       });
 
@@ -207,6 +215,10 @@ export default function SettingsView() {
         const settingsData = settingsResponse.data;
         setRagSettings({
           embeddingModel: settingsData.embedding_model || 'text-embedding-3-small',
+          azureOpenAIEndpoint: settingsData.azure_openai_endpoint || '',
+          azureOpenAIApiVersion: settingsData.azure_openai_api_version || '2024-05-01-preview',
+          azureOpenAIEmbeddingDeployment: settingsData.azure_openai_embedding_deployment || '',
+          azureOpenAIEmbeddingDimensions: settingsData.azure_openai_embedding_dimensions || 1536,
           chunkSize: settingsData.chunk_size || 1000,
           chunkOverlap: settingsData.chunk_overlap || 200
         });
@@ -240,6 +252,7 @@ export default function SettingsView() {
             await apiClient.setApiKeys({
               anthropic_api_key: apiKeys.anthropic || undefined,
               openai_api_key: apiKeys.openai || undefined,
+              azure_openai_api_key: apiKeys.azureOpenAI || undefined,
               google_api_key: apiKeys.google || undefined,
             });
             break;
@@ -260,6 +273,10 @@ export default function SettingsView() {
             if (ragSettings) {
               await apiClient.updateSettings({
                 embedding_model: ragSettings.embeddingModel,
+                azure_openai_endpoint: ragSettings.azureOpenAIEndpoint || null,
+                azure_openai_api_version: ragSettings.azureOpenAIApiVersion,
+                azure_openai_embedding_deployment: ragSettings.azureOpenAIEmbeddingDeployment || null,
+                azure_openai_embedding_dimensions: ragSettings.azureOpenAIEmbeddingDimensions || null,
                 chunk_size: ragSettings.chunkSize,
                 chunk_overlap: ragSettings.chunkOverlap
               });
@@ -501,6 +518,109 @@ export default function SettingsView() {
                       </p>
                     </div>
 
+                    <div className="border border-gray-200 dark:border-border-dark rounded-lg p-3">
+                      <h5 className="text-sm font-medium mb-2" style={{ color: 'var(--color-text-primary)' }}>
+                        Azure OpenAI Embedding Runtime
+                      </h5>
+                      <div className="space-y-3">
+                        <div>
+                          <label className="text-sm font-medium mb-1.5 block" style={{ color: 'var(--color-text-primary)' }}>
+                            Azure Endpoint
+                          </label>
+                          <input
+                            type="url"
+                            value={ragSettings?.azureOpenAIEndpoint || ''}
+                            onChange={(e) => {
+                              if (ragSettings) {
+                                setRagSettings({ ...ragSettings, azureOpenAIEndpoint: e.target.value });
+                                autoSave('general');
+                              }
+                            }}
+                            placeholder="https://your-resource.openai.azure.com/"
+                            className="w-full px-3 py-1.5 text-sm border border-gray-300 dark:border-border-dark rounded-lg focus:outline-none focus:ring-2 focus:ring-primary"
+                            style={{
+                              backgroundColor: 'var(--color-input-background)',
+                              color: 'var(--color-text-primary)'
+                            }}
+                          />
+                        </div>
+
+                        <div>
+                          <label className="text-sm font-medium mb-1.5 block" style={{ color: 'var(--color-text-primary)' }}>
+                            API Version
+                          </label>
+                          <input
+                            type="text"
+                            value={ragSettings?.azureOpenAIApiVersion || '2024-05-01-preview'}
+                            onChange={(e) => {
+                              if (ragSettings) {
+                                setRagSettings({ ...ragSettings, azureOpenAIApiVersion: e.target.value });
+                                autoSave('general');
+                              }
+                            }}
+                            placeholder="2024-05-01-preview"
+                            className="w-full px-3 py-1.5 text-sm border border-gray-300 dark:border-border-dark rounded-lg focus:outline-none focus:ring-2 focus:ring-primary font-mono"
+                            style={{
+                              backgroundColor: 'var(--color-input-background)',
+                              color: 'var(--color-text-primary)'
+                            }}
+                          />
+                        </div>
+
+                        <div>
+                          <label className="text-sm font-medium mb-1.5 block" style={{ color: 'var(--color-text-primary)' }}>
+                            Embedding Deployment
+                          </label>
+                          <input
+                            type="text"
+                            value={ragSettings?.azureOpenAIEmbeddingDeployment || ''}
+                            onChange={(e) => {
+                              if (ragSettings) {
+                                setRagSettings({ ...ragSettings, azureOpenAIEmbeddingDeployment: e.target.value });
+                                autoSave('general');
+                              }
+                            }}
+                            placeholder="text-embedding-3-small"
+                            className="w-full px-3 py-1.5 text-sm border border-gray-300 dark:border-border-dark rounded-lg focus:outline-none focus:ring-2 focus:ring-primary font-mono"
+                            style={{
+                              backgroundColor: 'var(--color-input-background)',
+                              color: 'var(--color-text-primary)'
+                            }}
+                          />
+                        </div>
+
+                        <div>
+                          <label className="text-sm font-medium mb-1.5 block" style={{ color: 'var(--color-text-primary)' }}>
+                            Embedding Dimensions
+                          </label>
+                          <input
+                            type="number"
+                            min="1"
+                            step="1"
+                            value={ragSettings?.azureOpenAIEmbeddingDimensions || 1536}
+                            onChange={(e) => {
+                              if (ragSettings) {
+                                setRagSettings({
+                                  ...ragSettings,
+                                  azureOpenAIEmbeddingDimensions: parseInt(e.target.value) || 1536
+                                });
+                                autoSave('general');
+                              }
+                            }}
+                            className="w-full px-3 py-1.5 text-sm border border-gray-300 dark:border-border-dark rounded-lg focus:outline-none focus:ring-2 focus:ring-primary"
+                            style={{
+                              backgroundColor: 'var(--color-input-background)',
+                              color: 'var(--color-text-primary)'
+                            }}
+                          />
+                        </div>
+
+                        <p className="text-xs leading-relaxed" style={{ color: 'var(--color-text-muted)' }}>
+                          Endpoint, API version, and deployment are saved in LangConfig settings so runtime embedding initialization can use Azure OpenAI. API key remains env-backed.
+                        </p>
+                      </div>
+                    </div>
+
                     <div>
                       <label className="text-sm font-medium mb-1.5 block" style={{ color: 'var(--color-text-primary)' }}>
                         Chunk Size
@@ -716,6 +836,39 @@ export default function SettingsView() {
                   </p>
                 </div>
 
+                {/* Azure OpenAI */}
+                <div>
+                  <div className="flex items-center gap-2 mb-1">
+                    <label className="text-sm font-medium" style={{ color: 'var(--color-text-primary)' }}>
+                      Azure OpenAI API Key
+                    </label>
+                    {apiKeyStatus.azureOpenAI ? (
+                      <span className="inline-flex items-center gap-1 px-2 py-0.5 text-xs font-medium bg-green-100 dark:bg-green-500/20 text-green-700 dark:text-green-400 rounded-full">
+                        <span className="material-symbols-outlined text-xs">check_circle</span>
+                        Configured
+                      </span>
+                    ) : (
+                      <span className="inline-flex items-center gap-1 px-2 py-0.5 text-xs font-medium bg-gray-100 dark:bg-gray-500/20 text-gray-600 dark:text-gray-400 rounded-full">
+                        Not set
+                      </span>
+                    )}
+                  </div>
+                  <input
+                    type="password"
+                    value={apiKeys.azureOpenAI}
+                    onChange={(e) => setApiKeys({ ...apiKeys, azureOpenAI: e.target.value })}
+                    placeholder={apiKeyStatus.azureOpenAI ? "Enter new key to replace existing" : "Azure OpenAI key"}
+                    className="w-full px-3 py-2 text-sm border border-gray-300 dark:border-border-dark rounded-lg focus:outline-none focus:ring-2 focus:ring-primary font-mono"
+                    style={{
+                      backgroundColor: 'var(--color-input-background)',
+                      color: 'var(--color-text-primary)'
+                    }}
+                  />
+                  <p className="text-xs mt-1" style={{ color: 'var(--color-text-muted)' }}>
+                    Used for Azure OpenAI embedding/runtime auth. When set, it overrides the shared OpenAI key for Azure calls.
+                  </p>
+                </div>
+
                 {/* Save Button and Status */}
                 <div className="pt-4 border-t border-gray-200 dark:border-border-dark">
                   <div className="flex items-center gap-3">
@@ -725,6 +878,7 @@ export default function SettingsView() {
                         const keysToSave: Record<string, string> = {};
                         if (apiKeys.anthropic) keysToSave.anthropic_api_key = apiKeys.anthropic;
                         if (apiKeys.openai) keysToSave.openai_api_key = apiKeys.openai;
+                        if (apiKeys.azureOpenAI) keysToSave.azure_openai_api_key = apiKeys.azureOpenAI;
                         if (apiKeys.google) keysToSave.google_api_key = apiKeys.google;
 
                         if (Object.keys(keysToSave).length === 0) {
@@ -741,10 +895,11 @@ export default function SettingsView() {
                           setApiKeyStatus({
                             anthropic: apiKeyStatus.anthropic || !!apiKeys.anthropic,
                             openai: apiKeyStatus.openai || !!apiKeys.openai,
+                            azureOpenAI: apiKeyStatus.azureOpenAI || !!apiKeys.azureOpenAI,
                             google: apiKeyStatus.google || !!apiKeys.google,
                           });
                           // Clear input fields after successful save
-                          setApiKeys({ anthropic: '', openai: '', google: '' });
+                          setApiKeys({ anthropic: '', openai: '', azureOpenAI: '', google: '' });
                           setApiKeySaveMessage('API keys saved successfully!');
                           setTimeout(() => setApiKeySaveMessage(null), 3000);
                         } catch (error) {
@@ -755,7 +910,7 @@ export default function SettingsView() {
                           setApiKeySaving(false);
                         }
                       }}
-                      disabled={apiKeySaving || (!apiKeys.anthropic && !apiKeys.openai && !apiKeys.google)}
+                      disabled={apiKeySaving || (!apiKeys.anthropic && !apiKeys.openai && !apiKeys.azureOpenAI && !apiKeys.google)}
                       className="px-4 py-2 text-sm font-medium bg-primary text-white rounded-lg hover:bg-primary/90 transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2"
                     >
                       {apiKeySaving ? (

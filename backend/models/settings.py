@@ -38,6 +38,10 @@ class Settings(Base):
     # RAG/Vector Database Settings
     storage_path = Column(String, nullable=True)
     embedding_model = Column(String, default="text-embedding-3-small")
+    azure_openai_endpoint = Column(String, nullable=True)
+    azure_openai_api_version = Column(String, default="2024-05-01-preview")
+    azure_openai_embedding_deployment = Column(String, nullable=True)
+    azure_openai_embedding_dimensions = Column(Integer, nullable=True)
     chunk_size = Column(Integer, default=1000)
     chunk_overlap = Column(Integer, default=200)
 

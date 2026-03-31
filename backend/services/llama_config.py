@@ -22,23 +22,51 @@ logger = logging.getLogger(__name__)
 # Try to import LlamaIndex - it's optional
 try:
     from llama_index.core import Settings
-    from llama_index.embeddings.huggingface import HuggingFaceEmbedding
-    from llama_index.embeddings.openai import OpenAIEmbedding
-    from llama_index.llms.openai import OpenAI
     from llama_index.vector_stores.postgres import PGVectorStore
     LLAMAINDEX_AVAILABLE = True
 except ImportError:
-    logger.warning("LlamaIndex not available. Vector store features will be disabled.")
+    logger.warning("LlamaIndex core/vector store not available. Vector store features will be disabled.")
     LLAMAINDEX_AVAILABLE = False
     Settings = None
-    HuggingFaceEmbedding = None
-    OpenAIEmbedding = None
-    OpenAI = None
     PGVectorStore = None
+
+try:
+    from llama_index.embeddings.azure_openai import AzureOpenAIEmbedding
+except ImportError:
+    AzureOpenAIEmbedding = None
+
+try:
+    from llama_index.embeddings.huggingface import HuggingFaceEmbedding
+except ImportError:
+    HuggingFaceEmbedding = None
+
+try:
+    from llama_index.embeddings.openai import OpenAIEmbedding
+except ImportError:
+    OpenAIEmbedding = None
+
+try:
+    from llama_index.llms.openai import OpenAI
+except ImportError:
+    OpenAI = None
 
 # Global flag to track initialization
 _initialized = False
 _multimodal_enabled = False
+_embedding_dimension = 384
+
+
+def _resolve_embedding_dimension(model_name: Optional[str], explicit_dimension: Optional[int], default: int) -> int:
+    if explicit_dimension:
+        return explicit_dimension
+
+    model = (model_name or "").strip()
+    model_defaults = {
+        "text-embedding-3-small": 1536,
+        "text-embedding-3-large": 3072,
+        "text-embedding-ada-002": 1536,
+    }
+    return model_defaults.get(model, default)
 
 def initialize_llama_index_settings(
     litellm_proxy_url: Optional[str] = None, 
@@ -53,33 +81,78 @@ def initialize_llama_index_settings(
         litellm_api_key: API key for LiteLLM proxy authentication
         enable_multimodal: Whether to use multimodal embeddings (requires OpenAI API key)
     """
-    global _initialized, _multimodal_enabled
+    global _initialized, _multimodal_enabled, _embedding_dimension
     
     if _initialized:
         logger.info("LlamaIndex settings already initialized")
         return
     
     try:
-        # Check if OpenAI API key is available for multimodal embeddings
-        openai_api_key = app_settings.OPENAI_API_KEY or os.getenv("OPENAI_API_KEY")
+        if not LLAMAINDEX_AVAILABLE or Settings is None:
+            raise RuntimeError("LlamaIndex core/vector store dependencies are not installed")
 
-        if enable_multimodal and openai_api_key:
+        embedding_model = app_settings.EMBEDDING_MODEL or os.getenv("EMBEDDING_MODEL") or "text-embedding-3-small"
+        openai_api_key = app_settings.OPENAI_API_KEY or os.getenv("OPENAI_API_KEY")
+        azure_api_key = app_settings.AZURE_OPENAI_API_KEY
+        azure_endpoint = app_settings.AZURE_OPENAI_ENDPOINT or os.getenv("AZURE_OPENAI_ENDPOINT")
+        azure_api_version = app_settings.AZURE_OPENAI_API_VERSION or os.getenv("AZURE_OPENAI_API_VERSION", "2024-05-01-preview")
+        azure_deployment = app_settings.AZURE_OPENAI_EMBEDDING_DEPLOYMENT or os.getenv("AZURE_OPENAI_EMBEDDING_DEPLOYMENT")
+        azure_embedding_dimension = app_settings.AZURE_OPENAI_EMBEDDING_DIMENSIONS
+
+        if azure_endpoint and azure_api_key and azure_deployment and AzureOpenAIEmbedding:
+            _embedding_dimension = _resolve_embedding_dimension(
+                embedding_model,
+                azure_embedding_dimension,
+                1536,
+            )
+            logger.info(
+                "Initializing Azure OpenAI embedding model",
+            )
+            Settings.embed_model = AzureOpenAIEmbedding(
+                model=embedding_model,
+                deployment_name=azure_deployment,
+                api_key=azure_api_key,
+                azure_endpoint=azure_endpoint,
+                api_version=azure_api_version,
+            )
+            _multimodal_enabled = False
+            logger.info(
+                "Azure OpenAI embeddings enabled with deployment '%s' and model '%s' (%sD)",
+                azure_deployment,
+                embedding_model,
+                _embedding_dimension,
+            )
+
+        elif enable_multimodal and openai_api_key and OpenAIEmbedding:
+            _embedding_dimension = _resolve_embedding_dimension(embedding_model, None, 1024)
             logger.info("Initializing OpenAI multimodal embedding model")
             Settings.embed_model = OpenAIEmbedding(
-                model="text-embedding-3-large",
-                dimensions=1024,  # Configurable dimensions for OpenAI embeddings
+                model=embedding_model,
+                dimensions=_embedding_dimension,
                 api_key=openai_api_key
             )
             _multimodal_enabled = True
-            logger.info("Multimodal embeddings enabled with OpenAI text-embedding-3-large")
+            logger.info(
+                "Multimodal embeddings enabled with OpenAI model '%s' (%sD)",
+                embedding_model,
+                _embedding_dimension,
+            )
         else:
             if enable_multimodal:
-                logger.warning("Multimodal requested but OpenAI API key not available, falling back to text-only")
+                logger.warning(
+                    "Cloud embeddings requested but Azure/OpenAI config not available, falling back to text-only"
+                )
+            if HuggingFaceEmbedding is None:
+                raise RuntimeError(
+                    "HuggingFace embedding fallback is unavailable in this backend profile. "
+                    "Install llama-index-embeddings-huggingface or configure Azure/OpenAI embeddings."
+                )
             logger.info("Initializing HuggingFace text-only embedding model")
             Settings.embed_model = HuggingFaceEmbedding(
                 model_name="sentence-transformers/all-MiniLM-L6-v2"
             )
             _multimodal_enabled = False
+            _embedding_dimension = 384
         
         # Configure LLM for HyDE if proxy details are provided
         if litellm_proxy_url and litellm_api_key:
@@ -193,8 +266,8 @@ def get_embedding_dimension() -> int:
     Returns:
         int: Embedding dimension (1024 for multimodal, 384 for text-only)
     """
-    global _multimodal_enabled
-    return 1024 if _multimodal_enabled else 384
+    global _embedding_dimension
+    return _embedding_dimension
 
 
 def is_multimodal_enabled() -> bool:

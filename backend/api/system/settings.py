@@ -18,6 +18,7 @@ router = APIRouter(prefix="/api/settings", tags=["settings"])
 # Pydantic Schemas
 class APIKeySet(BaseModel):
     openai_api_key: Optional[str] = None
+    azure_openai_api_key: Optional[str] = None
     anthropic_api_key: Optional[str] = None
     google_api_key: Optional[str] = None
     cohere_api_key: Optional[str] = None
@@ -35,6 +36,10 @@ class SettingsUpdate(BaseModel):
     default_temperature: Optional[float] = None
     max_tokens: Optional[int] = None
     embedding_model: Optional[str] = None
+    azure_openai_endpoint: Optional[str] = None
+    azure_openai_api_version: Optional[str] = None
+    azure_openai_embedding_deployment: Optional[str] = None
+    azure_openai_embedding_dimensions: Optional[int] = None
     chunk_size: Optional[int] = None
     chunk_overlap: Optional[int] = None
     storage_path: Optional[str] = None
@@ -45,6 +50,10 @@ class SettingsResponse(BaseModel):
     default_temperature: float
     max_tokens: int
     embedding_model: str
+    azure_openai_endpoint: Optional[str] = None
+    azure_openai_api_version: str
+    azure_openai_embedding_deployment: Optional[str] = None
+    azure_openai_embedding_dimensions: Optional[int] = None
     chunk_size: int
     chunk_overlap: int
     storage_path: str
@@ -116,6 +125,26 @@ def get_or_create_settings(db: Session) -> SettingsModel:
         db.add(settings)
         db.commit()
         db.refresh(settings)
+    else:
+        # Backfill nullable legacy rows so newer response models do not fail on NULLs.
+        updates = {
+            "default_model": settings.default_model or "gpt-4o",
+            "default_temperature": settings.default_temperature if settings.default_temperature is not None else 0.7,
+            "max_tokens": settings.max_tokens if settings.max_tokens is not None else 4096,
+            "embedding_model": settings.embedding_model or "text-embedding-3-small",
+            "azure_openai_api_version": settings.azure_openai_api_version or "2024-05-01-preview",
+            "chunk_size": settings.chunk_size if settings.chunk_size is not None else 1000,
+            "chunk_overlap": settings.chunk_overlap if settings.chunk_overlap is not None else 200,
+            "storage_path": settings.storage_path or get_default_storage_path(),
+        }
+        dirty = False
+        for field_name, value in updates.items():
+            if getattr(settings, field_name) != value:
+                setattr(settings, field_name, value)
+                dirty = True
+        if dirty:
+            db.commit()
+            db.refresh(settings)
     return settings
 
 
@@ -137,6 +166,8 @@ async def set_api_keys(keys: APIKeySet, db: Session = Depends(get_db)):
 
     if keys.openai_api_key:
         api_keys["openai"] = encryption_service.encrypt(keys.openai_api_key)
+    if keys.azure_openai_api_key:
+        api_keys["azure_openai"] = encryption_service.encrypt(keys.azure_openai_api_key)
     if keys.anthropic_api_key:
         api_keys["anthropic"] = encryption_service.encrypt(keys.anthropic_api_key)
     if keys.google_api_key:
@@ -157,7 +188,7 @@ async def get_api_keys(db: Session = Depends(get_db)):
     """Get masked API keys status"""
     settings = get_or_create_settings(db)
     api_keys = settings.api_keys or {}
-    providers = ["openai", "anthropic", "google", "cohere", "replicate"]
+    providers = ["openai", "azure_openai", "anthropic", "google", "cohere", "replicate"]
 
     results = []
     for provider in providers:
@@ -229,7 +260,7 @@ async def get_available_models(db: Session = Depends(get_db)):
 @router.delete("/api-keys/{provider}")
 async def delete_api_key(provider: str, db: Session = Depends(get_db)):
     """Delete an API key"""
-    if provider not in ["openai", "anthropic", "google", "cohere", "replicate"]:
+    if provider not in ["openai", "azure_openai", "anthropic", "google", "cohere", "replicate"]:
         raise HTTPException(status_code=400, detail="Invalid provider")
 
     settings = get_or_create_settings(db)
@@ -253,6 +284,10 @@ async def get_settings(db: Session = Depends(get_db)):
         default_temperature=settings.default_temperature,
         max_tokens=settings.max_tokens,
         embedding_model=settings.embedding_model,
+        azure_openai_endpoint=settings.azure_openai_endpoint,
+        azure_openai_api_version=settings.azure_openai_api_version or "2024-05-01-preview",
+        azure_openai_embedding_deployment=settings.azure_openai_embedding_deployment,
+        azure_openai_embedding_dimensions=settings.azure_openai_embedding_dimensions,
         chunk_size=settings.chunk_size,
         chunk_overlap=settings.chunk_overlap,
         storage_path=settings.storage_path or get_default_storage_path()
@@ -277,6 +312,10 @@ async def update_settings(settings_update: SettingsUpdate, db: Session = Depends
         default_temperature=settings.default_temperature,
         max_tokens=settings.max_tokens,
         embedding_model=settings.embedding_model,
+        azure_openai_endpoint=settings.azure_openai_endpoint,
+        azure_openai_api_version=settings.azure_openai_api_version or "2024-05-01-preview",
+        azure_openai_embedding_deployment=settings.azure_openai_embedding_deployment,
+        azure_openai_embedding_dimensions=settings.azure_openai_embedding_dimensions,
         chunk_size=settings.chunk_size,
         chunk_overlap=settings.chunk_overlap,
         storage_path=settings.storage_path or get_default_storage_path()
@@ -292,6 +331,10 @@ async def reset_settings(db: Session = Depends(get_db)):
     settings.default_temperature = 0.7
     settings.max_tokens = 4096
     settings.embedding_model = "text-embedding-3-small"
+    settings.azure_openai_endpoint = None
+    settings.azure_openai_api_version = "2024-05-01-preview"
+    settings.azure_openai_embedding_deployment = None
+    settings.azure_openai_embedding_dimensions = None
     settings.chunk_size = 1000
     settings.chunk_overlap = 200
     settings.storage_path = get_default_storage_path()
