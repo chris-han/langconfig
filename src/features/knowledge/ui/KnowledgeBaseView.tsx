@@ -60,6 +60,7 @@ export default function KnowledgeBaseView() {
   const [documents, setDocuments] = useState<Document[]>([]);
   const [loading, setLoading] = useState(true);
   const [uploading, setUploading] = useState(false);
+  const [indexingDocumentIds, setIndexingDocumentIds] = useState<Set<number>>(new Set());
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedStatus, setSelectedStatus] = useState<string>('all');
   const [showSettings, setShowSettings] = useState(false);
@@ -232,6 +233,24 @@ export default function KnowledgeBaseView() {
     } catch (error) {
       console.error('Failed to delete document:', error);
       alert('Failed to delete document');
+    }
+  };
+
+  const handleManualIndex = async (doc: Document) => {
+    setIndexingDocumentIds((current) => new Set(current).add(doc.id));
+
+    try {
+      await apiClient.indexDocument(doc.id);
+      await loadDocuments();
+    } catch (error) {
+      console.error('Failed to start document indexing:', error);
+      alert(`Failed to start indexing for "${doc.name}".`);
+    } finally {
+      setIndexingDocumentIds((current) => {
+        const next = new Set(current);
+        next.delete(doc.id);
+        return next;
+      });
     }
   };
 
@@ -658,6 +677,19 @@ export default function KnowledgeBaseView() {
                         </div>
                       </div>
                       <div className="flex items-center gap-2 flex-shrink-0">
+                        <button
+                          onClick={() => handleManualIndex(doc)}
+                          disabled={doc.indexing_status === 'indexing' || indexingDocumentIds.has(doc.id)}
+                          className="px-2.5 py-1.5 rounded-lg border border-gray-200 dark:border-border-dark text-xs font-medium hover:bg-gray-100 dark:hover:bg-white/10 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                          style={{ color: 'var(--color-text-primary)' }}
+                          title={doc.indexing_status === 'ready' ? 'Reindex document' : 'Start indexing'}
+                        >
+                          {doc.indexing_status === 'indexing' || indexingDocumentIds.has(doc.id)
+                            ? 'Indexing...'
+                            : doc.indexing_status === 'ready'
+                              ? 'Reindex'
+                              : 'Index'}
+                        </button>
                         <span
                           className={`px-2 py-1 rounded text-xs font-medium ${doc.indexing_status === 'ready'
                             ? 'bg-green-100 dark:bg-green-500/20 text-green-700 dark:text-green-400'

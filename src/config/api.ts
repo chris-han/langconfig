@@ -10,65 +10,61 @@
  *
  * Centralized API configuration using environment variables.
  * Prevents hardcoded URLs and enables different environments (dev, staging, prod).
+ *
+ * NOTE: All endpoints use relative paths to leverage Vite proxy for backend communication.
+ * The proxy is configured in vite.config.ts to forward /api/* to the backend server.
  */
 
-// Get API base URL from environment variable, fallback to 127.0.0.1 for development.
-// Keep host consistent with the verified main-backend dev target to avoid split localhost/127.0.0.1 state.
-export const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://127.0.0.1:8765';
+export const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || '';
 
 /**
  * API Endpoints
  * All backend API endpoints organized by domain
+ * Using relative paths to leverage Vite proxy for backend communication
  */
 export const API_ENDPOINTS = {
-  // Agent endpoints
   agents: {
-    templates: `${API_BASE_URL}/api/agents/templates`,
-    custom: `${API_BASE_URL}/api/deepagents`,
-    create: `${API_BASE_URL}/api/deepagents`,
-    update: (id: string) => `${API_BASE_URL}/api/deepagents/${id}`,
-    delete: (id: string) => `${API_BASE_URL}/api/deepagents/${id}`,
+    templates: `/api/agents/templates`,
+    custom: `/api/deepagents`,
+    create: `/api/deepagents`,
+    update: (id: string) => `/api/deepagents/${id}`,
+    delete: (id: string) => `/api/deepagents/${id}`,
   },
 
-  // Workflow endpoints
   workflows: {
-    list: `${API_BASE_URL}/api/workflows`,
-    detail: (id: number) => `${API_BASE_URL}/api/workflows/${id}`,
-    create: `${API_BASE_URL}/api/workflows`,
-    update: (id: number) => `${API_BASE_URL}/api/workflows/${id}`,
-    delete: (id: number) => `${API_BASE_URL}/api/workflows/${id}`,
-    duplicate: (id: number) => `${API_BASE_URL}/api/workflows/${id}/duplicate`,
-    rename: (id: number) => `${API_BASE_URL}/api/workflows/${id}/rename`,
+    list: `/api/workflows`,
+    detail: (id: number) => `/api/workflows/${id}`,
+    create: `/api/workflows`,
+    update: (id: number) => `/api/workflows/${id}`,
+    delete: (id: number) => `/api/workflows/${id}`,
+    duplicate: (id: number) => `/api/workflows/${id}/duplicate`,
+    rename: (id: number) => `/api/workflows/${id}/rename`,
     metrics: {
       cost: (id: number, days: number = 30) =>
-        `${API_BASE_URL}/api/workflows/${id}/metrics/cost?days=${days}`,
-      runs: (id: number) => `${API_BASE_URL}/api/workflows/${id}/metrics/runs`,
+        `/api/workflows/${id}/metrics/cost?days=${days}`,
+      runs: (id: number) => `/api/workflows/${id}/metrics/runs`,
     },
   },
 
-  // Project endpoints
   projects: {
-    list: `${API_BASE_URL}/api/projects`,
-    detail: (id: number) => `${API_BASE_URL}/api/projects/${id}`,
-    create: `${API_BASE_URL}/api/projects`,
-    update: (id: number) => `${API_BASE_URL}/api/projects/${id}`,
-    delete: (id: number) => `${API_BASE_URL}/api/projects/${id}`,
+    list: `/api/projects`,
+    detail: (id: number) => `/api/projects/${id}`,
+    create: `/api/projects`,
+    update: (id: number) => `/api/projects/${id}`,
+    delete: (id: number) => `/api/projects/${id}`,
   },
 
-  // Custom tool endpoints
   tools: {
-    list: `${API_BASE_URL}/api/custom-tools`,
-    detail: (id: string) => `${API_BASE_URL}/api/custom-tools/${id}`,
-    create: `${API_BASE_URL}/api/custom-tools`,
-    update: (id: string) => `${API_BASE_URL}/api/custom-tools/${id}`,
-    delete: (id: string) => `${API_BASE_URL}/api/custom-tools/${id}`,
+    list: `/api/custom-tools`,
+    detail: (id: string) => `/api/custom-tools/${id}`,
+    create: `/api/custom-tools`,
+    update: (id: string) => `/api/custom-tools/${id}`,
+    delete: (id: string) => `/api/custom-tools/${id}`,
     duplicate: (id: string, newId: string) =>
-      `${API_BASE_URL}/api/custom-tools/${id}/duplicate?new_tool_id=${newId}`,
-    test: (id: string) => `${API_BASE_URL}/api/custom-tools/${id}/test`,
+      `/api/custom-tools/${id}/duplicate?new_tool_id=${newId}`,
+    test: (id: string) => `/api/custom-tools/${id}/test`,
   },
 } as const;
-
-
 
 /**
  * Check if API is available
@@ -76,7 +72,7 @@ export const API_ENDPOINTS = {
  */
 export async function checkApiHealth(): Promise<boolean> {
   try {
-    const response = await fetch(`${API_BASE_URL}/health`, {
+    const response = await fetch(`/api/health`, {
       method: 'GET',
       signal: AbortSignal.timeout(5000), // 5 second timeout
     });

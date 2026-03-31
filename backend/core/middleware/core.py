@@ -51,6 +51,13 @@ from typing_extensions import NotRequired
 logger = logging.getLogger(__name__)
 
 
+def _clone_message_with_content(message: BaseMessage, content: Any) -> BaseMessage:
+    """Clone a LangChain message while preserving provider metadata."""
+    if hasattr(message, "model_copy"):
+        return message.model_copy(deep=True, update={"content": content})
+    return message.__class__(content=content)
+
+
 # =============================================================================
 # Base Middleware Classes (v1.0 Pattern)
 # =============================================================================
@@ -449,7 +456,7 @@ class ValidationMiddleware(AgentMiddleware):
         if modified_content != content:
             # Update message
             updated_messages = messages.copy()
-            updated_messages[-1] = AIMessage(content=modified_content)
+            updated_messages[-1] = _clone_message_with_content(last_message, modified_content)
             return {"messages": updated_messages}
 
         return None
@@ -1041,12 +1048,7 @@ class PIIMiddleware(AgentMiddleware):
                 if redacted_content != original_content:
                     redacted_count += 1
                     # Create new message with redacted content
-                    msg_class = msg.__class__
-                    updated_msg = msg_class(content=redacted_content)
-                    # Copy other attributes
-                    if hasattr(msg, 'additional_kwargs'):
-                        updated_msg.additional_kwargs = msg.additional_kwargs
-                    updated_messages.append(updated_msg)
+                    updated_messages.append(_clone_message_with_content(msg, redacted_content))
                 else:
                     updated_messages.append(msg)
             else:

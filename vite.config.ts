@@ -28,7 +28,7 @@ export default defineConfig(async () => ({
   clearScreen: false,
   // 2. tauri expects a fixed port, fail if that port is not available
   server: {
-    port: 1420,
+    port: 19001,
     strictPort: true,
     allowedHosts: [process.env.VITE_ALLOWED_HOSTS || "localhost"],
     host: host || false,
@@ -46,7 +46,7 @@ export default defineConfig(async () => ({
     // Proxy API requests to backend server
     proxy: {
       '/api': {
-        target: 'http://127.0.0.1:8765',
+        target: 'http://127.0.0.1:8766',
         changeOrigin: true,
         secure: false,
       },

@@ -32,9 +32,7 @@ langchain-text-splitters  # Advanced text splitting capabilities
 llama-index
 llama-index-vector-stores-postgres
 llama-index-embeddings-azure-openai
-llama-index-embeddings-huggingface
 llama-index-embeddings-openai
-sentence-transformers==3.2.0
 pgvector
 numpy
 

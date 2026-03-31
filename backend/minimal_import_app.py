@@ -16,6 +16,7 @@ from typing import Any, Dict, Generator, List, Optional
 from fastapi import Depends, FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel, Field
+from sqlalchemy import text
 from sqlalchemy.orm import Session
 
 from db.database import SessionLocal, async_init_db, check_db_health
@@ -30,6 +31,12 @@ from services.workflow_config_service import WorkflowConfigService
 logger = logging.getLogger(__name__)
 logging.basicConfig(level=logging.INFO, format="%(asctime)s - %(name)s - %(levelname)s - %(message)s")
 
+try:
+    from services.llama_config import get_table_name as canonical_get_table_name
+except Exception as exc:  # pragma: no cover - depends on optional runtime deps
+    canonical_get_table_name = None
+    logger.info("Canonical LlamaIndex table-name helper unavailable in minimal backend: %s", exc)
+
 
 def get_db() -> Generator[Session, None, None]:
     db = SessionLocal()
@@ -37,6 +44,52 @@ def get_db() -> Generator[Session, None, None]:
         yield db
     finally:
         db.close()
+
+
+def get_project_index_table_name(project_id: int) -> str:
+    if canonical_get_table_name is not None:
+        return canonical_get_table_name(project_id)
+    return f"data_project_index_{project_id}"
+
+
+def measure_project_storage(db: Session, project_id: int) -> Optional[dict]:
+    table_name = get_project_index_table_name(project_id)
+
+    table_exists = db.execute(
+        text(
+            """
+            SELECT EXISTS (
+                SELECT FROM information_schema.tables
+                WHERE table_name = :table_name
+            )
+            """
+        ),
+        {"table_name": table_name},
+    ).scalar()
+
+    if not table_exists:
+        return None
+
+    row = db.execute(
+        text(
+            """
+            SELECT
+                pg_total_relation_size(:table_name) as total_bytes,
+                pg_relation_size(:table_name) as table_bytes,
+                pg_indexes_size(:table_name) as index_bytes
+            """
+        ),
+        {"table_name": table_name},
+    ).fetchone()
+
+    total_bytes = row.total_bytes or 0
+    return {
+        "exists": True,
+        "total_bytes": total_bytes,
+        "table_bytes": row.table_bytes or 0,
+        "index_bytes": row.index_bytes or 0,
+        "total_gb": total_bytes / (1024 ** 3),
+    }
 
 
 class ProjectCreateRequest(BaseModel):
@@ -620,28 +673,35 @@ def get_project_storage_stats(project_id: int, db: Session = Depends(get_db)) ->
         raise HTTPException(status_code=404, detail="Project not found")
 
     documents = db.query(ContextDocument).filter(ContextDocument.project_id == project_id).all()
-    total_bytes = sum(document.file_size or 0 for document in documents)
     indexed_nodes_count = sum(document.indexed_chunks_count or 0 for document in documents)
     document_count = len(documents)
+    fallback_total_bytes = sum(document.file_size or 0 for document in documents)
+
+    actual_storage = measure_project_storage(db, project_id)
+    if actual_storage is None:
+        actual_storage = {
+            "exists": document_count > 0,
+            "total_bytes": fallback_total_bytes,
+            "table_bytes": fallback_total_bytes,
+            "index_bytes": 0,
+            "total_gb": fallback_total_bytes / (1024 ** 3),
+        }
+        message = "Minimal import backend storage metrics fallback to document bytes because the project vector table does not exist yet."
+    else:
+        message = "Actual storage measured from PostgreSQL system catalog (minimal import backend)."
 
     return {
         "project_id": project.id,
         "project_name": project.name,
         "indexing_status": project.indexing_status.value if hasattr(project.indexing_status, "value") else project.indexing_status,
         "last_indexed_at": project.last_indexed_at.isoformat() if getattr(project, "last_indexed_at", None) else None,
-        "actual_storage": {
-            "exists": document_count > 0,
-            "total_bytes": total_bytes,
-            "table_bytes": total_bytes,
-            "index_bytes": 0,
-            "total_gb": total_bytes / (1024 ** 3),
-        },
+        "actual_storage": actual_storage,
         "configuration": {
             "chunk_size": 0,
             "chunk_overlap": 0,
             "embedding_dimensions": getattr(project, "embedding_dimension", 0) or 0,
             "indexed_nodes_count": indexed_nodes_count,
         },
-        "storage_per_document_gb": (total_bytes / document_count / (1024 ** 3)) if document_count else 0,
-        "message": "Minimal import backend storage metrics are compatibility-only and do not include vector index sizes.",
+        "storage_per_document_gb": (actual_storage["total_bytes"] / document_count / (1024 ** 3)) if document_count else 0,
+        "message": message,
     }

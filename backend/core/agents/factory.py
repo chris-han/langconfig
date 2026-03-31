@@ -37,6 +37,7 @@ from langchain_core.prompts import ChatPromptTemplate, MessagesPlaceholder
 # MIGRATED: Using native Python tools instead of MCP subprocess servers
 from tools.native_tools import load_native_tools
 from core.agents.memory import AgentMemorySystem
+from core.agents.kimi_chat_openai import KimiChatOpenAI
 from config import settings
 
 try:
@@ -1216,6 +1217,7 @@ You have been equipped with the following tools: {', '.join(tool_names)}
                 reasoning_effort = provider_config.get("reasoning_effort")
                 if isinstance(reasoning_effort, str) and reasoning_effort.strip():
                     chat_openai_kwargs["extra_body"] = {"reasoning_effort": reasoning_effort.strip()}
+                return KimiChatOpenAI(**chat_openai_kwargs)
 
             return ChatOpenAI(**chat_openai_kwargs)
 

@@ -7,6 +7,7 @@
 LangConfig Configuration
 Supports both .env file (local dev) and settings page (prod app)
 """
+from pydantic import field_validator
 from pydantic_settings import BaseSettings
 from typing import Optional
 import os
@@ -22,6 +23,21 @@ def _optional_int_env(name: str) -> Optional[int]:
     if value is None or value == "":
         return None
     return int(value)
+
+
+def _coerce_boolish(value: object, default: bool) -> bool:
+    if value is None or value == "":
+        return default
+    if isinstance(value, bool):
+        return value
+
+    normalized = str(value).strip().lower()
+    if normalized in {"true", "1", "yes", "on", "debug", "development"}:
+        return True
+    if normalized in {"false", "0", "no", "off", "release", "production"}:
+        return False
+
+    return default
 
 
 def get_setting_value_from_db(column_name: str) -> Optional[str]:
@@ -253,6 +269,11 @@ class Settings(BaseSettings):
         env_file = os.path.join(os.path.dirname(os.path.dirname(__file__)), ".env")
         env_file_encoding = "utf-8"
         extra = "ignore"  # Ignore extra fields from .env file
+
+    @field_validator("debug", mode="before")
+    @classmethod
+    def normalize_debug_setting(cls, value: object) -> bool:
+        return _coerce_boolish(value, True)
 
 
 # Global settings instance

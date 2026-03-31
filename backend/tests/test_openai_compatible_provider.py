@@ -14,14 +14,14 @@ async def test_openai_compatible_provider_uses_chat_openai(monkeypatch):
 
     monkeypatch.setattr(agent_factory_module, "ChatOpenAI", DummyChatOpenAI)
     monkeypatch.setattr(
-        agent_factory_module.settings,
+        agent_factory_module.settings.__class__,
         "get_api_key",
-        lambda key_name: "test-key" if key_name == "openai_compatible_api_key" else None,
+        lambda self, key_name: "test-key" if key_name == "openai_compatible_api_key" else None,
     )
     monkeypatch.setattr(
-        agent_factory_module.settings,
+        agent_factory_module.settings.__class__,
         "get_provider_config",
-        lambda provider_name: {
+        lambda self, provider_name: {
             "base_url": "https://example-compatible.local/v1",
             "compatibility_mode": "generic",
         } if provider_name == "openai_compatible" else {},
@@ -47,20 +47,20 @@ async def test_openai_compatible_provider_uses_chat_openai(monkeypatch):
 async def test_openai_compatible_kimi_mode_adds_kimi_headers(monkeypatch):
     captured = {}
 
-    class DummyChatOpenAI:
+    class DummyKimiChatOpenAI:
         def __init__(self, **kwargs):
             captured.update(kwargs)
 
-    monkeypatch.setattr(agent_factory_module, "ChatOpenAI", DummyChatOpenAI)
+    monkeypatch.setattr(agent_factory_module, "KimiChatOpenAI", DummyKimiChatOpenAI)
     monkeypatch.setattr(
-        agent_factory_module.settings,
+        agent_factory_module.settings.__class__,
         "get_api_key",
-        lambda key_name: "test-key" if key_name == "openai_compatible_api_key" else None,
+        lambda self, key_name: "test-key" if key_name == "openai_compatible_api_key" else None,
     )
     monkeypatch.setattr(
-        agent_factory_module.settings,
+        agent_factory_module.settings.__class__,
         "get_provider_config",
-        lambda provider_name: {
+        lambda self, provider_name: {
             "base_url": "https://api.kimi.com/coding/v1",
             "compatibility_mode": "kimi",
             "reasoning_effort": "medium",

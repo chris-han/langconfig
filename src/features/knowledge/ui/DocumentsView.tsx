@@ -30,6 +30,7 @@ export default function DocumentsView({ projectId }: DocumentsViewProps) {
   const [documents, setDocuments] = useState<Document[]>([]);
   const [loading, setLoading] = useState(false);
   const [uploading, setUploading] = useState(false);
+  const [indexingDocumentIds, setIndexingDocumentIds] = useState<Set<number>>(new Set());
 
   useEffect(() => {
     const abortController = new AbortController();
@@ -94,6 +95,24 @@ export default function DocumentsView({ projectId }: DocumentsViewProps) {
     } catch (error) {
       console.error('Failed to delete document:', error);
       alert('Failed to delete document. Check console for details.');
+    }
+  };
+
+  const handleManualIndex = async (documentId: number, documentName: string) => {
+    setIndexingDocumentIds((current) => new Set(current).add(documentId));
+
+    try {
+      await apiClient.indexDocument(documentId);
+      fetchDocuments();
+    } catch (error) {
+      console.error('Failed to start document indexing:', error);
+      alert(`Failed to start indexing for "${documentName}". Check console for details.`);
+    } finally {
+      setIndexingDocumentIds((current) => {
+        const next = new Set(current);
+        next.delete(documentId);
+        return next;
+      });
     }
   };
 
@@ -182,6 +201,16 @@ export default function DocumentsView({ projectId }: DocumentsViewProps) {
                     )}
                   </div>
                 </div>
+                <button
+                  onClick={() => handleManualIndex(doc.id, doc.name)}
+                  disabled={doc.indexing_status === 'indexing' || indexingDocumentIds.has(doc.id)}
+                  className="px-3 py-2 rounded-lg hover:bg-[var(--primary)]/10 text-[var(--primary)] transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+                  title={doc.indexing_status === 'indexed' ? 'Reindex document' : 'Start indexing'}
+                >
+                  <span className="material-symbols-outlined text-lg">
+                    {doc.indexing_status === 'indexing' || indexingDocumentIds.has(doc.id) ? 'progress_activity' : 'sync'}
+                  </span>
+                </button>
                 <button
                   onClick={() => handleDeleteDocument(doc.id)}
                   className="p-2 rounded-lg hover:bg-red-500/20 text-red-500 transition-all"
