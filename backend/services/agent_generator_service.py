@@ -5,16 +5,24 @@
 
 """
 Simple AI-powered agent configuration generator for v1 alpha.
-Uses OpenAI API directly to generate agent configs quickly.
+Uses the configured LangConfig model factory so generation can run on any supported provider.
 """
-import json
-import os
+from pathlib import Path
 from typing import Optional
 from pydantic import BaseModel
-from openai import OpenAI
+from langchain_core.messages import HumanMessage, SystemMessage
 import logging
 
+from core.agents.factory import AgentFactory
+
 logger = logging.getLogger(__name__)
+
+PROMPT_ID = "agent_generator_system"
+PROMPT_PATH = Path(__file__).resolve().parents[1] / "prompts" / "agent_generator" / "system.md"
+GENERIC_DEFAULT_SYSTEM_PROMPT = (
+    "You are a helpful AI assistant with planning, research, and task delegation capabilities. "
+    "When facing complex multi-step tasks, use the `task` tool to delegate specialized work to subagents."
+)
 
 
 class GenerateAgentRequest(BaseModel):
@@ -23,6 +31,7 @@ class GenerateAgentRequest(BaseModel):
     description: str
     agent_type: str  # "regular" or "deep"
     category: Optional[str] = None
+    model: Optional[str] = None
 
 
 class GeneratedAgentConfig(BaseModel):
@@ -33,6 +42,91 @@ class GeneratedAgentConfig(BaseModel):
     mcp_tools: list[str]
     reasoning: str
     confidence_score: float = 0.8
+
+
+def infer_runtime_model(request: GenerateAgentRequest, generation_model: str) -> str:
+    description = request.description.lower()
+    category = (request.category or "").lower()
+
+    if "research" in category or "research" in description:
+        return "gpt-4o"
+    if "test" in category or "test" in description:
+        return generation_model
+    if "code" in category or "python" in description or "langgraph" in description:
+        return generation_model
+    return generation_model
+
+
+def infer_temperature(request: GenerateAgentRequest) -> float:
+    description = request.description.lower()
+    category = (request.category or "").lower()
+
+    if "code" in category or "python" in description or "test" in category:
+        return 0.2
+    if "research" in category or "research" in description:
+        return 0.4
+    return 0.5
+
+
+def infer_tools(request: GenerateAgentRequest) -> list[str]:
+    description = request.description.lower()
+    category = (request.category or "").lower()
+    tools: list[str] = []
+
+    if "code" in category or "python" in description or "langgraph" in description:
+        tools.extend(["read_file", "write_file", "ls", "edit_file", "glob", "grep"])
+
+    if "research" in category or "research" in description:
+        tools.extend(["web_search", "web_fetch"])
+
+    if request.agent_type == "deep":
+        tools.extend(["reasoning_chain", "memory_store", "memory_recall"])
+
+    deduped_tools: list[str] = []
+    for tool in tools:
+        if tool not in deduped_tools:
+            deduped_tools.append(tool)
+
+    return deduped_tools or ["read_file", "ls"]
+
+
+def build_fallback_config(
+    request: GenerateAgentRequest,
+    generation_model: str,
+    reason: str,
+) -> GeneratedAgentConfig:
+    return GeneratedAgentConfig(
+        model=infer_runtime_model(request, generation_model),
+        temperature=infer_temperature(request),
+        system_prompt=build_specific_system_prompt(request),
+        mcp_tools=infer_tools(request),
+        reasoning=(
+            "LangConfig applied a deterministic fallback configuration because the model response could not be "
+            f"parsed reliably. Reason: {reason}"
+        ),
+        confidence_score=0.6,
+    )
+
+
+def build_specific_system_prompt(request: GenerateAgentRequest) -> str:
+    role_line = (
+        f"You are {request.name}, a {request.category or 'custom'} {request.agent_type} agent."
+        if request.name
+        else f"You are a {request.category or 'custom'} {request.agent_type} agent."
+    )
+    task_shape = (
+        "Handle focused single-agent execution, use tools deliberately, and return concise, dependable results."
+        if request.agent_type == "regular"
+        else "Handle complex multi-step work, break tasks into clear stages, and use deeper planning before acting."
+    )
+
+    return (
+        f"{role_line} Your primary responsibility is: {request.description.strip()}.\n\n"
+        f"{task_shape} Use only the tools that materially help with the task, explain assumptions when needed, "
+        f"and keep outputs aligned with the user's requested outcome.\n\n"
+        "When writing or changing code, prefer precise, minimal edits and call out tradeoffs or risks that would "
+        "affect implementation quality."
+    )
 
 
 async def generate_agent_config(request: GenerateAgentRequest) -> dict:
@@ -70,126 +164,92 @@ async def generate_agent_config(request: GenerateAgentRequest) -> dict:
         "memory_recall"
     ]
 
-    # Build context-aware prompt
-    agent_type_context = ""
-    if request.agent_type == "regular":
-        agent_type_context = """
-This is a REGULAR AGENT (LangChain AgentExecutor):
-- Simple, single-agent tasks
-- Tool calling with basic iteration control
-- Suitable for focused tasks like code generation, testing, research
-- Keep configuration simple and focused
-"""
-    else:  # deep
-        agent_type_context = """
-This is a DEEP AGENT (LangGraph StateGraph):
-- Complex multi-step workflows
-- Can use middleware, subagents, persistent storage
-- Suitable for long-running tasks, multi-agent coordination
-- More advanced configuration available
-"""
+    if not PROMPT_PATH.exists():
+        raise ValueError(f"Missing prompt asset for {PROMPT_ID}: expected file at {PROMPT_PATH}")
 
-    prompt = f"""You are an expert AI agent configuration specialist for LangConfig.
-
-Generate an optimal agent configuration for:
-**Name:** {request.name}
-**Description:** {request.description}
-**Category:** {request.category or 'Not specified'}
-
-{agent_type_context}
-
-**Available Models:** {', '.join(available_models)}
-**Available MCP Tools:** {', '.join(available_tools)}
-
-INSTRUCTIONS:
-1. Select the best model for this task:
-   - gpt-4o: Complex reasoning, code generation, architecture
-   - gpt-4o-mini: Simple tasks, cost-effective
-   - claude-sonnet-4-5-20250929: Long context, detailed analysis
-   - claude-haiku-4-5: Fast, simple tasks
-   - gemini-2.0-flash-exp: Multimodal, fast prototyping
-
-2. Choose appropriate temperature (0.0-1.0):
-   - 0.0-0.3: Deterministic tasks (code, SQL, testing)
-   - 0.4-0.7: Balanced creativity (general tasks, research)
-   - 0.8-1.0: Creative tasks (brainstorming, content generation)
-
-3. Select ONLY the MCP tools actually needed (from available list above)
-   - read_file: Read file contents with line numbers
-   - write_file: Create new files
-   - ls: List directory contents with metadata
-   - edit_file: Perform exact string replacements in files
-   - glob: Find files matching patterns
-   - grep: Search file contents with regex
-   - web_search: Search the web for information
-   - web_fetch: Fetch content from URLs
-   - browser: Automated browser actions (scraping, screenshots)
-   - reasoning_chain: Step-by-step reasoning and planning
-   - memory_store: Save information for later recall
-   - memory_recall: Retrieve stored memories
-
-4. Create a comprehensive, role-based system prompt that:
-   - Clearly defines the agent's role and expertise
-   - Specifies expected output format
-   - Includes relevant constraints or guidelines
-   - Is 2-4 paragraphs, detailed but focused
-
-5. Provide clear reasoning for your choices
-
-Return ONLY valid JSON with this exact structure:
-{{
-    "model": "selected_model_id",
-    "temperature": 0.7,
-    "system_prompt": "Detailed system prompt here...",
-    "mcp_tools": ["tool1", "tool2"],
-    "reasoning": "I chose gpt-4o because... temperature 0.7 for... tools selected because...",
-    "confidence_score": 0.85
-}}
-
-IMPORTANT: Return ONLY the JSON object, no markdown, no explanations outside the JSON.
-"""
+    system_prompt = PROMPT_PATH.read_text(encoding="utf-8")
+    generation_model = request.model or "gpt-4o"
+    user_payload = {
+        "name": request.name,
+        "description": request.description,
+        "agent_type": request.agent_type,
+        "category": request.category or "Not specified",
+        "selected_generation_model": generation_model,
+        "available_models": available_models,
+        "available_tools": available_tools,
+    }
 
     try:
-        # Initialize OpenAI client
-        api_key = os.getenv("OPENAI_API_KEY")
-        if not api_key:
-            raise ValueError("OPENAI_API_KEY environment variable not set")
-
-        client = OpenAI(api_key=api_key)
-
-        logger.info(f"Generating agent config for: {request.name}")
-
-        # Call OpenAI API
-        response = client.chat.completions.create(
-            model="gpt-4o",
-            messages=[
-                {
-                    "role": "system",
-                    "content": "You are an expert AI agent configuration specialist. You generate optimal agent configurations based on requirements. Always return valid JSON."
-                },
-                {
-                    "role": "user",
-                    "content": prompt
-                }
-            ],
-            response_format={"type": "json_object"},
-            temperature=0.7
+        logger.info(f"Generating agent config for: {request.name} using model {generation_model}")
+        llm = await AgentFactory._create_llm(
+            generation_model,
+            0.3,
+            3000,
+            {"streaming": False},
+        )
+        structured_llm = llm.with_structured_output(GeneratedAgentConfig, include_raw=True)
+        generated_response = await structured_llm.ainvoke(
+            [
+                SystemMessage(content=system_prompt),
+                HumanMessage(content=str(user_payload)),
+            ]
         )
 
-        # Parse response
-        generated_json = response.choices[0].message.content
-        generated_config = json.loads(generated_json)
+        parsed_config = (
+            generated_response.get("parsed")
+            if isinstance(generated_response, dict)
+            else generated_response
+        )
+        parsing_error = (
+            generated_response.get("parsing_error")
+            if isinstance(generated_response, dict)
+            else None
+        )
 
-        logger.info(f"Successfully generated config. Model: {generated_config.get('model')}, Tools: {generated_config.get('mcp_tools')}")
+        if parsing_error or parsed_config is None:
+            logger.warning(
+                "Agent generation returned unparsable structured output for %s; applying deterministic fallback: %s",
+                request.name,
+                parsing_error or "missing parsed payload",
+            )
+            return build_fallback_config(
+                request,
+                generation_model,
+                str(parsing_error or "missing parsed payload"),
+            ).model_dump()
 
-        # Validate the generated config
-        validated_config = GeneratedAgentConfig(**generated_config)
+        validated_config = (
+            parsed_config
+            if isinstance(parsed_config, GeneratedAgentConfig)
+            else GeneratedAgentConfig.model_validate(parsed_config)
+        )
+
+        if not validated_config.model.strip():
+            validated_config = validated_config.model_copy(update={"model": infer_runtime_model(request, generation_model)})
+
+        if not validated_config.mcp_tools:
+            validated_config = validated_config.model_copy(update={"mcp_tools": infer_tools(request)})
+
+        if (
+            not validated_config.system_prompt.strip()
+            or validated_config.system_prompt.strip() == GENERIC_DEFAULT_SYSTEM_PROMPT
+        ):
+            logger.warning(
+                "Agent generation returned a generic system prompt for %s; applying deterministic fallback",
+                request.name,
+            )
+            validated_config = validated_config.model_copy(
+                update={
+                    "system_prompt": build_specific_system_prompt(request),
+                    "reasoning": (
+                        f"{validated_config.reasoning} "
+                        "The returned system prompt was too generic, so LangConfig replaced it with a prompt tailored "
+                        "to the provided name and description."
+                    ).strip(),
+                }
+            )
 
         return validated_config.model_dump()
-
-    except json.JSONDecodeError as e:
-        logger.error(f"Failed to parse JSON from OpenAI response: {e}")
-        raise ValueError(f"AI generated invalid JSON: {str(e)}")
     except Exception as e:
         logger.error(f"Agent generation failed: {e}")
         raise ValueError(f"Agent generation failed: {str(e)}")

@@ -709,8 +709,9 @@ class APIClient {
     description: string;
     agent_type: string;
     category: string;
+    model?: string;
   }) {
-    return this.client.post('/api/generation/generate', data);
+    return this.client.post('/api/generation/generate', data, { timeout: 120000 });
   }
 
   async exportDeepAgent(id: number, data: {
@@ -719,6 +720,16 @@ class APIClient {
     include_docker: boolean;
   }) {
     return this.client.post(`/api/deepagents/${id}/export`, data);
+  }
+
+  async editorAssistDeepAgent(id: number, data: {
+    instruction: string;
+    code: string;
+    selected_text?: string;
+    selection_start?: number;
+    selection_end?: number;
+  }) {
+    return this.client.post(`/api/deepagents/${id}/editor-assist`, data);
   }
 
   // Custom Tools

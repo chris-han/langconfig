@@ -88,6 +88,7 @@ interface AgentConfigViewProps {
 }
 
 const AgentConfigView = ({ agent, onSave, onDelete, onClose }: AgentConfigViewProps) => {
+  const { showSuccess, showWarning, logError, NotificationModal } = useNotification();
   const [config, setConfig] = useState(agent.config || {});
   const [agentName, setAgentName] = useState(agent.name);
   const [agentDescription, setAgentDescription] = useState(agent.description);
@@ -106,6 +107,26 @@ const AgentConfigView = ({ agent, onSave, onDelete, onClose }: AgentConfigViewPr
   const [expandedTools, setExpandedTools] = useState<Set<string>>(new Set());
   const [showCodeModal, setShowCodeModal] = useState(false);
   const [generatedCode, setGeneratedCode] = useState('');
+  const [aiInstruction, setAiInstruction] = useState('');
+  const [isAiLoading, setIsAiLoading] = useState(false);
+  const [editorSelection, setEditorSelection] = useState<{ from: number; to: number; text: string }>({
+    from: 0,
+    to: 0,
+    text: '',
+  });
+  const [editorProposal, setEditorProposal] = useState<{
+    summary: string;
+    applyTo: 'selection' | 'full' | 'none';
+    replacementText: string | null;
+    originalSnippet: string;
+    proposedSnippet: string;
+    proposedCode: string;
+    instruction: string;
+  } | null>(null);
+  const [assistAgentId, setAssistAgentId] = useState<number>(agent.id);
+  const [assistAgents, setAssistAgents] = useState<Array<{ id: number; name: string; model?: string }>>([
+    { id: agent.id, name: agent.name, model: agent.config?.model },
+  ]);
   const [subagents, setSubagents] = useState(agent.config?.subagents || []);
   const [expandedSubagents, setExpandedSubagents] = useState<Set<number>>(new Set());
   const [availableWorkflows, setAvailableWorkflows] = useState<Array<{ id: number, name: string, description?: string }>>([]);
@@ -133,6 +154,7 @@ const AgentConfigView = ({ agent, onSave, onDelete, onClose }: AgentConfigViewPr
     setAgentName(agent.name);
     setAgentDescription(agent.description);
     setCustomGuardrails(agent.config?.guardrails || null);
+    setAssistAgentId(agent.id);
   }, [agent]);
 
   useEffect(() => {
@@ -189,6 +211,41 @@ const AgentConfigView = ({ agent, onSave, onDelete, onClose }: AgentConfigViewPr
       abortController.abort();
     };
   }, []);
+
+  useEffect(() => {
+    const abortController = new AbortController();
+
+    const fetchAssistAgents = async () => {
+      try {
+        const response = await apiClient.listDeepAgents({
+          public_only: false,
+          signal: abortController.signal,
+        });
+        const nextAgents = (response.data || []).map((item: any) => ({
+          id: item.id,
+          name: item.name,
+          model: item.config?.model,
+        }));
+        const hasCurrent = nextAgents.some((item: { id: number }) => item.id === agent.id);
+        setAssistAgents(
+          hasCurrent
+            ? nextAgents
+            : [{ id: agent.id, name: agent.name, model: agent.config?.model }, ...nextAgents]
+        );
+      } catch (error) {
+        if (error instanceof Error && (error.name === 'AbortError' || error.name === 'CanceledError')) {
+          return;
+        }
+        console.error('Failed to fetch assist agents:', error);
+      }
+    };
+
+    fetchAssistAgents();
+
+    return () => {
+      abortController.abort();
+    };
+  }, [agent.config?.model, agent.id, agent.name]);
 
   // Fetch available workflows for CompiledSubAgent
   useEffect(() => {
@@ -441,7 +498,72 @@ print(result)
   const handleViewCode = () => {
     const code = generateLangChainCode();
     setGeneratedCode(code);
+    setEditorProposal(null);
+    setAiInstruction('');
     setShowCodeModal(true);
+  };
+
+  const runEditorAssist = async (instructionOverride?: string) => {
+    const nextInstruction = (instructionOverride ?? aiInstruction).trim();
+    if (!nextInstruction) {
+      showWarning('Enter an instruction for the editor assistant first.');
+      return;
+    }
+
+    const hasSelection = editorSelection.to > editorSelection.from && editorSelection.text.length > 0;
+    setIsAiLoading(true);
+    try {
+      const response = await apiClient.editorAssistDeepAgent(assistAgentId, {
+        instruction: nextInstruction,
+        code: generatedCode,
+        selected_text: hasSelection ? editorSelection.text : undefined,
+        selection_start: hasSelection ? editorSelection.from : undefined,
+        selection_end: hasSelection ? editorSelection.to : undefined,
+      });
+
+      const data = response.data as {
+        summary: string;
+        apply_to: 'selection' | 'full' | 'none';
+        replacement_text?: string | null;
+      };
+
+      let proposedCode = generatedCode;
+      let originalSnippet = '';
+      let proposedSnippet = '';
+
+      if (data.apply_to === 'selection' && hasSelection) {
+        originalSnippet = editorSelection.text;
+        proposedSnippet = data.replacement_text || '';
+        proposedCode = `${generatedCode.slice(0, editorSelection.from)}${proposedSnippet}${generatedCode.slice(editorSelection.to)}`;
+      } else if (data.apply_to === 'full') {
+        originalSnippet = generatedCode;
+        proposedSnippet = data.replacement_text || '';
+        proposedCode = proposedSnippet;
+      }
+
+      setEditorProposal({
+        summary: data.summary,
+        applyTo: data.apply_to,
+        replacementText: data.replacement_text || null,
+        originalSnippet,
+        proposedSnippet,
+        proposedCode,
+        instruction: nextInstruction,
+      });
+    } catch (error: any) {
+      logError('Editor assist failed', error?.response?.data?.detail || error.message || 'Unexpected error');
+    } finally {
+      setIsAiLoading(false);
+    }
+  };
+
+  const applyEditorProposal = () => {
+    if (!editorProposal || editorProposal.applyTo === 'none') {
+      return;
+    }
+    setGeneratedCode(editorProposal.proposedCode);
+    setEditorProposal(null);
+    showSuccess('Applied AI suggestion to the editor.');
   };
 
   return (
@@ -1342,11 +1464,171 @@ print(result)
 
             {/* Modal Content */}
             <div className="flex-1 overflow-y-auto p-4">
+              <div
+                className="mb-4 rounded-xl border p-4"
+                style={{
+                  backgroundColor: 'var(--color-panel-dark)',
+                  borderColor: 'var(--color-border-dark)',
+                }}
+              >
+                <div className="flex flex-wrap items-center gap-2 mb-3">
+                  {[
+                    'Explain this code',
+                    'Improve clarity and structure',
+                    'Fix likely issues',
+                    'Add stronger Python typing',
+                  ].map((preset) => (
+                    <button
+                      key={preset}
+                      onClick={() => {
+                        setAiInstruction(preset);
+                        void runEditorAssist(preset);
+                      }}
+                      disabled={isAiLoading}
+                      className="px-3 py-1.5 rounded-lg text-xs font-medium border transition-colors disabled:opacity-50"
+                      style={{
+                        borderColor: 'var(--color-border-dark)',
+                        color: 'var(--color-text-primary)',
+                        backgroundColor: 'rgba(255,255,255,0.55)',
+                      }}
+                    >
+                      {preset}
+                    </button>
+                  ))}
+                </div>
+
+                <div className="flex gap-3 items-start">
+                  <div className="flex-1 space-y-3">
+                    <div>
+                      <label className="block text-xs font-medium mb-2" style={{ color: 'var(--color-text-muted)' }}>
+                        Ask AI Using Saved Agent
+                      </label>
+                      <select
+                        value={assistAgentId}
+                        onChange={(e) => setAssistAgentId(parseInt(e.target.value, 10))}
+                        className="w-full px-3 py-2 text-sm rounded-lg border"
+                        style={{
+                          backgroundColor: 'var(--color-background)',
+                          borderColor: 'var(--color-border-dark)',
+                          color: 'var(--color-text-primary)',
+                        }}
+                      >
+                        {assistAgents.map((assistAgent) => (
+                          <option key={assistAgent.id} value={assistAgent.id}>
+                            {assistAgent.name}{assistAgent.model ? ` (${assistAgent.model})` : ''}
+                          </option>
+                        ))}
+                      </select>
+                    </div>
+                    <textarea
+                      value={aiInstruction}
+                      onChange={(e) => setAiInstruction(e.target.value)}
+                      rows={3}
+                      placeholder="Ask AI to refactor, explain, tighten imports, add typing, or improve the selected block."
+                      className="w-full px-3 py-2 text-sm rounded-lg border resize-none"
+                      style={{
+                        backgroundColor: 'var(--color-background)',
+                        borderColor: 'var(--color-border-dark)',
+                        color: 'var(--color-text-primary)',
+                      }}
+                    />
+                  </div>
+                  <button
+                    onClick={() => void runEditorAssist()}
+                    disabled={isAiLoading}
+                    className="px-4 py-2 rounded-lg text-sm font-medium text-white disabled:opacity-60"
+                    style={{ backgroundColor: 'var(--color-primary)' }}
+                  >
+                    {isAiLoading ? 'Thinking...' : 'Ask AI'}
+                  </button>
+                </div>
+
+                <div className="mt-2 text-xs" style={{ color: 'var(--color-text-muted)' }}>
+                  {editorSelection.to > editorSelection.from
+                    ? `Selection active: ${editorSelection.to - editorSelection.from} characters. AI can target just this region.`
+                    : 'No selection active. AI actions will operate on the full file unless they are explanation-only.'}
+                </div>
+                <div className="mt-1 text-xs" style={{ color: 'var(--color-text-muted)' }}>
+                  Ask AI uses the saved agent selected above, including that agent&apos;s model and system prompt.
+                </div>
+              </div>
+
               <PythonCodeEditor
                 value={generatedCode}
                 onChange={setGeneratedCode}
+                onSelectionChange={setEditorSelection}
                 minHeight="520px"
               />
+
+              {editorProposal && (
+                <div
+                  className="mt-4 rounded-xl border p-4"
+                  style={{
+                    backgroundColor: 'var(--color-panel-dark)',
+                    borderColor: 'var(--color-border-dark)',
+                  }}
+                >
+                  <div className="flex items-start justify-between gap-4 mb-3">
+                    <div>
+                      <h4 className="text-sm font-semibold" style={{ color: 'var(--color-text-primary)' }}>
+                        AI Proposal
+                      </h4>
+                      <p className="text-sm mt-1" style={{ color: 'var(--color-text-muted)' }}>
+                        {editorProposal.summary}
+                      </p>
+                      <p className="text-xs mt-2" style={{ color: 'var(--color-text-muted)' }}>
+                        Scope: {editorProposal.applyTo === 'none' ? 'Explanation only' : editorProposal.applyTo === 'selection' ? 'Selected code' : 'Full file'}
+                      </p>
+                    </div>
+                    <div className="flex items-center gap-2">
+                      {editorProposal.applyTo !== 'none' && (
+                        <button
+                          onClick={applyEditorProposal}
+                          className="px-3 py-1.5 rounded-lg text-xs font-medium text-white"
+                          style={{ backgroundColor: 'var(--color-primary)' }}
+                        >
+                          Apply
+                        </button>
+                      )}
+                      <button
+                        onClick={() => setEditorProposal(null)}
+                        className="px-3 py-1.5 rounded-lg text-xs font-medium border"
+                        style={{
+                          borderColor: 'var(--color-border-dark)',
+                          color: 'var(--color-text-primary)',
+                        }}
+                      >
+                        Dismiss
+                      </button>
+                    </div>
+                  </div>
+
+                  {editorProposal.applyTo !== 'none' && (
+                    <div className="grid grid-cols-2 gap-4">
+                      <div>
+                        <div className="text-xs font-medium mb-2" style={{ color: 'var(--color-text-muted)' }}>
+                          Current
+                        </div>
+                        <PythonCodeEditor
+                          value={editorProposal.originalSnippet}
+                          readOnly
+                          minHeight="240px"
+                        />
+                      </div>
+                      <div>
+                        <div className="text-xs font-medium mb-2" style={{ color: 'var(--color-text-muted)' }}>
+                          Proposed
+                        </div>
+                        <PythonCodeEditor
+                          value={editorProposal.proposedSnippet}
+                          readOnly
+                          minHeight="240px"
+                        />
+                      </div>
+                    </div>
+                  )}
+                </div>
+              )}
             </div>
 
             {/* Modal Footer */}
@@ -1358,6 +1640,7 @@ print(result)
           </div>
         </div>
       )}
+      <NotificationModal />
     </div>
   );
 };

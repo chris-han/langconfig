@@ -10,8 +10,8 @@ API endpoints for DeepAgent configuration and management.
 import logging
 from fastapi import APIRouter, HTTPException, Depends, BackgroundTasks
 from sqlalchemy.orm import Session
-from typing import List, Optional
-from pydantic import BaseModel
+from typing import List, Optional, Literal
+from pydantic import BaseModel, Field
 
 from db.database import get_db
 from models.deep_agent import (
@@ -24,6 +24,7 @@ from models.deep_agent import (
     GuardrailsConfig
 )
 from services.export_service import ExportService
+from services.editor_assist_service import run_editor_assist
 from core.versioning import check_version_conflict, format_lock_version_error
 
 logger = logging.getLogger(__name__)
@@ -106,6 +107,20 @@ class ExportResponse(BaseModel):
     created_at: str
     task_id: Optional[int] = None  # Background task ID
     status: Optional[str] = None  # Export status (pending, in_progress, completed, failed)
+
+
+class EditorAssistRequest(BaseModel):
+    instruction: str = Field(..., min_length=1, description="User request for the editor assistant")
+    code: str = Field(..., description="Current editor code")
+    selected_text: Optional[str] = Field(default=None, description="Currently selected text, if any")
+    selection_start: Optional[int] = Field(default=None, ge=0)
+    selection_end: Optional[int] = Field(default=None, ge=0)
+
+
+class EditorAssistResponse(BaseModel):
+    summary: str
+    apply_to: Literal["selection", "full", "none"]
+    replacement_text: Optional[str] = None
 
 
 # =============================================================================
@@ -256,6 +271,49 @@ async def get_deepagent(
         created_at=agent.created_at.isoformat(),
         updated_at=agent.updated_at.isoformat()
     )
+
+
+@router.post("/{agent_id}/editor-assist", response_model=EditorAssistResponse)
+async def editor_assist(
+    agent_id: int,
+    request: EditorAssistRequest,
+    db: Session = Depends(get_db),
+):
+    """Run a lightweight Cursor-like editor assist request using the agent's configured model."""
+    agent = db.query(DeepAgentTemplate).filter(DeepAgentTemplate.id == agent_id).first()
+    if not agent:
+        raise HTTPException(status_code=404, detail="DeepAgent not found")
+
+    if request.selected_text and (
+        request.selection_start is None or request.selection_end is None
+    ):
+        raise HTTPException(
+            status_code=422,
+            detail="selection_start and selection_end are required when selected_text is provided",
+        )
+
+    try:
+        result = await run_editor_assist(
+            agent_config=agent.config or {},
+            instruction=request.instruction.strip(),
+            code=request.code,
+            selected_text=request.selected_text,
+            selection_start=request.selection_start,
+            selection_end=request.selection_end,
+        )
+        return EditorAssistResponse(
+            summary=result.summary,
+            apply_to=result.apply_to,
+            replacement_text=result.replacement_text,
+        )
+    except FileNotFoundError as exc:
+        logger.error("Editor assist prompt asset missing", exc_info=True)
+        raise HTTPException(status_code=500, detail=str(exc))
+    except ValueError as exc:
+        raise HTTPException(status_code=400, detail=str(exc))
+    except Exception as exc:
+        logger.error(f"Error running editor assist for DeepAgent {agent_id}: {exc}", exc_info=True)
+        raise HTTPException(status_code=500, detail="Editor assist failed")
 
 
 @router.put("/{agent_id}", response_model=DeepAgentResponse)

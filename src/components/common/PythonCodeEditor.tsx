@@ -8,6 +8,7 @@ import { EditorView } from '@codemirror/view';
 interface PythonCodeEditorProps {
   value: string;
   onChange?: (value: string) => void;
+  onSelectionChange?: (selection: { from: number; to: number; text: string }) => void;
   readOnly?: boolean;
   minHeight?: string;
 }
@@ -76,6 +77,7 @@ const langChainPythonCompletions = completeFromList([
 export default function PythonCodeEditor({
   value,
   onChange,
+  onSelectionChange,
   readOnly = false,
   minHeight = '480px',
 }: PythonCodeEditorProps) {
@@ -151,6 +153,22 @@ export default function PythonCodeEditor({
       }}
       extensions={extensions}
       onChange={(nextValue) => onChange?.(nextValue)}
+      onCreateEditor={(view) => {
+        const range = view.state.selection.main;
+        onSelectionChange?.({
+          from: range.from,
+          to: range.to,
+          text: view.state.doc.sliceString(range.from, range.to),
+        });
+      }}
+      onUpdate={(update) => {
+        const range = update.state.selection.main;
+        onSelectionChange?.({
+          from: range.from,
+          to: range.to,
+          text: update.state.doc.sliceString(range.from, range.to),
+        });
+      }}
     />
   );
 }

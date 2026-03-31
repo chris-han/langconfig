@@ -5,7 +5,7 @@
  * LICENSE file in the root directory of this source tree.
  */
 
-import React, { useState, useEffect, useCallback, useMemo } from 'react';
+import React, { useState, useEffect, useCallback, useMemo, useRef } from 'react';
 import {
   Save,
   Play,
@@ -319,6 +319,7 @@ export default function DeepAgentBuilder({
   onBack
 }: DeepAgentBuilderProps) {
   const { showSuccess, logError, showWarning, NotificationModal } = useNotification();
+  const systemPromptRef = useRef<HTMLTextAreaElement | null>(null);
   const [config, setConfig] = useState<AgentConfig>(() => {
     const baseConfig: AgentConfig = {
       ...DEFAULT_CONFIG,
@@ -629,7 +630,8 @@ export default function DeepAgentBuilder({
         name: config.name,
         description: config.description,
         agent_type: agentType,
-        category: config.category
+        category: config.category,
+        model: config.model,
       });
 
       const result = response.data;
@@ -643,12 +645,27 @@ export default function DeepAgentBuilder({
         ...prev,
         model: result.config.model,
         temperature: result.config.temperature,
-        system_prompt: result.config.system_prompt,
+        system_prompt: result.config.system_prompt || prev.system_prompt,
         native_tools: result.config.native_tools || result.config.mcp_tools || []
       }));
 
+      setExpandedSections(prev => ({
+        ...prev,
+        prompt: true,
+      }));
+
+      requestAnimationFrame(() => {
+        systemPromptRef.current?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        systemPromptRef.current?.focus();
+      });
+
       // Show success with reasoning
-      showSuccess('Configuration generated!', result.config.reasoning || 'AI configured your agent');
+      showSuccess(
+        'Configuration generated!',
+        result.config.system_prompt
+          ? (result.config.reasoning || 'AI configured your agent and updated the system prompt.')
+          : 'AI configured the agent, but no new system prompt was returned.'
+      );
     } catch (error: any) {
       logError('Generation failed', error.message || 'An unexpected error occurred');
     } finally {
@@ -687,38 +704,6 @@ export default function DeepAgentBuilder({
               </div>
             </div>
             <div className="flex items-center gap-2">
-              <button
-                onClick={handleAIGenerate}
-                disabled={aiLoading}
-                className="flex items-center gap-2 px-4 py-2 rounded-lg transition-all disabled:opacity-50 disabled:cursor-not-allowed"
-                style={{
-                  backgroundColor: 'rgba(255, 255, 255, 0.2)',
-                  color: 'white',
-                  backdropFilter: 'blur(8px)',
-                  border: '1px solid rgba(255, 255, 255, 0.3)',
-                  textShadow: '0 1px 2px rgba(0, 0, 0, 0.15)'
-                }}
-                onMouseEnter={(e) => {
-                  if (!aiLoading) {
-                    e.currentTarget.style.backgroundColor = 'rgba(255, 255, 255, 0.3)';
-                  }
-                }}
-                onMouseLeave={(e) => {
-                  e.currentTarget.style.backgroundColor = 'rgba(255, 255, 255, 0.2)';
-                }}
-              >
-                {aiLoading ? (
-                  <>
-                    <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
-                    Generating...
-                  </>
-                ) : (
-                  <>
-                    <Sparkles className="w-4 h-4" />
-                    AI Generate
-                  </>
-                )}
-              </button>
               <button
                 onClick={() => handleCloseAttempt('close')}
                 className="p-2 transition-all text-white/90 hover:text-white hover:bg-white/15 rounded-lg"
@@ -768,11 +753,23 @@ export default function DeepAgentBuilder({
                 className="w-full px-3 py-2 bg-white dark:bg-background-dark border border-gray-200 dark:border-border-dark rounded-lg text-sm text-gray-900 dark:text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent"
               />
               <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">
-                💡 Fill out Name & Description, then click "AI Generate" to auto-fill the rest
+                💡 Fill out Name & Description, then click "AI Generate" to auto-fill the rest using the currently selected provider/model
               </p>
             </div>
 
             <div className="grid grid-cols-2 gap-4">
+              <div>
+                <label className="block text-xs font-medium text-gray-700 dark:text-gray-300 mb-2 uppercase">
+                  Agent Type
+                </label>
+                <div className="w-full px-3 py-2 bg-gray-100 dark:bg-panel-dark border border-gray-200 dark:border-border-dark rounded-lg text-sm text-gray-900 dark:text-white">
+                  {agentType === 'regular' ? 'Regular Agent' : 'Deep Agent'}
+                </div>
+                <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">
+                  This builder mode is chosen before you open the form and is sent to AI Generate automatically.
+                </p>
+              </div>
+
               <div>
                 <label className="block text-xs font-medium text-gray-700 dark:text-gray-300 mb-2 uppercase">
                   Category <span className="text-red-500">*</span>
@@ -789,48 +786,72 @@ export default function DeepAgentBuilder({
                   <option value="Custom">Custom</option>
                 </select>
               </div>
-
-              <div>
-                <label className="block text-xs font-medium text-gray-700 dark:text-gray-300 mb-2 uppercase">
-                  Model
-                </label>
-                <ModelSelectorInline
-                  value={config.model}
-                  onChange={(modelId) => updateConfig('model', modelId)}
-                  includeLocal={true}
-                  onlyValidated={true}
-                />
-              </div>
             </div>
 
-            <div className="grid grid-cols-2 gap-4">
-              <div>
-                <label className="block text-xs font-medium text-gray-700 dark:text-gray-300 mb-2 uppercase">
-                  Temperature ({config.temperature})
-                </label>
-                <input
-                  type="range"
-                  min="0"
-                  max="2"
-                  step="0.1"
-                  value={config.temperature}
-                  onChange={(e) => updateConfig('temperature', parseFloat(e.target.value))}
-                  className="w-full"
-                />
+            <div className="grid grid-cols-[minmax(0,1fr)_auto] gap-4 items-end pt-2">
+              <div className="grid grid-cols-[minmax(0,1.8fr)_minmax(0,0.7fr)_minmax(0,0.7fr)] gap-4">
+                <div>
+                  <label className="block text-xs font-medium text-gray-700 dark:text-gray-300 mb-2 uppercase">
+                    Model
+                  </label>
+                  <ModelSelectorInline
+                    value={config.model}
+                    onChange={(modelId) => updateConfig('model', modelId)}
+                    includeLocal={true}
+                    onlyValidated={true}
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-xs font-medium text-gray-700 dark:text-gray-300 mb-2 uppercase">
+                    Temperature ({config.temperature})
+                  </label>
+                  <input
+                    type="range"
+                    min="0"
+                    max="2"
+                    step="0.1"
+                    value={config.temperature}
+                    onChange={(e) => updateConfig('temperature', parseFloat(e.target.value))}
+                    className="w-full mt-2"
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-xs font-medium text-gray-700 dark:text-gray-300 mb-2 uppercase">
+                    Max Tokens (Optional)
+                  </label>
+                  <input
+                    type="number"
+                    value={config.max_tokens || ''}
+                    onChange={(e) => updateConfig('max_tokens', e.target.value ? parseInt(e.target.value) : undefined)}
+                    placeholder="Leave empty for default"
+                    className="w-full px-3 py-2 bg-white dark:bg-background-dark border border-gray-200 dark:border-border-dark rounded-lg text-sm text-gray-900 dark:text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent"
+                  />
+                </div>
               </div>
 
-              <div>
-                <label className="block text-xs font-medium text-gray-700 dark:text-gray-300 mb-2 uppercase">
-                  Max Tokens (Optional)
-                </label>
-                <input
-                  type="number"
-                  value={config.max_tokens || ''}
-                  onChange={(e) => updateConfig('max_tokens', e.target.value ? parseInt(e.target.value) : undefined)}
-                  placeholder="Leave empty for default"
-                  className="w-full px-3 py-2 bg-white dark:bg-background-dark border border-gray-200 dark:border-border-dark rounded-lg text-sm text-gray-900 dark:text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent"
-                />
-              </div>
+              <button
+                onClick={handleAIGenerate}
+                disabled={aiLoading}
+                className="flex items-center gap-2 px-4 py-2 rounded-lg transition-all disabled:opacity-50 disabled:cursor-not-allowed whitespace-nowrap"
+                style={{
+                  backgroundColor: 'var(--color-primary)',
+                  color: 'white',
+                }}
+              >
+                {aiLoading ? (
+                  <>
+                    <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
+                    Generating...
+                  </>
+                ) : (
+                  <>
+                    <Sparkles className="w-4 h-4" />
+                    AI Generate
+                  </>
+                )}
+              </button>
             </div>
           </ConfigSection>
 
@@ -846,6 +867,7 @@ export default function DeepAgentBuilder({
                 Instructions for the agent <span className="text-red-500">*</span>
               </label>
               <textarea
+                ref={systemPromptRef}
                 value={config.system_prompt}
                 onChange={(e) => updateConfig('system_prompt', e.target.value)}
                 rows={6}
