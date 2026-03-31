@@ -11,6 +11,8 @@ import path from "path";
 
 // @ts-expect-error process is a nodejs global
 const host = process.env.TAURI_DEV_HOST;
+// @ts-expect-error process is a nodejs global
+const backendProxyTarget = process.env.VITE_BACKEND_PROXY_TARGET || "http://127.0.0.1:8766";
 
 // https://vite.dev/config/
 export default defineConfig(async () => ({
@@ -46,7 +48,7 @@ export default defineConfig(async () => ({
     // Proxy API requests to backend server
     proxy: {
       '/api': {
-        target: 'http://127.0.0.1:8766',
+        target: backendProxyTarget,
         changeOrigin: true,
         secure: false,
       },
