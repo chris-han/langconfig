@@ -47,6 +47,28 @@ def _convert_message_to_dict_with_reasoning(message: Any) -> dict[str, Any]:
     return payload
 
 
+def _ensure_reasoning_content_on_payload_messages(messages: list[dict[str, Any]]) -> list[dict[str, Any]]:
+    """Backfill Kimi reasoning metadata on assistant tool-call replay payloads.
+
+    Some middleware paths reshape assistant tool-call turns before they reach the
+    model transport layer. At that point the original `AIMessage` metadata may
+    already be gone, so enforce Kimi's required field on the final payload too.
+    """
+    normalized_messages: list[dict[str, Any]] = []
+
+    for message in messages:
+        normalized = dict(message)
+        if (
+            normalized.get("role") == "assistant"
+            and normalized.get("tool_calls")
+            and "reasoning_content" not in normalized
+        ):
+            normalized["reasoning_content"] = ""
+        normalized_messages.append(normalized)
+
+    return normalized_messages
+
+
 class KimiChatOpenAI(ChatOpenAI):
     """ChatOpenAI variant that preserves Kimi `reasoning_content`."""
 
@@ -63,14 +85,14 @@ class KimiChatOpenAI(ChatOpenAI):
             return payload
 
         messages = self._convert_input(input_).to_messages()
-        payload["messages"] = [
+        payload["messages"] = _ensure_reasoning_content_on_payload_messages([
             _convert_message_to_dict_with_reasoning(
                 _convert_from_v1_to_chat_completions(message)
                 if isinstance(message, AIMessage)
                 else message
             )
             for message in messages
-        ]
+        ])
         return payload
 
     def _create_chat_result(
