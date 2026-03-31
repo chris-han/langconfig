@@ -16,8 +16,13 @@ export const ADDITIONAL_PROVIDER_CATALOG: Record<string, { label: string; baseUr
     baseUrl: 'https://inference.baseten.co/v1',
     placeholderModels: ['openai/gpt-4.1'],
   },
+  openai_compatible: {
+    label: 'OpenAI-Compatible',
+    baseUrl: '',
+    placeholderModels: ['kimi-for-coding', 'gpt-4.1'],
+  },
   kimi: {
-    label: 'kimi-for-coding',
+    label: 'Kimi (Legacy)',
     baseUrl: 'https://api.kimi.com/coding/v1',
     placeholderModels: ['kimi-for-coding'],
   },
@@ -32,6 +37,7 @@ const BUILTIN_PROVIDER_LABELS: Record<string, string> = {
   lmstudio: 'LM Studio',
   vllm: 'vLLM',
   litellm: 'LiteLLM',
+  openai_compatible: 'OpenAI-Compatible',
   local: 'Local',
 };
 

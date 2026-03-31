@@ -13,6 +13,7 @@ No blueprints, no strategies - just execute the workflow definition stored in th
 import asyncio
 import json
 import logging
+import re
 from typing import Dict, Any, Optional, List, Annotated, TypedDict
 from datetime import datetime
 import operator
@@ -38,11 +39,73 @@ except ImportError:
     INTERRUPT_AVAILABLE = False
 
 from models.workflow import WorkflowProfile
+from models.deep_agent import DeepAgentTemplate
 from core.workflows.events.emitter import create_execution_callback_handler
 from core.workflows.events.progress import clear_execution_context
 from core.workflows.checkpointing.manager import get_store
+from db.database import SessionLocal
 
 logger = logging.getLogger(__name__)
+
+
+def _coerce_deep_agent_template_id(raw_value: Any) -> Optional[int]:
+    """Normalize deep-agent template references from numeric or legacy alias forms."""
+    if isinstance(raw_value, int):
+        return raw_value
+
+    if isinstance(raw_value, str):
+        value = raw_value.strip()
+        if value.isdigit():
+            return int(value)
+
+        match = re.match(r"^(?:custom_|agent_)?(\d+)$", value)
+        if match:
+            return int(match.group(1))
+
+    return None
+
+
+def _rehydrate_agent_config_from_template(agent_config: Dict[str, Any]) -> Dict[str, Any]:
+    """
+    Merge a workflow node config with the saved DeepAgent template config when available.
+
+    This provides compatibility for older workflow nodes that persisted template aliases like
+    `custom_4` into `deep_agent_template_id` or lost some DeepAgent fields when saved.
+    Node-level config remains authoritative for explicit overrides.
+    """
+    template_id = _coerce_deep_agent_template_id(agent_config.get("deep_agent_template_id"))
+    if template_id is None:
+        return agent_config
+
+    try:
+        with SessionLocal() as db:
+            template = db.query(DeepAgentTemplate).filter(DeepAgentTemplate.id == template_id).first()
+            if not template or not isinstance(template.config, dict):
+                return {
+                    **agent_config,
+                    "deep_agent_template_id": template_id,
+                }
+
+            merged_config = {
+                **template.config,
+                **agent_config,
+                "deep_agent_template_id": template_id,
+            }
+
+            # Preserve list-like fields from node config when explicitly set, otherwise fall back to template.
+            for key in ("native_tools", "cli_tools", "custom_tools", "subagents", "middleware", "fallback_models"):
+                if key in agent_config and agent_config.get(key) is not None:
+                    merged_config[key] = agent_config.get(key)
+                elif key in template.config:
+                    merged_config[key] = template.config.get(key)
+
+            return merged_config
+    except Exception as exc:
+        logger.warning(f"Failed to rehydrate DeepAgent template {template_id}: {exc}")
+        return {
+            **agent_config,
+            "deep_agent_template_id": template_id,
+        }
 
 
 # Simple state for user-created workflows
@@ -320,7 +383,7 @@ class SimpleWorkflowExecutor:
 
             # Set up execution context for tool progress events
             # This allows tools to emit progress updates via the event bus
-            from core.workflows.events.progress import set_execution_context, clear_execution_context
+            from core.workflows.events.progress import set_execution_context
             set_execution_context({
                 'workflow_id': workflow.id,
                 'task_id': task_id,
@@ -1382,7 +1445,7 @@ class SimpleWorkflowExecutor:
             # Skip non-executable control nodes (START and END are handled specially)
             if agent_type not in ['START_NODE', 'END_NODE']:
                 # Normalize config to ensure backward compatibility with V1/V2 schemas
-                raw_config = node.get("config", {})
+                raw_config = _rehydrate_agent_config_from_template(node.get("config", {}))
                 # Store config as-is (AgentFactory will normalize when needed)
                 node_metadata[node_id] = {
                     "label": agent_label,
@@ -1684,7 +1747,7 @@ class SimpleWorkflowExecutor:
 
             try:
                 # Get agent configuration from node data
-                agent_config = node_data.get("config", {})
+                agent_config = _rehydrate_agent_config_from_template(node_data.get("config", {}))
                 logger.info(f"[{display_name}] RAW node_data keys: {list(node_data.keys())}")
                 logger.info(f"[{display_name}] RAW agent_config keys: {list(agent_config.keys())}")
                 logger.info(f"[{display_name}] RAW agent_config.custom_tools: {agent_config.get('custom_tools', 'NOT_FOUND')}")

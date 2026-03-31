@@ -26,6 +26,7 @@ class APIKeySet(BaseModel):
     openrouter_api_key: Optional[str] = None
     fireworks_api_key: Optional[str] = None
     baseten_api_key: Optional[str] = None
+    openai_compatible_api_key: Optional[str] = None
     kimi_api_key: Optional[str] = None
 
 
@@ -189,6 +190,8 @@ async def set_api_keys(keys: APIKeySet, db: Session = Depends(get_db)):
         api_keys["fireworks"] = encryption_service.encrypt(keys.fireworks_api_key)
     if keys.baseten_api_key:
         api_keys["baseten"] = encryption_service.encrypt(keys.baseten_api_key)
+    if keys.openai_compatible_api_key:
+        api_keys["openai_compatible"] = encryption_service.encrypt(keys.openai_compatible_api_key)
     if keys.kimi_api_key:
         api_keys["kimi"] = encryption_service.encrypt(keys.kimi_api_key)
 
@@ -203,7 +206,7 @@ async def get_api_keys(db: Session = Depends(get_db)):
     """Get masked API keys status"""
     settings = get_or_create_settings(db)
     api_keys = settings.api_keys or {}
-    providers = ["openai", "azure_openai", "anthropic", "google", "cohere", "replicate", "openrouter", "fireworks", "baseten", "kimi"]
+    providers = ["openai", "azure_openai", "anthropic", "google", "cohere", "replicate", "openrouter", "fireworks", "baseten", "openai_compatible", "kimi"]
 
     results = []
     for provider in providers:
@@ -275,7 +278,7 @@ async def get_available_models(db: Session = Depends(get_db)):
 @router.delete("/api-keys/{provider}")
 async def delete_api_key(provider: str, db: Session = Depends(get_db)):
     """Delete an API key"""
-    if provider not in ["openai", "azure_openai", "anthropic", "google", "cohere", "replicate", "openrouter", "fireworks", "baseten", "kimi"]:
+    if provider not in ["openai", "azure_openai", "anthropic", "google", "cohere", "replicate", "openrouter", "fireworks", "baseten", "openai_compatible", "kimi"]:
         raise HTTPException(status_code=400, detail="Invalid provider")
 
     settings = get_or_create_settings(db)
@@ -387,7 +390,7 @@ async def list_available_models(db: Session = Depends(get_db)):
     ):
         available.append(f"azure_openai:{azure_deployment}")
 
-    for provider_name in ["openrouter", "fireworks", "baseten", "kimi"]:
+    for provider_name in ["openrouter", "fireworks", "baseten", "openai_compatible", "kimi"]:
         provider_config = provider_configs.get(provider_name) or {}
         if not isinstance(provider_config, dict):
             continue

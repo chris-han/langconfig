@@ -117,7 +117,7 @@ DEFAULT_AGENT_GUARDRAILS = """
 
 # Legacy alias for backward compatibility
 REASONING_FRAMEWORK = DEFAULT_AGENT_GUARDRAILS
-OPENAI_COMPATIBLE_PROVIDER_PREFIXES = {"openrouter", "fireworks", "baseten", "kimi"}
+OPENAI_COMPATIBLE_PROVIDER_PREFIXES = {"openrouter", "fireworks", "baseten", "openai_compatible", "kimi"}
 
 class AgentFactory:
     """
@@ -1183,6 +1183,7 @@ You have been equipped with the following tools: {', '.join(tool_names)}
             provider_api_key = settings.get_api_key(f"{provider_prefix}_api_key")
             provider_config = settings.get_provider_config(provider_prefix)
             provider_base_url = provider_config.get("base_url")
+            compatibility_mode = str(provider_config.get("compatibility_mode") or "").strip().lower()
 
             if not provider_api_key:
                 raise ValueError(f"{provider_prefix.upper()} API key is required for model {model_name}")
@@ -1200,7 +1201,13 @@ You have been equipped with the following tools: {', '.join(tool_names)}
                 "streaming": streaming,
             }
 
-            if provider_prefix == "kimi":
+            is_kimi_compatible = (
+                provider_prefix == "kimi"
+                or compatibility_mode == "kimi"
+                or (isinstance(provider_base_url, str) and "api.kimi.com" in provider_base_url.lower())
+            )
+
+            if is_kimi_compatible:
                 # Kimi coding API expects Roo Code style client headers.
                 chat_openai_kwargs["default_headers"] = {
                     "User-Agent": "RooCode/1.0.0",

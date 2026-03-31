@@ -29,6 +29,7 @@ export default function SettingsView() {
     openrouter: '',
     fireworks: '',
     baseten: '',
+    openaiCompatible: '',
     kimi: '',
   });
   const [storedMaskedApiKeys, setStoredMaskedApiKeys] = useState({
@@ -39,6 +40,7 @@ export default function SettingsView() {
     openrouter: '',
     fireworks: '',
     baseten: '',
+    openaiCompatible: '',
     kimi: '',
   });
   const [apiKeyStatus, setApiKeyStatus] = useState({
@@ -49,6 +51,7 @@ export default function SettingsView() {
     openrouter: false,
     fireworks: false,
     baseten: false,
+    openaiCompatible: false,
     kimi: false,
   });
   const [apiKeyVisibility, setApiKeyVisibility] = useState({
@@ -59,6 +62,7 @@ export default function SettingsView() {
     openrouter: false,
     fireworks: false,
     baseten: false,
+    openaiCompatible: false,
     kimi: false,
   });
   const [apiKeySaving, setApiKeySaving] = useState(false);
@@ -125,6 +129,7 @@ export default function SettingsView() {
     enabled: boolean;
     baseUrl: string;
     models: string[];
+    compatibilityMode?: string;
     reasoningEffort?: string;
     temperature?: number;
     maxTokens?: number;
@@ -194,6 +199,7 @@ export default function SettingsView() {
         enabled: value.enabled !== false,
         baseUrl: value.baseUrl || value.base_url || '',
         models: Array.isArray(value.models) ? value.models : [],
+        compatibilityMode: value.compatibilityMode || value.compatibility_mode || '',
         reasoningEffort: value.reasoningEffort || value.reasoning_effort || '',
         temperature: typeof value.temperature === 'number' ? value.temperature : undefined,
         maxTokens: typeof value.maxTokens === 'number' ? value.maxTokens : (typeof value.max_tokens === 'number' ? value.max_tokens : undefined),
@@ -208,6 +214,7 @@ export default function SettingsView() {
         enabled: providerConfig.enabled,
         base_url: providerConfig.baseUrl,
         models: providerConfig.models,
+        ...(providerConfig.compatibilityMode ? { compatibility_mode: providerConfig.compatibilityMode } : {}),
         ...(providerConfig.reasoningEffort ? { reasoning_effort: providerConfig.reasoningEffort } : {}),
         ...(typeof providerConfig.temperature === 'number' ? { temperature: providerConfig.temperature } : {}),
         ...(typeof providerConfig.maxTokens === 'number' ? { max_tokens: providerConfig.maxTokens } : {}),
@@ -240,6 +247,7 @@ export default function SettingsView() {
         openrouter: keys.find((k: any) => k.provider === 'openrouter')?.masked_key || '',
         fireworks: keys.find((k: any) => k.provider === 'fireworks')?.masked_key || '',
         baseten: keys.find((k: any) => k.provider === 'baseten')?.masked_key || '',
+        openaiCompatible: keys.find((k: any) => k.provider === 'openai_compatible')?.masked_key || '',
         kimi: keys.find((k: any) => k.provider === 'kimi')?.masked_key || '',
       };
       setApiKeyStatus({
@@ -250,6 +258,7 @@ export default function SettingsView() {
         openrouter: keys.find((k: any) => k.provider === 'openrouter')?.is_set || false,
         fireworks: keys.find((k: any) => k.provider === 'fireworks')?.is_set || false,
         baseten: keys.find((k: any) => k.provider === 'baseten')?.is_set || false,
+        openaiCompatible: keys.find((k: any) => k.provider === 'openai_compatible')?.is_set || false,
         kimi: keys.find((k: any) => k.provider === 'kimi')?.is_set || false,
       });
       setStoredMaskedApiKeys(maskedApiKeys);
@@ -445,7 +454,13 @@ export default function SettingsView() {
     openrouter: 'openrouter',
     fireworks: 'fireworks',
     baseten: 'baseten',
+    openaiCompatible: 'openai_compatible',
     kimi: 'kimi',
+  };
+
+  const getProviderApiStateKey = (providerKey: string): keyof typeof apiKeys => {
+    if (providerKey === 'openai_compatible') return 'openaiCompatible';
+    return providerKey as keyof typeof apiKeys;
   };
 
   const clearStoredApiKey = async (
@@ -493,6 +508,7 @@ export default function SettingsView() {
       if (apiKeys.openrouter && apiKeys.openrouter !== storedMaskedApiKeys.openrouter) providerApiKeys.openrouter_api_key = apiKeys.openrouter;
       if (apiKeys.fireworks && apiKeys.fireworks !== storedMaskedApiKeys.fireworks) providerApiKeys.fireworks_api_key = apiKeys.fireworks;
       if (apiKeys.baseten && apiKeys.baseten !== storedMaskedApiKeys.baseten) providerApiKeys.baseten_api_key = apiKeys.baseten;
+      if (apiKeys.openaiCompatible && apiKeys.openaiCompatible !== storedMaskedApiKeys.openaiCompatible) providerApiKeys.openai_compatible_api_key = apiKeys.openaiCompatible;
       if (apiKeys.kimi && apiKeys.kimi !== storedMaskedApiKeys.kimi) providerApiKeys.kimi_api_key = apiKeys.kimi;
 
       if (Object.keys(providerApiKeys).length > 0) {
@@ -503,6 +519,7 @@ export default function SettingsView() {
           openrouter: apiKeyStatus.openrouter || !!apiKeys.openrouter,
           fireworks: apiKeyStatus.fireworks || !!apiKeys.fireworks,
           baseten: apiKeyStatus.baseten || !!apiKeys.baseten,
+          openaiCompatible: apiKeyStatus.openaiCompatible || !!apiKeys.openaiCompatible,
           kimi: apiKeyStatus.kimi || !!apiKeys.kimi,
         });
       }
@@ -1105,6 +1122,7 @@ export default function SettingsView() {
                             openrouter: apiKeyStatus.openrouter,
                             fireworks: apiKeyStatus.fireworks,
                             baseten: apiKeyStatus.baseten,
+                            openaiCompatible: apiKeyStatus.openaiCompatible,
                             kimi: apiKeyStatus.kimi,
                           });
                           setApiKeySaveMessage('API keys saved successfully!');
@@ -1154,7 +1172,7 @@ export default function SettingsView() {
                         Additional Model Providers
                       </h3>
                       <p className="text-xs mt-1" style={{ color: 'var(--color-text-muted)' }}>
-                        Configure provider-specific routing surfaces beyond the built-in shared keys. This covers Azure OpenAI, OpenRouter, Fireworks, Baseten, and kimi-for-coding while Ollama remains under Local Models.
+                        Configure provider-specific routing surfaces beyond the built-in shared keys. This covers Azure OpenAI, OpenRouter, Fireworks, Baseten, and a generic OpenAI-compatible endpoint while Ollama remains under Local Models.
                       </p>
                     </div>
                     <div className="flex items-center gap-2">
@@ -1186,6 +1204,7 @@ export default function SettingsView() {
                               enabled: true,
                               baseUrl: providerMeta.baseUrl,
                               models: providerMeta.placeholderModels,
+                              compatibilityMode: providerToAdd === 'openai_compatible' ? 'generic' : undefined,
                               reasoningEffort: providerToAdd === 'kimi' ? 'medium' : undefined,
                               temperature: providerToAdd === 'kimi' ? 0.0 : undefined,
                               maxTokens: providerToAdd === 'kimi' ? 32768 : undefined,
@@ -1374,6 +1393,7 @@ export default function SettingsView() {
                     <div className="space-y-4">
                       {Object.entries(providerConfigs).map(([providerKey, providerConfig]) => {
                         const providerMeta = ADDITIONAL_PROVIDER_CATALOG[providerKey];
+                        const providerApiStateKey = getProviderApiStateKey(providerKey);
                         return (
                           <div key={providerKey} className="rounded-lg border border-gray-200 dark:border-border-dark p-4 space-y-3">
                             <div className="flex items-start justify-between gap-3">
@@ -1415,15 +1435,47 @@ export default function SettingsView() {
 
                               <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
                               <div className="md:col-span-2">
+                                {providerKey === 'openai_compatible' && (
+                                  <div className="mb-3 grid grid-cols-1 md:grid-cols-2 gap-3">
+                                    <div>
+                                      <label className="text-xs font-medium" style={{ color: 'var(--color-text-muted)' }}>
+                                        Compatibility Mode
+                                      </label>
+                                      <select
+                                        value={providerConfig.compatibilityMode || 'generic'}
+                                        onChange={(e) => setProviderConfigs({
+                                          ...providerConfigs,
+                                          [providerKey]: {
+                                            ...providerConfig,
+                                            compatibilityMode: e.target.value,
+                                            baseUrl: e.target.value === 'kimi' ? 'https://api.kimi.com/coding/v1' : providerConfig.baseUrl,
+                                            models: e.target.value === 'kimi' && (!providerConfig.models || providerConfig.models.length === 0)
+                                              ? ['kimi-for-coding']
+                                              : providerConfig.models,
+                                            reasoningEffort: e.target.value === 'kimi' ? (providerConfig.reasoningEffort || 'medium') : providerConfig.reasoningEffort,
+                                          },
+                                        })}
+                                        className="mt-1 w-full px-3 py-2 text-sm border border-gray-300 dark:border-border-dark rounded-lg focus:outline-none focus:ring-2 focus:ring-primary"
+                                        style={{
+                                          backgroundColor: 'var(--color-input-background)',
+                                          color: 'var(--color-text-primary)'
+                                        }}
+                                      >
+                                        <option value="generic">Generic</option>
+                                        <option value="kimi">Kimi preset</option>
+                                      </select>
+                                    </div>
+                                  </div>
+                                )}
                                 <label className="text-xs font-medium" style={{ color: 'var(--color-text-muted)' }}>
                                   API Key
                                 </label>
                                 <div className="mt-1 flex items-stretch gap-2">
                                   <input
-                                    type={getApiKeyInputType(providerKey as keyof typeof apiKeys)}
-                                    value={apiKeys[providerKey as keyof typeof apiKeys]}
-                                    onChange={(e) => setApiKeys({ ...apiKeys, [providerKey]: e.target.value })}
-                                    placeholder={apiKeyStatus[providerKey as keyof typeof apiKeyStatus] ? 'Enter new key to replace existing' : `${providerMeta?.label || providerKey} API key`}
+                                    type={getApiKeyInputType(providerApiStateKey)}
+                                    value={apiKeys[providerApiStateKey]}
+                                    onChange={(e) => setApiKeys({ ...apiKeys, [providerApiStateKey]: e.target.value })}
+                                    placeholder={apiKeyStatus[providerApiStateKey] ? 'Enter new key to replace existing' : `${providerMeta?.label || providerKey} API key`}
                                     className="w-full px-3 py-2 text-sm border border-gray-300 dark:border-border-dark rounded-lg focus:outline-none focus:ring-2 focus:ring-primary font-mono"
                                     style={{
                                       backgroundColor: 'var(--color-input-background)',
@@ -1432,19 +1484,19 @@ export default function SettingsView() {
                                   />
                                   <button
                                     type="button"
-                                    onClick={() => setApiKeyVisibility({ ...apiKeyVisibility, [providerKey]: !apiKeyVisibility[providerKey as keyof typeof apiKeyVisibility] })}
-                                    disabled={isStoredMaskedValue(providerKey as keyof typeof apiKeys)}
+                                    onClick={() => setApiKeyVisibility({ ...apiKeyVisibility, [providerApiStateKey]: !apiKeyVisibility[providerApiStateKey] })}
+                                    disabled={isStoredMaskedValue(providerApiStateKey)}
                                     className="px-3 py-2 text-sm border border-gray-300 dark:border-border-dark rounded-lg hover:bg-gray-50 dark:hover:bg-panel-dark/80 transition-colors"
                                     style={{ color: 'var(--color-text-primary)' }}
                                   >
-                                    {isStoredMaskedValue(providerKey as keyof typeof apiKeys)
+                                    {isStoredMaskedValue(providerApiStateKey)
                                       ? 'Stored'
-                                      : (apiKeyVisibility[providerKey as keyof typeof apiKeyVisibility] ? 'Hide' : 'Show')}
+                                      : (apiKeyVisibility[providerApiStateKey] ? 'Hide' : 'Show')}
                                   </button>
-                                  {apiKeyStatus[providerKey as keyof typeof apiKeyStatus] && (
+                                  {apiKeyStatus[providerApiStateKey] && (
                                     <button
                                       type="button"
-                                      onClick={() => clearStoredApiKey(providerKey as keyof typeof apiKeys, 'provider')}
+                                      onClick={() => clearStoredApiKey(providerApiStateKey, 'provider')}
                                       className="px-3 py-2 text-sm border border-red-200 rounded-lg text-red-600 hover:bg-red-50 dark:hover:bg-red-900/20 transition-colors"
                                     >
                                       Clear
@@ -1452,7 +1504,7 @@ export default function SettingsView() {
                                   )}
                                 </div>
                                 <p className="text-xs mt-1" style={{ color: 'var(--color-text-muted)' }}>
-                                  {apiKeyStatus[providerKey as keyof typeof apiKeyStatus] ? 'Configured. Enter a new key to replace the stored one.' : 'Required to activate this provider in model selection.'}
+                                  {apiKeyStatus[providerApiStateKey] ? 'Configured. Enter a new key to replace the stored one.' : 'Required to activate this provider in model selection.'}
                                 </p>
                               </div>
 
@@ -1501,7 +1553,7 @@ export default function SettingsView() {
                                 </p>
                               </div>
 
-                              {providerKey === 'kimi' && (
+                              {(providerKey === 'kimi' || (providerKey === 'openai_compatible' && providerConfig.compatibilityMode === 'kimi')) && (
                                 <>
                                   <div>
                                     <label className="text-xs font-medium" style={{ color: 'var(--color-text-muted)' }}>

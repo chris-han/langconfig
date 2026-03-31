@@ -92,6 +92,11 @@ interface Agent {
   enable_rag?: boolean;
   requires_human_approval?: boolean;
   tags?: string[];
+  use_deepagents?: boolean;
+  subagents?: any[];
+  subagents_config?: any[];
+  deep_agent_template_id?: number | null;
+  config?: Partial<NodeData['config']>;
 }
 
 interface NodeData {
@@ -122,8 +127,12 @@ interface NodeData {
     context_window_size?: number;
     banked_message_ids?: string[];
     // DeepAgent support
+    use_deepagents?: boolean;
     subagents?: any[];
     middleware?: any[];
+    tool_type?: string | null;
+    tool_id?: string | null;
+    tool_params?: Record<string, any>;
   };
   executionStatus?: NodeExecutionStatus;
 }
@@ -146,6 +155,29 @@ export interface WorkflowCanvasRef {
   saveWorkflow: (silent?: boolean) => Promise<void>;
   hasUnsavedChanges: () => boolean;
   clearCanvas: () => void;
+}
+
+function getDeepAgentTemplateId(agent: Agent): number | null {
+  if (typeof agent.deep_agent_template_id === 'number' && Number.isFinite(agent.deep_agent_template_id)) {
+    return agent.deep_agent_template_id;
+  }
+
+  const rawId = String(agent.id ?? '').trim();
+  if (/^\d+$/.test(rawId)) {
+    return parseInt(rawId, 10);
+  }
+
+  const customMatch = rawId.match(/^custom_(\d+)$/);
+  if (customMatch) {
+    return parseInt(customMatch[1], 10);
+  }
+
+  const nestedTemplateId = (agent as any).config?.deep_agent_template_id;
+  if (typeof nestedTemplateId === 'number' && Number.isFinite(nestedTemplateId)) {
+    return nestedTemplateId;
+  }
+
+  return null;
 }
 
 // Recipe type for multi-node workflow templates
@@ -1322,6 +1354,25 @@ if __name__ == "__main__":
         newPosition = { x: 250, y: 250 };
       }
 
+      const deepAgentTemplateId = getDeepAgentTemplateId(selectedAgent);
+      const selectedAgentConfig = (selectedAgent.config || {}) as Partial<NodeData['config']>;
+      const enableRag =
+        selectedAgentConfig.enable_rag ?? selectedAgent.enable_rag ?? false;
+      const requiresHumanApproval =
+        selectedAgentConfig.requires_human_approval ?? selectedAgent.requires_human_approval ?? false;
+      const useDeepAgents =
+        selectedAgentConfig.use_deepagents ??
+        selectedAgent.use_deepagents ??
+        ((selectedAgent as any).config?.use_deepagents) ??
+        (((selectedAgent as any).subagents?.length ?? 0) > 0) ??
+        (((selectedAgent as any).subagents_config?.length ?? 0) > 0) ??
+        false;
+      const subagents =
+        selectedAgentConfig.subagents ??
+        (selectedAgent as any).subagents ??
+        (selectedAgent as any).subagents_config ??
+        [];
+
       const newNode: Node = {
         id: `node-${nodeIdCounter}`,
         type: 'custom',
@@ -1330,39 +1381,36 @@ if __name__ == "__main__":
           label: selectedAgent.name,
           agentType: selectedAgent.id,
           model: selectedAgent.model,
-          // Add full agent config as expected by backend (simple_executor.py line 178)
+          // Start from the saved library config so provider/model/tool metadata survives workflow insertion.
           config: {
-            model: selectedAgent.model,
-            fallback_models: selectedAgent.fallback_models || [],
-            temperature: selectedAgent.temperature,
-            max_tokens: selectedAgent.max_tokens,
-            system_prompt: selectedAgent.system_prompt,
+            ...selectedAgentConfig,
+            model: selectedAgentConfig.model || selectedAgent.model,
+            fallback_models: selectedAgentConfig.fallback_models || selectedAgent.fallback_models || [],
+            temperature: selectedAgentConfig.temperature ?? selectedAgent.temperature,
+            max_tokens: selectedAgentConfig.max_tokens ?? selectedAgent.max_tokens,
+            system_prompt: selectedAgentConfig.system_prompt || selectedAgent.system_prompt,
             // Built-in tools
-            native_tools: selectedAgent.native_tools || [],
-            tools: [], // legacy
-            cli_tools: selectedAgent.cli_tools || [],
-            custom_tools: selectedAgent.custom_tools || [],  // User-created custom tools
-            timeout_seconds: selectedAgent.timeout_seconds,
-            max_retries: selectedAgent.max_retries,
-            enable_model_routing: selectedAgent.enable_model_routing,
-            enable_parallel_tools: selectedAgent.enable_parallel_tools,
-            enable_memory: selectedAgent.enable_memory,
-            enable_rag: selectedAgent.enable_rag || false,
-            requires_human_approval: selectedAgent.requires_human_approval || false,
+            native_tools: selectedAgentConfig.native_tools || selectedAgent.native_tools || [],
+            tools: selectedAgentConfig.tools || [], // legacy
+            cli_tools: selectedAgentConfig.cli_tools || selectedAgent.cli_tools || [],
+            custom_tools: selectedAgentConfig.custom_tools || selectedAgent.custom_tools || [],
+            timeout_seconds: selectedAgentConfig.timeout_seconds ?? selectedAgent.timeout_seconds,
+            max_retries: selectedAgentConfig.max_retries ?? selectedAgent.max_retries,
+            enable_model_routing: selectedAgentConfig.enable_model_routing ?? selectedAgent.enable_model_routing,
+            enable_parallel_tools: selectedAgentConfig.enable_parallel_tools ?? selectedAgent.enable_parallel_tools,
+            enable_memory: selectedAgentConfig.enable_memory ?? selectedAgent.enable_memory,
+            enable_rag: enableRag,
+            requires_human_approval: requiresHumanApproval,
             // DeepAgent configuration - check multiple sources for compatibility
             // Deep agents return use_deepagents at top-level AND in config
-            use_deepagents: (selectedAgent as any).use_deepagents ||
-              (selectedAgent as any).config?.use_deepagents ||
-              ((selectedAgent as any).subagents?.length > 0) ||
-              ((selectedAgent as any).subagents_config?.length > 0) ||
-              false,
-            subagents: (selectedAgent as any).subagents || (selectedAgent as any).subagents_config || [],
+            use_deepagents: useDeepAgents,
+            subagents,
             // Track original library agent for updates (preserves chat context)
-            deep_agent_template_id: (selectedAgent as any).id || null,
+            deep_agent_template_id: deepAgentTemplateId,
             // Tool Node configuration (instance-specific)
-            tool_type: null,
-            tool_id: null,
-            tool_params: {}
+            tool_type: selectedAgentConfig.tool_type ?? null,
+            tool_id: selectedAgentConfig.tool_id ?? null,
+            tool_params: selectedAgentConfig.tool_params || {}
           },
         },
       };

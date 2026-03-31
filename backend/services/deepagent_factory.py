@@ -217,8 +217,15 @@ class DeepAgentFactory:
 
         # Create DeepAgent with all components
         try:
+            resolved_model = await AgentFactory._create_llm(
+                config.model,
+                config.temperature,
+                config.max_tokens,
+                config.model_dump()
+            )
+
             agent_kwargs = {
-                "model": config.model,
+                "model": resolved_model,
                 "tools": all_tools,
                 "system_prompt": config.system_prompt,
                 "middleware": middleware_instances if middleware_instances else None,
@@ -407,7 +414,14 @@ class DeepAgentFactory:
                 }
 
                 if sub_config.model:
-                    subagent["model"] = sub_config.model
+                    subagent["model"] = await AgentFactory._create_llm(
+                        sub_config.model,
+                        0.0,
+                        None,
+                        {
+                            "streaming": True,
+                        }
+                    )
 
                 if sub_config.interrupt_on:
                     subagent["interrupt_on"] = sub_config.interrupt_on
