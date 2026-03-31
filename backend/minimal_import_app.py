@@ -327,7 +327,7 @@ def get_api_keys(db: Session = Depends(get_db)) -> List[dict]:
     providers = ["openai", "azure_openai", "anthropic", "google", "cohere", "replicate"]
     env_fallbacks = {
         "openai": os.getenv("OPENAI_API_KEY"),
-        "azure_openai": os.getenv("AZURE_OPENAI_API_KEY"),
+        "azure_openai": None,
         "anthropic": os.getenv("ANTHROPIC_API_KEY"),
         "google": os.getenv("GOOGLE_API_KEY") or os.getenv("GEMINI_API_KEY"),
         "cohere": os.getenv("COHERE_API_KEY"),

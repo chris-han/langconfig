@@ -91,12 +91,12 @@ def initialize_llama_index_settings(
         if not LLAMAINDEX_AVAILABLE or Settings is None:
             raise RuntimeError("LlamaIndex core/vector store dependencies are not installed")
 
-        embedding_model = app_settings.EMBEDDING_MODEL or os.getenv("EMBEDDING_MODEL") or "text-embedding-3-small"
+        embedding_model = app_settings.EMBEDDING_MODEL or "text-embedding-3-small"
         openai_api_key = app_settings.OPENAI_API_KEY or os.getenv("OPENAI_API_KEY")
         azure_api_key = app_settings.AZURE_OPENAI_API_KEY
-        azure_endpoint = app_settings.AZURE_OPENAI_ENDPOINT or os.getenv("AZURE_OPENAI_ENDPOINT")
-        azure_api_version = app_settings.AZURE_OPENAI_API_VERSION or os.getenv("AZURE_OPENAI_API_VERSION", "2024-05-01-preview")
-        azure_deployment = app_settings.AZURE_OPENAI_EMBEDDING_DEPLOYMENT or os.getenv("AZURE_OPENAI_EMBEDDING_DEPLOYMENT")
+        azure_endpoint = app_settings.AZURE_OPENAI_ENDPOINT
+        azure_api_version = app_settings.AZURE_OPENAI_API_VERSION or "2024-05-01-preview"
+        azure_deployment = app_settings.AZURE_OPENAI_EMBEDDING_DEPLOYMENT
         azure_embedding_dimension = app_settings.AZURE_OPENAI_EMBEDDING_DIMENSIONS
 
         if azure_endpoint and azure_api_key and azure_deployment and AzureOpenAIEmbedding:

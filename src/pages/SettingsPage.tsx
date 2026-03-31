@@ -32,6 +32,12 @@ export default function SettingsView() {
     azureOpenAI: false,
     google: false,
   });
+  const [apiKeyVisibility, setApiKeyVisibility] = useState({
+    anthropic: false,
+    openai: false,
+    azureOpenAI: false,
+    google: false,
+  });
   const [apiKeySaving, setApiKeySaving] = useState(false);
   const [apiKeySaveMessage, setApiKeySaveMessage] = useState<string | null>(null);
 
@@ -89,14 +95,36 @@ export default function SettingsView() {
     chunkOverlap: number;
   }
 
-  // Local Models state - start with null, load from backend
-  const [localModelsSettings, setLocalModelsSettings] = useState<LocalModelsSettings | null>(null);
+  // Local Models state - initialize with safe defaults so the page can render even if one endpoint fails
+  const [localModelsSettings, setLocalModelsSettings] = useState<LocalModelsSettings>({
+    provider: 'ollama',
+    baseUrl: 'http://localhost:11434/v1',
+    modelName: 'llama3.2:latest',
+    apiKey: ''
+  });
 
-  // Local Workspace state - start with null, load from backend
-  const [workspaceSettings, setWorkspaceSettings] = useState<WorkspaceSettings | null>(null);
+  // Local Workspace state - initialize with safe defaults so the page can render even if one endpoint fails
+  const [workspaceSettings, setWorkspaceSettings] = useState<WorkspaceSettings>({
+    workspacePath: '',
+    allowRead: true,
+    allowWrite: true,
+    requireApproval: true,
+    autoDetectGit: true,
+    backupBeforeEdit: true
+  });
 
-  // Model Defaults state - start with null, load from backend
-  const [modelDefaultsSettings, setModelDefaultsSettings] = useState<ModelDefaultsSettings | null>(null);
+  // Model Defaults state - initialize with safe defaults so the page can render even if one endpoint fails
+  const [modelDefaultsSettings, setModelDefaultsSettings] = useState<ModelDefaultsSettings>({
+    primaryModel: 'gpt-4o',
+    fallbackModels: ['claude-sonnet-4-5'],
+    temperature: 0.7,
+    maxTokens: 4096,
+    topP: 1.0,
+    routingStrategy: 'balanced',
+    dailyTokenLimit: 0,
+    monthlyTokenLimit: 0,
+    alertThreshold: 80
+  });
 
   // General settings state - start with null, load from backend
   const [generalSettings, setGeneralSettings] = useState<GeneralSettings>({
@@ -111,8 +139,16 @@ export default function SettingsView() {
     storagePath: ''
   });
 
-  // RAG settings state - start with null, load from backend
-  const [ragSettings, setRagSettings] = useState<RagSettings | null>(null);
+  // RAG settings state - initialize with safe defaults so the page can render even if one endpoint fails
+  const [ragSettings, setRagSettings] = useState<RagSettings>({
+    embeddingModel: 'text-embedding-3-small',
+    azureOpenAIEndpoint: '',
+    azureOpenAIApiVersion: '2024-05-01-preview',
+    azureOpenAIEmbeddingDeployment: '',
+    azureOpenAIEmbeddingDimensions: 1536,
+    chunkSize: 1000,
+    chunkOverlap: 200
+  });
 
   useEffect(() => {
     const abortController = new AbortController();
@@ -258,7 +294,6 @@ export default function SettingsView() {
             break;
 
           case 'general':
-            if (!generalSettings) return;
             await apiClient.updateGeneralSettings({
               app_name: generalSettings.appName,
               auto_save: generalSettings.autoSave,
@@ -270,21 +305,18 @@ export default function SettingsView() {
               log_level: generalSettings.logLevel
             });
             // Also save RAG settings to main settings endpoint
-            if (ragSettings) {
-              await apiClient.updateSettings({
-                embedding_model: ragSettings.embeddingModel,
-                azure_openai_endpoint: ragSettings.azureOpenAIEndpoint || null,
-                azure_openai_api_version: ragSettings.azureOpenAIApiVersion,
-                azure_openai_embedding_deployment: ragSettings.azureOpenAIEmbeddingDeployment || null,
-                azure_openai_embedding_dimensions: ragSettings.azureOpenAIEmbeddingDimensions || null,
-                chunk_size: ragSettings.chunkSize,
-                chunk_overlap: ragSettings.chunkOverlap
-              });
-            }
+            await apiClient.updateSettings({
+              embedding_model: ragSettings.embeddingModel,
+              azure_openai_endpoint: ragSettings.azureOpenAIEndpoint || null,
+              azure_openai_api_version: ragSettings.azureOpenAIApiVersion,
+              azure_openai_embedding_deployment: ragSettings.azureOpenAIEmbeddingDeployment || null,
+              azure_openai_embedding_dimensions: ragSettings.azureOpenAIEmbeddingDimensions || null,
+              chunk_size: ragSettings.chunkSize,
+              chunk_overlap: ragSettings.chunkOverlap
+            });
             break;
 
           case 'local-models':
-            if (!localModelsSettings) return;
             await apiClient.updateLocalModelsSettings({
               provider: localModelsSettings.provider,
               base_url: localModelsSettings.baseUrl,
@@ -294,7 +326,6 @@ export default function SettingsView() {
             break;
 
           case 'local-workspace':
-            if (!workspaceSettings) return;
             await apiClient.updateWorkspaceSettings({
               workspace_path: workspaceSettings.workspacePath,
               allow_read: workspaceSettings.allowRead,
@@ -306,7 +337,6 @@ export default function SettingsView() {
             break;
 
           case 'model-defaults':
-            if (!modelDefaultsSettings) return;
             await apiClient.updateModelDefaultsSettings({
               primary_model: modelDefaultsSettings.primaryModel,
               fallback_models: modelDefaultsSettings.fallbackModels,
@@ -498,10 +528,8 @@ export default function SettingsView() {
                       <select
                         value={ragSettings?.embeddingModel || 'text-embedding-3-small'}
                         onChange={(e) => {
-                          if (ragSettings) {
-                            setRagSettings({ ...ragSettings, embeddingModel: e.target.value });
-                            autoSave('general');
-                          }
+                          setRagSettings({ ...ragSettings, embeddingModel: e.target.value });
+                          autoSave('general');
                         }}
                         className="w-full px-3 py-1.5 text-sm border border-gray-300 dark:border-border-dark rounded-lg focus:outline-none focus:ring-2 focus:ring-primary"
                         style={{
@@ -531,10 +559,8 @@ export default function SettingsView() {
                             type="url"
                             value={ragSettings?.azureOpenAIEndpoint || ''}
                             onChange={(e) => {
-                              if (ragSettings) {
-                                setRagSettings({ ...ragSettings, azureOpenAIEndpoint: e.target.value });
-                                autoSave('general');
-                              }
+                              setRagSettings({ ...ragSettings, azureOpenAIEndpoint: e.target.value });
+                              autoSave('general');
                             }}
                             placeholder="https://your-resource.openai.azure.com/"
                             className="w-full px-3 py-1.5 text-sm border border-gray-300 dark:border-border-dark rounded-lg focus:outline-none focus:ring-2 focus:ring-primary"
@@ -553,10 +579,8 @@ export default function SettingsView() {
                             type="text"
                             value={ragSettings?.azureOpenAIApiVersion || '2024-05-01-preview'}
                             onChange={(e) => {
-                              if (ragSettings) {
-                                setRagSettings({ ...ragSettings, azureOpenAIApiVersion: e.target.value });
-                                autoSave('general');
-                              }
+                              setRagSettings({ ...ragSettings, azureOpenAIApiVersion: e.target.value });
+                              autoSave('general');
                             }}
                             placeholder="2024-05-01-preview"
                             className="w-full px-3 py-1.5 text-sm border border-gray-300 dark:border-border-dark rounded-lg focus:outline-none focus:ring-2 focus:ring-primary font-mono"
@@ -575,10 +599,8 @@ export default function SettingsView() {
                             type="text"
                             value={ragSettings?.azureOpenAIEmbeddingDeployment || ''}
                             onChange={(e) => {
-                              if (ragSettings) {
-                                setRagSettings({ ...ragSettings, azureOpenAIEmbeddingDeployment: e.target.value });
-                                autoSave('general');
-                              }
+                              setRagSettings({ ...ragSettings, azureOpenAIEmbeddingDeployment: e.target.value });
+                              autoSave('general');
                             }}
                             placeholder="text-embedding-3-small"
                             className="w-full px-3 py-1.5 text-sm border border-gray-300 dark:border-border-dark rounded-lg focus:outline-none focus:ring-2 focus:ring-primary font-mono"
@@ -599,13 +621,11 @@ export default function SettingsView() {
                             step="1"
                             value={ragSettings?.azureOpenAIEmbeddingDimensions || 1536}
                             onChange={(e) => {
-                              if (ragSettings) {
-                                setRagSettings({
-                                  ...ragSettings,
-                                  azureOpenAIEmbeddingDimensions: parseInt(e.target.value) || 1536
-                                });
-                                autoSave('general');
-                              }
+                              setRagSettings({
+                                ...ragSettings,
+                                azureOpenAIEmbeddingDimensions: parseInt(e.target.value) || 1536
+                              });
+                              autoSave('general');
                             }}
                             className="w-full px-3 py-1.5 text-sm border border-gray-300 dark:border-border-dark rounded-lg focus:outline-none focus:ring-2 focus:ring-primary"
                             style={{
@@ -616,7 +636,7 @@ export default function SettingsView() {
                         </div>
 
                         <p className="text-xs leading-relaxed" style={{ color: 'var(--color-text-muted)' }}>
-                          Endpoint, API version, and deployment are saved in LangConfig settings so runtime embedding initialization can use Azure OpenAI. API key remains env-backed.
+                          Endpoint, API version, deployment, and API key are all managed in LangConfig settings so Azure OpenAI embedding initialization is fully DB-backed.
                         </p>
                       </div>
                     </div>
@@ -754,17 +774,27 @@ export default function SettingsView() {
                       </span>
                     )}
                   </div>
-                  <input
-                    type="password"
-                    value={apiKeys.anthropic}
-                    onChange={(e) => setApiKeys({ ...apiKeys, anthropic: e.target.value })}
-                    placeholder={apiKeyStatus.anthropic ? "Enter new key to replace existing" : "sk-ant-..."}
-                    className="w-full px-3 py-2 text-sm border border-gray-300 dark:border-border-dark rounded-lg focus:outline-none focus:ring-2 focus:ring-primary font-mono"
-                    style={{
-                      backgroundColor: 'var(--color-input-background)',
-                      color: 'var(--color-text-primary)'
-                    }}
-                  />
+                  <div className="flex items-stretch gap-2">
+                    <input
+                      type={apiKeyVisibility.anthropic ? 'text' : 'password'}
+                      value={apiKeys.anthropic}
+                      onChange={(e) => setApiKeys({ ...apiKeys, anthropic: e.target.value })}
+                      placeholder={apiKeyStatus.anthropic ? "Enter new key to replace existing" : "sk-ant-..."}
+                      className="w-full px-3 py-2 text-sm border border-gray-300 dark:border-border-dark rounded-lg focus:outline-none focus:ring-2 focus:ring-primary font-mono"
+                      style={{
+                        backgroundColor: 'var(--color-input-background)',
+                        color: 'var(--color-text-primary)'
+                      }}
+                    />
+                    <button
+                      type="button"
+                      onClick={() => setApiKeyVisibility({ ...apiKeyVisibility, anthropic: !apiKeyVisibility.anthropic })}
+                      className="px-3 py-2 text-sm border border-gray-300 dark:border-border-dark rounded-lg hover:bg-gray-50 dark:hover:bg-panel-dark/80 transition-colors"
+                      style={{ color: 'var(--color-text-primary)' }}
+                    >
+                      {apiKeyVisibility.anthropic ? 'Hide' : 'Show'}
+                    </button>
+                  </div>
                   <p className="text-xs mt-1" style={{ color: 'var(--color-text-muted)' }}>
                     Required for Claude models (claude-sonnet-4-5, claude-haiku-4-5, etc.)
                   </p>
@@ -787,17 +817,27 @@ export default function SettingsView() {
                       </span>
                     )}
                   </div>
-                  <input
-                    type="password"
-                    value={apiKeys.openai}
-                    onChange={(e) => setApiKeys({ ...apiKeys, openai: e.target.value })}
-                    placeholder={apiKeyStatus.openai ? "Enter new key to replace existing" : "sk-..."}
-                    className="w-full px-3 py-2 text-sm border border-gray-300 dark:border-border-dark rounded-lg focus:outline-none focus:ring-2 focus:ring-primary font-mono"
-                    style={{
-                      backgroundColor: 'var(--color-input-background)',
-                      color: 'var(--color-text-primary)'
-                    }}
-                  />
+                  <div className="flex items-stretch gap-2">
+                    <input
+                      type={apiKeyVisibility.openai ? 'text' : 'password'}
+                      value={apiKeys.openai}
+                      onChange={(e) => setApiKeys({ ...apiKeys, openai: e.target.value })}
+                      placeholder={apiKeyStatus.openai ? "Enter new key to replace existing" : "sk-..."}
+                      className="w-full px-3 py-2 text-sm border border-gray-300 dark:border-border-dark rounded-lg focus:outline-none focus:ring-2 focus:ring-primary font-mono"
+                      style={{
+                        backgroundColor: 'var(--color-input-background)',
+                        color: 'var(--color-text-primary)'
+                      }}
+                    />
+                    <button
+                      type="button"
+                      onClick={() => setApiKeyVisibility({ ...apiKeyVisibility, openai: !apiKeyVisibility.openai })}
+                      className="px-3 py-2 text-sm border border-gray-300 dark:border-border-dark rounded-lg hover:bg-gray-50 dark:hover:bg-panel-dark/80 transition-colors"
+                      style={{ color: 'var(--color-text-primary)' }}
+                    >
+                      {apiKeyVisibility.openai ? 'Hide' : 'Show'}
+                    </button>
+                  </div>
                   <p className="text-xs mt-1" style={{ color: 'var(--color-text-muted)' }}>
                     Required for GPT models (gpt-4o, gpt-4o-mini, gpt-4-turbo, etc.)
                   </p>
@@ -820,17 +860,27 @@ export default function SettingsView() {
                       </span>
                     )}
                   </div>
-                  <input
-                    type="password"
-                    value={apiKeys.google}
-                    onChange={(e) => setApiKeys({ ...apiKeys, google: e.target.value })}
-                    placeholder={apiKeyStatus.google ? "Enter new key to replace existing" : "AIza..."}
-                    className="w-full px-3 py-2 text-sm border border-gray-300 dark:border-border-dark rounded-lg focus:outline-none focus:ring-2 focus:ring-primary font-mono"
-                    style={{
-                      backgroundColor: 'var(--color-input-background)',
-                      color: 'var(--color-text-primary)'
-                    }}
-                  />
+                  <div className="flex items-stretch gap-2">
+                    <input
+                      type={apiKeyVisibility.google ? 'text' : 'password'}
+                      value={apiKeys.google}
+                      onChange={(e) => setApiKeys({ ...apiKeys, google: e.target.value })}
+                      placeholder={apiKeyStatus.google ? "Enter new key to replace existing" : "AIza..."}
+                      className="w-full px-3 py-2 text-sm border border-gray-300 dark:border-border-dark rounded-lg focus:outline-none focus:ring-2 focus:ring-primary font-mono"
+                      style={{
+                        backgroundColor: 'var(--color-input-background)',
+                        color: 'var(--color-text-primary)'
+                      }}
+                    />
+                    <button
+                      type="button"
+                      onClick={() => setApiKeyVisibility({ ...apiKeyVisibility, google: !apiKeyVisibility.google })}
+                      className="px-3 py-2 text-sm border border-gray-300 dark:border-border-dark rounded-lg hover:bg-gray-50 dark:hover:bg-panel-dark/80 transition-colors"
+                      style={{ color: 'var(--color-text-primary)' }}
+                    >
+                      {apiKeyVisibility.google ? 'Hide' : 'Show'}
+                    </button>
+                  </div>
                   <p className="text-xs mt-1" style={{ color: 'var(--color-text-muted)' }}>
                     Required for Gemini models (gemini-2.5-pro, gemini-2.5-flash, etc.)
                   </p>
@@ -853,20 +903,145 @@ export default function SettingsView() {
                       </span>
                     )}
                   </div>
-                  <input
-                    type="password"
-                    value={apiKeys.azureOpenAI}
-                    onChange={(e) => setApiKeys({ ...apiKeys, azureOpenAI: e.target.value })}
-                    placeholder={apiKeyStatus.azureOpenAI ? "Enter new key to replace existing" : "Azure OpenAI key"}
-                    className="w-full px-3 py-2 text-sm border border-gray-300 dark:border-border-dark rounded-lg focus:outline-none focus:ring-2 focus:ring-primary font-mono"
-                    style={{
-                      backgroundColor: 'var(--color-input-background)',
-                      color: 'var(--color-text-primary)'
-                    }}
-                  />
+                  <div className="flex items-stretch gap-2">
+                    <input
+                      type={apiKeyVisibility.azureOpenAI ? 'text' : 'password'}
+                      value={apiKeys.azureOpenAI}
+                      onChange={(e) => setApiKeys({ ...apiKeys, azureOpenAI: e.target.value })}
+                      placeholder={apiKeyStatus.azureOpenAI ? "Enter new key to replace existing" : "Azure OpenAI key"}
+                      className="w-full px-3 py-2 text-sm border border-gray-300 dark:border-border-dark rounded-lg focus:outline-none focus:ring-2 focus:ring-primary font-mono"
+                      style={{
+                        backgroundColor: 'var(--color-input-background)',
+                        color: 'var(--color-text-primary)'
+                      }}
+                    />
+                    <button
+                      type="button"
+                      onClick={() => setApiKeyVisibility({ ...apiKeyVisibility, azureOpenAI: !apiKeyVisibility.azureOpenAI })}
+                      className="px-3 py-2 text-sm border border-gray-300 dark:border-border-dark rounded-lg hover:bg-gray-50 dark:hover:bg-panel-dark/80 transition-colors"
+                      style={{ color: 'var(--color-text-primary)' }}
+                    >
+                      {apiKeyVisibility.azureOpenAI ? 'Hide' : 'Show'}
+                    </button>
+                  </div>
                   <p className="text-xs mt-1" style={{ color: 'var(--color-text-muted)' }}>
                     Used for Azure OpenAI embedding/runtime auth. When set, it overrides the shared OpenAI key for Azure calls.
                   </p>
+                </div>
+
+                <div className="rounded-lg border border-gray-200 dark:border-border-dark p-4 space-y-3 bg-gray-50/60 dark:bg-panel-dark/60">
+                  <div className="flex items-center gap-2">
+                    <span className="material-symbols-outlined text-base" style={{ color: 'var(--color-primary)' }}>
+                      settings
+                    </span>
+                    <h3 className="text-sm font-semibold" style={{ color: 'var(--color-text-primary)' }}>
+                      Azure OpenAI Provider Configuration
+                    </h3>
+                  </div>
+                  <p className="text-xs leading-relaxed" style={{ color: 'var(--color-text-muted)' }}>
+                    These provider settings are stored in the database and used by the Azure embedding/runtime path. Changes here are saved through the same settings contract as the General RAG Configuration section.
+                  </p>
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                    <div>
+                      <label className="text-xs font-medium" style={{ color: 'var(--color-text-muted)' }}>
+                        Embedding Model
+                      </label>
+                      <select
+                        value={ragSettings.embeddingModel}
+                        onChange={(e) => {
+                          setRagSettings({ ...ragSettings, embeddingModel: e.target.value });
+                          autoSave('general');
+                        }}
+                        className="mt-1 w-full px-3 py-2 text-sm border border-gray-300 dark:border-border-dark rounded-lg focus:outline-none focus:ring-2 focus:ring-primary"
+                        style={{
+                          backgroundColor: 'var(--color-input-background)',
+                          color: 'var(--color-text-primary)'
+                        }}
+                      >
+                        <option value="text-embedding-3-small">text-embedding-3-small</option>
+                        <option value="text-embedding-3-large">text-embedding-3-large</option>
+                        <option value="text-embedding-ada-002">text-embedding-ada-002</option>
+                      </select>
+                    </div>
+                    <div>
+                      <label className="text-xs font-medium" style={{ color: 'var(--color-text-muted)' }}>
+                        API Version
+                      </label>
+                      <input
+                        type="text"
+                        value={ragSettings.azureOpenAIApiVersion}
+                        onChange={(e) => {
+                          setRagSettings({ ...ragSettings, azureOpenAIApiVersion: e.target.value });
+                          autoSave('general');
+                        }}
+                        className="mt-1 w-full px-3 py-2 text-sm border border-gray-300 dark:border-border-dark rounded-lg focus:outline-none focus:ring-2 focus:ring-primary"
+                        style={{
+                          backgroundColor: 'var(--color-input-background)',
+                          color: 'var(--color-text-primary)'
+                        }}
+                      />
+                    </div>
+                    <div className="md:col-span-2">
+                      <label className="text-xs font-medium" style={{ color: 'var(--color-text-muted)' }}>
+                        Azure Endpoint
+                      </label>
+                      <input
+                        type="url"
+                        value={ragSettings.azureOpenAIEndpoint}
+                        onChange={(e) => {
+                          setRagSettings({ ...ragSettings, azureOpenAIEndpoint: e.target.value });
+                          autoSave('general');
+                        }}
+                        placeholder="https://your-resource.openai.azure.com/"
+                        className="mt-1 w-full px-3 py-2 text-sm border border-gray-300 dark:border-border-dark rounded-lg focus:outline-none focus:ring-2 focus:ring-primary"
+                        style={{
+                          backgroundColor: 'var(--color-input-background)',
+                          color: 'var(--color-text-primary)'
+                        }}
+                      />
+                    </div>
+                    <div>
+                      <label className="text-xs font-medium" style={{ color: 'var(--color-text-muted)' }}>
+                        Embedding Deployment
+                      </label>
+                      <input
+                        type="text"
+                        value={ragSettings.azureOpenAIEmbeddingDeployment}
+                        onChange={(e) => {
+                          setRagSettings({ ...ragSettings, azureOpenAIEmbeddingDeployment: e.target.value });
+                          autoSave('general');
+                        }}
+                        placeholder="text-embedding-3-small"
+                        className="mt-1 w-full px-3 py-2 text-sm border border-gray-300 dark:border-border-dark rounded-lg focus:outline-none focus:ring-2 focus:ring-primary"
+                        style={{
+                          backgroundColor: 'var(--color-input-background)',
+                          color: 'var(--color-text-primary)'
+                        }}
+                      />
+                    </div>
+                    <div>
+                      <label className="text-xs font-medium" style={{ color: 'var(--color-text-muted)' }}>
+                        Embedding Dimensions
+                      </label>
+                      <input
+                        type="number"
+                        value={ragSettings.azureOpenAIEmbeddingDimensions}
+                        onChange={(e) => {
+                          setRagSettings({
+                            ...ragSettings,
+                            azureOpenAIEmbeddingDimensions: Math.max(1, Number(e.target.value) || 1),
+                          });
+                          autoSave('general');
+                        }}
+                        min={1}
+                        className="mt-1 w-full px-3 py-2 text-sm border border-gray-300 dark:border-border-dark rounded-lg focus:outline-none focus:ring-2 focus:ring-primary"
+                        style={{
+                          backgroundColor: 'var(--color-input-background)',
+                          color: 'var(--color-text-primary)'
+                        }}
+                      />
+                    </div>
+                  </div>
                 </div>
 
                 {/* Save Button and Status */}
@@ -898,8 +1073,6 @@ export default function SettingsView() {
                             azureOpenAI: apiKeyStatus.azureOpenAI || !!apiKeys.azureOpenAI,
                             google: apiKeyStatus.google || !!apiKeys.google,
                           });
-                          // Clear input fields after successful save
-                          setApiKeys({ anthropic: '', openai: '', azureOpenAI: '', google: '' });
                           setApiKeySaveMessage('API keys saved successfully!');
                           setTimeout(() => setApiKeySaveMessage(null), 3000);
                         } catch (error) {
@@ -966,7 +1139,6 @@ export default function SettingsView() {
         return <LocalModelsSettings />;
 
       case 'local-workspace':
-        if (!workspaceSettings) return null;
         return (
           <LocalWorkspaceSettings
             settings={workspaceSettings}
@@ -978,7 +1150,6 @@ export default function SettingsView() {
         );
 
       case 'model-defaults':
-        if (!modelDefaultsSettings) return null;
         return (
           <div>
             <ModelDefaultsSettings
@@ -1237,11 +1408,6 @@ export default function SettingsView() {
         </div>
       </div>
     );
-  }
-
-  // Don't render if settings haven't loaded yet
-  if (!generalSettings || !localModelsSettings || !workspaceSettings || !modelDefaultsSettings || !ragSettings) {
-    return null;
   }
 
   return (

@@ -143,32 +143,31 @@ class Settings(BaseSettings):
 
     @property
     def AZURE_OPENAI_API_KEY(self) -> Optional[str]:
-        """Get Azure OpenAI API key from DB/env, falling back to shared OpenAI key when reused."""
-        return self.get_api_key("azure_openai_api_key") or os.getenv("AZURE_OPENAI_API_KEY") or self.OPENAI_API_KEY
+        """Get Azure OpenAI API key from the managed settings surface only."""
+        return self.get_api_key("azure_openai_api_key")
 
     @property
     def AZURE_OPENAI_ENDPOINT(self) -> Optional[str]:
-        return get_setting_value_from_db("azure_openai_endpoint") or os.getenv("AZURE_OPENAI_ENDPOINT")
+        return get_setting_value_from_db("azure_openai_endpoint")
 
     @property
     def AZURE_OPENAI_API_VERSION(self) -> str:
-        return get_setting_value_from_db("azure_openai_api_version") or os.getenv("AZURE_OPENAI_API_VERSION", "2024-05-01-preview")
+        return get_setting_value_from_db("azure_openai_api_version") or "2024-05-01-preview"
 
     @property
     def AZURE_OPENAI_EMBEDDING_DEPLOYMENT(self) -> Optional[str]:
-        return get_setting_value_from_db("azure_openai_embedding_deployment") or os.getenv("AZURE_OPENAI_EMBEDDING_DEPLOYMENT")
+        return get_setting_value_from_db("azure_openai_embedding_deployment")
 
     @property
     def AZURE_OPENAI_EMBEDDING_DIMENSIONS(self) -> Optional[int]:
         db_value = get_setting_value_from_db("azure_openai_embedding_dimensions")
         if db_value:
             return int(db_value)
-        env_value = os.getenv("AZURE_OPENAI_EMBEDDING_DIMENSIONS")
-        return int(env_value) if env_value else None
+        return None
 
     @property
     def EMBEDDING_MODEL(self) -> str:
-        return get_setting_value_from_db("embedding_model") or os.getenv("EMBEDDING_MODEL", self.embedding_model)
+        return get_setting_value_from_db("embedding_model") or self.embedding_model
 
     # Keep lowercase versions for backward compatibility
     @property
