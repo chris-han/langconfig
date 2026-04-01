@@ -6,7 +6,7 @@
  */
 
 import { useState, useEffect } from 'react';
-import { Upload, FileText, Trash2, Search, Database, Settings, Filter, RefreshCw } from 'lucide-react';
+import { Upload, FileText, Trash2, Search, Database, Settings, Filter, RefreshCw, Save, Check } from 'lucide-react';
 import apiClient from "../../../lib/api-client";
 import { useProject } from "../../../contexts/ProjectContext";
 import SearchMetricsDisplay from './SearchMetricsDisplay';
@@ -83,6 +83,13 @@ export default function KnowledgeBaseView() {
   const [extractArchives, setExtractArchives] = useState(true);
   const [isFolderUpload, setIsFolderUpload] = useState(false);
 
+  // RAG Configuration State
+  const [embeddingModel, setEmbeddingModel] = useState('text-embedding-3-large');
+  const [chunkSize, setChunkSize] = useState(1000);
+  const [chunkOverlap, setChunkOverlap] = useState(200);
+  const [savingRAGConfig, setSavingRAGConfig] = useState(false);
+  const [ragConfigSaveMessage, setRagConfigSaveMessage] = useState<{ type: 'success' | 'error', text: string } | null>(null);
+
   const { activeProjectId } = useProject();
   // Expanded file type support - includes code files, documents, images, and archives
   const SUPPORTED_FILES = '.txt,.md,.pdf,.json,.py,.js,.ts,.tsx,.jsx,.java,.c,.cpp,.h,.hpp,.cs,.rb,.go,.rs,.php,.swift,.kt,.scala,.r,.sql,.sh,.bash,.doc,.docx,.html,.htm,.xml,.csv,.yaml,.yml,.zip,.tar,.gz,.tgz,.rar,.7z,.rtf,.odt,.epub,.ppt,.pptx,.xls,.xlsx,.png,.jpg,.jpeg,.gif,.bmp,.tiff,.webp';
@@ -98,6 +105,44 @@ export default function KnowledgeBaseView() {
       abortController.abort();
     };
   }, [selectedStatus, activeProjectId]);
+
+  // Load RAG settings when settings panel is opened
+  useEffect(() => {
+    if (showSettings) {
+      loadRAGSettings();
+    }
+  }, [showSettings]);
+
+  const loadRAGSettings = async () => {
+    try {
+      const response = await apiClient.getSettings();
+      const settings = response.data;
+      setEmbeddingModel(settings.embedding_model || 'text-embedding-3-large');
+      setChunkSize(settings.chunk_size || 1000);
+      setChunkOverlap(settings.chunk_overlap || 200);
+    } catch (error) {
+      console.error('Failed to load RAG settings:', error);
+    }
+  };
+
+  const saveRAGSettings = async () => {
+    setSavingRAGConfig(true);
+    setRagConfigSaveMessage(null);
+    try {
+      await apiClient.updateSettings({
+        embedding_model: embeddingModel,
+        chunk_size: chunkSize,
+        chunk_overlap: chunkOverlap,
+      });
+      setRagConfigSaveMessage({ type: 'success', text: 'RAG Configuration saved successfully!' });
+      setTimeout(() => setRagConfigSaveMessage(null), 3000);
+    } catch (error) {
+      console.error('Failed to save RAG settings:', error);
+      setRagConfigSaveMessage({ type: 'error', text: 'Failed to save configuration. Please try again.' });
+    } finally {
+      setSavingRAGConfig(false);
+    }
+  };
 
   const loadDocuments = async (signal?: AbortSignal) => {
     if (!activeProjectId) return;
@@ -495,21 +540,31 @@ export default function KnowledgeBaseView() {
       {/* Settings Panel (Collapsible) */}
       {showSettings && (
         <div className="bg-yellow-500/10 border-b border-yellow-500/30 p-4">
-          <h3 className="text-sm font-semibold mb-3" style={{ color: 'var(--color-text-primary)' }}>
-            RAG Configuration
-          </h3>
-          <div className="grid grid-cols-3 gap-3">
+          <div className="flex items-center justify-between mb-3">
+            <h3 className="text-sm font-semibold" style={{ color: 'var(--color-text-primary)' }}>
+              RAG Configuration
+            </h3>
+            {ragConfigSaveMessage && (
+              <div className={`flex items-center gap-1.5 text-xs ${ragConfigSaveMessage.type === 'success' ? 'text-green-600 dark:text-green-400' : 'text-red-600 dark:text-red-400'}`}>
+                {ragConfigSaveMessage.type === 'success' ? <Check className="w-3.5 h-3.5" /> : <span className="w-3.5 h-3.5 flex items-center justify-center">!</span>}
+                <span>{ragConfigSaveMessage.text}</span>
+              </div>
+            )}
+          </div>
+          <div className="grid grid-cols-3 gap-3 mb-4">
             <div>
               <label className="block text-xs font-medium mb-1.5" style={{ color: 'var(--color-text-muted)' }}>
                 EMBEDDING MODEL
               </label>
               <select
+                value={embeddingModel}
+                onChange={(e) => setEmbeddingModel(e.target.value)}
                 className="w-full px-3 py-2 border border-gray-200 dark:border-border-dark rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-primary"
                 style={{ backgroundColor: 'var(--color-input-background)', color: 'var(--color-text-primary)' }}
               >
-                <option>text-embedding-3-large</option>
-                <option>text-embedding-3-small</option>
-                <option>text-embedding-ada-002</option>
+                <option value="text-embedding-3-large">text-embedding-3-large</option>
+                <option value="text-embedding-3-small">text-embedding-3-small</option>
+                <option value="text-embedding-ada-002">text-embedding-ada-002</option>
               </select>
             </div>
             <div>
@@ -518,7 +573,10 @@ export default function KnowledgeBaseView() {
               </label>
               <input
                 type="number"
-                defaultValue={1000}
+                value={chunkSize}
+                onChange={(e) => setChunkSize(parseInt(e.target.value) || 0)}
+                min={100}
+                max={10000}
                 className="w-full px-3 py-2 border border-gray-200 dark:border-border-dark rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-primary"
                 style={{ backgroundColor: 'var(--color-input-background)', color: 'var(--color-text-primary)' }}
               />
@@ -529,11 +587,33 @@ export default function KnowledgeBaseView() {
               </label>
               <input
                 type="number"
-                defaultValue={200}
+                value={chunkOverlap}
+                onChange={(e) => setChunkOverlap(parseInt(e.target.value) || 0)}
+                min={0}
+                max={chunkSize - 1}
                 className="w-full px-3 py-2 border border-gray-200 dark:border-border-dark rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-primary"
                 style={{ backgroundColor: 'var(--color-input-background)', color: 'var(--color-text-primary)' }}
               />
             </div>
+          </div>
+          <div className="flex justify-end">
+            <button
+              onClick={saveRAGSettings}
+              disabled={savingRAGConfig}
+              className="flex items-center gap-2 px-4 py-2 bg-primary text-white rounded-lg hover:opacity-90 transition-all disabled:opacity-50 disabled:cursor-not-allowed text-sm font-medium"
+            >
+              {savingRAGConfig ? (
+                <>
+                  <RefreshCw className="w-4 h-4 animate-spin" />
+                  <span>Saving...</span>
+                </>
+              ) : (
+                <>
+                  <Save className="w-4 h-4" />
+                  <span>Save Configuration</span>
+                </>
+              )}
+            </button>
           </div>
         </div>
       )}
