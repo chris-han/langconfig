@@ -108,6 +108,8 @@ export function useNodeManagement({
                 native_tools: newConfig.native_tools !== undefined ? newConfig.native_tools : node.data.config?.native_tools,
                 tools: newConfig.tools !== undefined ? newConfig.tools : node.data.config?.tools,
                 custom_tools: newConfig.custom_tools !== undefined ? newConfig.custom_tools : node.data.config?.custom_tools,
+                skills: newConfig.skills !== undefined ? newConfig.skills : node.data.config?.skills,
+                enable_skills: newConfig.enable_skills !== undefined ? newConfig.enable_skills : node.data.config?.enable_skills,
                 enable_memory: newConfig.enable_memory !== undefined ? newConfig.enable_memory : node.data.config?.enable_memory,
                 enable_rag: newConfig.enable_rag !== undefined ? newConfig.enable_rag : node.data.config?.enable_rag,
               },

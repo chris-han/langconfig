@@ -450,6 +450,9 @@ function AppContent() {
               condition: selectedNodeData.condition || selectedNodeData.config?.condition,
               max_iterations: selectedNodeData.max_iterations || selectedNodeData.config?.max_iterations,
               exit_condition: selectedNodeData.exit_condition || selectedNodeData.config?.exit_condition,
+              // Skills
+              skills: (selectedNodeData as any).skills || selectedNodeData.config?.skills || [],
+              enable_skills: (selectedNodeData as any).enable_skills || selectedNodeData.config?.enable_skills || false,
               // DeepAgent subagents
               subagents: (selectedNodeData as any).subagents || selectedNodeData.config?.subagents || [],
               use_deepagents: (selectedNodeData as any).use_deepagents || selectedNodeData.config?.use_deepagents || false

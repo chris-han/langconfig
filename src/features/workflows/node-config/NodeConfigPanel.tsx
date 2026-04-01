@@ -1772,18 +1772,6 @@ const NodeConfigPanel = ({
                 </div>
               </div>
 
-              {/* Save Button - Right after system prompt */}
-              <button
-                onClick={handleSave}
-                disabled={saveStatus === 'saving'}
-                className="w-full px-3 py-2 rounded-md text-sm font-medium transition-all hover:opacity-90 disabled:opacity-50 mt-3"
-                style={{
-                  backgroundColor: saveStatus === 'saved' ? '#10b981' : 'var(--color-primary)',
-                  color: 'white'
-                }}
-              >
-                {saveStatus === 'saving' ? 'Saving...' : saveStatus === 'saved' ? 'Saved' : 'Save Changes'}
-              </button>
             </div>
           )}
 
@@ -2547,6 +2535,21 @@ const NodeConfigPanel = ({
             </div>
           )}
 
+        </div>
+
+        {/* Sticky Save Footer - saves ALL config (system prompt, tools, skills, etc.) */}
+        <div className="p-3 border-t border-gray-200 dark:border-border-dark flex-shrink-0">
+          <button
+            onClick={handleSave}
+            disabled={saveStatus === 'saving'}
+            className="w-full px-3 py-2 rounded-md text-sm font-medium transition-all hover:opacity-90 disabled:opacity-50"
+            style={{
+              backgroundColor: saveStatus === 'saved' ? '#10b981' : 'var(--color-primary)',
+              color: 'white'
+            }}
+          >
+            {saveStatus === 'saving' ? 'Saving...' : saveStatus === 'saved' ? 'Saved' : 'Save Changes'}
+          </button>
         </div>
       </aside>
 
