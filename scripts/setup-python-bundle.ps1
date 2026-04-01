@@ -57,7 +57,7 @@ Write-Host "🔍 Verifying Python installation..." -ForegroundColor Yellow
 # Install backend dependencies
 Write-Host "📚 Installing backend dependencies..." -ForegroundColor Yellow
 & $PythonExe -m pip install --upgrade pip
-& $PythonExe -m pip install -r (Join-Path $BackendDir "requirements.txt") -t $BackendLib
+& $PythonExe -m pip install -r (Join-Path $BackendDir "requirements.azure.txt") -t $BackendLib
 Write-Host "✓ Dependencies installed to: $BackendLib" -ForegroundColor Green
 
 # Cleanup

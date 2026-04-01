@@ -227,17 +227,28 @@ async def _check_database(db: Session) -> Dict[str, Any]:
 
         response_time_ms = (time.time() - start_time) * 1000
 
-        # Get comprehensive health status including pool metrics
-        health_status = await check_db_health()
+        # Collect async pool metrics as best-effort only; sync probe above is
+        # the primary readiness signal used by API traffic.
+        health_status: Optional[Dict[str, Any]] = None
+        pool_warning: Optional[str] = None
+        try:
+            health_status = await check_db_health()
+            if health_status.get("status") != "healthy":
+                pool_warning = health_status.get("error") or "Async pool metrics unavailable"
+        except Exception as pool_error:
+            pool_warning = str(pool_error)
 
-        # Combine response time with health check results
-        return {
-            "status": health_status.get("status", "healthy"),
+        response: Dict[str, Any] = {
+            "status": "healthy",
             "response_time_ms": round(response_time_ms, 2),
             "message": "Database connection OK",
-            "extensions": health_status.get("extensions", []),
-            "pool": health_status.get("pool", {})
+            "extensions": (health_status or {}).get("extensions", []),
+            "pool": (health_status or {}).get("pool", {}),
         }
+        if pool_warning:
+            response["warning"] = f"Pool diagnostics unavailable: {pool_warning}"
+
+        return response
     except Exception as e:
         logger.error(f"Database health check failed: {e}", exc_info=True)
         return {

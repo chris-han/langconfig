@@ -102,11 +102,15 @@ def install_dependencies():
     """Install Python dependencies."""
     print_step("Installing Python dependencies...")
     root = get_project_root()
-    requirements = root / "backend" / "requirements.txt"
+    profile = os.getenv("LANGCONFIG_REQUIREMENTS_PROFILE", "azure").strip().lower()
+    requirements_file = "requirements.azure.txt" if profile != "full" else "requirements.txt"
+    requirements = root / "backend" / requirements_file
     
     if not requirements.exists():
-        print_error("requirements.txt not found!")
+        print_error(f"{requirements_file} not found!")
         return False
+
+    print_success(f"Using dependency profile: {profile} ({requirements_file})")
     
     try:
         subprocess.run(

@@ -86,7 +86,7 @@ echo "🔍 Verifying Python installation..."
 # Install backend dependencies
 echo "📚 Installing backend dependencies..."
 "$PYTHON_EXE" -m pip install --upgrade pip
-"$PYTHON_EXE" -m pip install -r "$BACKEND_DIR/requirements.txt" -t "$BACKEND_LIB"
+"$PYTHON_EXE" -m pip install -r "$BACKEND_DIR/requirements.azure.txt" -t "$BACKEND_LIB"
 echo "✓ Dependencies installed to: $BACKEND_LIB"
 
 # Cleanup

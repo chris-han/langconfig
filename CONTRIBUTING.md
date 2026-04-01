@@ -60,7 +60,7 @@ npm install
 
 # Install backend dependencies
 cd backend
-pip install -r requirements.txt
+pip install -r requirements.azure.txt
 cd ..
 
 # Start PostgreSQL

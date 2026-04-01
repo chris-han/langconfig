@@ -115,28 +115,14 @@ Frontend runs at: `http://localhost:1420`
 
 Open your browser to `http://localhost:1420`
 
-### Minimal Import Contract Mode
+### Import Contract Validation (Main Backend)
 
-Use this mode when you only need to validate `.langconfig` import compatibility without waiting for the full LangConfig backend dependency stack.
+The minimal import backend is retired. Import contract validation now runs against the main backend on `http://127.0.0.1:8765`.
 
-**Start Docker dependencies:**
-```bash
-npm run start:docker
-```
-
-**Start the minimal import backend:**
-```bash
-npm run start:backend:minimal-import
-```
-
-This launches a lightweight FastAPI backend at: `http://127.0.0.1:8766`
-
-Supported use cases:
-- `.langconfig` import contract validation
-- project and workflow listing for imported fixtures
-- Semantier-to-LangConfig local handoff testing
-
-This mode intentionally does **not** provide the full LangConfig runtime surface. It is a supported contract-testing utility, not a replacement for the main backend on `:8765`.
+Use this flow:
+- Start Docker dependencies: `npm run start:docker`
+- Start backend: `npm run start:backend`
+- Run contract test from `backend/`: `python -m pytest tests/test_import_contract_main_backend.py`
 
 ### Desktop App Mode (Advanced)
 
@@ -282,7 +268,7 @@ LangConfig uses a single PostgreSQL database with pgvector for:
 1. Build workflow visually (e.g., Research → Plan → Implement → Test)
 2. Click **Export** → **Download Python Package**
 3. Extract the ZIP file to any folder
-4. Run `pip install -r requirements.txt`
+4. Run `pip install -r requirements.azure.txt`
 5. Add API keys to `.env`
 6. Run `streamlit run streamlit_app.py`
 7. Use your workflow as a standalone web app with live streaming output
@@ -310,6 +296,30 @@ cp .env.example .env
 | `OPENAI_API_KEY` | OpenAI API key for GPT models |
 | `ANTHROPIC_API_KEY` | Anthropic API key for Claude models |
 | `GOOGLE_API_KEY` | Google API key for Gemini models |
+
+**Cloud Embeddings Required (Azure profile default):**
+
+The backend now defaults to `requirements.azure.txt`, which intentionally excludes local HuggingFace embedding fallback packages. For deterministic startup, configure one cloud embedding path:
+
+Option A (OpenAI embeddings):
+
+```env
+OPENAI_API_KEY=sk-...
+DEFAULT_EMBEDDING_MODEL=text-embedding-3-small
+```
+
+Option B (Azure OpenAI embeddings):
+
+```env
+AZURE_OPENAI_API_KEY=...
+AZURE_OPENAI_ENDPOINT=https://<your-resource>.openai.azure.com/
+AZURE_OPENAI_API_VERSION=2024-05-01-preview
+AZURE_OPENAI_EMBEDDING_DEPLOYMENT=<your-embedding-deployment>
+AZURE_OPENAI_EMBEDDING_DIMENSIONS=1536
+DEFAULT_EMBEDDING_MODEL=text-embedding-3-small
+```
+
+If neither path is configured, backend startup fails by design with a HuggingFace fallback unavailable error.
 
 **Optional:**
 | Variable | Description | Default |
@@ -477,10 +487,28 @@ alembic upgrade head
 ### Python Dependencies Issues
 
 ```bash
-# Reinstall all dependencies
+# Reinstall all dependencies (Azure-first profile)
 cd backend
 pip install --upgrade pip
-pip install -r requirements.txt
+pip install -r requirements.azure.txt
+```
+
+### Startup Fails With Embedding Configuration Error
+
+If backend startup fails with a message similar to HuggingFace fallback unavailable, configure cloud embeddings first:
+
+1. Set `OPENAI_API_KEY` (and optional `DEFAULT_EMBEDDING_MODEL=text-embedding-3-small`) in `.env`, or
+2. Configure Azure embedding settings in `.env` / Settings UI:
+   - `AZURE_OPENAI_API_KEY`
+   - `AZURE_OPENAI_ENDPOINT`
+   - `AZURE_OPENAI_EMBEDDING_DEPLOYMENT`
+   - Optional: `AZURE_OPENAI_API_VERSION`, `AZURE_OPENAI_EMBEDDING_DIMENSIONS`
+
+Then restart backend:
+
+```bash
+cd backend
+python main.py
 ```
 
 ---

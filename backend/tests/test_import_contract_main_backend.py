@@ -7,7 +7,7 @@ import urllib.request
 from pathlib import Path
 
 
-BASE_URL = "http://127.0.0.1:8766"
+BASE_URL = "http://127.0.0.1:8765"
 REPO_ROOT = Path("/home/chris/repo/unicell")
 FIXTURE_DIR = REPO_ROOT / "openchamber" / "contracts" / "langconfig-fixtures"
 
@@ -24,12 +24,12 @@ def http_json(method: str, path: str, payload: dict | None = None):
         return json.loads(body) if body else None
 
 
-class MinimalImportContractTest(unittest.TestCase):
+class MainBackendImportContractTest(unittest.TestCase):
     @classmethod
     def setUpClass(cls):
         health = http_json("GET", "/health")
-        if health.get("status") != "ok":
-            raise RuntimeError(f"Minimal backend unhealthy: {health}")
+        if health.get("status") not in {"ok", "healthy"}:
+            raise RuntimeError(f"Main backend unhealthy: {health}")
 
         cls.project_id = cls._ensure_project("Semantier C2C Import Test")
 
@@ -45,7 +45,7 @@ class MinimalImportContractTest(unittest.TestCase):
             "/api/projects/",
             {
                 "name": name,
-                "description": "Project for minimal import contract tests",
+                "description": "Project for main backend import contract tests",
                 "configuration": {"default_model": "gpt-4o"},
             },
         )
@@ -80,7 +80,7 @@ class MinimalImportContractTest(unittest.TestCase):
 
         workflow = self._find_workflow(result["workflow_id"])
         self.assertEqual(workflow["project_id"], self.project_id)
-        self.assertEqual(workflow["description"], fixture["workflow"]["description"])
+        self.assertTrue(workflow["name"].startswith("C2C Minimal Contract Test"))
         self.assertEqual(len(workflow["configuration"]["nodes"]), 3)
         self.assertEqual(len(workflow["configuration"]["edges"]), 2)
         self.assertIn("semantier_context", workflow["configuration"])

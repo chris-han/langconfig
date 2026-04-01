@@ -5,7 +5,7 @@ import { spawn } from "node:child_process";
 import { pathToFileURL } from "node:url";
 import got from "got";
 
-const DEFAULT_BACKEND_URL = "http://127.0.0.1:8766";
+const DEFAULT_BACKEND_URL = "http://127.0.0.1:8765";
 const DEFAULT_REQUIRED_ENDPOINTS = ["/health"];
 
 function normalizeUrl(url) {
