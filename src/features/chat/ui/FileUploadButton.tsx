@@ -39,7 +39,6 @@ export default function FileUploadButton({ sessionId, onFileUploaded, disabled }
       onFileUploaded(response.data);
     } catch (error: any) {
       console.error('Failed to upload file:', error);
-      alert(error.response?.data?.detail || 'Failed to upload file');
     } finally {
       setUploading(false);
       if (fileInputRef.current) {

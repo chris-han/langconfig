@@ -1315,6 +1315,8 @@ async def index_session_document_background(document_id: int, agent_id: int):
         doc.indexing_status = IndexingStatus.INDEXING
         file_path = doc.file_path
         session_id = doc.session_id
+        original_filename = doc.original_filename
+        document_type = doc.document_type
         db.commit()
         db.close()
 
@@ -1333,15 +1335,20 @@ async def index_session_document_background(document_id: int, agent_id: int):
         project_id = agent.project_id if hasattr(agent, 'project_id') else None
         db.close()
 
-        # Index the document with session-specific metadata
-        result = await context_document_indexer.index_document(
+        # Index the document with session-specific metadata via raw-file path.
+        result = await context_document_indexer.index_file_with_metadata(
             document_id=document_id,
             file_path=file_path,
+            filename=original_filename,
+            project_id=project_id,
             metadata={
                 "session_id": session_id,
                 "agent_id": str(agent_id),
-                "doc_type": "session_document"
-            }
+                "doc_type": "session_document",
+                "document_type": "session_document",
+            },
+            document_type=document_type,
+            node_prefix="session_doc",
         )
 
         # Update status to ready

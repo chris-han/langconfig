@@ -302,7 +302,8 @@ class ContextDocumentIndexer:
         document_id: int,
         file_path: str,
         chunk_size: int = 1024,
-        chunk_overlap: int = 200
+        chunk_overlap: int = 200,
+        extra_metadata: Optional[Dict[str, Any]] = None,
     ) -> Dict[str, Any]:
         """
         Index a context document into the vector database.
@@ -385,7 +386,8 @@ class ContextDocumentIndexer:
                 chunks,
                 document_id,
                 original_filename,
-                project_id
+                project_id,
+                extra_metadata=extra_metadata,
             )
 
             # Store in vector database
@@ -427,6 +429,103 @@ class ContextDocumentIndexer:
 
             raise RuntimeError(f"Document indexing failed: {e}")
 
+    def _infer_document_type(self, file_path: Path) -> DocumentType:
+        """Infer DocumentType from file extension for raw-file indexing flows."""
+        ext = file_path.suffix.lower().lstrip(".")
+
+        extension_map = {
+            "md": DocumentType.MARKDOWN,
+            "markdown": DocumentType.MARKDOWN,
+            "txt": DocumentType.TEXT,
+            "pdf": DocumentType.PDF,
+            "docx": DocumentType.DOCX,
+            "doc": DocumentType.DOCX,
+            "csv": DocumentType.CSV,
+            "json": DocumentType.JSON,
+            "yaml": DocumentType.YAML,
+            "yml": DocumentType.YAML,
+            "html": DocumentType.HTML,
+            "htm": DocumentType.HTML,
+            "xml": DocumentType.XML,
+            "py": DocumentType.CODE,
+            "js": DocumentType.CODE,
+            "ts": DocumentType.CODE,
+            "tsx": DocumentType.CODE,
+            "jsx": DocumentType.CODE,
+            "java": DocumentType.CODE,
+            "go": DocumentType.CODE,
+            "rs": DocumentType.CODE,
+            "cpp": DocumentType.CODE,
+            "c": DocumentType.CODE,
+            "h": DocumentType.CODE,
+            "png": DocumentType.IMAGE,
+            "jpg": DocumentType.IMAGE,
+            "jpeg": DocumentType.IMAGE,
+            "gif": DocumentType.IMAGE,
+            "bmp": DocumentType.IMAGE,
+            "webp": DocumentType.IMAGE,
+        }
+
+        return extension_map.get(ext, DocumentType.OTHER)
+
+    async def index_file_with_metadata(
+        self,
+        document_id: int,
+        file_path: str,
+        filename: str,
+        project_id: Optional[int] = None,
+        metadata: Optional[Dict[str, Any]] = None,
+        document_type: Optional[DocumentType] = None,
+        chunk_size: int = 1024,
+        chunk_overlap: int = 200,
+        node_prefix: str = "external_doc",
+    ) -> Dict[str, Any]:
+        """Index a file path without requiring a ContextDocument database row."""
+        file_path_obj = Path(file_path)
+        if not file_path_obj.exists():
+            raise FileNotFoundError(f"Document file not found: {file_path}")
+
+        resolved_doc_type = document_type or self._infer_document_type(file_path_obj)
+        logger.info(
+            "Indexing external document id=%s filename=%s type=%s",
+            document_id,
+            filename,
+            resolved_doc_type,
+        )
+
+        loader = self._get_document_loader(file_path_obj, resolved_doc_type)
+        documents = await self._load_document_async(loader)
+        if not documents:
+            raise ValueError(f"No content could be extracted from {file_path}")
+
+        text_splitter = RecursiveCharacterTextSplitter(
+            chunk_size=chunk_size,
+            chunk_overlap=chunk_overlap,
+            separators=["\n\n", "\n", ". ", " ", ""],
+            length_function=len,
+        )
+        chunks = text_splitter.split_documents(documents)
+        if not chunks:
+            raise ValueError("No text chunks created from document")
+
+        nodes = await self._create_embeddings(
+            chunks,
+            document_id,
+            filename,
+            project_id,
+            extra_metadata=metadata,
+            node_prefix=node_prefix,
+        )
+        stored_count = await self._store_in_vector_db(nodes)
+
+        return {
+            "status": "success",
+            "document_id": document_id,
+            "chunks_created": len(chunks),
+            "embeddings_stored": stored_count,
+            "timestamp": datetime.now(timezone.utc).isoformat(),
+        }
+
     async def _load_document_async(self, loader) -> List:
         """
         Async wrapper for document loading.
@@ -452,7 +551,9 @@ class ContextDocumentIndexer:
         chunks: List,  # List of LangChain Document objects
         document_id: int,
         filename: str,
-        project_id: Optional[int] = None
+        project_id: Optional[int] = None,
+        extra_metadata: Optional[Dict[str, Any]] = None,
+        node_prefix: str = "context_doc",
     ) -> List[Dict[str, Any]]:
         """
         Create embeddings for document chunks.
@@ -478,8 +579,8 @@ class ContextDocumentIndexer:
             embed_model = Settings.embed_model
 
             for i, chunk in enumerate(chunks):
-                # Generate unique node ID
-                node_id = f"context_doc_{document_id}_chunk_{i}"
+                # Generate unique node ID; prefix avoids collisions across document sources.
+                node_id = f"{node_prefix}_{document_id}_chunk_{i}"
 
                 # Combine metadata from document loader with our metadata
                 metadata = {
@@ -503,6 +604,10 @@ class ContextDocumentIndexer:
                 # Add project metadata if available
                 if project_id is not None:
                     metadata["project_id"] = project_id
+
+                # Merge caller-provided metadata (session scope, agent id, etc.)
+                if extra_metadata:
+                    metadata.update(extra_metadata)
 
                 # Extract text content from LangChain Document
                 text_content = chunk.page_content if hasattr(chunk, 'page_content') else str(chunk)
