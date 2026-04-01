@@ -26,6 +26,9 @@ interface NodeConfig {
   tools: string[];  // Built-in tools
   native_tools: string[];  // Native Python tools
   custom_tools?: string[];  // User-created custom tools
+  skills?: string[];  // Claude skills selected for this node
+  enable_skills?: boolean;  // Whether skill injection is enabled
+  max_skills?: number;  // Max number of skills to inject
   middleware?: any[];  // Middleware configuration
   subagents?: any[];  // Subagent configurations (Advanced: DeepAgents)
   use_deepagents?: boolean;  // Flag to enable DeepAgent mode
@@ -357,11 +360,53 @@ const NodeConfigPanel = ({
 
   // Fetch available skills
   const fetchSkills = async (signal?: AbortSignal) => {
+    const normalizeSkillsPayload = (payload: any) => {
+      if (Array.isArray(payload)) {
+        return payload;
+      }
+      if (Array.isArray(payload?.skills)) {
+        return payload.skills;
+      }
+      return [];
+    };
+
     try {
-      const response = await apiClient.get('/api/skills/');
-      setAvailableSkills(response.data || []);
+      // Use canonical endpoint (no trailing slash) to avoid redirect/CORS issues via dev proxy.
+      const response = await apiClient.get('/api/skills', { signal });
+      const skills = normalizeSkillsPayload(response?.data);
+      setAvailableSkills(skills);
     } catch (error) {
+      // Ignore aborted requests during fast unmount/remount cycles.
+      if (error instanceof Error && (error.name === 'AbortError' || error.name === 'CanceledError')) {
+        return;
+      }
+
+      // Fallback #1: direct absolute fetch via configured backend URL.
+      try {
+        const absolutePayload = await apiClient.apiFetch(`${apiClient.baseURL}/api/skills`, { signal });
+        const skills = normalizeSkillsPayload(absolutePayload);
+        setAvailableSkills(skills);
+        return;
+      } catch (fallbackError) {
+        if (fallbackError instanceof Error && (fallbackError.name === 'AbortError' || fallbackError.name === 'CanceledError')) {
+          return;
+        }
+      }
+
+      // Fallback #2: browser-relative fetch (uses dev proxy in local dev).
+      try {
+        const relativePayload = await apiClient.apiFetch('/api/skills', { signal });
+        const skills = normalizeSkillsPayload(relativePayload);
+        setAvailableSkills(skills);
+        return;
+      } catch (finalError) {
+        if (finalError instanceof Error && (finalError.name === 'AbortError' || finalError.name === 'CanceledError')) {
+          return;
+        }
+      }
+
       console.error('Failed to fetch skills:', error);
+      setAvailableSkills([]);
     }
   };
 
@@ -546,6 +591,9 @@ const NodeConfigPanel = ({
       // Load custom tools (check both locations)
       setSelectedCustomTools(selectedNode.custom_tools || nodeConfig.custom_tools || []);
 
+      // Load Claude skills (check both locations)
+      setSelectedSkills(selectedNode.skills || nodeConfig.skills || []);
+
       // Load subagents configuration (Advanced: DeepAgents)
       setSubagents(selectedNode.subagents || nodeConfig.subagents || []);
 
@@ -653,6 +701,9 @@ const NodeConfigPanel = ({
         native_tools: nativeTools,  // Native Python tools (memory flags handled in unified section)
         mcp_tools: [], // Deprecated in favor of native_tools
         custom_tools: selectedCustomTools,  // User-defined custom tools
+        skills: selectedSkills,
+        enable_skills: selectedSkills.length > 0,
+        max_skills: config.max_skills || selectedNode?.max_skills || 3,
 
         // Agent capabilities now handled in unified Context & Memory section below
 
@@ -1966,7 +2017,8 @@ const NodeConfigPanel = ({
                               if (config) {
                                 onSave(config.id, {
                                   ...config,
-                                  skills: newSkills
+                                  skills: newSkills,
+                                  enable_skills: newSkills.length > 0
                                 });
                               }
                             }}

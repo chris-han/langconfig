@@ -14,10 +14,15 @@ from fastapi.responses import FileResponse
 from sqlalchemy.orm import Session
 from typing import List
 from pydantic import BaseModel
+from datetime import datetime, timezone
+import os
+import mimetypes as mt
 
 from db.database import get_db
 from services.workspace_manager import get_workspace_manager
-from models.core import Task
+from models.core import Task, ContextDocument, IndexingStatus, DocumentType
+from models.settings import Settings as SettingsModel
+from services.context_document_indexer import ContextDocumentIndexer
 from pathlib import Path
 
 logger = logging.getLogger(__name__)
@@ -552,6 +557,42 @@ class IndexFileResponse(BaseModel):
     status: str
     message: str
     chunks_created: int | None = None
+
+
+def _get_rag_chunk_config(db: Session) -> tuple[int, int]:
+    """Load chunk config from persisted settings with safe defaults."""
+    settings = db.query(SettingsModel).filter(SettingsModel.id == 1).first()
+    chunk_size = settings.chunk_size if settings and settings.chunk_size else 1000
+    chunk_overlap = settings.chunk_overlap if settings and settings.chunk_overlap is not None else 200
+    return chunk_size, chunk_overlap
+
+
+def _infer_document_type(filename: str) -> DocumentType:
+    ext = Path(filename).suffix.lower()
+    doc_type_map = {
+        '.md': DocumentType.MARKDOWN,
+        '.txt': DocumentType.TEXT,
+        '.pdf': DocumentType.PDF,
+        '.docx': DocumentType.DOCX,
+        '.doc': DocumentType.DOCX,
+        '.py': DocumentType.CODE,
+        '.js': DocumentType.CODE,
+        '.ts': DocumentType.CODE,
+        '.tsx': DocumentType.CODE,
+        '.jsx': DocumentType.CODE,
+        '.json': DocumentType.JSON,
+        '.html': DocumentType.HTML,
+        '.xml': DocumentType.XML,
+        '.csv': DocumentType.CSV,
+        '.yaml': DocumentType.YAML,
+        '.yml': DocumentType.YAML,
+        '.png': DocumentType.IMAGE,
+        '.jpg': DocumentType.IMAGE,
+        '.jpeg': DocumentType.IMAGE,
+        '.gif': DocumentType.IMAGE,
+        '.webp': DocumentType.IMAGE,
+    }
+    return doc_type_map.get(ext, DocumentType.OTHER)
 
 
 @router.post("/tasks/{task_id}/files/{filename}/index", response_model=IndexFileResponse)
@@ -1259,127 +1300,71 @@ async def index_file_by_path(
 
     Works for files anywhere in outputs/ directory.
     """
-    from langchain_text_splitters import RecursiveCharacterTextSplitter
-    from llama_index.core.schema import TextNode
-    from llama_index.core import Settings
-    from datetime import datetime, timezone
-    from models.core import ContextDocument, IndexingStatus, DocumentType
-    import os
-    import mimetypes as mt
-
     workspace_mgr = get_workspace_manager()
 
     # Security: Validate path is within outputs/
     full_path = _validate_path_in_workspace(file_path, workspace_mgr)
 
+    filename = full_path.name
+    mime_type, _ = mt.guess_type(filename)
+    doc_type = _infer_document_type(filename)
+
+    context_doc = ContextDocument(
+        filename=filename,
+        original_filename=filename,
+        file_path=str(full_path),
+        file_size=os.path.getsize(full_path),
+        mime_type=mime_type or 'application/octet-stream',
+        document_type=doc_type,
+        indexing_status=IndexingStatus.INDEXING,
+        description=f"Workspace file: {file_path}",
+        project_id=request.project_id,
+    )
+    db.add(context_doc)
+    db.commit()
+    db.refresh(context_doc)
+
     try:
-        # Read file content
-        with open(full_path, 'r', encoding='utf-8') as f:
-            content = f.read()
-
-        if not content.strip():
-            return IndexFileResponse(
-                status="error",
-                message="File is empty - nothing to index"
-            )
-
-        text_splitter = RecursiveCharacterTextSplitter(
-            chunk_size=1024,
-            chunk_overlap=200,
-            separators=["\n\n", "\n", ". ", " ", ""],
-        )
-
-        chunks = text_splitter.split_text(content)
-
-        if not chunks:
-            return IndexFileResponse(
-                status="error",
-                message="Could not split file into chunks"
-            )
-
-        # Get vector store for the project
-        from services.llama_config import get_vector_store
-        vector_store = get_vector_store(request.project_id)
-
-        # Create embeddings and store
-        embed_model = Settings.embed_model
-        nodes = []
-        filename = full_path.name
-
-        for i, chunk_text in enumerate(chunks):
-            node_id = f"workspace_file_path_{file_path}_{i}"
-            metadata = {
+        chunk_size, chunk_overlap = _get_rag_chunk_config(db)
+        indexer = ContextDocumentIndexer()
+        result = await indexer.index_file_with_metadata(
+            document_id=context_doc.id,
+            file_path=str(full_path),
+            filename=filename,
+            project_id=request.project_id,
+            metadata={
                 "source": "workspace_file",
                 "file_path": file_path,
                 "filename": filename,
-                "project_id": request.project_id,
-                "chunk_index": i,
-                "total_chunks": len(chunks),
-                "indexed_at": datetime.now(timezone.utc).isoformat()
-            }
-
-            text_node = TextNode(
-                id_=node_id,
-                text=chunk_text,
-                metadata=metadata
-            )
-
-            embedding = embed_model.get_text_embedding(chunk_text)
-            text_node.embedding = embedding
-
-            nodes.append(text_node)
-
-        vector_store.add(nodes)
-
-        # Determine document type from extension
-        ext = os.path.splitext(filename)[1].lower()
-        doc_type_map = {
-            '.md': DocumentType.MARKDOWN,
-            '.txt': DocumentType.TEXT,
-            '.pdf': DocumentType.PDF,
-            '.py': DocumentType.CODE,
-            '.js': DocumentType.CODE,
-            '.ts': DocumentType.CODE,
-            '.json': DocumentType.JSON,
-            '.html': DocumentType.HTML,
-            '.xml': DocumentType.XML,
-            '.csv': DocumentType.CSV,
-            '.yaml': DocumentType.YAML,
-            '.yml': DocumentType.YAML,
-        }
-        doc_type = doc_type_map.get(ext, DocumentType.TEXT)
-
-        # Get mime type
-        mime_type, _ = mt.guess_type(filename)
-
-        # Create a ContextDocument record
-        context_doc = ContextDocument(
-            filename=filename,
-            original_filename=filename,
-            file_path=str(full_path),
-            file_size=os.path.getsize(full_path),
-            mime_type=mime_type or 'text/plain',
+            },
             document_type=doc_type,
-            indexing_status=IndexingStatus.READY,
-            indexed_at=datetime.now(timezone.utc),
-            indexed_chunks_count=len(nodes),
-            description=f"Workspace file: {file_path}",
-            content_preview=content[:500] if len(content) > 500 else content,
-            project_id=request.project_id,
+            chunk_size=chunk_size,
+            chunk_overlap=chunk_overlap,
+            node_prefix="workspace_file_path",
         )
-        db.add(context_doc)
+
+        context_doc.indexing_status = IndexingStatus.READY
+        context_doc.indexed_at = datetime.now(timezone.utc)
+        context_doc.indexed_chunks_count = result.get("chunks_created", 0)
         db.commit()
 
-        logger.info(f"Indexed {len(nodes)} chunks from {file_path} to project {request.project_id}")
+        logger.info(
+            "Indexed %s chunks from %s to project %s",
+            result.get("chunks_created", 0),
+            file_path,
+            request.project_id,
+        )
 
         return IndexFileResponse(
             status="success",
-            message=f"Successfully indexed {len(nodes)} chunks into the knowledge base",
-            chunks_created=len(nodes)
+            message=f"Successfully indexed {result.get('chunks_created', 0)} chunks into the knowledge base",
+            chunks_created=result.get("chunks_created", 0),
         )
 
     except Exception as e:
-        logger.error(f"Error indexing file: {e}")
+        context_doc.indexing_status = IndexingStatus.FAILED
+        db.commit()
+        logger.error(f"Error indexing file: {e}", exc_info=True)
         raise HTTPException(status_code=500, detail=str(e))
 
 
@@ -1394,40 +1379,15 @@ async def bulk_index_files_by_path(
     Useful for indexing an entire folder of files at once.
     Skips binary files and files that fail to read.
     """
-    from langchain_text_splitters import RecursiveCharacterTextSplitter
-    from llama_index.core.schema import TextNode
-    from llama_index.core import Settings
-    from datetime import datetime, timezone
-    from models.core import ContextDocument, IndexingStatus, DocumentType
-    import os
-    import mimetypes as mt
-
     workspace_mgr = get_workspace_manager()
-
-    # Text file extensions we can index
-    text_extensions = {
-        '.md', '.txt', '.py', '.js', '.ts', '.tsx', '.jsx', '.json',
-        '.yaml', '.yml', '.xml', '.html', '.css', '.scss', '.sql',
-        '.sh', '.bash', '.csv', '.toml', '.ini', '.cfg', '.conf',
-        '.log', '.rst', '.tex'
-    }
 
     indexed_count = 0
     failed_count = 0
     total_chunks = 0
     errors = []
 
-    # Get vector store for the project
-    from services.llama_config import get_vector_store
-    vector_store = get_vector_store(request.project_id)
-
-    text_splitter = RecursiveCharacterTextSplitter(
-        chunk_size=1024,
-        chunk_overlap=200,
-        separators=["\n\n", "\n", ". ", " ", ""],
-    )
-
-    embed_model = Settings.embed_model
+    chunk_size, chunk_overlap = _get_rag_chunk_config(db)
+    indexer = ContextDocumentIndexer()
 
     for file_path in request.file_paths:
         try:
@@ -1447,111 +1407,67 @@ async def bulk_index_files_by_path(
                 failed_count += 1
                 continue
 
-            # Check if it's a text file we can index
-            ext = full_path.suffix.lower()
-            if ext not in text_extensions:
-                errors.append(f"{file_path}: Skipped (binary or unsupported type)")
-                failed_count += 1
-                continue
-
-            # Read file content
-            try:
-                with open(full_path, 'r', encoding='utf-8') as f:
-                    content = f.read()
-            except Exception as read_err:
-                errors.append(f"{file_path}: Could not read ({str(read_err)})")
-                failed_count += 1
-                continue
-
-            if not content.strip():
-                errors.append(f"{file_path}: Empty file")
-                failed_count += 1
-                continue
-
-            # Split into chunks
-            chunks = text_splitter.split_text(content)
-            if not chunks:
-                errors.append(f"{file_path}: Could not split into chunks")
-                failed_count += 1
-                continue
-
-            # Create embeddings and store
             filename = full_path.name
-            nodes = []
-
-            for i, chunk_text in enumerate(chunks):
-                node_id = f"workspace_file_path_{file_path}_{i}"
-                metadata = {
-                    "source": "workspace_file",
-                    "file_path": file_path,
-                    "filename": filename,
-                    "project_id": request.project_id,
-                    "chunk_index": i,
-                    "total_chunks": len(chunks),
-                    "indexed_at": datetime.now(timezone.utc).isoformat()
-                }
-
-                text_node = TextNode(
-                    id_=node_id,
-                    text=chunk_text,
-                    metadata=metadata
-                )
-
-                embedding = embed_model.get_text_embedding(chunk_text)
-                text_node.embedding = embedding
-
-                nodes.append(text_node)
-
-            vector_store.add(nodes)
-            total_chunks += len(nodes)
-
-            # Determine document type from extension
-            doc_type_map = {
-                '.md': DocumentType.MARKDOWN,
-                '.txt': DocumentType.TEXT,
-                '.pdf': DocumentType.PDF,
-                '.py': DocumentType.CODE,
-                '.js': DocumentType.CODE,
-                '.ts': DocumentType.CODE,
-                '.json': DocumentType.JSON,
-                '.html': DocumentType.HTML,
-                '.xml': DocumentType.XML,
-                '.csv': DocumentType.CSV,
-                '.yaml': DocumentType.YAML,
-                '.yml': DocumentType.YAML,
-            }
-            doc_type = doc_type_map.get(ext, DocumentType.TEXT)
-
-            # Get mime type
+            doc_type = _infer_document_type(filename)
             mime_type, _ = mt.guess_type(filename)
 
-            # Create a ContextDocument record
             context_doc = ContextDocument(
                 filename=filename,
                 original_filename=filename,
                 file_path=str(full_path),
                 file_size=os.path.getsize(full_path),
-                mime_type=mime_type or 'text/plain',
+                mime_type=mime_type or 'application/octet-stream',
                 document_type=doc_type,
-                indexing_status=IndexingStatus.READY,
-                indexed_at=datetime.now(timezone.utc),
-                indexed_chunks_count=len(nodes),
+                indexing_status=IndexingStatus.INDEXING,
                 description=f"Workspace file: {file_path}",
-                content_preview=content[:500] if len(content) > 500 else content,
                 project_id=request.project_id,
             )
             db.add(context_doc)
+            db.commit()
+            db.refresh(context_doc)
+
+            result = await indexer.index_file_with_metadata(
+                document_id=context_doc.id,
+                file_path=str(full_path),
+                filename=filename,
+                project_id=request.project_id,
+                metadata={
+                    "source": "workspace_file",
+                    "file_path": file_path,
+                    "filename": filename,
+                },
+                document_type=doc_type,
+                chunk_size=chunk_size,
+                chunk_overlap=chunk_overlap,
+                node_prefix="workspace_file_path",
+            )
+
+            chunks_created = result.get("chunks_created", 0)
+            context_doc.indexing_status = IndexingStatus.READY
+            context_doc.indexed_at = datetime.now(timezone.utc)
+            context_doc.indexed_chunks_count = chunks_created
+            db.commit()
 
             indexed_count += 1
-            logger.info(f"Indexed {len(nodes)} chunks from {file_path}")
+            total_chunks += chunks_created
+            logger.info(f"Indexed {chunks_created} chunks from {file_path}")
 
         except Exception as e:
             errors.append(f"{file_path}: {str(e)}")
             failed_count += 1
+            try:
+                failed_doc = db.query(ContextDocument).filter(
+                    ContextDocument.file_path == str((workspace_mgr.base_dir / file_path).resolve()),
+                    ContextDocument.project_id == request.project_id,
+                ).order_by(ContextDocument.id.desc()).first()
+                if failed_doc:
+                    failed_doc.indexing_status = IndexingStatus.FAILED
+                    db.commit()
+                else:
+                    db.rollback()
+            except Exception:
+                db.rollback()
             logger.error(f"Error indexing {file_path}: {e}")
-
-    # Commit all ContextDocument records
-    db.commit()
 
     logger.info(f"Bulk index complete: {indexed_count} indexed, {failed_count} failed, {total_chunks} total chunks")
 

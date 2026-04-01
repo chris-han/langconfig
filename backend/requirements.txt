@@ -39,6 +39,7 @@ numpy
 # Document Processing
 # Using LangChain Community loaders instead of direct libraries
 unstructured[all-docs]>=0.10.0  # Universal document loader (PDF, DOCX, etc.) with OCR
+pypdf>=4.0.0  # Fallback PDF loader when unstructured fails
 python-docx>=1.1.0  # Word document generation for export functionality
 # Note: PyPDF2 and python-docx still available as fallbacks via langchain-community
 beautifulsoup4>=4.12.0

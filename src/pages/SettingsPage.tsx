@@ -191,6 +191,14 @@ export default function SettingsView() {
   });
   const [providerConfigs, setProviderConfigs] = useState<Record<string, AdditionalProviderConfig>>({});
 
+  // Keep refs in sync so debounced autosave always reads the latest state values.
+  const apiKeysRef = useRef(apiKeys);
+  const generalSettingsRef = useRef(generalSettings);
+  const ragSettingsRef = useRef(ragSettings);
+  const localModelsSettingsRef = useRef(localModelsSettings);
+  const workspaceSettingsRef = useRef(workspaceSettings);
+  const modelDefaultsSettingsRef = useRef(modelDefaultsSettings);
+
   const normalizeProviderConfigs = (rawConfigs: Record<string, any> | undefined | null): Record<string, AdditionalProviderConfig> => {
     const entries = Object.entries(rawConfigs || {});
     return Object.fromEntries(entries.map(([providerKey, rawValue]) => {
@@ -233,6 +241,30 @@ export default function SettingsView() {
       abortController.abort();
     };
   }, []);
+
+  useEffect(() => {
+    apiKeysRef.current = apiKeys;
+  }, [apiKeys]);
+
+  useEffect(() => {
+    generalSettingsRef.current = generalSettings;
+  }, [generalSettings]);
+
+  useEffect(() => {
+    ragSettingsRef.current = ragSettings;
+  }, [ragSettings]);
+
+  useEffect(() => {
+    localModelsSettingsRef.current = localModelsSettings;
+  }, [localModelsSettings]);
+
+  useEffect(() => {
+    workspaceSettingsRef.current = workspaceSettings;
+  }, [workspaceSettings]);
+
+  useEffect(() => {
+    modelDefaultsSettingsRef.current = modelDefaultsSettings;
+  }, [modelDefaultsSettings]);
 
   const loadSettings = async () => {
     try {
@@ -367,70 +399,77 @@ export default function SettingsView() {
     // Set new timeout to save after 1 second of no changes
     saveTimeoutRef.current = setTimeout(async () => {
       try {
+        const currentApiKeys = apiKeysRef.current;
+        const currentGeneralSettings = generalSettingsRef.current;
+        const currentRagSettings = ragSettingsRef.current;
+        const currentLocalModelsSettings = localModelsSettingsRef.current;
+        const currentWorkspaceSettings = workspaceSettingsRef.current;
+        const currentModelDefaultsSettings = modelDefaultsSettingsRef.current;
+
         switch (category) {
           case 'api-keys':
             await apiClient.setApiKeys({
-              anthropic_api_key: apiKeys.anthropic || undefined,
-              openai_api_key: apiKeys.openai || undefined,
-              azure_openai_api_key: apiKeys.azureOpenAI || undefined,
-              google_api_key: apiKeys.google || undefined,
+              anthropic_api_key: currentApiKeys.anthropic || undefined,
+              openai_api_key: currentApiKeys.openai || undefined,
+              azure_openai_api_key: currentApiKeys.azureOpenAI || undefined,
+              google_api_key: currentApiKeys.google || undefined,
             });
             break;
 
           case 'general':
             await apiClient.updateGeneralSettings({
-              app_name: generalSettings.appName,
-              auto_save: generalSettings.autoSave,
-              auto_save_interval: generalSettings.autoSaveInterval,
-              confirm_before_delete: generalSettings.confirmBeforeDelete,
-              show_notifications: generalSettings.showNotifications,
-              check_updates: generalSettings.checkUpdates,
-              telemetry: generalSettings.telemetry,
-              log_level: generalSettings.logLevel
+              app_name: currentGeneralSettings.appName,
+              auto_save: currentGeneralSettings.autoSave,
+              auto_save_interval: currentGeneralSettings.autoSaveInterval,
+              confirm_before_delete: currentGeneralSettings.confirmBeforeDelete,
+              show_notifications: currentGeneralSettings.showNotifications,
+              check_updates: currentGeneralSettings.checkUpdates,
+              telemetry: currentGeneralSettings.telemetry,
+              log_level: currentGeneralSettings.logLevel
             });
             // Also save RAG settings to main settings endpoint
             await apiClient.updateSettings({
-              embedding_model: ragSettings.embeddingModel,
-              azure_openai_endpoint: ragSettings.azureOpenAIEndpoint || null,
-              azure_openai_api_version: ragSettings.azureOpenAIApiVersion,
-              azure_openai_embedding_deployment: ragSettings.azureOpenAIEmbeddingDeployment || null,
-              azure_openai_embedding_dimensions: ragSettings.azureOpenAIEmbeddingDimensions || null,
-              chunk_size: ragSettings.chunkSize,
-              chunk_overlap: ragSettings.chunkOverlap
+              embedding_model: currentRagSettings.embeddingModel,
+              azure_openai_endpoint: currentRagSettings.azureOpenAIEndpoint || null,
+              azure_openai_api_version: currentRagSettings.azureOpenAIApiVersion,
+              azure_openai_embedding_deployment: currentRagSettings.azureOpenAIEmbeddingDeployment || null,
+              azure_openai_embedding_dimensions: currentRagSettings.azureOpenAIEmbeddingDimensions || null,
+              chunk_size: currentRagSettings.chunkSize,
+              chunk_overlap: currentRagSettings.chunkOverlap
             });
             break;
 
           case 'local-models':
             await apiClient.updateLocalModelsSettings({
-              provider: localModelsSettings.provider,
-              base_url: localModelsSettings.baseUrl,
-              model_name: localModelsSettings.modelName,
-              api_key: localModelsSettings.apiKey || null
+              provider: currentLocalModelsSettings.provider,
+              base_url: currentLocalModelsSettings.baseUrl,
+              model_name: currentLocalModelsSettings.modelName,
+              api_key: currentLocalModelsSettings.apiKey || null
             });
             break;
 
           case 'local-workspace':
             await apiClient.updateWorkspaceSettings({
-              workspace_path: workspaceSettings.workspacePath,
-              allow_read: workspaceSettings.allowRead,
-              allow_write: workspaceSettings.allowWrite,
-              require_approval: workspaceSettings.requireApproval,
-              auto_detect_git: workspaceSettings.autoDetectGit,
-              backup_before_edit: workspaceSettings.backupBeforeEdit
+              workspace_path: currentWorkspaceSettings.workspacePath,
+              allow_read: currentWorkspaceSettings.allowRead,
+              allow_write: currentWorkspaceSettings.allowWrite,
+              require_approval: currentWorkspaceSettings.requireApproval,
+              auto_detect_git: currentWorkspaceSettings.autoDetectGit,
+              backup_before_edit: currentWorkspaceSettings.backupBeforeEdit
             });
             break;
 
           case 'model-defaults':
             await apiClient.updateModelDefaultsSettings({
-              primary_model: modelDefaultsSettings.primaryModel,
-              fallback_models: modelDefaultsSettings.fallbackModels,
-              temperature: modelDefaultsSettings.temperature,
-              max_tokens: modelDefaultsSettings.maxTokens,
-              top_p: modelDefaultsSettings.topP,
-              routing_strategy: modelDefaultsSettings.routingStrategy,
-              daily_token_limit: modelDefaultsSettings.dailyTokenLimit,
-              monthly_token_limit: modelDefaultsSettings.monthlyTokenLimit,
-              alert_threshold: modelDefaultsSettings.alertThreshold
+              primary_model: currentModelDefaultsSettings.primaryModel,
+              fallback_models: currentModelDefaultsSettings.fallbackModels,
+              temperature: currentModelDefaultsSettings.temperature,
+              max_tokens: currentModelDefaultsSettings.maxTokens,
+              top_p: currentModelDefaultsSettings.topP,
+              routing_strategy: currentModelDefaultsSettings.routingStrategy,
+              daily_token_limit: currentModelDefaultsSettings.dailyTokenLimit,
+              monthly_token_limit: currentModelDefaultsSettings.monthlyTokenLimit,
+              alert_threshold: currentModelDefaultsSettings.alertThreshold
             });
             break;
         }
@@ -438,7 +477,7 @@ export default function SettingsView() {
         console.error('Failed to autosave settings:', error);
       }
     }, 1000); // 1 second debounce
-  }, [apiKeys, generalSettings, ragSettings, localModelsSettings, workspaceSettings, modelDefaultsSettings]);
+  }, []);
 
   const isStoredMaskedValue = (providerKey: keyof typeof apiKeys) =>
     !!storedMaskedApiKeys[providerKey] && apiKeys[providerKey] === storedMaskedApiKeys[providerKey];

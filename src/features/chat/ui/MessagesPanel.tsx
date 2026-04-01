@@ -43,6 +43,7 @@ export default function MessagesPanel({
 }: MessagesPanelProps) {
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const [copiedIndex, setCopiedIndex] = useState<number | null>(null);
+  const [documentsRefreshTrigger, setDocumentsRefreshTrigger] = useState(0);
 
   // Auto-scroll to bottom when messages change
   useEffect(() => {
@@ -539,7 +540,10 @@ export default function MessagesPanel({
       )}
 
       {/* Session Documents Panel */}
-      <SessionDocumentsPanel sessionId={sessionId} />
+      <SessionDocumentsPanel
+        sessionId={sessionId}
+        refreshTrigger={documentsRefreshTrigger}
+      />
 
       {/* Input Area */}
       <div
@@ -554,6 +558,8 @@ export default function MessagesPanel({
           sessionId={sessionId}
           onFileUploaded={(file) => {
             console.log('File uploaded:', file);
+            // Trigger refresh of SessionDocumentsPanel
+            setDocumentsRefreshTrigger(prev => prev + 1);
           }}
         />
       </div>

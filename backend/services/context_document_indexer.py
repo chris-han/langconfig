@@ -39,6 +39,7 @@ from langchain_community.document_loaders import (
     CSVLoader,
     UnstructuredMarkdownLoader,
     UnstructuredHTMLLoader,
+    PyPDFLoader,
 )
 from langchain_text_splitters import RecursiveCharacterTextSplitter
 
@@ -219,16 +220,20 @@ class ContextDocumentIndexer:
 
         try:
             if doc_type == DocumentType.PDF:
-                # UnstructuredPDFLoader provides:
-                # - OCR for scanned PDFs
-                # - Table extraction
-                # - Page number metadata
-                # - Better handling of complex layouts
-                return UnstructuredPDFLoader(
-                    file_path_str,
-                    mode="elements",  # Preserves document structure
-                    strategy="auto",  # Auto-detects if OCR needed
-                )
+                # Try UnstructuredPDFLoader first (better OCR, table extraction)
+                # Fall back to PyPDFLoader if unstructured is not available
+                try:
+                    return UnstructuredPDFLoader(
+                        file_path_str,
+                        mode="elements",  # Preserves document structure
+                        strategy="auto",  # Auto-detects if OCR needed
+                    )
+                except Exception as unstructured_error:
+                    logger.warning(
+                        f"UnstructuredPDFLoader failed (missing dependencies?), "
+                        f"falling back to PyPDFLoader: {unstructured_error}"
+                    )
+                    return PyPDFLoader(file_path_str)
 
             elif doc_type == DocumentType.DOCX:
                 # UnstructuredWordDocumentLoader provides:
@@ -291,6 +296,12 @@ class ContextDocumentIndexer:
 
         except Exception as e:
             logger.warning(f"Failed to create specific loader for {doc_type}, falling back to universal loader: {e}")
+            # For PDFs, try PyPDFLoader as a last resort
+            if doc_type == DocumentType.PDF:
+                try:
+                    return PyPDFLoader(file_path_str)
+                except Exception as pdf_error:
+                    logger.warning(f"PyPDFLoader also failed: {pdf_error}")
             return UnstructuredFileLoader(
                 file_path_str,
                 mode="single",  # Fallback to simple mode

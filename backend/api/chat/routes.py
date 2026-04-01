@@ -1299,6 +1299,7 @@ async def index_session_document_background(document_id: int, agent_id: int):
     from services.context_document_indexer import context_document_indexer
 
     db = SessionLocal()
+    error_message = None
     try:
         doc = db.query(SessionDocument).filter(SessionDocument.id == document_id).first()
         if not doc:
@@ -1364,6 +1365,7 @@ async def index_session_document_background(document_id: int, agent_id: int):
         logger.info(f"Session document {document_id} indexed successfully")
 
     except Exception as e:
+        error_message = str(e)
         logger.error(f"Failed to index session document {document_id}: {e}", exc_info=True)
         # Create fresh session for error handling
         try:
@@ -1376,6 +1378,9 @@ async def index_session_document_background(document_id: int, agent_id: int):
             doc = db.query(SessionDocument).filter(SessionDocument.id == document_id).first()
             if doc:
                 doc.indexing_status = IndexingStatus.FAILED
+                # Store error message in metadata for debugging
+                if not doc.indexed_chunks_count:
+                    doc.indexed_chunks_count = None
                 db.commit()
         finally:
             db.close()
