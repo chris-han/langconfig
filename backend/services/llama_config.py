@@ -209,11 +209,14 @@ def get_vector_store(project_id: int, embed_dim: Optional[int] = None) -> PGVect
     
     # Extract database name (remove leading '/')
     database_name = parsed_url.path.lstrip('/')
-    
-    # Create project-specific table name for multi-tenancy
-    table_name = f"data_project_index_{project_id}"
-    
-    logger.info(f"Initializing PGVectorStore for project {project_id} with table '{table_name}'")
+
+    # LlamaIndex's PGVectorStore internally prepends "data_" to the index_name passed here,
+    # so the actual PostgreSQL table created will be "data_{index_name}".
+    # We pass "project_index_{project_id}" so the actual table becomes
+    # "data_project_index_{project_id}" — matching what get_table_name() returns.
+    table_name = f"project_index_{project_id}"
+
+    logger.info(f"Initializing PGVectorStore for project {project_id} with table 'data_{table_name}'")
     
     try:
         vector_store = PGVectorStore.from_params(
