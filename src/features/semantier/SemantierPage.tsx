@@ -513,15 +513,15 @@ function ExplorerPane({
       </div>
       <Tabs value={activeTab} onValueChange={(value) => onTabChange(value as ExplorerTab)} className="flex min-h-0 flex-1 flex-col">
         <TabsList className="h-auto w-full justify-start rounded-none border-b border-sidebar-border bg-transparent p-0">
-          <TabsTrigger value="ontology" className="rounded-none border-b-2 border-transparent px-3 py-2 text-xs data-[state=active]:border-primary data-[state=active]:bg-transparent">
+          <TabsTrigger value="ontology" className="rounded-none border-b border-transparent px-3 py-2 text-xs data-[state=active]:border-primary data-[state=active]:bg-transparent">
             <BookOpen className="h-3.5 w-3.5" />
             Ontology
           </TabsTrigger>
-          <TabsTrigger value="dimensions" className="rounded-none border-b-2 border-transparent px-3 py-2 text-xs data-[state=active]:border-primary data-[state=active]:bg-transparent">
+          <TabsTrigger value="dimensions" className="rounded-none border-b border-transparent px-3 py-2 text-xs data-[state=active]:border-primary data-[state=active]:bg-transparent">
             <GitBranch className="h-3.5 w-3.5" />
             Dimensions
           </TabsTrigger>
-          <TabsTrigger value="rules" className="rounded-none border-b-2 border-transparent px-3 py-2 text-xs data-[state=active]:border-primary data-[state=active]:bg-transparent">
+          <TabsTrigger value="rules" className="rounded-none border-b border-transparent px-3 py-2 text-xs data-[state=active]:border-primary data-[state=active]:bg-transparent">
             <Workflow className="h-3.5 w-3.5" />
             Rules
           </TabsTrigger>
@@ -562,18 +562,18 @@ function InspectorPane({ selectedItem, graphSelection }: { selectedItem: TreeNod
     <div className="flex h-full flex-col bg-sidebar border-l border-sidebar-border">
       <Tabs defaultValue="properties" className="flex min-h-0 flex-1 flex-col">
         <TabsList className="h-auto w-full justify-start rounded-none border-b border-sidebar-border bg-transparent p-0">
-          <TabsTrigger value="properties" className="rounded-none border-b-2 border-transparent px-3 py-2 text-xs data-[state=active]:border-primary data-[state=active]:bg-transparent">
+          <TabsTrigger value="properties" className="rounded-none border-b border-transparent px-3 py-2 text-xs data-[state=active]:border-primary data-[state=active]:bg-transparent">
             <Settings2 className="h-3.5 w-3.5" />
             属性
           </TabsTrigger>
-          <TabsTrigger value="reconciliation" className="rounded-none border-b-2 border-transparent px-3 py-2 text-xs data-[state=active]:border-primary data-[state=active]:bg-transparent">
+          <TabsTrigger value="reconciliation" className="rounded-none border-b border-transparent px-3 py-2 text-xs data-[state=active]:border-primary data-[state=active]:bg-transparent">
             <Link2 className="h-3.5 w-3.5" />
             勾稽
             <span className="ml-1 rounded bg-destructive px-1 py-0 text-[10px] font-semibold text-destructive-foreground">
               {reconciliationAlerts.length}
             </span>
           </TabsTrigger>
-          <TabsTrigger value="versions" className="rounded-none border-b-2 border-transparent px-3 py-2 text-xs data-[state=active]:border-primary data-[state=active]:bg-transparent">
+          <TabsTrigger value="versions" className="rounded-none border-b border-transparent px-3 py-2 text-xs data-[state=active]:border-primary data-[state=active]:bg-transparent">
             <History className="h-3.5 w-3.5" />
             版本
           </TabsTrigger>
@@ -867,15 +867,15 @@ export default function SemantierPage() {
               </div>
               <Tabs value={workspaceTab} onValueChange={(value) => setWorkspaceTab(value as WorkspaceTab)} className="flex min-h-0 flex-1 flex-col overflow-hidden">
                 <TabsList className="h-auto w-full justify-start rounded-none border-b bg-card px-4 py-0">
-                  <TabsTrigger value="graph" className="rounded-none border-b-2 border-transparent px-4 py-2.5 text-sm data-[state=active]:border-primary data-[state=active]:bg-transparent">
+                  <TabsTrigger value="graph" className="rounded-none border-b border-transparent px-4 py-2.5 text-sm data-[state=active]:border-primary data-[state=active]:bg-transparent">
                     <GitBranch className="h-4 w-4" />
                     Graph Modeling
                   </TabsTrigger>
-                  <TabsTrigger value="rules" className="rounded-none border-b-2 border-transparent px-4 py-2.5 text-sm data-[state=active]:border-primary data-[state=active]:bg-transparent">
+                  <TabsTrigger value="rules" className="rounded-none border-b border-transparent px-4 py-2.5 text-sm data-[state=active]:border-primary data-[state=active]:bg-transparent">
                     <Workflow className="h-4 w-4" />
                     Execution Rules
                   </TabsTrigger>
-                  <TabsTrigger value="editor" className="rounded-none border-b-2 border-transparent px-4 py-2.5 text-sm data-[state=active]:border-primary data-[state=active]:bg-transparent">
+                  <TabsTrigger value="editor" className="rounded-none border-b border-transparent px-4 py-2.5 text-sm data-[state=active]:border-primary data-[state=active]:bg-transparent">
                     <FileCode2 className="h-4 w-4" />
                     Code View
                   </TabsTrigger>

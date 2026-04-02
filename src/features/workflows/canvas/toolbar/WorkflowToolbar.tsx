@@ -108,7 +108,7 @@ const WorkflowToolbar = memo(function WorkflowToolbar({
         : 'border-transparent text-gray-600 dark:text-text-muted hover:text-gray-900 dark:hover:text-white'
     }`;
   return (
-    <div className="bg-white dark:bg-panel-dark border-b border-gray-200 dark:border-border-dark px-4 py-1.5">
+    <div className="bg-background border-b border-border px-4 py-1.5">
       <div className="flex items-center">
         {/* LEFT SECTION: Workflow Switcher + Save + Versions + Settings */}
         <div className="flex items-center gap-2">
@@ -128,13 +128,13 @@ const WorkflowToolbar = memo(function WorkflowToolbar({
                   }
                 }}
                 autoFocus
-                className="px-2 py-1.5 text-sm font-semibold bg-white dark:bg-background-dark border border-primary rounded-lg focus:outline-none focus:ring-2 focus:ring-primary"
+                className="px-2 py-1.5 text-sm font-semibold bg-card border border-primary rounded-md focus:outline-none focus:ring-2 focus:ring-primary"
                 style={{ color: 'var(--color-text-primary, #1a1a1a)', minWidth: '180px' }}
               />
             ) : (
               <button
                 onClick={handleToggleWorkflowDropdown}
-                className="inline-flex items-center gap-1.5 px-2 py-1.5 text-sm font-semibold bg-white dark:bg-background-dark border border-gray-300 dark:border-border-dark rounded-lg hover:bg-gray-50 dark:hover:bg-white/5 transition-colors"
+                className="inline-flex items-center gap-1.5 px-2 py-1.5 text-sm font-semibold bg-card border border-border rounded-md hover:bg-accent/10 transition-colors"
                 style={{ color: 'var(--color-text-primary)' }}
                 title="Click to switch workflow or double-click name to rename"
               >
@@ -155,8 +155,8 @@ const WorkflowToolbar = memo(function WorkflowToolbar({
               <>
                 <div className="fixed inset-0 z-40" onClick={handleCloseWorkflowDropdown} />
                 <div
-                  className="absolute top-full left-0 mt-1 w-80 rounded-lg shadow-xl z-50 max-h-96 overflow-hidden flex flex-col border"
-                  style={{ backgroundColor: 'var(--color-panel-dark)', borderColor: 'var(--color-border-dark)' }}
+                  className="absolute top-full left-0 mt-1 w-80 rounded-md shadow-xl z-50 max-h-96 overflow-hidden flex flex-col border bg-card"
+                  style={{ borderColor: 'var(--color-border-dark)' }}
                 >
                   <div className="p-3 border-b" style={{ borderColor: 'var(--color-border-dark)' }}>
                     <input
@@ -164,14 +164,14 @@ const WorkflowToolbar = memo(function WorkflowToolbar({
                       placeholder="Search workflows..."
                       value={workflowSearchQuery}
                       onChange={handleWorkflowSearchChange}
-                      className="w-full px-3 py-2 text-sm rounded-lg border focus:outline-none focus:ring-2 transition-all"
-                      style={{ backgroundColor: 'var(--color-background-light)', borderColor: 'var(--color-border-dark)', color: 'var(--color-text-primary)' }}
+                    className="w-full px-3 py-2 text-sm rounded-md border focus:outline-none focus:ring-2 transition-all bg-background"
+                      style={{ borderColor: 'var(--color-border-dark)', color: 'var(--color-text-primary)' }}
                     />
                   </div>
                   <div className="p-2 border-b" style={{ borderColor: 'var(--color-border-dark)' }}>
                     <button
                       onClick={onShowCreateWorkflowModal}
-                      className="w-full px-3 py-2 text-sm font-medium text-white bg-primary rounded-lg hover:opacity-90 transition-opacity flex items-center justify-center gap-2"
+                    className="w-full px-3 py-2 text-sm font-medium text-primary-foreground bg-primary rounded-md hover:opacity-90 transition-opacity flex items-center justify-center gap-2"
                     >
                       <span className="material-symbols-outlined text-sm">add</span>
                       Create New Workflow
