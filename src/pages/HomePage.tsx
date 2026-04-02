@@ -81,7 +81,7 @@ export default function HomePage() {
 
   return (
     <div
-      className="flex flex-col items-center justify-center h-full w-full relative overflow-hidden bg-gray-50 dark:bg-background-dark"
+      className="flex flex-col items-center justify-center h-full w-full relative overflow-hidden bg-background text-foreground"
     >
       {/* Background decoration */}
       <div className="absolute inset-0 overflow-hidden pointer-events-none">
@@ -116,7 +116,7 @@ export default function HomePage() {
           {/* Create Project */}
           <button
             onClick={() => setShowCreateModal(true)}
-            className="flex items-center gap-4 p-6 rounded-xl border border-gray-200 dark:border-border-dark bg-white dark:bg-panel-dark transition-all hover:shadow-lg group text-left"
+            className="flex items-center gap-4 p-6 rounded-md border border-border bg-card transition-all hover:shadow-lg group text-left"
           >
             <div
               className="p-3 rounded-lg transition-all group-hover:scale-110"
@@ -140,7 +140,7 @@ export default function HomePage() {
           {/* Open Project */}
           <button
             onClick={() => setShowOpenModal(true)}
-            className="flex items-center gap-4 p-6 rounded-xl border border-gray-200 dark:border-border-dark bg-white dark:bg-panel-dark transition-all hover:shadow-lg group text-left"
+            className="flex items-center gap-4 p-6 rounded-md border border-border bg-card transition-all hover:shadow-lg group text-left"
           >
             <div
               className="p-3 rounded-lg transition-all group-hover:scale-110"
@@ -196,7 +196,7 @@ export default function HomePage() {
                 <button
                   key={project.id}
                   onClick={() => handleOpenProject(project.id)}
-                  className="flex items-center justify-between p-4 rounded-lg border border-gray-200 dark:border-border-dark bg-white dark:bg-panel-dark transition-all hover:shadow-md text-left group"
+                  className="flex items-center justify-between p-4 rounded-md border border-border bg-card transition-all hover:shadow-md text-left group"
                 >
                   <div className="flex-1 min-w-0 mr-4">
                     <div

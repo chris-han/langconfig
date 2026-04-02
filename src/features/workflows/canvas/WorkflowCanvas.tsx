@@ -1984,7 +1984,7 @@ if __name__ == "__main__":
         />
 
         {/* Canvas Area */}
-        <div className="flex-1 bg-gray-50 dark:bg-background-dark relative overflow-hidden" id="workflow-canvas-container">
+        <div className="flex-1 bg-background relative overflow-hidden" id="workflow-canvas-container">
           {/* Studio Tab - Keep ReactFlow mounted to preserve node selection */}
           <div style={{ display: activeTab === 'studio' ? 'flex' : 'none', flexDirection: 'column', height: '100%' }}>
             {nodes.length === 0 ? (

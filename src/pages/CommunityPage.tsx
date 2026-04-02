@@ -7,7 +7,7 @@
 
 export default function CommunityPage() {
   return (
-    <div className="h-full flex items-center justify-center p-6 bg-gray-50 dark:bg-background-dark">
+    <div className="h-full flex items-center justify-center p-6 bg-background text-foreground">
       <div className="max-w-2xl w-full text-center">
         {/* Icon */}
         <div className="w-24 h-24 mx-auto mb-6 rounded-2xl bg-primary/10 flex items-center justify-center">
@@ -26,7 +26,7 @@ export default function CommunityPage() {
 
         {/* Features List */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-left max-w-xl mx-auto">
-          <div className="p-4 rounded-lg border border-gray-200 dark:border-border-dark bg-white dark:bg-panel-dark">
+          <div className="p-4 rounded-md border border-border bg-card">
             <div className="flex items-start gap-3">
               <span className="material-symbols-outlined text-primary flex-shrink-0">article</span>
               <div>
@@ -40,7 +40,7 @@ export default function CommunityPage() {
             </div>
           </div>
 
-          <div className="p-4 rounded-lg border border-gray-200 dark:border-border-dark bg-white dark:bg-panel-dark">
+          <div className="p-4 rounded-md border border-border bg-card">
             <div className="flex items-start gap-3">
               <span className="material-symbols-outlined text-primary flex-shrink-0">share</span>
               <div>
@@ -54,7 +54,7 @@ export default function CommunityPage() {
             </div>
           </div>
 
-          <div className="p-4 rounded-lg border border-gray-200 dark:border-border-dark bg-white dark:bg-panel-dark">
+          <div className="p-4 rounded-md border border-border bg-card">
             <div className="flex items-start gap-3">
               <span className="material-symbols-outlined text-primary flex-shrink-0">forum</span>
               <div>
@@ -68,7 +68,7 @@ export default function CommunityPage() {
             </div>
           </div>
 
-          <div className="p-4 rounded-lg border border-gray-200 dark:border-border-dark bg-white dark:bg-panel-dark">
+          <div className="p-4 rounded-md border border-border bg-card">
             <div className="flex items-start gap-3">
               <span className="material-symbols-outlined text-primary flex-shrink-0">code</span>
               <div>
@@ -84,8 +84,8 @@ export default function CommunityPage() {
         </div>
 
         {/* Call to Action */}
-        <div className="mt-10 p-4 rounded-lg border border-blue-200 dark:border-blue-500/30 bg-blue-50 dark:bg-blue-500/10">
-          <p className="text-sm text-blue-800 dark:text-blue-300">
+        <div className="mt-10 p-4 rounded-md border border-border bg-card">
+          <p className="text-sm text-foreground">
             <strong>Want to contribute?</strong> Stay tuned for updates on how you can share your knowledge with the community.
           </p>
         </div>

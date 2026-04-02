@@ -95,7 +95,7 @@ export default function ModelSelector({
             onChange(nextModel?.id || '');
           }}
           disabled={disabled || isLoading}
-          className="px-3 py-2 border border-gray-300 dark:border-border-dark rounded-lg focus:outline-none focus:ring-2 focus:ring-primary disabled:opacity-50 disabled:cursor-not-allowed"
+          className="px-3 py-2 border border-border rounded-md bg-card focus:outline-none focus:ring-2 focus:ring-primary disabled:opacity-50 disabled:cursor-not-allowed"
           style={{
             backgroundColor: 'var(--color-input-background)',
             color: 'var(--color-text-primary)'
@@ -113,7 +113,7 @@ export default function ModelSelector({
           disabled={disabled || isLoading || selectedProviderModels.length === 0}
           onMouseDown={(e) => e.stopPropagation()}
           onWheel={(e) => e.stopPropagation()}
-          className="px-3 py-2 border border-gray-300 dark:border-border-dark rounded-lg focus:outline-none focus:ring-2 focus:ring-primary disabled:opacity-50 disabled:cursor-not-allowed"
+          className="px-3 py-2 border border-border rounded-md bg-card focus:outline-none focus:ring-2 focus:ring-primary disabled:opacity-50 disabled:cursor-not-allowed"
           style={{
             backgroundColor: 'var(--color-input-background)',
             color: 'var(--color-text-primary)'
@@ -190,7 +190,7 @@ export function ModelSelectorInline({
           onChange(nextModel?.id || '');
         }}
         disabled={disabled || isLoading}
-        className="w-full px-3 py-2 border border-gray-300 dark:border-border-dark rounded-lg focus:outline-none focus:ring-2 focus:ring-primary disabled:opacity-50"
+        className="w-full px-3 py-2 border border-border rounded-md bg-card focus:outline-none focus:ring-2 focus:ring-primary disabled:opacity-50"
         style={{
           backgroundColor: 'var(--color-input-background)',
           color: 'var(--color-text-primary)'
@@ -208,7 +208,7 @@ export function ModelSelectorInline({
         disabled={disabled || isLoading || selectedProviderModels.length === 0}
         onMouseDown={(e) => e.stopPropagation()}
         onWheel={(e) => e.stopPropagation()}
-        className="w-full px-3 py-2 border border-gray-300 dark:border-border-dark rounded-lg focus:outline-none focus:ring-2 focus:ring-primary disabled:opacity-50"
+        className="w-full px-3 py-2 border border-border rounded-md bg-card focus:outline-none focus:ring-2 focus:ring-primary disabled:opacity-50"
         style={{
           backgroundColor: 'var(--color-input-background)',
           color: 'var(--color-text-primary)'
