@@ -24,7 +24,7 @@ from llama_index.core.retrievers import BaseRetriever, VectorIndexRetriever
 from llama_index.core.indices import VectorStoreIndex
 
 from config import settings
-from db.database import SessionLocal
+from db.database import AsyncSessionLocal as SessionLocal
 from models.core import Project, IndexingStatus
 from services.llama_config import get_vector_store, ensure_initialized
 
