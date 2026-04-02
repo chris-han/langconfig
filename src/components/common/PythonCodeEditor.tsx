@@ -1,9 +1,6 @@
 import { useMemo } from 'react';
-import CodeMirror from '@uiw/react-codemirror';
-import { autocompletion, completeFromList, snippetCompletion } from '@codemirror/autocomplete';
-import { python } from '@codemirror/lang-python';
-import { Compartment, EditorState, Extension } from '@codemirror/state';
-import { EditorView } from '@codemirror/view';
+import Editor, { OnMount } from '@monaco-editor/react';
+import * as monaco from 'monaco-editor';
 
 interface PythonCodeEditorProps {
   value: string;
@@ -13,66 +10,83 @@ interface PythonCodeEditorProps {
   minHeight?: string;
 }
 
-const langChainPythonCompletions = completeFromList([
-  snippetCompletion('from langchain_openai import ChatOpenAI', {
+const langChainPythonCompletions = [
+  {
     label: 'from langchain_openai import ChatOpenAI',
-    type: 'keyword',
+    kind: 'Keyword',
+    insertText: 'from langchain_openai import ChatOpenAI',
     detail: 'LangChain import',
-  }),
-  snippetCompletion('from langchain.agents import AgentExecutor', {
+  },
+  {
     label: 'from langchain.agents import AgentExecutor',
-    type: 'keyword',
+    kind: 'Keyword',
+    insertText: 'from langchain.agents import AgentExecutor',
     detail: 'LangChain import',
-  }),
-  snippetCompletion('from langgraph.prebuilt import create_react_agent', {
+  },
+  {
     label: 'from langgraph.prebuilt import create_react_agent',
-    type: 'keyword',
+    kind: 'Keyword',
+    insertText: 'from langgraph.prebuilt import create_react_agent',
     detail: 'LangGraph import',
-  }),
-  snippetCompletion('from langgraph.checkpoint.postgres import PostgresSaver', {
+  },
+  {
     label: 'from langgraph.checkpoint.postgres import PostgresSaver',
-    type: 'keyword',
+    kind: 'Keyword',
+    insertText: 'from langgraph.checkpoint.postgres import PostgresSaver',
     detail: 'LangGraph import',
-  }),
-  snippetCompletion('ChatOpenAI(model="${model}", temperature=${temperature}, max_tokens=${maxTokens})', {
+  },
+  {
     label: 'ChatOpenAI(...)',
-    type: 'function',
+    kind: 'Function',
+    insertText: 'ChatOpenAI(model="${model}", temperature=${temperature}, max_tokens=${maxTokens})',
     detail: 'OpenAI-compatible chat model',
-  }),
-  snippetCompletion('create_react_agent(llm, tools, state_modifier=system_prompt)', {
+  },
+  {
     label: 'create_react_agent(...)',
-    type: 'function',
+    kind: 'Function',
+    insertText: 'create_react_agent(llm, tools, state_modifier=system_prompt)',
     detail: 'Build LangGraph react agent',
-  }),
-  snippetCompletion('AgentExecutor(\n    agent=agent,\n    tools=tools,\n    checkpointer=checkpointer,\n    verbose=True,\n)', {
+  },
+  {
     label: 'AgentExecutor(...)',
-    type: 'class',
+    kind: 'Class',
+    insertText: 'AgentExecutor(\n    agent=agent,\n    tools=tools,\n    checkpointer=checkpointer,\n    verbose=True,\n)',
     detail: 'Run the agent with tools',
-  }),
-  snippetCompletion('agent_executor.invoke(\n    {"messages": [("user", "${prompt}")]},\n    config={"configurable": {"thread_id": "${threadId}"}}\n)', {
+  },
+  {
     label: 'agent_executor.invoke(...)',
-    type: 'method',
+    kind: 'Method',
+    insertText:
+      'agent_executor.invoke(\n    {"messages": [("user", "${prompt}")]},\n    config={"configurable": {"thread_id": "${threadId}"}}\n)',
     detail: 'Execute the agent',
-  }),
+  },
   {
     label: 'system_prompt',
-    type: 'variable',
+    kind: 'Variable',
+    insertText: 'system_prompt',
     detail: 'System prompt string',
-    apply: 'system_prompt',
   },
   {
     label: 'tools',
-    type: 'variable',
+    kind: 'Variable',
+    insertText: 'tools',
     detail: 'Configured tool list',
-    apply: 'tools',
   },
   {
     label: 'checkpointer',
-    type: 'variable',
+    kind: 'Variable',
+    insertText: 'checkpointer',
     detail: 'Checkpoint persistence',
-    apply: 'checkpointer',
   },
-]);
+];
+
+const completionKindMap: Record<string, monaco.languages.CompletionItemKind> = {
+  Keyword: monaco.languages.CompletionItemKind.Keyword,
+  Function: monaco.languages.CompletionItemKind.Function,
+  Class: monaco.languages.CompletionItemKind.Class,
+  Method: monaco.languages.CompletionItemKind.Method,
+  Variable: monaco.languages.CompletionItemKind.Variable,
+};
 
 export default function PythonCodeEditor({
   value,
@@ -81,94 +95,73 @@ export default function PythonCodeEditor({
   readOnly = false,
   minHeight = '480px',
 }: PythonCodeEditorProps) {
-  const readOnlyCompartment = useMemo(() => new Compartment(), []);
+  const handleMount = useMemo<OnMount>(() => {
+    return (editor, monaco) => {
+      monaco.languages.registerCompletionItemProvider('python', {
+        triggerCharacters: ['.', '(', '_'],
+        provideCompletionItems: () => ({
+          suggestions: langChainPythonCompletions.map((item) => ({
+            label: item.label,
+            kind: completionKindMap[item.kind] ?? monaco.languages.CompletionItemKind.Text,
+            insertText: item.insertText,
+            detail: item.detail,
+            insertTextRules: monaco.languages.CompletionItemInsertTextRule.InsertAsSnippet,
+          })),
+        }),
+      });
 
-  const extensions = useMemo<Extension[]>(() => [
-    python(),
-    EditorState.tabSize.of(4),
-    EditorView.lineWrapping,
-    EditorView.theme({
-      '&': {
-        fontSize: '12px',
-        backgroundColor: 'var(--color-background-dark)',
-        color: 'var(--color-text-primary)',
-        border: '1px solid var(--color-border-dark)',
-        borderRadius: '10px',
-      },
-      '.cm-scroller': {
-        fontFamily: 'Monaco, Menlo, Ubuntu Mono, monospace',
-        minHeight,
-      },
-      '.cm-content': {
-        padding: '16px',
-      },
-      '.cm-gutters': {
-        backgroundColor: 'rgba(46, 92, 138, 0.08)',
-        color: 'var(--color-text-muted)',
-        borderRight: '1px solid rgba(46, 92, 138, 0.2)',
-      },
-      '.cm-activeLine': {
-        backgroundColor: 'rgba(46, 92, 138, 0.08)',
-      },
-      '.cm-activeLineGutter': {
-        backgroundColor: 'rgba(46, 92, 138, 0.14)',
-      },
-      '.cm-selectionBackground, &.cm-focused .cm-selectionBackground': {
-        backgroundColor: 'rgba(46, 92, 138, 0.28)',
-      },
-      '.cm-tooltip.cm-tooltip-autocomplete': {
-        border: '1px solid var(--color-border-dark)',
-        backgroundColor: 'var(--color-panel-dark)',
-        color: 'var(--color-text-primary)',
-      },
-      '.cm-tooltip-autocomplete ul li[aria-selected]': {
-        backgroundColor: 'rgba(46, 92, 138, 0.14)',
-        color: 'var(--color-text-primary)',
-      },
-      '.cm-cursor': {
-        borderLeftColor: 'var(--color-primary)',
-      },
-      '&.cm-focused': {
-        outline: 'none',
-      },
-    }),
-    autocompletion({
-      activateOnTyping: true,
-      override: [langChainPythonCompletions],
-    }),
-    readOnlyCompartment.of(EditorState.readOnly.of(readOnly)),
-  ], [minHeight, readOnly, readOnlyCompartment]);
+      const emitSelection = () => {
+        const selection = editor.getSelection();
+        if (!selection) {
+          return;
+        }
+        const model = editor.getModel();
+        if (!model) {
+          return;
+        }
+        const from = model.getOffsetAt(selection.getStartPosition());
+        const to = model.getOffsetAt(selection.getEndPosition());
+        onSelectionChange?.({
+          from,
+          to,
+          text: model.getValueInRange(selection),
+        });
+      };
+
+      emitSelection();
+      editor.onDidChangeCursorSelection(emitSelection);
+    };
+  }, [onSelectionChange]);
 
   return (
-    <CodeMirror
-      value={value}
-      height={minHeight}
-      basicSetup={{
-        lineNumbers: true,
-        foldGutter: true,
-        highlightActiveLine: true,
-        highlightActiveLineGutter: true,
-        dropCursor: false,
-        allowMultipleSelections: false,
-      }}
-      extensions={extensions}
-      onChange={(nextValue) => onChange?.(nextValue)}
-      onCreateEditor={(view) => {
-        const range = view.state.selection.main;
-        onSelectionChange?.({
-          from: range.from,
-          to: range.to,
-          text: view.state.doc.sliceString(range.from, range.to),
-        });
-      }}
-      onUpdate={(update) => {
-        const range = update.state.selection.main;
-        onSelectionChange?.({
-          from: range.from,
-          to: range.to,
-          text: update.state.doc.sliceString(range.from, range.to),
-        });
-      }}
-    />
+    <div style={{ minHeight }}>
+      <Editor
+        height={minHeight}
+        defaultLanguage="python"
+        value={value}
+        onMount={handleMount}
+        onChange={(nextValue) => onChange?.(nextValue ?? '')}
+        options={{
+          fontSize: 12,
+          fontFamily: 'Monaco, Menlo, Ubuntu Mono, monospace',
+          tabSize: 4,
+          readOnly,
+          minimap: { enabled: false },
+          wordWrap: 'on',
+          scrollBeyondLastLine: false,
+          automaticLayout: true,
+          lineNumbers: 'on',
+          renderLineHighlight: 'line',
+          folding: true,
+          contextmenu: true,
+          padding: { top: 16, bottom: 16 },
+          smoothScrolling: true,
+          cursorBlinking: 'smooth',
+          overviewRulerBorder: false,
+        }}
+        theme="vs-dark"
+        loading={<div />}
+      />
+    </div>
   );
 }

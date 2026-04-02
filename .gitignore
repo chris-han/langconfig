@@ -103,6 +103,7 @@ client_secret*.json
 # Backend outputs
 /backend/outputs/
 /backend/workspace/
+/backend/data/
 
 # Internal documentation (keep docs/ folder but ignore contents except setup guides)
 docs/*

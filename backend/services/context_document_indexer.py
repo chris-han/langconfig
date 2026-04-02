@@ -401,10 +401,10 @@ class ContextDocumentIndexer:
                 extra_metadata=extra_metadata,
             )
 
-            # Store in vector database
-            stored_count = await self._store_in_vector_db(nodes)
+            # Store in vector database (project-specific table when available)
+            stored_count = await self._store_in_vector_db(nodes, project_id=project_id)
 
-            # Update document status and metadata
+            # Update document status and project status
             async with AsyncSessionLocal() as db:
                 doc = await db.get(ContextDocument, document_id)
                 if doc:
@@ -412,6 +412,15 @@ class ContextDocumentIndexer:
                     doc.indexed_at = datetime.now(timezone.utc)
                     doc.indexed_chunks_count = stored_count
                     await db.commit()
+
+                # Mark the parent project as ready so the search endpoint
+                # doesn't gate on project.indexing_status.
+                if project_id is not None:
+                    from models.core import Project
+                    project = await db.get(Project, project_id)
+                    if project and project.indexing_status != IndexingStatus.READY:
+                        project.indexing_status = IndexingStatus.READY
+                        await db.commit()
 
             result = {
                 "status": "success",
@@ -527,7 +536,7 @@ class ContextDocumentIndexer:
             extra_metadata=metadata,
             node_prefix=node_prefix,
         )
-        stored_count = await self._store_in_vector_db(nodes)
+        stored_count = await self._store_in_vector_db(nodes, project_id=project_id)
 
         return {
             "status": "success",
@@ -655,20 +664,33 @@ class ContextDocumentIndexer:
 
     async def _store_in_vector_db(
         self,
-        nodes: List[Dict[str, Any]]
+        nodes: List[Dict[str, Any]],
+        project_id: Optional[int] = None,
     ) -> int:
         """
-        Store embeddings in the dedicated context documents vector database.
+        Store embeddings in the vector database.
+
+        When project_id is provided the project-specific table is used so that
+        the RAG search endpoint (which always queries per-project tables) can
+        find the indexed chunks.  Falls back to the shared context-documents
+        table for non-project documents.
 
         Args:
             nodes: List of node dictionaries with embeddings
+            project_id: Target project – uses project-scoped table when set
 
         Returns:
             Number of nodes stored
         """
         try:
-            # Get dedicated vector store for context documents
-            vector_store = self._get_context_docs_vector_store()
+            # Use the project-specific store when project_id is known so that
+            # the RAG search endpoint (which queries per-project tables) finds
+            # the chunks.  Fall back to the shared store otherwise.
+            if project_id is not None:
+                from services.llama_config import get_vector_store
+                vector_store = get_vector_store(project_id)
+            else:
+                vector_store = self._get_context_docs_vector_store()
 
             # Convert serialized nodes back to TextNode objects
             from llama_index.core.schema import TextNode

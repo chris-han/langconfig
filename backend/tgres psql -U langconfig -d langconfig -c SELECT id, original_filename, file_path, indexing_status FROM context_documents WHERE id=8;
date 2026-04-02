@@ -1,0 +1,26 @@
+                                            Table "public.context_documents"
+        Column        |           Type           | Collation | Nullable |                    Default                    
+----------------------+--------------------------+-----------+----------+-----------------------------------------------
+ id                   | integer                  |           | not null | nextval('context_documents_id_seq'::regclass)
+ filename             | character varying(255)   |           | not null | 
+ original_filename    | character varying(255)   |           | not null | 
+ file_path            | character varying(500)   |           | not null | 
+ file_size            | integer                  |           | not null | 
+ mime_type            | character varying(100)   |           |          | 
+ document_type        | documenttype             |           |          | 
+ indexing_status      | indexingstatus           |           |          | 
+ indexed_at           | timestamp with time zone |           |          | 
+ indexed_chunks_count | integer                  |           |          | 
+ description          | text                     |           |          | 
+ tags                 | json                     |           |          | 
+ content_preview      | text                     |           |          | 
+ project_id           | integer                  |           |          | 
+ created_at           | timestamp with time zone |           |          | 
+ updated_at           | timestamp with time zone |           |          | 
+Indexes:
+    "context_documents_pkey" PRIMARY KEY, btree (id)
+    "ix_context_documents_id" btree (id)
+    "ix_context_documents_project_id" btree (project_id)
+Foreign-key constraints:
+    "context_documents_project_id_fkey" FOREIGN KEY (project_id) REFERENCES projects(id)
+
