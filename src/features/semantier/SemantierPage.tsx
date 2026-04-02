@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState, type CSSProperties, type ReactNode } from "react";
+import { useEffect, useMemo, useState, type ReactNode } from "react";
 import Editor, { useMonaco } from "@monaco-editor/react";
 import "reactflow/dist/style.css";
 import {
@@ -13,17 +13,23 @@ import {
   Sparkles,
   Workflow,
 } from "lucide-react";
+
+import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { Input } from "@/components/ui/input";
+import { ResizableHandle, ResizablePanel, ResizablePanelGroup } from "@/components/ui/resizable";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import OntologyGraph from "./OntologyGraph";
 import {
   SDSL_LANGUAGE_ID,
   languageConfiguration,
   monarchTokensProvider,
   semantierTheme,
 } from "./sdslLanguage";
-import OntologyGraph from "./OntologyGraph";
 
 type ResourceType = "folder" | "ontology" | "dimension" | "rule";
 type ExplorerTab = "ontology" | "dimensions" | "rules";
-type WorkspaceTab = "editor" | "logic" | "graph";
+type WorkspaceTab = "editor" | "rules" | "graph";
 type GraphSelection = { type: "node" | "edge"; data: any } | null;
 
 interface TreeNode {
@@ -172,14 +178,14 @@ const dimensionData: TreeNode[] = [
 const ruleData: TreeNode[] = [
   {
     id: "reconciliation-rules",
-    name: "Reconciliation Rules",
+    name: "Execution Rules",
     type: "folder",
     children: [
       {
         id: "contract-to-revenue",
         name: "ContractToRevenue",
         type: "rule",
-        description: "Ensures contract completion drives recognized revenue and tax obligations.",
+        description: "Execution rule linking completed contracts to revenue and tax evaluation.",
         snippet: `WHEN core:Contract.status CHANGES TO "completed":\n  TRIGGER fin:RevenueRecognition {\n    amount: Contract.amount,\n    recognitionDate: NOW()\n  }\n\n  EVALUATE tax:TaxObligation {\n    taxableAmount: Contract.amount\n  }`,
       },
       {
@@ -194,7 +200,7 @@ const ruleData: TreeNode[] = [
 
 const initialEditorValue = `// Semantier starter\nMAP core:Contract {\n  contractId: string @primary\n  amount: decimal\n  status: enum\n  signDate: date?\n}\n\nDIMENSION mgt:CostCenter {\n  centerId: string\n  budget: decimal?\n}`;
 
-const logicWeaveCode = `WHEN core:Contract.status CHANGES TO "completed":\n  TRIGGER fin:RevenueRecognition {\n    amount: Contract.amount,\n    recognitionDate: NOW(),\n    method: DERIVE_FROM(Contract.type)\n  }\n\n  EVALUATE tax:TaxObligation {\n    taxableAmount: Contract.amount,\n    taxType: DERIVE_FROM(Contract.region)\n  }\n\n  RECONCILE {\n    fin:RevenueRecognition.amount == tax:TaxObligation.taxableAmount\n  }`;
+const executionRulesCode = `WHEN core:Contract.status CHANGES TO "completed":\n  TRIGGER fin:RevenueRecognition {\n    amount: Contract.amount,\n    recognitionDate: NOW(),\n    method: DERIVE_FROM(Contract.type)\n  }\n\n  EVALUATE tax:TaxObligation {\n    taxableAmount: Contract.amount,\n    taxType: DERIVE_FROM(Contract.region)\n  }\n\n  RECONCILE {\n    fin:RevenueRecognition.amount == tax:TaxObligation.taxableAmount\n  }`;
 
 function flattenTree(nodes: TreeNode[]): TreeNode[] {
   return nodes.flatMap((node) => [node, ...(node.children ? flattenTree(node.children) : [])]);
@@ -230,9 +236,7 @@ function ExplorerPane({
     return selfMatches || !!node.children?.some(matchesNode);
   };
 
-  const filtered = groups[activeTab].filter(matchesNode);
-
-  const renderNode = (node: TreeNode, level = 0) => {
+  const renderNode = (node: TreeNode, level = 0): ReactNode => {
     if (!matchesNode(node)) {
       return null;
     }
@@ -268,36 +272,26 @@ function ExplorerPane({
               onSelectItem(node);
             }
           }}
-          style={{
-            width: "100%",
-            display: "flex",
-            alignItems: "center",
-            gap: 10,
-            padding: "10px 12px",
-            paddingLeft: `${14 + level * 18}px`,
-            borderRadius: 14,
-            border: selected ? "1px solid rgba(46, 92, 138, 0.35)" : "1px solid transparent",
-            background: selected ? "rgba(46, 92, 138, 0.12)" : "transparent",
-            color: "var(--color-text-primary)",
-            textAlign: "left",
-          }}
+          className={[
+            "group flex w-full items-center gap-2 rounded-lg px-3 py-2 text-left text-sm transition-colors",
+            selected ? "bg-accent text-accent-foreground" : "hover:bg-accent/60",
+            !isFolder ? "cursor-grab active:cursor-grabbing" : "",
+          ].join(" ")}
+          style={{ paddingLeft: `${12 + level * 16}px` }}
         >
-          <span
-            className="material-symbols-outlined"
-            style={{ fontSize: 18, color: "var(--color-text-muted)", transform: isFolder && expanded ? "rotate(90deg)" : "none" }}
-          >
+          <span className={`material-symbols-outlined text-base text-muted-foreground transition-transform ${isFolder && expanded ? "rotate-90" : ""}`}>
             chevron_right
           </span>
-          {!isFolder && node.type === "ontology" && <FileCode2 size={16} color="var(--color-primary)" />}
-          {!isFolder && node.type === "dimension" && <CircleDot size={16} color="#0F766E" />}
-          {!isFolder && node.type === "rule" && <Workflow size={16} color="#C2410C" />}
-          {isFolder && <Layers3 size={16} color="var(--color-primary)" />}
-          <div style={{ display: "flex", flexDirection: "column", minWidth: 0 }}>
-            <span style={{ fontSize: 13, fontWeight: isFolder ? 700 : 600 }}>{node.name}</span>
+          {!isFolder && node.type === "ontology" && <FileCode2 className="h-4 w-4 text-primary" />}
+          {!isFolder && node.type === "dimension" && <CircleDot className="h-4 w-4 text-sky-400" />}
+          {!isFolder && node.type === "rule" && <Workflow className="h-4 w-4 text-amber-400" />}
+          {isFolder && <Layers3 className="h-4 w-4 text-primary" />}
+          <div className="min-w-0 flex-1">
+            <div className={`truncate ${isFolder ? "font-semibold text-muted-foreground" : "font-medium text-foreground"}`}>{node.name}</div>
             {!isFolder && (
-              <span style={{ fontSize: 11, color: "var(--color-text-muted)" }}>
+              <div className="truncate text-xs text-muted-foreground">
                 {[node.prefix, node.version].filter(Boolean).join(" ")}
-              </span>
+              </div>
             )}
           </div>
         </button>
@@ -306,264 +300,145 @@ function ExplorerPane({
     );
   };
 
-  const tabButton = (tab: ExplorerTab, label: string, icon: ReactNode) => (
-    <button
-      onClick={() => onTabChange(tab)}
-      style={{
-        flex: 1,
-        display: "flex",
-        alignItems: "center",
-        justifyContent: "center",
-        gap: 8,
-        padding: "10px 12px",
-        borderRadius: 14,
-        border: activeTab === tab ? "1px solid rgba(46, 92, 138, 0.3)" : "1px solid transparent",
-        background: activeTab === tab ? "rgba(46, 92, 138, 0.12)" : "transparent",
-        color: activeTab === tab ? "var(--color-primary)" : "var(--color-text-muted)",
-        fontWeight: 600,
-      }}
-    >
-      {icon}
-      <span style={{ fontSize: 12 }}>{label}</span>
-    </button>
-  );
-
   return (
-    <aside
-      style={{
-        width: 300,
-        minWidth: 300,
-        display: "flex",
-        flexDirection: "column",
-        borderRight: "1px solid rgba(46, 92, 138, 0.12)",
-        background: "rgba(255, 255, 255, 0.6)",
-        backdropFilter: "blur(12px)",
-      }}
-    >
-      <div style={{ padding: 18, borderBottom: "1px solid rgba(46, 92, 138, 0.12)" }}>
-        <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: 14 }}>
-          <div
-            style={{
-              width: 38,
-              height: 38,
-              borderRadius: 14,
-              background: "linear-gradient(135deg, #2E5C8A, #6B9E7E)",
-              display: "grid",
-              placeItems: "center",
-            }}
-          >
-            <Layers3 size={20} color="white" />
+    <Card className="h-full rounded-none border-y-0 border-l-0 gap-0 py-0 shadow-none">
+      <CardHeader className="border-b px-4 py-4">
+        <div className="flex items-center gap-3">
+          <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-primary/15 text-primary">
+            <Layers3 className="h-5 w-5" />
           </div>
           <div>
-            <div style={{ fontSize: 14, fontWeight: 700, color: "var(--color-text-primary)" }}>Semantier Explorer</div>
-            <div style={{ fontSize: 12, color: "var(--color-text-muted)" }}>Ontology, dimensions, and rules</div>
+            <CardTitle className="text-base">Semantier Explorer</CardTitle>
+            <CardDescription>Ontology structure and execution rules</CardDescription>
           </div>
         </div>
-        <div
-          style={{
-            display: "flex",
-            alignItems: "center",
-            gap: 10,
-            padding: "10px 12px",
-            borderRadius: 14,
-            background: "rgba(255, 255, 255, 0.9)",
-            border: "1px solid rgba(46, 92, 138, 0.14)",
-          }}
-        >
-          <Search size={16} color="var(--color-text-muted)" />
-          <input
+        <div className="relative mt-3">
+          <Search className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+          <Input
             value={query}
             onChange={(event) => setQuery(event.target.value)}
-            placeholder="Search semantic resources"
-            style={{
-              flex: 1,
-              border: 0,
-              outline: "none",
-              background: "transparent",
-              color: "var(--color-text-primary)",
-              fontSize: 13,
-            }}
+            placeholder="Search resources"
+            className="pl-9"
           />
         </div>
-      </div>
-      <div style={{ padding: 14, display: "flex", gap: 8 }}>
-        {tabButton("ontology", "Ontology", <BookOpen size={15} />)}
-        {tabButton("dimensions", "Dimensions", <GitBranch size={15} />)}
-        {tabButton("rules", "Rules", <Workflow size={15} />)}
-      </div>
-      <div style={{ flex: 1, overflowY: "auto", padding: "0 10px 14px" }}>
-        {filtered.map((node) => renderNode(node))}
-      </div>
-    </aside>
+      </CardHeader>
+      <CardContent className="flex min-h-0 flex-1 flex-col px-3 py-3">
+        <Tabs value={activeTab} onValueChange={(value) => onTabChange(value as ExplorerTab)} className="min-h-0 flex-1">
+          <TabsList className="grid w-full grid-cols-3">
+            <TabsTrigger value="ontology"><BookOpen className="h-4 w-4" />Ontology</TabsTrigger>
+            <TabsTrigger value="dimensions"><GitBranch className="h-4 w-4" />Dimensions</TabsTrigger>
+            <TabsTrigger value="rules"><Workflow className="h-4 w-4" />Rules</TabsTrigger>
+          </TabsList>
+          <TabsContent value={activeTab} className="mt-3 min-h-0 flex-1 overflow-auto">
+            <div className="space-y-1">{groups[activeTab].map((node) => renderNode(node))}</div>
+          </TabsContent>
+        </Tabs>
+      </CardContent>
+    </Card>
   );
 }
 
 function InspectorPane({ selectedItem, graphSelection }: { selectedItem: TreeNode | null; graphSelection: GraphSelection }) {
   const graphData = graphSelection?.type === "node" ? graphSelection.data?.data : graphSelection?.data?.data;
   const edgeData = graphSelection?.type === "edge" ? graphSelection.data : null;
-
   const propertyRows = graphData?.properties || selectedItem?.properties || [];
-  const title = graphSelection?.type === "node"
-    ? graphData?.label
-    : graphSelection?.type === "edge"
-      ? edgeData?.label || edgeData?.data?.relType
-      : selectedItem?.name;
-
-  const description = graphSelection?.type === "node"
-    ? graphData?.description
-    : graphSelection?.type === "edge"
-      ? edgeData?.data?.description
-      : selectedItem?.description;
+  const title =
+    graphSelection?.type === "node"
+      ? graphData?.label
+      : graphSelection?.type === "edge"
+        ? edgeData?.label || edgeData?.data?.relType
+        : selectedItem?.name;
+  const description =
+    graphSelection?.type === "node"
+      ? graphData?.description
+      : graphSelection?.type === "edge"
+        ? edgeData?.data?.description
+        : selectedItem?.description;
 
   return (
-    <aside
-      style={{
-        width: 320,
-        minWidth: 320,
-        display: "flex",
-        flexDirection: "column",
-        borderLeft: "1px solid rgba(46, 92, 138, 0.12)",
-        background: "rgba(255, 255, 255, 0.66)",
-        backdropFilter: "blur(12px)",
-      }}
-    >
-      <div style={{ padding: 20, borderBottom: "1px solid rgba(46, 92, 138, 0.12)" }}>
-        <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: 10 }}>
-          <Settings2 size={18} color="var(--color-primary)" />
-          <strong style={{ fontSize: 15, color: "var(--color-text-primary)" }}>Properties</strong>
+    <Card className="h-full rounded-none border-y-0 border-r-0 gap-0 py-0 shadow-none">
+      <CardHeader className="border-b px-5 py-5">
+        <div className="flex items-center gap-2 text-primary">
+          <Settings2 className="h-4 w-4" />
+          <span className="text-sm font-medium">Inspector</span>
         </div>
-        <div style={{ fontSize: 20, fontWeight: 700, color: "var(--color-text-primary)" }}>
-          {title || "Select a resource"}
-        </div>
-        <p style={{ margin: "10px 0 0", fontSize: 13, lineHeight: 1.6, color: "var(--color-text-muted)" }}>
-          {description || "Choose an explorer item, graph node, or edge to inspect its semantic contract."}
-        </p>
-      </div>
-
-      <div style={{ padding: 20, overflowY: "auto", display: "flex", flexDirection: "column", gap: 18 }}>
+        <CardTitle className="text-2xl">{title || "Select a resource"}</CardTitle>
+        <CardDescription>{description || "Choose an ontology item, graph node, or edge to inspect its contract."}</CardDescription>
+      </CardHeader>
+      <CardContent className="space-y-4 overflow-auto px-5 py-5">
         {graphSelection?.type === "edge" && (
-          <div style={cardStyle}>
-            <div style={labelStyle}>Relationship</div>
-            <div style={valueStyle}>{edgeData?.source} {"->"} {edgeData?.target}</div>
-            <div style={{ marginTop: 8, fontSize: 12, color: "var(--color-text-muted)" }}>
-              {edgeData?.data?.category}
-            </div>
-          </div>
+          <Card className="gap-3 py-4">
+            <CardContent className="px-4">
+              <div className="text-xs font-semibold uppercase tracking-[0.18em] text-muted-foreground">Relationship</div>
+              <div className="mt-3 text-sm font-semibold text-foreground">{edgeData?.source} {"->"} {edgeData?.target}</div>
+              <div className="mt-1 text-xs text-muted-foreground">{edgeData?.data?.category}</div>
+            </CardContent>
+          </Card>
         )}
 
         {(selectedItem?.prefix || selectedItem?.version || graphSelection?.type === "node") && (
-          <div style={cardStyle}>
-            <div style={labelStyle}>Identity</div>
-            <div style={valueStyle}>
-              {selectedItem?.prefix && <div>{selectedItem.prefix}{selectedItem.name}</div>}
-              {selectedItem?.version && <div style={{ marginTop: 6, color: "var(--color-text-muted)", fontSize: 12 }}>{selectedItem.version}</div>}
-              {graphSelection?.type === "node" && <div>{graphData?.category}</div>}
-            </div>
-          </div>
+          <Card className="gap-3 py-4">
+            <CardContent className="px-4">
+              <div className="text-xs font-semibold uppercase tracking-[0.18em] text-muted-foreground">Identity</div>
+              <div className="mt-3 space-y-1 text-sm font-semibold text-foreground">
+                {selectedItem?.prefix && <div>{selectedItem.prefix}{selectedItem.name}</div>}
+                {selectedItem?.version && <div className="text-xs font-normal text-muted-foreground">{selectedItem.version}</div>}
+                {graphSelection?.type === "node" && <div>{graphData?.type}</div>}
+              </div>
+            </CardContent>
+          </Card>
         )}
 
         {propertyRows.length > 0 && (
-          <div style={cardStyle}>
-            <div style={labelStyle}>Fields</div>
-            <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
+          <Card className="gap-3 py-4">
+            <CardContent className="space-y-3 px-4">
+              <div className="text-xs font-semibold uppercase tracking-[0.18em] text-muted-foreground">Fields</div>
               {propertyRows.map((property: any) => (
-                <div
-                  key={property.name}
-                  style={{
-                    display: "grid",
-                    gridTemplateColumns: "1fr auto",
-                    gap: 8,
-                    padding: "10px 12px",
-                    borderRadius: 12,
-                    background: "rgba(46, 92, 138, 0.05)",
-                  }}
-                >
+                <div key={property.name} className="grid grid-cols-[1fr_auto] gap-3 rounded-lg border bg-muted/40 px-3 py-3">
                   <div>
-                    <div style={{ fontSize: 13, fontWeight: 600, color: "var(--color-text-primary)" }}>{property.name}</div>
-                    <div style={{ fontSize: 12, color: "var(--color-text-muted)", marginTop: 4 }}>{property.type}</div>
+                    <div className="text-sm font-medium text-foreground">{property.name}</div>
+                    <div className="mt-1 text-xs text-muted-foreground">{property.type}</div>
                   </div>
-                  <div
-                    style={{
-                      alignSelf: "start",
-                      padding: "4px 8px",
-                      borderRadius: 999,
-                      fontSize: 11,
-                      fontWeight: 700,
-                      color: property.required ? "#9A3412" : "#0F766E",
-                      background: property.required ? "rgba(249, 115, 22, 0.14)" : "rgba(16, 185, 129, 0.14)",
-                    }}
-                  >
+                  <div className={`self-start rounded-full px-2 py-1 text-[11px] font-semibold ${property.required ? "bg-amber-500/15 text-amber-300" : "bg-emerald-500/15 text-emerald-300"}`}>
                     {property.required ? "required" : "optional"}
                   </div>
                 </div>
               ))}
-            </div>
-          </div>
+            </CardContent>
+          </Card>
         )}
 
         {!!selectedItem?.actions?.length && (
-          <div style={cardStyle}>
-            <div style={labelStyle}>Actions</div>
-            <div style={{ display: "flex", flexWrap: "wrap", gap: 8 }}>
-              {selectedItem.actions.map((action) => (
-                <span
-                  key={action}
-                  style={{
-                    padding: "6px 10px",
-                    borderRadius: 999,
-                    fontSize: 12,
-                    fontWeight: 600,
-                    color: "var(--color-primary)",
-                    background: "rgba(46, 92, 138, 0.1)",
-                  }}
-                >
-                  {action}
-                </span>
-              ))}
-            </div>
-          </div>
+          <Card className="gap-3 py-4">
+            <CardContent className="px-4">
+              <div className="text-xs font-semibold uppercase tracking-[0.18em] text-muted-foreground">Actions</div>
+              <div className="mt-3 flex flex-wrap gap-2">
+                {selectedItem.actions.map((action) => (
+                  <div key={action} className="rounded-full bg-primary/12 px-3 py-1 text-xs font-medium text-primary">
+                    {action}
+                  </div>
+                ))}
+              </div>
+            </CardContent>
+          </Card>
         )}
-
-        <div style={cardStyle}>
-          <div style={labelStyle}>Status</div>
-          <div style={valueStyle}>Extraction mode: standalone</div>
-          <div style={{ marginTop: 8, fontSize: 12, color: "var(--color-text-muted)" }}>
-            OpenChamber session-specific tool integrations were intentionally excluded from this route.
-          </div>
-        </div>
-      </div>
-    </aside>
+      </CardContent>
+    </Card>
   );
 }
 
-const cardStyle: CSSProperties = {
-  borderRadius: 18,
-  padding: 16,
-  background: "rgba(255, 255, 255, 0.92)",
-  border: "1px solid rgba(46, 92, 138, 0.12)",
-  boxShadow: "0 12px 28px rgba(17, 32, 49, 0.06)",
-};
-
-const labelStyle: CSSProperties = {
-  fontSize: 11,
-  textTransform: "uppercase",
-  letterSpacing: "0.14em",
-  color: "var(--color-text-muted)",
-  marginBottom: 10,
-  fontWeight: 700,
-};
-
-const valueStyle: CSSProperties = {
-  fontSize: 14,
-  fontWeight: 600,
-  color: "var(--color-text-primary)",
-  lineHeight: 1.6,
-};
-
 export default function SemantierPage() {
   const monaco = useMonaco();
-  const [workspaceTab, setWorkspaceTab] = useState<WorkspaceTab>("editor");
+  const [workspaceTab, setWorkspaceTab] = useState<WorkspaceTab>("graph");
   const [explorerTab, setExplorerTab] = useState<ExplorerTab>("ontology");
+  const explorerGroups = useMemo<Record<ExplorerTab, TreeNode[]>>(
+    () => ({
+      ontology: ontologyData,
+      dimensions: dimensionData,
+      rules: ruleData,
+    }),
+    [],
+  );
   const allResources = useMemo(() => flattenTree([...ontologyData, ...dimensionData, ...ruleData]), []);
   const [selectedItem, setSelectedItem] = useState<TreeNode | null>(allResources.find((node) => node.id === "contract") || null);
   const [graphSelection, setGraphSelection] = useState<GraphSelection>(null);
@@ -574,32 +449,21 @@ export default function SemantierPage() {
     if (!monaco) {
       return;
     }
-
     const existing = monaco.languages.getLanguages().find((language) => language.id === SDSL_LANGUAGE_ID);
     if (!existing) {
       monaco.languages.register({ id: SDSL_LANGUAGE_ID, extensions: [".sdsl"] });
       monaco.languages.setMonarchTokensProvider(SDSL_LANGUAGE_ID, monarchTokensProvider as any);
       monaco.languages.setLanguageConfiguration(SDSL_LANGUAGE_ID, languageConfiguration as any);
     }
-
     monaco.editor.defineTheme("semantier-langconfig", semantierTheme);
   }, [monaco]);
-
-  const explorerGroups = useMemo<Record<ExplorerTab, TreeNode[]>>(
-    () => ({
-      ontology: ontologyData,
-      dimensions: dimensionData,
-      rules: ruleData,
-    }),
-    [],
-  );
 
   const handleSelectItem = (node: TreeNode) => {
     setSelectedItem(node);
     setGraphSelection(null);
     if (node.snippet) {
       setEditorValue(node.snippet);
-      setWorkspaceTab("editor");
+      setWorkspaceTab(node.type === "rule" ? "rules" : "editor");
     }
   };
 
@@ -608,9 +472,7 @@ export default function SemantierPage() {
       setGraphSelection(null);
       return;
     }
-
     setGraphSelection({ type, data });
-
     if (type === "node") {
       const matchedItem = allResources.find((item) => item.id === data.id);
       if (matchedItem) {
@@ -620,152 +482,113 @@ export default function SemantierPage() {
   };
 
   return (
-    <div
-      style={{
-        display: "flex",
-        flex: 1,
-        minHeight: 0,
-        background: "radial-gradient(circle at top left, rgba(107, 158, 126, 0.16), transparent 28%), linear-gradient(180deg, var(--color-background-light), var(--color-background-dark))",
-      }}
-    >
-      <ExplorerPane
-        groups={explorerGroups}
-        activeTab={explorerTab}
-        onTabChange={setExplorerTab}
-        selectedItem={selectedItem}
-        onSelectItem={handleSelectItem}
-      />
-
-      <section style={{ flex: 1, minWidth: 0, display: "flex", flexDirection: "column" }}>
-        <div
-          style={{
-            padding: "22px 24px 18px",
-            borderBottom: "1px solid rgba(46, 92, 138, 0.12)",
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "space-between",
-            gap: 16,
-          }}
-        >
+    <div className="flex h-full min-h-0 flex-col bg-background text-foreground">
+      <div className="border-b bg-background/80 backdrop-blur">
+        <div className="flex items-start justify-between gap-6 px-6 py-5">
           <div>
-            <div style={{ fontSize: 12, fontWeight: 700, textTransform: "uppercase", letterSpacing: "0.14em", color: "var(--color-primary)" }}>
-              Hash Route
-            </div>
-            <h1 style={{ margin: "8px 0 0", fontSize: 30, lineHeight: 1.1, color: "var(--color-text-primary)" }}>Semantier</h1>
-            <p style={{ margin: "10px 0 0", fontSize: 14, color: "var(--color-text-muted)" }}>
-              Extracted from OpenChamber as a standalone semantic modeling workspace for LangConfig.
+            <div className="text-xs font-semibold uppercase tracking-[0.2em] text-primary">Semantier Studio</div>
+            <h1 className="mt-2 text-3xl font-semibold tracking-tight">Ontology and Rule Design</h1>
+            <p className="mt-2 max-w-2xl text-sm text-muted-foreground">
+              Ontology objects define semantic structure. Execution rules live in a separate layer and are not treated as ontology objects.
             </p>
           </div>
-
-          <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
-            <button
+          <div className="flex items-center gap-2">
+            <Button
+              variant="outline"
               onClick={() => {
-                setEditorValue(logicWeaveCode);
-                setWorkspaceTab("logic");
+                setEditorValue(executionRulesCode);
+                setWorkspaceTab("rules");
               }}
-              style={secondaryButtonStyle}
             >
-              <Sparkles size={15} />
-              Load logic weave
-            </button>
-            <button
-              onClick={() => setValidationState("passed")}
-              style={primaryButtonStyle}
-            >
-              <Play size={15} />
+              <Sparkles className="h-4 w-4" />
+              Load rule set
+            </Button>
+            <Button onClick={() => setValidationState("passed")}>
+              <Play className="h-4 w-4" />
               Validate
-            </button>
+            </Button>
           </div>
         </div>
-
-        <div style={{ padding: "14px 24px", display: "flex", gap: 10, alignItems: "center" }}>
-          {(["editor", "logic", "graph"] as WorkspaceTab[]).map((tab) => (
-            <button
-              key={tab}
-              onClick={() => setWorkspaceTab(tab)}
-              style={{
-                ...secondaryButtonStyle,
-                background: workspaceTab === tab ? "rgba(46, 92, 138, 0.12)" : "rgba(255, 255, 255, 0.72)",
-                borderColor: workspaceTab === tab ? "rgba(46, 92, 138, 0.24)" : "rgba(46, 92, 138, 0.12)",
-                color: workspaceTab === tab ? "var(--color-primary)" : "var(--color-text-primary)",
-              }}
-            >
-              {tab === "editor" && <FileCode2 size={15} />}
-              {tab === "logic" && <Sparkles size={15} />}
-              {tab === "graph" && <GitBranch size={15} />}
-              {tab === "editor" ? "SDSL Editor" : tab === "logic" ? "Logic Weave" : "Ontology Graph"}
-            </button>
-          ))}
-          <div style={{ marginLeft: "auto", fontSize: 13, color: validationState === "passed" ? "#0F766E" : "var(--color-text-muted)", fontWeight: 600 }}>
+        <div className="flex items-center gap-3 border-t px-6 py-3">
+          <Tabs value={workspaceTab} onValueChange={(value) => setWorkspaceTab(value as WorkspaceTab)} className="w-auto">
+            <TabsList>
+              <TabsTrigger value="graph"><GitBranch className="h-4 w-4" />Graph</TabsTrigger>
+              <TabsTrigger value="editor"><FileCode2 className="h-4 w-4" />Schema</TabsTrigger>
+              <TabsTrigger value="rules"><Workflow className="h-4 w-4" />Execution Rules</TabsTrigger>
+            </TabsList>
+          </Tabs>
+          <div className={`ml-auto text-sm font-medium ${validationState === "passed" ? "text-emerald-400" : "text-muted-foreground"}`}>
             {validationState === "passed" ? "Validation passed" : "Validation idle"}
           </div>
         </div>
+      </div>
 
-        <div style={{ flex: 1, minHeight: 0, padding: "0 24px 24px" }}>
-          <div
-            style={{
-              height: "100%",
-              borderRadius: 24,
-              overflow: "hidden",
-              border: "1px solid rgba(46, 92, 138, 0.14)",
-              boxShadow: "0 24px 50px rgba(17, 32, 49, 0.10)",
-              background: "rgba(255, 255, 255, 0.72)",
-            }}
-          >
-            {workspaceTab !== "graph" && (
-              <Editor
-                height="100%"
-                language={SDSL_LANGUAGE_ID}
-                theme="semantier-langconfig"
-                value={workspaceTab === "logic" ? logicWeaveCode : editorValue}
-                onChange={(value) => setEditorValue(value || "")}
-                options={{
-                  minimap: { enabled: false },
-                  fontSize: 14,
-                  lineNumbers: "on",
-                  wordWrap: "on",
-                  scrollBeyondLastLine: false,
-                  roundedSelection: true,
-                  automaticLayout: true,
-                }}
-              />
-            )}
+      <div className="min-h-0 flex-1">
+        <ResizablePanelGroup direction="horizontal">
+          <ResizablePanel defaultSize={400} minSize={300} maxSize={500}>
+            <ExplorerPane
+              groups={explorerGroups}
+              activeTab={explorerTab}
+              onTabChange={setExplorerTab}
+              selectedItem={selectedItem}
+              onSelectItem={handleSelectItem}
+            />
+          </ResizablePanel>
 
-            {workspaceTab === "graph" && (
-              <OntologyGraph onSelectItem={handleGraphSelectItem} />
-            )}
-          </div>
-        </div>
-      </section>
+          <ResizableHandle withHandle />
 
-      <InspectorPane selectedItem={selectedItem} graphSelection={graphSelection} />
+          <ResizablePanel defaultSize={55}>
+            <div className="h-full min-h-0 p-4">
+              <Card className="h-full gap-0 overflow-hidden py-0">
+                <CardHeader className="border-b px-5 py-4">
+                  <CardTitle className="text-lg">
+                    {selectedItem ? (
+                      <>
+                        <span className="text-muted-foreground">{selectedItem.prefix ?? ""}</span>
+                        {selectedItem.name}
+                      </>
+                    ) : (
+                      "Semantic Workspace"
+                    )}
+                  </CardTitle>
+                  <CardDescription>
+                    {workspaceTab === "graph" && "Interactive ontology graph with drag, drop, reconnect, and re-layout."}
+                    {workspaceTab === "editor" && "Schema editing surface for ontology definitions."}
+                    {workspaceTab === "rules" && "Execution rule layer for triggers and reconciliation logic."}
+                  </CardDescription>
+                </CardHeader>
+                <CardContent className="h-full min-h-0 p-0">
+                  {workspaceTab === "graph" && <OntologyGraph onSelectItem={handleGraphSelectItem} />}
+                  {workspaceTab !== "graph" && (
+                    <Editor
+                      height="100%"
+                      language={SDSL_LANGUAGE_ID}
+                      theme="semantier-langconfig"
+                      value={workspaceTab === "rules" ? executionRulesCode : editorValue}
+                      onChange={(value) => setEditorValue(value || "")}
+                      options={{
+                        minimap: { enabled: false },
+                        fontSize: 14,
+                        lineNumbers: "on",
+                        wordWrap: "on",
+                        scrollBeyondLastLine: false,
+                        roundedSelection: true,
+                        automaticLayout: true,
+                      }}
+                    />
+                  )}
+                </CardContent>
+              </Card>
+            </div>
+          </ResizablePanel>
+
+          <ResizableHandle withHandle />
+
+          <ResizablePanel defaultSize={400} minSize={300} maxSize={500}>
+            <InspectorPane selectedItem={selectedItem} graphSelection={graphSelection} />
+          </ResizablePanel>
+        </ResizablePanelGroup>
+      </div>
     </div>
   );
 }
-
-const primaryButtonStyle: CSSProperties = {
-  display: "inline-flex",
-  alignItems: "center",
-  gap: 8,
-  padding: "11px 16px",
-  borderRadius: 14,
-  border: "1px solid rgba(46, 92, 138, 0.26)",
-  background: "linear-gradient(135deg, #2E5C8A, #6B9E7E)",
-  color: "white",
-  fontSize: 13,
-  fontWeight: 700,
-  boxShadow: "0 14px 24px rgba(46, 92, 138, 0.18)",
-};
-
-const secondaryButtonStyle: CSSProperties = {
-  display: "inline-flex",
-  alignItems: "center",
-  gap: 8,
-  padding: "11px 14px",
-  borderRadius: 14,
-  border: "1px solid rgba(46, 92, 138, 0.12)",
-  background: "rgba(255, 255, 255, 0.72)",
-  color: "var(--color-text-primary)",
-  fontSize: 13,
-  fontWeight: 600,
-};
