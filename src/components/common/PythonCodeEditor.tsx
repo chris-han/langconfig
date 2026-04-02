@@ -1,5 +1,5 @@
-import { useMemo } from 'react';
-import Editor, { OnMount } from '@monaco-editor/react';
+import { useEffect, useMemo, useState } from 'react';
+import Editor, { BeforeMount, OnMount } from '@monaco-editor/react';
 import * as monaco from 'monaco-editor';
 
 interface PythonCodeEditorProps {
@@ -88,6 +88,67 @@ const completionKindMap: Record<string, monaco.languages.CompletionItemKind> = {
   Variable: monaco.languages.CompletionItemKind.Variable,
 };
 
+const darkThemes = new Set(['dark', 'midnight', 'ocean', 'forest', 'botanical', 'godspeed']);
+
+function getCssVar(name: string, fallback: string) {
+  if (typeof window === 'undefined') {
+    return fallback;
+  }
+  return getComputedStyle(document.documentElement).getPropertyValue(name).trim() || fallback;
+}
+
+function getEditorThemeName() {
+  if (typeof window === 'undefined') {
+    return 'langconfig-editor-light';
+  }
+  const theme = document.documentElement.getAttribute('data-theme') || 'langconfig';
+  return darkThemes.has(theme) ? 'langconfig-editor-dark' : 'langconfig-editor-light';
+}
+
+function defineEditorTheme(monacoInstance: typeof monaco, themeName: string) {
+  const isDark = themeName.endsWith('-dark');
+  const background = getCssVar('--color-background-dark', isDark ? '#101622' : '#D8EDF5');
+  const panel = getCssVar('--color-panel-dark', isDark ? '#181e29' : '#E3F0F5');
+  const border = getCssVar('--color-border-dark', isDark ? '#232f48' : '#2E5C8A');
+  const primary = getCssVar('--color-primary', '#2E5C8A');
+  const textPrimary = getCssVar('--color-text-primary', isDark ? '#e5e9f0' : '#1a2332');
+  const textMuted = getCssVar('--color-text-muted', isDark ? '#92a4c9' : '#4A6B8A');
+  const inputBackground = getCssVar('--color-input-background', isDark ? '#0c1018' : '#FFFFFF');
+
+  monacoInstance.editor.defineTheme(themeName, {
+    base: isDark ? 'vs-dark' : 'vs',
+    inherit: true,
+    rules: [],
+    colors: {
+      'editor.background': background,
+      'editor.foreground': textPrimary,
+      'editorLineNumber.foreground': textMuted,
+      'editorLineNumber.activeForeground': textPrimary,
+      'editorCursor.foreground': primary,
+      'editor.selectionBackground': `${primary}40`,
+      'editor.inactiveSelectionBackground': `${primary}22`,
+      'editor.lineHighlightBackground': `${primary}14`,
+      'editor.lineHighlightBorder': `${primary}00`,
+      'editorGutter.background': panel,
+      'editorGutter.modifiedBackground': primary,
+      'editorGutter.addedBackground': primary,
+      'editorIndentGuide.background1': `${border}40`,
+      'editorIndentGuide.activeBackground1': `${primary}55`,
+      'editorWhitespace.foreground': `${textMuted}55`,
+      'editorWidget.background': panel,
+      'editorWidget.border': border,
+      'editorSuggestWidget.background': panel,
+      'editorSuggestWidget.border': border,
+      'editorSuggestWidget.foreground': textPrimary,
+      'editorSuggestWidget.selectedBackground': `${primary}1f`,
+      'input.background': inputBackground,
+      'input.foreground': textPrimary,
+      'input.border': border,
+      'focusBorder': primary,
+    },
+  });
+}
+
 export default function PythonCodeEditor({
   value,
   onChange,
@@ -95,8 +156,36 @@ export default function PythonCodeEditor({
   readOnly = false,
   minHeight = '480px',
 }: PythonCodeEditorProps) {
+  const [themeName, setThemeName] = useState(() => getEditorThemeName());
+
+  useEffect(() => {
+    const root = document.documentElement;
+    const syncTheme = () => {
+      setThemeName(getEditorThemeName());
+    };
+
+    syncTheme();
+
+    const observer = new MutationObserver(syncTheme);
+    observer.observe(root, {
+      attributes: true,
+      attributeFilter: ['data-theme', 'style', 'class'],
+    });
+
+    return () => observer.disconnect();
+  }, []);
+
+  const handleBeforeMount = useMemo<BeforeMount>(() => {
+    return (monacoInstance) => {
+      defineEditorTheme(monacoInstance, themeName);
+    };
+  }, [themeName]);
+
   const handleMount = useMemo<OnMount>(() => {
     return (editor, monaco) => {
+      defineEditorTheme(monaco, themeName);
+      monaco.editor.setTheme(themeName);
+
       monaco.languages.registerCompletionItemProvider('python', {
         triggerCharacters: ['.', '(', '_'],
         provideCompletionItems: () => ({
@@ -131,13 +220,19 @@ export default function PythonCodeEditor({
       emitSelection();
       editor.onDidChangeCursorSelection(emitSelection);
     };
-  }, [onSelectionChange]);
+  }, [onSelectionChange, themeName]);
+
+  useEffect(() => {
+    defineEditorTheme(monaco, themeName);
+    monaco.editor.setTheme(themeName);
+  }, [themeName]);
 
   return (
     <div style={{ minHeight }}>
       <Editor
         height={minHeight}
         defaultLanguage="python"
+        beforeMount={handleBeforeMount}
         value={value}
         onMount={handleMount}
         onChange={(nextValue) => onChange?.(nextValue ?? '')}
@@ -159,7 +254,7 @@ export default function PythonCodeEditor({
           cursorBlinking: 'smooth',
           overviewRulerBorder: false,
         }}
-        theme="vs-dark"
+        theme={themeName}
         loading={<div />}
       />
     </div>
