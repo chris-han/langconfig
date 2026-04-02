@@ -87,6 +87,8 @@ export default function KnowledgeBaseView() {
   const [embeddingModel, setEmbeddingModel] = useState('text-embedding-3-large');
   const [chunkSize, setChunkSize] = useState(1000);
   const [chunkOverlap, setChunkOverlap] = useState(200);
+  const [ragLlmProvider, setRagLlmProvider] = useState('auto');
+  const [availableProviders, setAvailableProviders] = useState<{ value: string; label: string }[]>([]);
   const [savingRAGConfig, setSavingRAGConfig] = useState(false);
   const [ragConfigSaveMessage, setRagConfigSaveMessage] = useState<{ type: 'success' | 'error', text: string } | null>(null);
 
@@ -115,11 +117,21 @@ export default function KnowledgeBaseView() {
 
   const loadRAGSettings = async () => {
     try {
-      const response = await apiClient.getSettings();
-      const settings = response.data;
+      const [settingsRes, providersRes] = await Promise.all([
+        apiClient.getSettings(),
+        apiClient.getRagLlmProviders(),
+      ]);
+      const settings = settingsRes.data;
+      const remoteProviders: Array<{ value: string; label: string }> = providersRes.data?.providers || [];
+
       setEmbeddingModel(settings.embedding_model || 'text-embedding-3-large');
       setChunkSize(settings.chunk_size || 1000);
       setChunkOverlap(settings.chunk_overlap || 200);
+      setRagLlmProvider(settings.rag_llm_provider || 'auto');
+      setAvailableProviders([
+        { value: 'auto', label: 'Auto (use first available)' },
+        ...remoteProviders,
+      ]);
     } catch (error) {
       console.error('Failed to load RAG settings:', error);
     }
@@ -133,6 +145,7 @@ export default function KnowledgeBaseView() {
         embedding_model: embeddingModel,
         chunk_size: chunkSize,
         chunk_overlap: chunkOverlap,
+        rag_llm_provider: ragLlmProvider,
       });
       setRagConfigSaveMessage({ type: 'success', text: 'RAG Configuration saved successfully!' });
       setTimeout(() => setRagConfigSaveMessage(null), 3000);
@@ -551,7 +564,7 @@ export default function KnowledgeBaseView() {
               </div>
             )}
           </div>
-          <div className="grid grid-cols-3 gap-3 mb-4">
+          <div className="grid grid-cols-3 gap-3 mb-3">
             <div>
               <label className="block text-xs font-medium mb-1.5" style={{ color: 'var(--color-text-muted)' }}>
                 EMBEDDING MODEL
@@ -594,6 +607,33 @@ export default function KnowledgeBaseView() {
                 className="w-full px-3 py-2 border border-gray-200 dark:border-border-dark rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-primary"
                 style={{ backgroundColor: 'var(--color-input-background)', color: 'var(--color-text-primary)' }}
               />
+            </div>
+          </div>
+
+          {/* LLM Provider Card (for HyDE) */}
+          <div className="mb-4 p-3 rounded-lg border border-yellow-400/40 bg-yellow-500/5">
+            <div className="flex items-start gap-3">
+              <div className="flex-1">
+                <label className="block text-xs font-medium mb-1.5" style={{ color: 'var(--color-text-muted)' }}>
+                  HyDE LLM PROVIDER
+                </label>
+                <select
+                  value={ragLlmProvider}
+                  onChange={(e) => setRagLlmProvider(e.target.value)}
+                  className="w-full px-3 py-2 border border-gray-200 dark:border-border-dark rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-primary"
+                  style={{ backgroundColor: 'var(--color-input-background)', color: 'var(--color-text-primary)' }}
+                >
+                  {availableProviders.map((p) => (
+                    <option key={p.value} value={p.value}>{p.label}</option>
+                  ))}
+                </select>
+              
+              <p className="text-xs mt-6 leading-relaxed" style={{ color: 'var(--color-text-muted)' }}>
+                Used when <strong>HyDE</strong> is enabled for search. Providers are configured in{' '}
+                <span className="font-medium" style={{ color: 'var(--color-text-primary)' }}>Settings → API Keys & Providers</span>.
+                Only enabled providers appear here.
+              </p>
+            </div>
             </div>
           </div>
           <div className="flex justify-end">

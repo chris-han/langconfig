@@ -300,18 +300,32 @@ class ContextRetriever:
                 # Create HyDE transformer with DNA augmentation
                 hyde_transform = self.create_hyde_transform(project_dna)
 
-                # Generate hypothetical implementation using HyDE
-                logger.info("Generating HyDE hypothesis for semantic search")
-                hyde_result = hyde_transform(task_description)
-
-                # Extract query string from QueryBundle
-                if hasattr(hyde_result, 'query_str'):
-                    search_query = hyde_result.query_str
-                else:
-                    search_query = str(hyde_result)
-
-                logger.debug(f"HyDE query generated ({len(search_query)} chars)")
-                retrieval_method = 'hyde_augmented' if project_dna else 'hyde_basic'
+                # HyDEQueryTransform.__call__ is synchronous and calls the LLM.
+                # Run it in a thread-pool executor with a timeout so a missing or
+                # slow LLM never blocks the event loop indefinitely.
+                import asyncio
+                loop = asyncio.get_event_loop()
+                try:
+                    logger.info("Generating HyDE hypothesis for semantic search")
+                    hyde_result = await asyncio.wait_for(
+                        loop.run_in_executor(None, hyde_transform, task_description),
+                        timeout=15.0,
+                    )
+                    # Extract query string from QueryBundle
+                    if hasattr(hyde_result, 'query_str'):
+                        search_query = hyde_result.query_str
+                    else:
+                        search_query = str(hyde_result)
+                    logger.debug(f"HyDE query generated ({len(search_query)} chars)")
+                    retrieval_method = 'hyde_augmented' if project_dna else 'hyde_basic'
+                except (asyncio.TimeoutError, Exception) as hyde_err:
+                    logger.warning(
+                        f"HyDE generation failed ({type(hyde_err).__name__}: {hyde_err}), "
+                        "falling back to direct semantic search"
+                    )
+                    search_query = task_description
+                    retrieval_method = 'direct_semantic'
+                    should_use_hyde = False
             else:
                 logger.info("Using direct semantic search (no HyDE)")
                 search_query = task_description

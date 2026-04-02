@@ -45,6 +45,7 @@ class Settings(Base):
     azure_openai_embedding_dimensions = Column(Integer, nullable=True)
     chunk_size = Column(Integer, default=1000)
     chunk_overlap = Column(Integer, default=200)
+    rag_llm_provider = Column(String, nullable=True)  # e.g. "auto", "openai_compatible", "openai", "kimi"
 
     # Model Defaults
     default_model = Column(String, default="gpt-4o")

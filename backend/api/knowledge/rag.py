@@ -946,3 +946,51 @@ async def get_project_storage_stats(
     except Exception as e:
         logger.error(f"Failed to get storage stats for project {project_id}: {e}", exc_info=True)
         raise HTTPException(status_code=500, detail=f"Failed to get storage stats: {str(e)}")
+
+
+@router.get("/llm-providers")
+async def list_rag_llm_providers(db: Session = Depends(get_db)):
+    """
+    Return the list of LLM providers that are fully configured and usable for HyDE.
+    Mirrors the provider-detection logic in list_available_models so the frontend
+    never has to hardcode provider names.
+    """
+    from models.settings import Settings as SettingsModel
+
+    settings = db.query(SettingsModel).filter(SettingsModel.id == 1).first()
+    if not settings:
+        return {"providers": []}
+
+    api_keys: dict = settings.api_keys or {}
+    provider_configs: dict = settings.provider_configs or {}
+
+    providers = []
+
+    # Azure OpenAI — needs endpoint + API key
+    if api_keys.get("azure_openai") and (settings.azure_openai_endpoint or "").strip():
+        providers.append({
+            "value": "azure_openai",
+            "label": "Azure OpenAI",
+        })
+
+    # Additional providers from provider_configs — each needs enabled=true, a base_url, and an API key
+    for provider_name, cfg in provider_configs.items():
+        if not isinstance(cfg, dict):
+            continue
+        if cfg.get("enabled") is False:
+            continue
+        base_url = (cfg.get("base_url") or cfg.get("baseUrl") or "").strip()
+        if not base_url:
+            continue
+        if not api_keys.get(provider_name):
+            continue
+        models: list = cfg.get("models") or []
+        model_label = models[0] if models else ""
+        # Use a human-readable label derived from the provider name
+        display = provider_name.replace("_", " ").title()
+        providers.append({
+            "value": provider_name,
+            "label": f"{display}{f' ({model_label})' if model_label else ''}",
+        })
+
+    return {"providers": providers}

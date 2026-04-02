@@ -494,6 +494,10 @@ class APIClient {
     return this.client.get(`/api/rag/projects/${projectId}/storage-stats`);
   }
 
+  async getRagLlmProviders() {
+    return this.client.get('/api/rag/llm-providers');
+  }
+
   // Settings
   async getSettings() {
     return this.client.get('/api/settings/');
@@ -510,6 +514,7 @@ class APIClient {
     azure_openai_embedding_dimensions?: number | null;
     chunk_size?: number;
     chunk_overlap?: number;
+    rag_llm_provider?: string;
     provider_configs?: Record<string, Record<string, any>>;
   }) {
     return this.client.patch('/api/settings/', data);

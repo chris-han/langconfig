@@ -11,6 +11,7 @@ from pydantic import BaseModel
 from db.database import get_db
 from models.settings import Settings as SettingsModel
 from constants.models import ModelChoice
+from services.llama_config import reset_initialization as _reset_llama_initialization
 
 router = APIRouter(prefix="/api/settings", tags=["settings"])
 
@@ -47,6 +48,7 @@ class SettingsUpdate(BaseModel):
     azure_openai_embedding_dimensions: Optional[int] = None
     chunk_size: Optional[int] = None
     chunk_overlap: Optional[int] = None
+    rag_llm_provider: Optional[str] = None
     storage_path: Optional[str] = None
     provider_configs: Optional[Dict[str, Dict[str, object]]] = None
 
@@ -62,6 +64,7 @@ class SettingsResponse(BaseModel):
     azure_openai_embedding_dimensions: Optional[int] = None
     chunk_size: int
     chunk_overlap: int
+    rag_llm_provider: str
     storage_path: str
     provider_configs: Dict[str, Dict[str, object]]
 
@@ -142,6 +145,7 @@ def get_or_create_settings(db: Session) -> SettingsModel:
             "azure_openai_api_version": settings.azure_openai_api_version or "2024-05-01-preview",
             "chunk_size": settings.chunk_size if settings.chunk_size is not None else 1000,
             "chunk_overlap": settings.chunk_overlap if settings.chunk_overlap is not None else 200,
+            "rag_llm_provider": settings.rag_llm_provider or "auto",
             "storage_path": settings.storage_path or get_default_storage_path(),
             "provider_configs": settings.provider_configs or {},
         }
@@ -197,6 +201,9 @@ async def set_api_keys(keys: APIKeySet, db: Session = Depends(get_db)):
 
     settings.api_keys = api_keys
     db.commit()
+
+    # Allow LlamaIndex LLM to pick up the new key on next retrieval call
+    _reset_llama_initialization()
 
     return {"message": "API keys saved successfully"}
 
@@ -308,6 +315,7 @@ async def get_settings(db: Session = Depends(get_db)):
         azure_openai_embedding_dimensions=settings.azure_openai_embedding_dimensions,
         chunk_size=settings.chunk_size,
         chunk_overlap=settings.chunk_overlap,
+        rag_llm_provider=settings.rag_llm_provider or "auto",
         storage_path=settings.storage_path or get_default_storage_path(),
         provider_configs=settings.provider_configs or {}
     )
@@ -326,6 +334,10 @@ async def update_settings(settings_update: SettingsUpdate, db: Session = Depends
     db.commit()
     db.refresh(settings)
 
+    # If rag_llm_provider changed, force LlamaIndex to reinitialize with the new provider
+    if "rag_llm_provider" in update_data or "provider_configs" in update_data:
+        _reset_llama_initialization()
+
     return SettingsResponse(
         default_model=settings.default_model,
         default_temperature=settings.default_temperature,
@@ -337,6 +349,7 @@ async def update_settings(settings_update: SettingsUpdate, db: Session = Depends
         azure_openai_embedding_dimensions=settings.azure_openai_embedding_dimensions,
         chunk_size=settings.chunk_size,
         chunk_overlap=settings.chunk_overlap,
+        rag_llm_provider=settings.rag_llm_provider or "auto",
         storage_path=settings.storage_path or get_default_storage_path(),
         provider_configs=settings.provider_configs or {}
     )
