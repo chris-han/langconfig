@@ -1,0 +1,60 @@
+@layer components {
+  .typography-markdown {
+    font-size: var(--text-markdown);
+  }
+
+  .typography-code {
+    font-size: var(--text-code);
+  }
+
+  .typography-ui-header {
+    font-size: var(--text-ui-header);
+  }
+
+  .typography-ui-label {
+    font-size: var(--text-ui-label);
+  }
+
+  .typography-meta {
+    font-size: var(--text-meta);
+  }
+
+  .typography-micro {
+    font-size: var(--text-micro);
+  }
+
+  .typography-h1 {
+    font-size: var(--text-markdown);
+    line-height: var(--h1-line-height);
+    letter-spacing: var(--h1-letter-spacing);
+    font-weight: var(--h1-font-weight);
+  }
+
+  .typography-h2 {
+    font-size: var(--text-markdown);
+    line-height: var(--h2-line-height);
+    letter-spacing: var(--h2-letter-spacing);
+    font-weight: var(--h2-font-weight);
+  }
+
+  .typography-h3 {
+    font-size: var(--text-markdown);
+    line-height: var(--h3-line-height);
+    letter-spacing: var(--h3-letter-spacing);
+    font-weight: var(--h3-font-weight);
+  }
+
+  .typography-ui-button {
+    font-size: var(--text-ui-label);
+    line-height: var(--ui-button-line-height);
+    letter-spacing: var(--ui-button-letter-spacing);
+    font-weight: var(--ui-button-font-weight);
+  }
+
+  .typography-ui-caption {
+    font-size: var(--text-micro);
+    line-height: var(--ui-caption-line-height);
+    letter-spacing: var(--ui-caption-letter-spacing);
+    font-weight: var(--ui-caption-font-weight);
+  }
+}

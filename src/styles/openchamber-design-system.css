@@ -1,0 +1,236 @@
+@custom-variant dark (&:is(.dark *));
+
+@layer base {
+  :root {
+    color-scheme: dark;
+    --ui-regular-font-weight: 400;
+    --padding-scale: 1;
+    --radius: 0.75rem;
+
+    --background: #0f1115;
+    --foreground: #eef2f7;
+    --card: #141820;
+    --card-foreground: #eef2f7;
+    --popover: #141820;
+    --popover-foreground: #eef2f7;
+    --primary: #39d0cf;
+    --primary-foreground: #071417;
+    --secondary: #1b2029;
+    --secondary-foreground: #d9e1ea;
+    --muted: #161b23;
+    --muted-foreground: #96a2b4;
+    --accent: #39d0cf;
+    --accent-foreground: #071417;
+    --destructive: #f06a7f;
+    --destructive-foreground: #fff6f8;
+    --border: #252b36;
+    --input: #171c24;
+    --ring: rgba(57, 208, 207, 0.42);
+
+    --sidebar: #0b0e13;
+    --sidebar-foreground: #dce5f0;
+    --sidebar-primary: #39d0cf;
+    --sidebar-primary-foreground: #071417;
+    --sidebar-accent: #161b23;
+    --sidebar-accent-foreground: #eef2f7;
+    --sidebar-border: #212733;
+
+    --surface-base: rgba(15, 17, 21, 0.96);
+    --surface-panel: rgba(20, 24, 32, 0.92);
+    --surface-elevated: rgba(29, 35, 45, 0.95);
+    --surface-overlay: rgba(10, 13, 18, 0.78);
+    --interactive-hover: rgba(255, 255, 255, 0.06);
+    --interactive-active: rgba(255, 255, 255, 0.1);
+    --interactive-selection: rgba(57, 208, 207, 0.16);
+    --interactive-selection-foreground: #eefdfd;
+
+    --status-success: #3ccf91;
+    --status-warning: #f2b94b;
+    --status-error: #f06a7f;
+    --status-info: #5ca7ff;
+
+    --primary-base: var(--primary);
+
+    --editor-bg: #10151d;
+    --node-bg: #171d27;
+    --node-border: #28303c;
+    --sem-warning: #f2b94b;
+    --sem-success: #3ccf91;
+    --sem-info: #5ca7ff;
+
+    --text-markdown: 0.9375rem;
+    --text-code: 0.8125rem;
+    --text-ui-header: 0.9375rem;
+    --text-ui-label: 0.875rem;
+    --text-meta: 0.875rem;
+    --text-micro: 0.8125rem;
+
+    --h1-line-height: 1.15;
+    --h1-letter-spacing: -0.03em;
+    --h1-font-weight: 700;
+    --h2-line-height: 1.2;
+    --h2-letter-spacing: -0.02em;
+    --h2-font-weight: 650;
+    --h3-line-height: 1.3;
+    --h3-letter-spacing: -0.01em;
+    --h3-font-weight: 600;
+    --ui-button-line-height: 1.2;
+    --ui-button-letter-spacing: -0.01em;
+    --ui-button-font-weight: 600;
+    --ui-caption-line-height: 1.3;
+    --ui-caption-letter-spacing: 0;
+    --ui-caption-font-weight: 500;
+    --markdown-body-line-height: 1.6;
+    --markdown-body-letter-spacing: 0;
+    --markdown-body-font-weight: 400;
+    --markdown-h1-line-height: 1.2;
+    --markdown-h1-letter-spacing: -0.02em;
+    --markdown-h1-font-weight: 700;
+    --markdown-h2-line-height: 1.25;
+    --markdown-h2-letter-spacing: -0.015em;
+    --markdown-h2-font-weight: 650;
+    --markdown-h3-line-height: 1.35;
+    --markdown-h3-letter-spacing: -0.01em;
+    --markdown-h3-font-weight: 600;
+    --markdown-h4-line-height: 1.4;
+    --markdown-h4-letter-spacing: -0.005em;
+    --markdown-h4-font-weight: 600;
+
+    /* LangConfig legacy aliases */
+    --color-primary: var(--primary);
+    --color-primary-light: color-mix(in srgb, var(--primary) 78%, white);
+    --color-primary-alpha: color-mix(in srgb, var(--primary) 18%, transparent);
+    --color-primary-alpha-10: color-mix(in srgb, var(--primary) 10%, transparent);
+    --color-primary-rgb: 57, 208, 207;
+    --color-background: var(--background);
+    --color-background-light: var(--background);
+    --color-background-dark: var(--muted);
+    --color-background-secondary: var(--secondary);
+    --color-bg-surface: var(--surface-panel);
+    --color-panel-light: var(--surface-panel);
+    --color-panel-dark: var(--card);
+    --color-border: var(--border);
+    --color-border-light: color-mix(in srgb, var(--border) 72%, white);
+    --color-border-dark: var(--border);
+    --color-text-primary: var(--foreground);
+    --color-text-secondary: color-mix(in srgb, var(--foreground) 78%, var(--muted-foreground));
+    --color-text-muted: var(--muted-foreground);
+    --color-input-background: var(--input);
+    --color-logo-background: var(--surface-elevated);
+    --color-node-background: var(--node-bg);
+    --color-node-background-light: color-mix(in srgb, var(--node-bg) 85%, white);
+    --color-category-background: var(--secondary);
+    --color-success: var(--status-success);
+    --color-success-subtle: color-mix(in srgb, var(--status-success) 18%, transparent);
+    --color-warning-bg: color-mix(in srgb, var(--status-warning) 16%, transparent);
+    --color-warning-border: color-mix(in srgb, var(--status-warning) 32%, transparent);
+    --color-warning-text: var(--status-warning);
+    --color-accent: var(--accent);
+  }
+
+  * {
+    border-color: var(--border);
+  }
+
+  html,
+  body,
+  #root {
+    min-height: 100%;
+  }
+
+  body {
+    background:
+      radial-gradient(circle at top left, color-mix(in srgb, var(--primary) 9%, transparent) 0%, transparent 30%),
+      linear-gradient(180deg, color-mix(in srgb, var(--background) 96%, black) 0%, var(--background) 100%);
+    color: var(--foreground);
+    font-family: var(--font-family-sans, "IBM Plex Sans", "Inter", system-ui, sans-serif);
+    font-weight: var(--ui-regular-font-weight, 400);
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+
+  .font-sans {
+    font-family: var(--font-family-sans, "IBM Plex Sans", "Inter", system-ui, sans-serif) !important;
+  }
+
+  .font-mono,
+  code,
+  pre {
+    font-family: var(--font-family-mono, "IBM Plex Mono", ui-monospace, monospace) !important;
+  }
+
+  input,
+  textarea,
+  select {
+    background: color-mix(in srgb, var(--input) 92%, transparent);
+    color: var(--foreground);
+    border-color: color-mix(in srgb, var(--border) 88%, white);
+  }
+
+  input::placeholder,
+  textarea::placeholder {
+    color: var(--muted-foreground);
+  }
+
+  button,
+  [role="button"] {
+    transition:
+      background-color 140ms ease,
+      border-color 140ms ease,
+      color 140ms ease,
+      box-shadow 140ms ease;
+  }
+
+  button:focus-visible,
+  [role="button"]:focus-visible,
+  input:focus-visible,
+  textarea:focus-visible,
+  select:focus-visible {
+    outline: none;
+    box-shadow: 0 0 0 3px var(--ring);
+  }
+}
+
+@theme inline {
+  --font-family-display: var(--font-family-display, "IBM Plex Sans", "Inter", system-ui, sans-serif);
+  --font-family-sans: var(--font-family-sans, "IBM Plex Sans", "Inter", system-ui, sans-serif);
+  --font-family-mono: var(--font-family-mono, "IBM Plex Mono", ui-monospace, monospace);
+
+  --radius-sm: calc(var(--radius) - 4px);
+  --radius-md: calc(var(--radius) - 2px);
+  --radius-lg: var(--radius);
+  --radius-xl: calc(var(--radius) + 4px);
+
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+  --color-popover: var(--popover);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-destructive: var(--destructive);
+  --color-destructive-foreground: var(--destructive-foreground);
+  --color-border: var(--border);
+  --color-input: var(--input);
+  --color-ring: var(--ring);
+  --color-sidebar: var(--sidebar);
+  --color-sidebar-foreground: var(--sidebar-foreground);
+  --color-sidebar-primary: var(--sidebar-primary);
+  --color-sidebar-primary-foreground: var(--sidebar-primary-foreground);
+  --color-sidebar-accent: var(--sidebar-accent);
+  --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
+  --color-sidebar-border: var(--sidebar-border);
+  --color-editor-bg: var(--editor-bg);
+  --color-node-bg: var(--node-bg);
+  --color-node-border: var(--node-border);
+  --color-sem-warning: var(--sem-warning);
+  --color-sem-success: var(--sem-success);
+  --color-sem-info: var(--sem-info);
+}

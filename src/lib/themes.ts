@@ -27,6 +27,66 @@ export interface Theme {
   textured?: boolean;
 }
 
+const darkThemes = new Set<ThemeName>(['dark', 'midnight', 'ocean', 'forest', 'botanical', 'godspeed']);
+
+function setSemanticThemeTokens(theme: Theme, isDarkTheme: boolean) {
+  const root = document.documentElement;
+  const foreground = theme.colors.textPrimary;
+  const background = theme.colors.backgroundDark;
+  const panel = theme.colors.panelDark;
+  const secondary = theme.colors.nodeBackground;
+  const border = theme.colors.borderDark;
+  const input = theme.colors.inputBackground;
+  const primary = theme.colors.primary;
+  const primaryForeground = isDarkTheme ? '#071417' : '#ffffff';
+
+  root.style.setProperty('--background', background);
+  root.style.setProperty('--foreground', foreground);
+  root.style.setProperty('--card', panel);
+  root.style.setProperty('--card-foreground', foreground);
+  root.style.setProperty('--popover', panel);
+  root.style.setProperty('--popover-foreground', foreground);
+  root.style.setProperty('--primary', primary);
+  root.style.setProperty('--primary-foreground', primaryForeground);
+  root.style.setProperty('--secondary', secondary);
+  root.style.setProperty('--secondary-foreground', foreground);
+  root.style.setProperty('--muted', theme.colors.backgroundLight);
+  root.style.setProperty('--muted-foreground', theme.colors.textMuted);
+  root.style.setProperty('--accent', primary);
+  root.style.setProperty('--accent-foreground', primaryForeground);
+  root.style.setProperty('--destructive', '#f06a7f');
+  root.style.setProperty('--destructive-foreground', '#fff6f8');
+  root.style.setProperty('--border', border);
+  root.style.setProperty('--input', input);
+  root.style.setProperty('--ring', isDarkTheme ? 'rgba(57, 208, 207, 0.42)' : 'rgba(46, 92, 138, 0.28)');
+  root.style.setProperty('--sidebar', background);
+  root.style.setProperty('--sidebar-foreground', foreground);
+  root.style.setProperty('--sidebar-primary', primary);
+  root.style.setProperty('--sidebar-primary-foreground', primaryForeground);
+  root.style.setProperty('--sidebar-accent', secondary);
+  root.style.setProperty('--sidebar-accent-foreground', foreground);
+  root.style.setProperty('--sidebar-border', border);
+  root.style.setProperty('--surface-base', background);
+  root.style.setProperty('--surface-panel', panel);
+  root.style.setProperty('--surface-elevated', theme.colors.logoBackground);
+  root.style.setProperty('--surface-overlay', isDarkTheme ? 'rgba(10, 13, 18, 0.78)' : 'rgba(245, 249, 252, 0.82)');
+  root.style.setProperty('--interactive-hover', isDarkTheme ? 'rgba(255, 255, 255, 0.06)' : 'rgba(46, 92, 138, 0.06)');
+  root.style.setProperty('--interactive-active', isDarkTheme ? 'rgba(255, 255, 255, 0.1)' : 'rgba(46, 92, 138, 0.1)');
+  root.style.setProperty('--interactive-selection', isDarkTheme ? 'rgba(57, 208, 207, 0.16)' : 'rgba(46, 92, 138, 0.14)');
+  root.style.setProperty('--interactive-selection-foreground', foreground);
+  root.style.setProperty('--status-success', '#3ccf91');
+  root.style.setProperty('--status-warning', '#f2b94b');
+  root.style.setProperty('--status-error', '#f06a7f');
+  root.style.setProperty('--status-info', '#5ca7ff');
+  root.style.setProperty('--primary-base', primary);
+  root.style.setProperty('--editor-bg', background);
+  root.style.setProperty('--node-bg', theme.colors.nodeBackground);
+  root.style.setProperty('--node-border', theme.colors.nodeBackgroundLight);
+  root.style.setProperty('--sem-warning', '#f2b94b');
+  root.style.setProperty('--sem-success', '#3ccf91');
+  root.style.setProperty('--sem-info', '#5ca7ff');
+}
+
 export const themes: Record<ThemeName, Theme> = {
   langconfig: {
     name: 'langconfig',
@@ -213,6 +273,7 @@ export const themes: Record<ThemeName, Theme> = {
 
 export function applyTheme(theme: Theme) {
   const root = document.documentElement;
+  const isDarkTheme = darkThemes.has(theme.name);
 
   // Set CSS variables
   root.style.setProperty('--color-primary', theme.colors.primary);
@@ -227,9 +288,28 @@ export function applyTheme(theme: Theme) {
   root.style.setProperty('--color-node-background', theme.colors.nodeBackground);
   root.style.setProperty('--color-node-background-light', theme.colors.nodeBackgroundLight);
   root.style.setProperty('--color-category-background', theme.colors.categoryBackground);
+  root.style.setProperty('--color-background', theme.colors.backgroundDark);
+  root.style.setProperty('--color-background-secondary', theme.colors.backgroundLight);
+  root.style.setProperty('--color-bg-surface', theme.colors.panelDark);
+  root.style.setProperty('--color-panel-light', theme.colors.panelDark);
+  root.style.setProperty('--color-border', theme.colors.borderDark);
+  root.style.setProperty('--color-border-light', theme.colors.nodeBackgroundLight);
+  root.style.setProperty('--color-text-secondary', theme.colors.textMuted);
+  root.style.setProperty('--color-primary-light', theme.colors.nodeBackgroundLight);
+  root.style.setProperty('--color-primary-alpha', `${theme.colors.primary}33`);
+  root.style.setProperty('--color-primary-alpha-10', `${theme.colors.primary}1A`);
+  root.style.setProperty('--color-success', '#3ccf91');
+  root.style.setProperty('--color-success-subtle', 'rgba(60, 207, 145, 0.18)');
+  root.style.setProperty('--color-warning-bg', 'rgba(242, 185, 75, 0.12)');
+  root.style.setProperty('--color-warning-border', 'rgba(242, 185, 75, 0.28)');
+  root.style.setProperty('--color-warning-text', '#f2b94b');
+  root.style.setProperty('--color-accent', theme.colors.primary);
+
+  setSemanticThemeTokens(theme, isDarkTheme);
 
   // Set data-theme attribute for CSS targeting
   root.setAttribute('data-theme', theme.name);
+  root.classList.toggle('dark', isDarkTheme);
 
   // Add/remove textured class
   if (theme.textured) {

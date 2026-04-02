@@ -1,21 +1,9 @@
-@import url('https://fonts.googleapis.com/css2?family=Manrope:wght@200..800&display=swap');
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:wght@400;500;600;700&family=Inter:wght@400;500;600;700&display=swap');
 @import url('https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200');
 
 @import "tailwindcss";
-
-@theme {
-  --color-primary: #2E5C8A;
-  --color-background-light: #F5F9FC;
-  --color-background-dark: #D8EDF5;
-  --color-panel-dark: #E3F0F5;
-  --color-border-dark: #2E5C8A;
-  --color-text-muted: #4A6B8A;
-  --color-text-primary: #1a2332;
-
-  --font-family-display: Inter, sans-serif;
-  --font-family-sans: Manrope, system-ui, -apple-system, sans-serif;
-}
+@import "./styles/openchamber-design-system.css";
+@import "./styles/openchamber-typography.css";
 
 /* Global resets */
 html,

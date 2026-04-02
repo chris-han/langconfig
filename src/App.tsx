@@ -25,8 +25,9 @@ import { ToastProvider, ToastContainer } from './hooks/useToast';
 import { ChatProvider } from './features/chat/state/ChatContext';
 import GlobalChatModal from './features/chat/ui/GlobalChatModal';
 import apiClient from './lib/api-client';
+import SemantierPage from './features/semantier/SemantierPage';
 
-type View = 'studio' | 'library' | 'settings' | 'knowledge' | 'agents' | 'skills' | 'home' | 'community';
+type View = 'studio' | 'library' | 'settings' | 'knowledge' | 'agents' | 'skills' | 'home' | 'community' | 'semantier';
 type WorkflowStatus = 'draft' | 'saved' | 'running' | 'completed' | 'failed';
 
 interface Agent {
@@ -96,6 +97,9 @@ interface SelectedNodeData {
     enable_model_routing: boolean;
     enable_parallel_tools: boolean;
     enable_memory: boolean;
+    skills?: string[];
+    enable_skills?: boolean;
+    max_skills?: number;
     enable_rag?: boolean;
     requires_human_approval?: boolean;
     condition?: string;
@@ -169,6 +173,7 @@ function AppContent() {
     if (path === '/knowledge') return 'knowledge';
     if (path === '/skills') return 'skills';
     if (path === '/community') return 'community';
+    if (path === '/semantier') return 'semantier';
     if (path === '/settings') return 'settings';
     return 'home';
   })();
@@ -218,6 +223,7 @@ function AppContent() {
       skills: '/skills',
       knowledge: '/knowledge',
       community: '/community',
+      semantier: '/semantier',
       settings: '/settings'
     };
     navigate(routes[view]);
@@ -427,6 +433,7 @@ function AppContent() {
           {currentView === 'skills' && <SkillLibrary />}
           {currentView === 'knowledge' && <KnowledgeBaseView />}
           {currentView === 'community' && <CommunityPage />}
+          {currentView === 'semantier' && <SemantierPage />}
           {currentView === 'settings' && <SettingsView />}
         </div>
 
