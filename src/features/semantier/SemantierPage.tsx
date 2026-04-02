@@ -2,12 +2,18 @@ import { useEffect, useMemo, useState, type ReactNode } from "react";
 import Editor, { useMonaco } from "@monaco-editor/react";
 import "reactflow/dist/style.css";
 import {
+  AlertTriangle,
   BookOpen,
+  CheckCircle2,
   CircleDot,
   FileCode2,
   GitBranch,
+  History,
+  Info,
   Layers3,
+  Link2,
   Play,
+  RefreshCw,
   Search,
   Settings2,
   Sparkles,
@@ -15,7 +21,7 @@ import {
 } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardContent } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { ResizableHandle, ResizablePanel, ResizablePanelGroup } from "@/components/ui/resizable";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
@@ -202,6 +208,35 @@ const initialEditorValue = `// Semantier starter\nMAP core:Contract {\n  contrac
 
 const executionRulesCode = `WHEN core:Contract.status CHANGES TO "completed":\n  TRIGGER fin:RevenueRecognition {\n    amount: Contract.amount,\n    recognitionDate: NOW(),\n    method: DERIVE_FROM(Contract.type)\n  }\n\n  EVALUATE tax:TaxObligation {\n    taxableAmount: Contract.amount,\n    taxType: DERIVE_FROM(Contract.region)\n  }\n\n  RECONCILE {\n    fin:RevenueRecognition.amount == tax:TaxObligation.taxableAmount\n  }`;
 
+const reconciliationAlerts = [
+  {
+    id: "1",
+    type: "warning" as const,
+    domain: "管理会计",
+    message: "此修改将导致管理会计分摊额与财务总账数额产生不勾稽",
+    delta: "¥12,000",
+  },
+  {
+    id: "2",
+    type: "info" as const,
+    domain: "税务",
+    message: "税务义务已根据新规则 tax:DeductionRule_v2 自动更新",
+  },
+  {
+    id: "3",
+    type: "error" as const,
+    domain: "财务",
+    message: "收入确认时间点违反 ASC 606 准则要求",
+  },
+];
+
+const versionHistory = [
+  { version: "v2.1.0", date: "2024-03-15", author: "系统", changes: "添加 signDate 可选属性" },
+  { version: "v2.0.0", date: "2024-02-01", author: "张明", changes: "重构 amount 字段精度" },
+  { version: "v1.5.0", date: "2024-01-10", author: "李华", changes: "新增 status 枚举值" },
+  { version: "v1.0.0", date: "2023-12-01", author: "系统", changes: "初始版本" },
+];
+
 function flattenTree(nodes: TreeNode[]): TreeNode[] {
   return nodes.flatMap((node) => [node, ...(node.children ? flattenTree(node.children) : [])]);
 }
@@ -301,40 +336,45 @@ function ExplorerPane({
   };
 
   return (
-    <Card className="h-full rounded-none border-y-0 border-l-0 gap-0 py-0 shadow-none">
-      <CardHeader className="border-b px-4 py-4">
-        <div className="flex items-center gap-3">
-          <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-primary/15 text-primary">
-            <Layers3 className="h-5 w-5" />
-          </div>
+    <div className="flex h-full flex-col bg-sidebar border-r border-sidebar-border">
+      <div className="border-b border-sidebar-border p-3">
+        <div className="mb-3 flex items-center gap-2">
+          <Layers3 className="h-5 w-5 text-primary" />
           <div>
-            <CardTitle className="text-base">Semantier Explorer</CardTitle>
-            <CardDescription>Ontology structure and execution rules</CardDescription>
+            <div className="text-sm font-semibold text-sidebar-foreground">Resource Explorer</div>
+            <div className="text-xs text-muted-foreground">Ontology, dimensions, and rules</div>
           </div>
         </div>
-        <div className="relative mt-3">
+        <div className="relative">
           <Search className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
           <Input
             value={query}
             onChange={(event) => setQuery(event.target.value)}
             placeholder="Search resources"
-            className="pl-9"
+            className="h-8 border-sidebar-border bg-sidebar-accent pl-9 text-sm"
           />
         </div>
-      </CardHeader>
-      <CardContent className="flex min-h-0 flex-1 flex-col px-3 py-3">
-        <Tabs value={activeTab} onValueChange={(value) => onTabChange(value as ExplorerTab)} className="min-h-0 flex-1">
-          <TabsList className="grid w-full grid-cols-3">
-            <TabsTrigger value="ontology"><BookOpen className="h-4 w-4" />Ontology</TabsTrigger>
-            <TabsTrigger value="dimensions"><GitBranch className="h-4 w-4" />Dimensions</TabsTrigger>
-            <TabsTrigger value="rules"><Workflow className="h-4 w-4" />Rules</TabsTrigger>
-          </TabsList>
-          <TabsContent value={activeTab} className="mt-3 min-h-0 flex-1 overflow-auto">
-            <div className="space-y-1">{groups[activeTab].map((node) => renderNode(node))}</div>
-          </TabsContent>
-        </Tabs>
-      </CardContent>
-    </Card>
+      </div>
+      <Tabs value={activeTab} onValueChange={(value) => onTabChange(value as ExplorerTab)} className="flex min-h-0 flex-1 flex-col">
+        <TabsList className="h-auto w-full justify-start rounded-none border-b border-sidebar-border bg-transparent p-0">
+          <TabsTrigger value="ontology" className="rounded-none border-b-2 border-transparent px-3 py-2 text-xs data-[state=active]:border-primary data-[state=active]:bg-transparent">
+            <BookOpen className="h-3.5 w-3.5" />
+            Ontology
+          </TabsTrigger>
+          <TabsTrigger value="dimensions" className="rounded-none border-b-2 border-transparent px-3 py-2 text-xs data-[state=active]:border-primary data-[state=active]:bg-transparent">
+            <GitBranch className="h-3.5 w-3.5" />
+            Dimensions
+          </TabsTrigger>
+          <TabsTrigger value="rules" className="rounded-none border-b-2 border-transparent px-3 py-2 text-xs data-[state=active]:border-primary data-[state=active]:bg-transparent">
+            <Workflow className="h-3.5 w-3.5" />
+            Rules
+          </TabsTrigger>
+        </TabsList>
+        <TabsContent value={activeTab} className="m-0 min-h-0 flex-1 overflow-auto p-2">
+          <div className="space-y-1">{groups[activeTab].map((node) => renderNode(node))}</div>
+        </TabsContent>
+      </Tabs>
+    </div>
   );
 }
 
@@ -354,76 +394,191 @@ function InspectorPane({ selectedItem, graphSelection }: { selectedItem: TreeNod
       : graphSelection?.type === "edge"
         ? edgeData?.data?.description
         : selectedItem?.description;
+  const actions = graphData?.actions || selectedItem?.actions || [];
+  const identityLabel =
+    graphSelection?.type === "node"
+      ? graphData?.type
+      : graphSelection?.type === "edge"
+        ? edgeData?.data?.category
+        : [selectedItem?.prefix, selectedItem?.version].filter(Boolean).join(" ");
 
   return (
-    <Card className="h-full rounded-none border-y-0 border-r-0 gap-0 py-0 shadow-none">
-      <CardHeader className="border-b px-5 py-5">
-        <div className="flex items-center gap-2 text-primary">
-          <Settings2 className="h-4 w-4" />
-          <span className="text-sm font-medium">Inspector</span>
-        </div>
-        <CardTitle className="text-2xl">{title || "Select a resource"}</CardTitle>
-        <CardDescription>{description || "Choose an ontology item, graph node, or edge to inspect its contract."}</CardDescription>
-      </CardHeader>
-      <CardContent className="space-y-4 overflow-auto px-5 py-5">
-        {graphSelection?.type === "edge" && (
-          <Card className="gap-3 py-4">
-            <CardContent className="px-4">
-              <div className="text-xs font-semibold uppercase tracking-[0.18em] text-muted-foreground">Relationship</div>
-              <div className="mt-3 text-sm font-semibold text-foreground">{edgeData?.source} {"->"} {edgeData?.target}</div>
-              <div className="mt-1 text-xs text-muted-foreground">{edgeData?.data?.category}</div>
-            </CardContent>
-          </Card>
-        )}
+    <div className="flex h-full flex-col bg-sidebar border-l border-sidebar-border">
+      <Tabs defaultValue="properties" className="flex min-h-0 flex-1 flex-col">
+        <TabsList className="h-auto w-full justify-start rounded-none border-b border-sidebar-border bg-transparent p-0">
+          <TabsTrigger value="properties" className="rounded-none border-b-2 border-transparent px-3 py-2 text-xs data-[state=active]:border-primary data-[state=active]:bg-transparent">
+            <Settings2 className="h-3.5 w-3.5" />
+            属性
+          </TabsTrigger>
+          <TabsTrigger value="reconciliation" className="rounded-none border-b-2 border-transparent px-3 py-2 text-xs data-[state=active]:border-primary data-[state=active]:bg-transparent">
+            <Link2 className="h-3.5 w-3.5" />
+            勾稽
+            <span className="ml-1 rounded bg-destructive px-1 py-0 text-[10px] font-semibold text-destructive-foreground">
+              {reconciliationAlerts.length}
+            </span>
+          </TabsTrigger>
+          <TabsTrigger value="versions" className="rounded-none border-b-2 border-transparent px-3 py-2 text-xs data-[state=active]:border-primary data-[state=active]:bg-transparent">
+            <History className="h-3.5 w-3.5" />
+            版本
+          </TabsTrigger>
+        </TabsList>
 
-        {(selectedItem?.prefix || selectedItem?.version || graphSelection?.type === "node") && (
-          <Card className="gap-3 py-4">
-            <CardContent className="px-4">
-              <div className="text-xs font-semibold uppercase tracking-[0.18em] text-muted-foreground">Identity</div>
-              <div className="mt-3 space-y-1 text-sm font-semibold text-foreground">
-                {selectedItem?.prefix && <div>{selectedItem.prefix}{selectedItem.name}</div>}
-                {selectedItem?.version && <div className="text-xs font-normal text-muted-foreground">{selectedItem.version}</div>}
-                {graphSelection?.type === "node" && <div>{graphData?.type}</div>}
+        <TabsContent value="properties" className="m-0 flex-1 overflow-auto p-3">
+          <div className="space-y-4">
+            <div className="rounded-lg border border-border bg-card/60 p-3">
+              <div className="flex items-center gap-2 text-primary">
+                <Settings2 className="h-4 w-4" />
+                <span className="text-sm font-medium">Inspector</span>
               </div>
-            </CardContent>
-          </Card>
-        )}
+              <div className="mt-3 text-lg font-semibold text-sidebar-foreground">{title || "Select a resource"}</div>
+              <div className="mt-1 text-xs leading-relaxed text-muted-foreground">
+                {description || "Choose an ontology item, graph node, or edge to inspect its contract."}
+              </div>
+            </div>
 
-        {propertyRows.length > 0 && (
-          <Card className="gap-3 py-4">
-            <CardContent className="space-y-3 px-4">
-              <div className="text-xs font-semibold uppercase tracking-[0.18em] text-muted-foreground">Fields</div>
-              {propertyRows.map((property: any) => (
-                <div key={property.name} className="grid grid-cols-[1fr_auto] gap-3 rounded-lg border bg-muted/40 px-3 py-3">
-                  <div>
-                    <div className="text-sm font-medium text-foreground">{property.name}</div>
-                    <div className="mt-1 text-xs text-muted-foreground">{property.type}</div>
+            {graphSelection?.type === "edge" && (
+              <Card className="gap-3 py-4">
+                <CardContent className="px-4">
+                  <div className="text-xs font-semibold uppercase tracking-[0.18em] text-muted-foreground">Relationship</div>
+                  <div className="mt-3 text-sm font-semibold text-foreground">{edgeData?.source} {"->"} {edgeData?.target}</div>
+                  <div className="mt-1 text-xs text-muted-foreground">{edgeData?.data?.category}</div>
+                </CardContent>
+              </Card>
+            )}
+
+            {(title || identityLabel) && (
+              <Card className="gap-3 py-4">
+                <CardContent className="px-4">
+                  <div className="text-xs font-semibold uppercase tracking-[0.18em] text-muted-foreground">Identity</div>
+                  <div className="mt-3 space-y-1 text-sm font-semibold text-foreground">
+                    {title && <div>{title}</div>}
+                    {identityLabel && <div className="text-xs font-normal text-muted-foreground">{identityLabel}</div>}
                   </div>
-                  <div className={`self-start rounded-full px-2 py-1 text-[11px] font-semibold ${property.required ? "bg-amber-500/15 text-amber-300" : "bg-emerald-500/15 text-emerald-300"}`}>
-                    {property.required ? "required" : "optional"}
+                </CardContent>
+              </Card>
+            )}
+
+            {propertyRows.length > 0 ? (
+              <Card className="gap-3 py-4">
+                <CardContent className="space-y-3 px-4">
+                  <div className="text-xs font-semibold uppercase tracking-[0.18em] text-muted-foreground">Fields</div>
+                  {propertyRows.map((property: any) => (
+                    <div key={property.name} className="grid grid-cols-[1fr_auto] gap-3 rounded-lg border bg-muted/40 px-3 py-3">
+                      <div>
+                        <div className="text-sm font-medium text-foreground">{property.name}</div>
+                        <div className="mt-1 text-xs text-muted-foreground">{property.type}</div>
+                      </div>
+                      <div className={`self-start rounded-full px-2 py-1 text-[11px] font-semibold ${property.required ? "bg-amber-500/15 text-amber-300" : "bg-emerald-500/15 text-emerald-300"}`}>
+                        {property.required ? "required" : "optional"}
+                      </div>
+                    </div>
+                  ))}
+                </CardContent>
+              </Card>
+            ) : (
+              <div className="flex flex-col items-center justify-center rounded-lg border border-dashed border-border px-4 py-10 text-center">
+                <Settings2 className="mb-3 h-10 w-10 text-muted-foreground/30" />
+                <p className="text-sm text-muted-foreground">选择一个资源查看属性</p>
+              </div>
+            )}
+
+            {actions.length > 0 && (
+              <Card className="gap-3 py-4">
+                <CardContent className="px-4">
+                  <div className="text-xs font-semibold uppercase tracking-[0.18em] text-muted-foreground">Actions</div>
+                  <div className="mt-3 flex flex-wrap gap-2">
+                    {actions.map((action: string) => (
+                      <div key={action} className="rounded-full bg-primary/12 px-3 py-1 text-xs font-medium text-primary">
+                        {action}
+                      </div>
+                    ))}
+                  </div>
+                </CardContent>
+              </Card>
+            )}
+          </div>
+        </TabsContent>
+
+        <TabsContent value="reconciliation" className="m-0 flex-1 overflow-auto">
+          <div className="border-b border-border bg-card/50 p-3">
+            <h3 className="text-sm font-medium">实时勾稽检查</h3>
+            <p className="mt-1 text-xs text-muted-foreground">监测跨域数据一致性，确保业财税三位一体</p>
+          </div>
+          <div className="space-y-3 p-3">
+            {reconciliationAlerts.map((alert) => (
+              <div
+                key={alert.id}
+                className={[
+                  "rounded-lg border p-3",
+                  alert.type === "warning" ? "border-[var(--status-warning)]/40 bg-[var(--status-warning)]/8" : "",
+                  alert.type === "error" ? "border-destructive/40 bg-destructive/8" : "",
+                  alert.type === "info" ? "border-[var(--status-info)]/40 bg-[var(--status-info)]/8" : "",
+                ].join(" ")}
+              >
+                <div className="flex items-start gap-2">
+                  {alert.type === "warning" && <AlertTriangle className="mt-0.5 h-4 w-4 shrink-0 text-[var(--status-warning)]" />}
+                  {alert.type === "error" && <AlertTriangle className="mt-0.5 h-4 w-4 shrink-0 text-destructive" />}
+                  {alert.type === "info" && <Info className="mt-0.5 h-4 w-4 shrink-0 text-[var(--status-info)]" />}
+                  <div className="min-w-0 flex-1">
+                    <div className="mb-1 flex items-center gap-2">
+                      <span className="rounded border px-1.5 py-0 text-[10px] text-muted-foreground">{alert.domain}</span>
+                    </div>
+                    <p className="text-xs leading-relaxed text-foreground">{alert.message}</p>
+                    {alert.delta && <p className="mt-2 text-sm font-semibold text-[var(--status-warning)]">差额: {alert.delta}</p>}
                   </div>
                 </div>
-              ))}
-            </CardContent>
-          </Card>
-        )}
-
-        {!!selectedItem?.actions?.length && (
-          <Card className="gap-3 py-4">
-            <CardContent className="px-4">
-              <div className="text-xs font-semibold uppercase tracking-[0.18em] text-muted-foreground">Actions</div>
-              <div className="mt-3 flex flex-wrap gap-2">
-                {selectedItem.actions.map((action) => (
-                  <div key={action} className="rounded-full bg-primary/12 px-3 py-1 text-xs font-medium text-primary">
-                    {action}
-                  </div>
-                ))}
               </div>
-            </CardContent>
-          </Card>
-        )}
-      </CardContent>
-    </Card>
+            ))}
+          </div>
+          <div className="border-t border-sidebar-border p-3">
+            <Button variant="outline" size="sm" className="w-full text-xs">
+              <RefreshCw className="h-3.5 w-3.5" />
+              重新检查全部
+            </Button>
+          </div>
+        </TabsContent>
+
+        <TabsContent value="versions" className="m-0 flex-1 overflow-auto p-3">
+          <div className="space-y-3">
+            <div className="flex items-center justify-between">
+              <span className="text-sm font-medium">版本历史</span>
+              <span className="rounded bg-secondary px-2 py-0.5 text-[10px] font-medium text-secondary-foreground">语义版本控制</span>
+            </div>
+            <div className="space-y-2">
+              {versionHistory.map((entry, index) => (
+                <div
+                  key={entry.version}
+                  className={[
+                    "rounded-lg border p-3",
+                    index === 0 ? "border-primary/40 bg-primary/6" : "border-border",
+                  ].join(" ")}
+                >
+                  <div className="mb-1 flex items-center gap-2">
+                    <span className={`rounded px-2 py-0.5 text-xs font-medium ${index === 0 ? "bg-primary text-primary-foreground" : "border border-border text-foreground"}`}>
+                      {entry.version}
+                    </span>
+                    {index === 0 && <CheckCircle2 className="h-3.5 w-3.5 text-primary" />}
+                    <span className="ml-auto text-xs text-muted-foreground">{entry.date}</span>
+                  </div>
+                  <p className="text-xs text-foreground">{entry.changes}</p>
+                  <p className="mt-1 text-xs text-muted-foreground">by {entry.author}</p>
+                </div>
+              ))}
+            </div>
+          </div>
+        </TabsContent>
+      </Tabs>
+
+      <div className="border-t border-sidebar-border p-3">
+        <Button variant="secondary" size="sm" className="w-full text-xs">
+          <Sparkles className="h-3.5 w-3.5" />
+          AI 自动对齐
+        </Button>
+        <p className="mt-2 text-center text-[10px] text-muted-foreground">
+          导入非标准数据，AI 自动对齐到 Semantier 维度
+        </p>
+      </div>
+    </div>
   );
 }
 
@@ -482,46 +637,39 @@ export default function SemantierPage() {
   };
 
   return (
-    <div className="flex h-full min-h-0 flex-col bg-background text-foreground">
-      <div className="border-b bg-background/80 backdrop-blur">
-        <div className="flex items-start justify-between gap-6 px-6 py-5">
-          <div>
-            <div className="text-xs font-semibold uppercase tracking-[0.2em] text-primary">Semantier Studio</div>
-            <h1 className="mt-2 text-3xl font-semibold tracking-tight">Ontology and Rule Design</h1>
-            <p className="mt-2 max-w-2xl text-sm text-muted-foreground">
-              Ontology objects define semantic structure. Execution rules live in a separate layer and are not treated as ontology objects.
-            </p>
-          </div>
+    <div className="flex h-full min-h-0 flex-col overflow-hidden bg-background text-foreground">
+      <header className="flex h-12 items-center justify-between border-b bg-card px-4">
+        <div className="flex items-center gap-4">
           <div className="flex items-center gap-2">
-            <Button
-              variant="outline"
-              onClick={() => {
-                setEditorValue(executionRulesCode);
-                setWorkspaceTab("rules");
-              }}
-            >
-              <Sparkles className="h-4 w-4" />
-              Load rule set
-            </Button>
-            <Button onClick={() => setValidationState("passed")}>
-              <Play className="h-4 w-4" />
-              Validate
-            </Button>
+            <div className="flex h-7 w-7 items-center justify-center rounded-md bg-primary text-primary-foreground">
+              <Layers3 className="h-4 w-4" />
+            </div>
+            <span className="font-semibold text-foreground">Semantier Studio</span>
+            <div className="rounded bg-secondary px-1.5 py-0.5 text-[10px] font-medium text-secondary-foreground">Beta</div>
+          </div>
+          <div className="hidden text-xs text-muted-foreground md:block">
+            Ontology objects define structure. Execution rules stay in a separate layer.
           </div>
         </div>
-        <div className="flex items-center gap-3 border-t px-6 py-3">
-          <Tabs value={workspaceTab} onValueChange={(value) => setWorkspaceTab(value as WorkspaceTab)} className="w-auto">
-            <TabsList>
-              <TabsTrigger value="graph"><GitBranch className="h-4 w-4" />Graph</TabsTrigger>
-              <TabsTrigger value="editor"><FileCode2 className="h-4 w-4" />Schema</TabsTrigger>
-              <TabsTrigger value="rules"><Workflow className="h-4 w-4" />Execution Rules</TabsTrigger>
-            </TabsList>
-          </Tabs>
-          <div className={`ml-auto text-sm font-medium ${validationState === "passed" ? "text-emerald-400" : "text-muted-foreground"}`}>
-            {validationState === "passed" ? "Validation passed" : "Validation idle"}
-          </div>
+        <div className="flex items-center gap-2">
+          <Button
+            variant="ghost"
+            size="sm"
+            className="h-8 text-xs"
+            onClick={() => {
+              setEditorValue(executionRulesCode);
+              setWorkspaceTab("rules");
+            }}
+          >
+            <Sparkles className="h-3.5 w-3.5" />
+            Load rules
+          </Button>
+          <Button size="sm" className="h-8 text-xs" onClick={() => setValidationState("passed")}>
+            <Play className="h-3.5 w-3.5" />
+            Validate
+          </Button>
         </div>
-      </div>
+      </header>
 
       <div className="min-h-0 flex-1">
         <ResizablePanelGroup direction="horizontal">
@@ -538,10 +686,10 @@ export default function SemantierPage() {
           <ResizableHandle withHandle />
 
           <ResizablePanel defaultSize={55}>
-            <div className="h-full min-h-0 p-4">
-              <Card className="h-full gap-0 overflow-hidden py-0">
-                <CardHeader className="border-b px-5 py-4">
-                  <CardTitle className="text-lg">
+            <div className="flex h-full min-h-0 flex-col bg-[var(--editor-bg)]">
+              <div className="flex items-center justify-between border-b bg-card px-4 py-2">
+                <div className="flex items-center gap-2">
+                  <span className="text-sm font-medium">
                     {selectedItem ? (
                       <>
                         <span className="text-muted-foreground">{selectedItem.prefix ?? ""}</span>
@@ -550,35 +698,72 @@ export default function SemantierPage() {
                     ) : (
                       "Semantic Workspace"
                     )}
-                  </CardTitle>
-                  <CardDescription>
-                    {workspaceTab === "graph" && "Interactive ontology graph with drag, drop, reconnect, and re-layout."}
-                    {workspaceTab === "editor" && "Schema editing surface for ontology definitions."}
-                    {workspaceTab === "rules" && "Execution rule layer for triggers and reconciliation logic."}
-                  </CardDescription>
-                </CardHeader>
-                <CardContent className="h-full min-h-0 p-0">
-                  {workspaceTab === "graph" && <OntologyGraph onSelectItem={handleGraphSelectItem} />}
-                  {workspaceTab !== "graph" && (
-                    <Editor
-                      height="100%"
-                      language={SDSL_LANGUAGE_ID}
-                      theme="semantier-langconfig"
-                      value={workspaceTab === "rules" ? executionRulesCode : editorValue}
-                      onChange={(value) => setEditorValue(value || "")}
-                      options={{
-                        minimap: { enabled: false },
-                        fontSize: 14,
-                        lineNumbers: "on",
-                        wordWrap: "on",
-                        scrollBeyondLastLine: false,
-                        roundedSelection: true,
-                        automaticLayout: true,
-                      }}
-                    />
+                  </span>
+                  {selectedItem?.version && (
+                    <span className="rounded bg-secondary px-2 py-0.5 text-[10px] font-medium text-secondary-foreground">
+                      {selectedItem.version}
+                    </span>
                   )}
-                </CardContent>
-              </Card>
+                </div>
+                <div className={`text-xs font-medium ${validationState === "passed" ? "text-emerald-400" : "text-muted-foreground"}`}>
+                  {validationState === "passed" ? "Validation passed" : "Validation idle"}
+                </div>
+              </div>
+              <Tabs value={workspaceTab} onValueChange={(value) => setWorkspaceTab(value as WorkspaceTab)} className="flex min-h-0 flex-1 flex-col overflow-hidden">
+                <TabsList className="h-auto w-full justify-start rounded-none border-b bg-card px-4 py-0">
+                  <TabsTrigger value="graph" className="rounded-none border-b-2 border-transparent px-4 py-2.5 text-sm data-[state=active]:border-primary data-[state=active]:bg-transparent">
+                    <GitBranch className="h-4 w-4" />
+                    Graph Modeling
+                  </TabsTrigger>
+                  <TabsTrigger value="rules" className="rounded-none border-b-2 border-transparent px-4 py-2.5 text-sm data-[state=active]:border-primary data-[state=active]:bg-transparent">
+                    <Workflow className="h-4 w-4" />
+                    Execution Rules
+                  </TabsTrigger>
+                  <TabsTrigger value="editor" className="rounded-none border-b-2 border-transparent px-4 py-2.5 text-sm data-[state=active]:border-primary data-[state=active]:bg-transparent">
+                    <FileCode2 className="h-4 w-4" />
+                    Code View
+                  </TabsTrigger>
+                </TabsList>
+                <TabsContent value="graph" className="relative m-0 min-h-0 flex-1 overflow-hidden">
+                  <OntologyGraph onSelectItem={handleGraphSelectItem} />
+                </TabsContent>
+                <TabsContent value="rules" className="m-0 min-h-0 flex-1 overflow-hidden">
+                  <Editor
+                    height="100%"
+                    language={SDSL_LANGUAGE_ID}
+                    theme="semantier-langconfig"
+                    value={executionRulesCode}
+                    options={{
+                      minimap: { enabled: false },
+                      fontSize: 14,
+                      lineNumbers: "on",
+                      wordWrap: "on",
+                      scrollBeyondLastLine: false,
+                      roundedSelection: true,
+                      automaticLayout: true,
+                      readOnly: true,
+                    }}
+                  />
+                </TabsContent>
+                <TabsContent value="editor" className="m-0 min-h-0 flex-1 overflow-hidden">
+                  <Editor
+                    height="100%"
+                    language={SDSL_LANGUAGE_ID}
+                    theme="semantier-langconfig"
+                    value={editorValue}
+                    onChange={(value) => setEditorValue(value || "")}
+                    options={{
+                      minimap: { enabled: false },
+                      fontSize: 14,
+                      lineNumbers: "on",
+                      wordWrap: "on",
+                      scrollBeyondLastLine: false,
+                      roundedSelection: true,
+                      automaticLayout: true,
+                    }}
+                  />
+                </TabsContent>
+              </Tabs>
             </div>
           </ResizablePanel>
 
@@ -589,6 +774,21 @@ export default function SemantierPage() {
           </ResizablePanel>
         </ResizablePanelGroup>
       </div>
+
+      <footer className="flex h-6 items-center justify-between border-t bg-card px-3 text-xs text-muted-foreground">
+        <div className="flex items-center gap-4">
+          <span>Workspace: default</span>
+          <span>Ontology: {ontologyData.flatMap((group) => group.children ?? []).length} objects</span>
+          <span>Dimensions: {dimensionData.flatMap((group) => group.children ?? []).length} definitions</span>
+        </div>
+        <div className="flex items-center gap-4">
+          <span className="flex items-center gap-1">
+            <span className={`h-2 w-2 rounded-full ${validationState === "passed" ? "bg-emerald-400" : "bg-[var(--status-warning)]"}`} />
+            {validationState === "passed" ? "Validated" : "Draft"}
+          </span>
+          <span>v1.0.0</span>
+        </div>
+      </footer>
     </div>
   );
 }
