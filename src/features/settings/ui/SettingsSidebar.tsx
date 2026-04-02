@@ -24,7 +24,7 @@ const menuSections: MenuSection[] = [
   { id: 'model-defaults', label: 'Model Defaults', icon: 'psychology' },
   { id: 'local-models', label: 'Local Models', icon: 'computer' },
   { id: 'local-workspace', label: 'Local Workspace', icon: 'folder_open' },
-  { id: 'appearance', label: 'Appearance', icon: 'palette' },
+  { id: 'appearance', label: 'Appearance & Theme', icon: 'palette' },
   { id: 'about', label: 'About', icon: 'info' },
 ];
 

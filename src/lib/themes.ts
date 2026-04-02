@@ -5,7 +5,7 @@
  * LICENSE file in the root directory of this source tree.
  */
 
-export type ThemeName = 'langconfig' | 'dark' | 'light' | 'midnight' | 'ocean' | 'forest' | 'botanical' | 'godspeed' | 'cream' | 'cream-peach';
+export type ThemeName = 'langconfig' | 'semantier' | 'dark' | 'light' | 'midnight' | 'ocean' | 'forest' | 'botanical' | 'godspeed' | 'cream' | 'cream-peach';
 
 export interface Theme {
   name: ThemeName;
@@ -25,69 +25,180 @@ export interface Theme {
     categoryBackground: string;
   };
   textured?: boolean;
+  tokens?: Partial<{
+    background: string;
+    foreground: string;
+    card: string;
+    cardForeground: string;
+    popover: string;
+    popoverForeground: string;
+    primary: string;
+    primaryForeground: string;
+    secondary: string;
+    secondaryForeground: string;
+    muted: string;
+    mutedForeground: string;
+    accent: string;
+    accentForeground: string;
+    destructive: string;
+    destructiveForeground: string;
+    border: string;
+    input: string;
+    ring: string;
+    sidebar: string;
+    sidebarForeground: string;
+    sidebarPrimary: string;
+    sidebarPrimaryForeground: string;
+    sidebarAccent: string;
+    sidebarAccentForeground: string;
+    sidebarBorder: string;
+    surfaceBase: string;
+    surfacePanel: string;
+    surfaceElevated: string;
+    surfaceOverlay: string;
+    interactiveHover: string;
+    interactiveActive: string;
+    interactiveSelection: string;
+    interactiveSelectionForeground: string;
+    statusSuccess: string;
+    statusWarning: string;
+    statusError: string;
+    statusInfo: string;
+    editorBg: string;
+    nodeBg: string;
+    nodeBorder: string;
+    semWarning: string;
+    semSuccess: string;
+    semInfo: string;
+  }>;
 }
 
-const darkThemes = new Set<ThemeName>(['dark', 'midnight', 'ocean', 'forest', 'botanical', 'godspeed']);
+const darkThemes = new Set<ThemeName>(['semantier', 'dark', 'midnight', 'ocean', 'forest', 'botanical', 'godspeed']);
 
 function setSemanticThemeTokens(theme: Theme, isDarkTheme: boolean) {
   const root = document.documentElement;
-  const foreground = theme.colors.textPrimary;
-  const background = theme.colors.backgroundDark;
-  const panel = theme.colors.panelDark;
-  const secondary = theme.colors.nodeBackground;
-  const border = theme.colors.borderDark;
-  const input = theme.colors.inputBackground;
-  const primary = theme.colors.primary;
-  const primaryForeground = isDarkTheme ? '#071417' : '#ffffff';
+  const tokens = theme.tokens ?? {};
+  const foreground = tokens.foreground ?? theme.colors.textPrimary;
+  const background = tokens.background ?? theme.colors.backgroundDark;
+  const panel = tokens.card ?? theme.colors.panelDark;
+  const secondary = tokens.secondary ?? theme.colors.nodeBackground;
+  const border = tokens.border ?? theme.colors.borderDark;
+  const input = tokens.input ?? theme.colors.inputBackground;
+  const primary = tokens.primary ?? theme.colors.primary;
+  const primaryForeground = tokens.primaryForeground ?? (isDarkTheme ? '#071417' : '#ffffff');
 
   root.style.setProperty('--background', background);
   root.style.setProperty('--foreground', foreground);
   root.style.setProperty('--card', panel);
-  root.style.setProperty('--card-foreground', foreground);
-  root.style.setProperty('--popover', panel);
-  root.style.setProperty('--popover-foreground', foreground);
+  root.style.setProperty('--card-foreground', tokens.cardForeground ?? foreground);
+  root.style.setProperty('--popover', tokens.popover ?? panel);
+  root.style.setProperty('--popover-foreground', tokens.popoverForeground ?? foreground);
   root.style.setProperty('--primary', primary);
   root.style.setProperty('--primary-foreground', primaryForeground);
   root.style.setProperty('--secondary', secondary);
-  root.style.setProperty('--secondary-foreground', foreground);
-  root.style.setProperty('--muted', theme.colors.backgroundLight);
-  root.style.setProperty('--muted-foreground', theme.colors.textMuted);
-  root.style.setProperty('--accent', primary);
-  root.style.setProperty('--accent-foreground', primaryForeground);
-  root.style.setProperty('--destructive', '#f06a7f');
-  root.style.setProperty('--destructive-foreground', '#fff6f8');
+  root.style.setProperty('--secondary-foreground', tokens.secondaryForeground ?? foreground);
+  root.style.setProperty('--muted', tokens.muted ?? theme.colors.backgroundLight);
+  root.style.setProperty('--muted-foreground', tokens.mutedForeground ?? theme.colors.textMuted);
+  root.style.setProperty('--accent', tokens.accent ?? primary);
+  root.style.setProperty('--accent-foreground', tokens.accentForeground ?? primaryForeground);
+  root.style.setProperty('--destructive', tokens.destructive ?? '#f06a7f');
+  root.style.setProperty('--destructive-foreground', tokens.destructiveForeground ?? '#fff6f8');
   root.style.setProperty('--border', border);
   root.style.setProperty('--input', input);
-  root.style.setProperty('--ring', isDarkTheme ? 'rgba(57, 208, 207, 0.42)' : 'rgba(46, 92, 138, 0.28)');
-  root.style.setProperty('--sidebar', background);
-  root.style.setProperty('--sidebar-foreground', foreground);
-  root.style.setProperty('--sidebar-primary', primary);
-  root.style.setProperty('--sidebar-primary-foreground', primaryForeground);
-  root.style.setProperty('--sidebar-accent', secondary);
-  root.style.setProperty('--sidebar-accent-foreground', foreground);
-  root.style.setProperty('--sidebar-border', border);
-  root.style.setProperty('--surface-base', background);
-  root.style.setProperty('--surface-panel', panel);
-  root.style.setProperty('--surface-elevated', theme.colors.logoBackground);
-  root.style.setProperty('--surface-overlay', isDarkTheme ? 'rgba(10, 13, 18, 0.78)' : 'rgba(245, 249, 252, 0.82)');
-  root.style.setProperty('--interactive-hover', isDarkTheme ? 'rgba(255, 255, 255, 0.06)' : 'rgba(46, 92, 138, 0.06)');
-  root.style.setProperty('--interactive-active', isDarkTheme ? 'rgba(255, 255, 255, 0.1)' : 'rgba(46, 92, 138, 0.1)');
-  root.style.setProperty('--interactive-selection', isDarkTheme ? 'rgba(57, 208, 207, 0.16)' : 'rgba(46, 92, 138, 0.14)');
-  root.style.setProperty('--interactive-selection-foreground', foreground);
-  root.style.setProperty('--status-success', '#3ccf91');
-  root.style.setProperty('--status-warning', '#f2b94b');
-  root.style.setProperty('--status-error', '#f06a7f');
-  root.style.setProperty('--status-info', '#5ca7ff');
+  root.style.setProperty('--ring', tokens.ring ?? (isDarkTheme ? 'rgba(57, 208, 207, 0.42)' : 'rgba(46, 92, 138, 0.28)'));
+  root.style.setProperty('--sidebar', tokens.sidebar ?? background);
+  root.style.setProperty('--sidebar-foreground', tokens.sidebarForeground ?? foreground);
+  root.style.setProperty('--sidebar-primary', tokens.sidebarPrimary ?? primary);
+  root.style.setProperty('--sidebar-primary-foreground', tokens.sidebarPrimaryForeground ?? primaryForeground);
+  root.style.setProperty('--sidebar-accent', tokens.sidebarAccent ?? secondary);
+  root.style.setProperty('--sidebar-accent-foreground', tokens.sidebarAccentForeground ?? foreground);
+  root.style.setProperty('--sidebar-border', tokens.sidebarBorder ?? border);
+  root.style.setProperty('--surface-base', tokens.surfaceBase ?? background);
+  root.style.setProperty('--surface-panel', tokens.surfacePanel ?? panel);
+  root.style.setProperty('--surface-elevated', tokens.surfaceElevated ?? theme.colors.logoBackground);
+  root.style.setProperty('--surface-overlay', tokens.surfaceOverlay ?? (isDarkTheme ? 'rgba(10, 13, 18, 0.78)' : 'rgba(245, 249, 252, 0.82)'));
+  root.style.setProperty('--interactive-hover', tokens.interactiveHover ?? (isDarkTheme ? 'rgba(255, 255, 255, 0.06)' : 'rgba(46, 92, 138, 0.06)'));
+  root.style.setProperty('--interactive-active', tokens.interactiveActive ?? (isDarkTheme ? 'rgba(255, 255, 255, 0.1)' : 'rgba(46, 92, 138, 0.1)'));
+  root.style.setProperty('--interactive-selection', tokens.interactiveSelection ?? (isDarkTheme ? 'rgba(57, 208, 207, 0.16)' : 'rgba(46, 92, 138, 0.14)'));
+  root.style.setProperty('--interactive-selection-foreground', tokens.interactiveSelectionForeground ?? foreground);
+  root.style.setProperty('--status-success', tokens.statusSuccess ?? '#3ccf91');
+  root.style.setProperty('--status-warning', tokens.statusWarning ?? '#f2b94b');
+  root.style.setProperty('--status-error', tokens.statusError ?? '#f06a7f');
+  root.style.setProperty('--status-info', tokens.statusInfo ?? '#5ca7ff');
   root.style.setProperty('--primary-base', primary);
-  root.style.setProperty('--editor-bg', background);
-  root.style.setProperty('--node-bg', theme.colors.nodeBackground);
-  root.style.setProperty('--node-border', theme.colors.nodeBackgroundLight);
-  root.style.setProperty('--sem-warning', '#f2b94b');
-  root.style.setProperty('--sem-success', '#3ccf91');
-  root.style.setProperty('--sem-info', '#5ca7ff');
+  root.style.setProperty('--editor-bg', tokens.editorBg ?? background);
+  root.style.setProperty('--node-bg', tokens.nodeBg ?? theme.colors.nodeBackground);
+  root.style.setProperty('--node-border', tokens.nodeBorder ?? theme.colors.nodeBackgroundLight);
+  root.style.setProperty('--sem-warning', tokens.semWarning ?? '#f2b94b');
+  root.style.setProperty('--sem-success', tokens.semSuccess ?? '#3ccf91');
+  root.style.setProperty('--sem-info', tokens.semInfo ?? '#5ca7ff');
 }
 
 export const themes: Record<ThemeName, Theme> = {
+  'semantier': {
+    name: 'semantier',
+    displayName: 'OpenChamber Semantier',
+    colors: {
+      primary: 'oklch(0.65 0.18 180)',
+      backgroundLight: 'oklch(0.18 0.005 260)',
+      backgroundDark: 'oklch(0.12 0.005 260)',
+      panelDark: 'oklch(0.15 0.005 260)',
+      borderDark: 'oklch(0.25 0.005 260)',
+      textMuted: 'oklch(0.55 0 0)',
+      textPrimary: 'oklch(0.95 0 0)',
+      inputBackground: 'oklch(0.18 0.005 260)',
+      logoBackground: 'oklch(0.15 0.005 260)',
+      nodeBackground: 'oklch(0.18 0.008 260)',
+      nodeBackgroundLight: 'oklch(0.28 0.008 260)',
+      categoryBackground: 'oklch(0.18 0.005 260)',
+    },
+    tokens: {
+      background: 'oklch(0.12 0.005 260)',
+      foreground: 'oklch(0.95 0 0)',
+      card: 'oklch(0.15 0.005 260)',
+      cardForeground: 'oklch(0.95 0 0)',
+      popover: 'oklch(0.15 0.005 260)',
+      popoverForeground: 'oklch(0.95 0 0)',
+      primary: 'oklch(0.65 0.18 180)',
+      primaryForeground: 'oklch(0.12 0.005 260)',
+      secondary: 'oklch(0.22 0.005 260)',
+      secondaryForeground: 'oklch(0.85 0 0)',
+      muted: 'oklch(0.18 0.005 260)',
+      mutedForeground: 'oklch(0.55 0 0)',
+      accent: 'oklch(0.65 0.18 180)',
+      accentForeground: 'oklch(0.12 0.005 260)',
+      destructive: 'oklch(0.55 0.2 25)',
+      destructiveForeground: 'oklch(0.95 0 0)',
+      border: 'oklch(0.25 0.005 260)',
+      input: 'oklch(0.18 0.005 260)',
+      ring: 'oklch(0.65 0.18 180)',
+      sidebar: 'oklch(0.1 0.005 260)',
+      sidebarForeground: 'oklch(0.85 0 0)',
+      sidebarPrimary: 'oklch(0.65 0.18 180)',
+      sidebarPrimaryForeground: 'oklch(0.12 0.005 260)',
+      sidebarAccent: 'oklch(0.18 0.005 260)',
+      sidebarAccentForeground: 'oklch(0.95 0 0)',
+      sidebarBorder: 'oklch(0.22 0.005 260)',
+      surfaceBase: 'oklch(0.12 0.005 260)',
+      surfacePanel: 'oklch(0.15 0.005 260)',
+      surfaceElevated: 'oklch(0.15 0.005 260)',
+      surfaceOverlay: 'rgba(10, 13, 18, 0.78)',
+      interactiveHover: 'rgba(255, 255, 255, 0.06)',
+      interactiveActive: 'rgba(255, 255, 255, 0.1)',
+      interactiveSelection: 'rgba(57, 208, 207, 0.16)',
+      interactiveSelectionForeground: 'oklch(0.95 0 0)',
+      statusSuccess: 'oklch(0.65 0.18 145)',
+      statusWarning: 'oklch(0.75 0.18 80)',
+      statusError: 'oklch(0.55 0.2 25)',
+      statusInfo: 'oklch(0.65 0.15 240)',
+      editorBg: 'oklch(0.14 0.005 260)',
+      nodeBg: 'oklch(0.18 0.008 260)',
+      nodeBorder: 'oklch(0.28 0.008 260)',
+      semWarning: 'oklch(0.75 0.18 80)',
+      semSuccess: 'oklch(0.65 0.18 145)',
+      semInfo: 'oklch(0.65 0.15 240)',
+    },
+  },
   langconfig: {
     name: 'langconfig',
     displayName: 'LangConfig (Signature)',

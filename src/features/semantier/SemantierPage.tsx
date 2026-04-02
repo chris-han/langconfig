@@ -87,6 +87,38 @@ const ontologyData: TreeNode[] = [
         ],
         snippet: `MAP core:Invoice {\n  invoiceId: string @primary\n  dueDate: date\n  grossAmount: decimal\n}`,
       },
+      {
+        id: "milestone",
+        name: "Milestone",
+        type: "ontology",
+        prefix: "core:",
+        version: "v1.0",
+        description: "Tracks contractual delivery checkpoints and acceptance criteria.",
+        properties: [
+          { name: "milestoneId", type: "string", required: true },
+          { name: "contractId", type: "string", required: true },
+          { name: "status", type: "enum", required: true },
+          { name: "targetDate", type: "date", required: false },
+        ],
+        actions: ["schedule", "complete", "reopen"],
+        snippet: `MAP core:Milestone {\n  milestoneId: string @primary\n  contractId: string\n  status: enum\n  targetDate: date?\n}`,
+      },
+      {
+        id: "payment",
+        name: "Payment",
+        type: "ontology",
+        prefix: "core:",
+        version: "v2.0",
+        description: "Represents payment settlement events tied to invoices and contracts.",
+        properties: [
+          { name: "paymentId", type: "string", required: true },
+          { name: "invoiceId", type: "string", required: true },
+          { name: "settlementAmount", type: "decimal", required: true },
+          { name: "settlementDate", type: "date", required: true },
+        ],
+        actions: ["settle", "refund", "reverse"],
+        snippet: `MAP core:Payment {\n  paymentId: string @primary\n  invoiceId: string\n  settlementAmount: decimal\n  settlementDate: date\n}`,
+      },
     ],
   },
   {
@@ -122,6 +154,23 @@ const ontologyData: TreeNode[] = [
           { name: "credit", type: "decimal", required: true },
         ],
         actions: ["post", "reconcile", "close"],
+        snippet: `MAP fin:GeneralLedger {\n  accountCode: string\n  debit: decimal\n  credit: decimal\n}`,
+      },
+      {
+        id: "journal",
+        name: "JournalEntry",
+        type: "ontology",
+        prefix: "fin:",
+        version: "v2.1",
+        description: "Atomic bookkeeping entry generated from business and accounting events.",
+        properties: [
+          { name: "entryId", type: "string", required: true },
+          { name: "ledgerCode", type: "string", required: true },
+          { name: "amount", type: "decimal", required: true },
+          { name: "postedAt", type: "date", required: true },
+        ],
+        actions: ["draft", "post", "reverse"],
+        snippet: `MAP fin:JournalEntry {\n  entryId: string @primary\n  ledgerCode: string\n  amount: decimal\n  postedAt: date\n}`,
       },
     ],
   },
@@ -143,6 +192,23 @@ const ontologyData: TreeNode[] = [
           { name: "dueDate", type: "date", required: true },
         ],
         actions: ["calculate", "file", "defer"],
+        snippet: `MAP tax:TaxObligation {\n  taxType: enum\n  taxableAmount: decimal\n  dueDate: date\n}`,
+      },
+      {
+        id: "deduction",
+        name: "DeductionRule",
+        type: "ontology",
+        prefix: "tax:",
+        version: "v2.0",
+        description: "Tax deduction logic used to evaluate credits, offsets, and compliance constraints.",
+        properties: [
+          { name: "ruleId", type: "string", required: true },
+          { name: "jurisdiction", type: "string", required: true },
+          { name: "deductionRate", type: "decimal", required: true },
+          { name: "effectiveDate", type: "date", required: true },
+        ],
+        actions: ["evaluate", "apply", "retire"],
+        snippet: `MAP tax:DeductionRule {\n  ruleId: string @primary\n  jurisdiction: string\n  deductionRate: decimal\n  effectiveDate: date\n}`,
       },
     ],
   },
@@ -165,6 +231,21 @@ const dimensionData: TreeNode[] = [
           { name: "name", type: "string", required: true },
           { name: "role", type: "enum", required: true },
         ],
+        actions: ["authenticate", "authorize", "audit"],
+        snippet: `DIMENSION core:Actor {\n  actorId: string\n  name: string\n  role: enum\n}`,
+      },
+      {
+        id: "project",
+        name: "Project",
+        type: "dimension",
+        prefix: "mgt:",
+        description: "Management dimension used for project-based planning and budget control.",
+        properties: [
+          { name: "projectId", type: "string", required: true },
+          { name: "projectCode", type: "string", required: true },
+          { name: "status", type: "enum", required: true },
+        ],
+        snippet: `DIMENSION mgt:Project {\n  projectId: string\n  projectCode: string\n  status: enum\n}`,
       },
       {
         id: "cost_center",
@@ -174,8 +255,54 @@ const dimensionData: TreeNode[] = [
         description: "Management accounting cost attribution dimension.",
         properties: [
           { name: "centerId", type: "string", required: true },
+          { name: "name", type: "string", required: true },
           { name: "budget", type: "decimal", required: false },
         ],
+        snippet: `DIMENSION mgt:CostCenter {\n  centerId: string\n  name: string\n  budget: decimal?\n}`,
+      },
+      {
+        id: "timeperiod",
+        name: "TimePeriod",
+        type: "dimension",
+        prefix: "core:",
+        description: "Canonical reporting period dimension for ledgers, tax, and operational events.",
+        properties: [
+          { name: "periodId", type: "string", required: true },
+          { name: "startDate", type: "date", required: true },
+          { name: "endDate", type: "date", required: true },
+        ],
+        snippet: `DIMENSION core:TimePeriod {\n  periodId: string\n  startDate: date\n  endDate: date\n}`,
+      },
+    ],
+  },
+  {
+    id: "custom-dimensions",
+    name: "Custom Dimensions",
+    type: "folder",
+    children: [
+      {
+        id: "region",
+        name: "Region",
+        type: "dimension",
+        prefix: "ext:",
+        description: "External geographic segmentation dimension used in tax and revenue policy.",
+        properties: [
+          { name: "regionCode", type: "string", required: true },
+          { name: "country", type: "string", required: true },
+        ],
+        snippet: `DIMENSION ext:Region {\n  regionCode: string\n  country: string\n}`,
+      },
+      {
+        id: "product",
+        name: "ProductLine",
+        type: "dimension",
+        prefix: "ext:",
+        description: "External product hierarchy dimension for revenue and margin analysis.",
+        properties: [
+          { name: "productLineId", type: "string", required: true },
+          { name: "category", type: "string", required: true },
+        ],
+        snippet: `DIMENSION ext:ProductLine {\n  productLineId: string\n  category: string\n}`,
       },
     ],
   },
@@ -184,7 +311,7 @@ const dimensionData: TreeNode[] = [
 const ruleData: TreeNode[] = [
   {
     id: "reconciliation-rules",
-    name: "Execution Rules",
+    name: "Reconciliation Rules",
     type: "folder",
     children: [
       {
@@ -199,12 +326,41 @@ const ruleData: TreeNode[] = [
         name: "InvoiceToLedger",
         type: "rule",
         description: "Posts journal entries after invoice settlement.",
+        snippet: `WHEN core:Invoice.status CHANGES TO "settled":\n  TRIGGER fin:JournalEntry {\n    amount: Invoice.grossAmount,\n    postedAt: NOW()\n  }\n\n  UPDATE fin:GeneralLedger {\n    accountCode: Invoice.accountCode\n  }`,
+      },
+      {
+        id: "payment-to-tax",
+        name: "PaymentToTax",
+        type: "rule",
+        description: "Evaluates downstream tax obligations when payments are settled.",
+        snippet: `WHEN core:Payment.status CHANGES TO "settled":\n  EVALUATE tax:TaxObligation {\n    taxableAmount: Payment.settlementAmount,\n    dueDate: DERIVE_DUE_DATE(Payment.settlementDate)\n  }`,
+      },
+    ],
+  },
+  {
+    id: "automation-rules",
+    name: "Automation Rules",
+    type: "folder",
+    children: [
+      {
+        id: "auto-journal-entry",
+        name: "AutoJournalEntry",
+        type: "rule",
+        description: "Automatically drafts ledger entries from validated revenue events.",
+        snippet: `WHEN fin:RevenueRecognition.validated IS true:\n  TRIGGER fin:JournalEntry {\n    amount: RevenueRecognition.amount,\n    postedAt: NOW()\n  }`,
+      },
+      {
+        id: "tax-trigger",
+        name: "TaxTrigger",
+        type: "rule",
+        description: "Triggers deduction and tax checks from contract completion signals.",
+        snippet: `WHEN core:Contract.status CHANGES TO "completed":\n  EVALUATE tax:DeductionRule {\n    jurisdiction: Contract.region\n  }\n\n  TRIGGER tax:TaxObligation {\n    taxableAmount: Contract.amount\n  }`,
       },
     ],
   },
 ];
 
-const initialEditorValue = `// Semantier starter\nMAP core:Contract {\n  contractId: string @primary\n  amount: decimal\n  status: enum\n  signDate: date?\n}\n\nDIMENSION mgt:CostCenter {\n  centerId: string\n  budget: decimal?\n}`;
+const initialEditorValue = `// Semantier starter\nMAP core:Contract {\n  contractId: string @primary\n  amount: decimal\n  status: enum\n  signDate: date?\n}\n\nDIMENSION mgt:CostCenter {\n  centerId: string\n  name: string\n  budget: decimal?\n}`;
 
 const executionRulesCode = `WHEN core:Contract.status CHANGES TO "completed":\n  TRIGGER fin:RevenueRecognition {\n    amount: Contract.amount,\n    recognitionDate: NOW(),\n    method: DERIVE_FROM(Contract.type)\n  }\n\n  EVALUATE tax:TaxObligation {\n    taxableAmount: Contract.amount,\n    taxType: DERIVE_FROM(Contract.region)\n  }\n\n  RECONCILE {\n    fin:RevenueRecognition.amount == tax:TaxObligation.taxableAmount\n  }`;
 

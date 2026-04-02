@@ -1762,10 +1762,21 @@ export default function SettingsView() {
         return (
           <SettingsSection
             title="Appearance & Theme"
-            description="Customize the look and feel of LangConfig"
+            description="Customize the look and feel of LangConfig, including the original OpenChamber Semantier palette"
             icon="palette"
           >
-            <div>
+            <div className="space-y-4">
+              <div className="rounded-lg border border-gray-200 dark:border-border-dark bg-white/70 dark:bg-white/[0.03] p-3">
+                <div className="flex items-center gap-2">
+                  <span className="material-symbols-outlined text-base text-primary">deployed_code</span>
+                  <span className="text-sm font-medium" style={{ color: 'var(--color-text-primary)' }}>
+                    Semantier Original Theme
+                  </span>
+                </div>
+                <p className="mt-2 text-xs leading-relaxed" style={{ color: 'var(--color-text-muted)' }}>
+                  <strong>OpenChamber Semantier</strong> copies the original OpenChamber Semantier Studio token palette for the explorer, workspace, inspector, and editor surfaces.
+                </p>
+              </div>
               <label className="text-sm font-medium mb-3 block" style={{ color: 'var(--color-text-primary)' }}>
                 Color Theme
               </label>
