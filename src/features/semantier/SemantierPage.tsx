@@ -464,7 +464,7 @@ function ExplorerPane({
             }
           }}
           className={[
-            "group flex w-full items-center gap-2 rounded-lg px-3 py-2 text-left text-sm transition-colors",
+            "group flex w-full items-center gap-2 rounded-md px-3 py-2 text-left text-sm transition-colors",
             selected ? "bg-accent text-accent-foreground" : "hover:bg-accent/60",
             !isFolder ? "cursor-grab active:cursor-grabbing" : "",
           ].join(" ")}
@@ -581,7 +581,7 @@ function InspectorPane({ selectedItem, graphSelection }: { selectedItem: TreeNod
 
         <TabsContent value="properties" className="m-0 flex-1 overflow-auto p-3">
           <div className="space-y-4">
-            <div className="rounded-lg border border-border bg-card/60 p-3">
+            <div className="rounded-md border border-border bg-card/60 p-3">
               <div className="flex items-center gap-2 text-primary">
                 <Settings2 className="h-4 w-4" />
                 <span className="text-sm font-medium">Inspector</span>
@@ -593,7 +593,7 @@ function InspectorPane({ selectedItem, graphSelection }: { selectedItem: TreeNod
             </div>
 
             {graphSelection?.type === "edge" && (
-              <Card className="gap-3 py-4">
+                <Card className="gap-3 rounded-md py-4">
                 <CardContent className="px-4">
                   <div className="text-xs font-semibold uppercase tracking-[0.18em] text-muted-foreground">Relationship</div>
                   <div className="mt-3 text-sm font-semibold text-foreground">{edgeData?.source} {"->"} {edgeData?.target}</div>
@@ -603,7 +603,7 @@ function InspectorPane({ selectedItem, graphSelection }: { selectedItem: TreeNod
             )}
 
             {(title || identityLabel) && (
-              <Card className="gap-3 py-4">
+                <Card className="gap-3 rounded-md py-4">
                 <CardContent className="px-4">
                   <div className="text-xs font-semibold uppercase tracking-[0.18em] text-muted-foreground">Identity</div>
                   <div className="mt-3 space-y-1 text-sm font-semibold text-foreground">
@@ -615,7 +615,7 @@ function InspectorPane({ selectedItem, graphSelection }: { selectedItem: TreeNod
             )}
 
             {propertyRows.length > 0 ? (
-              <Card className="gap-3 py-4">
+                <Card className="gap-3 rounded-md py-4">
                 <CardContent className="space-y-3 px-4">
                   <div className="text-xs font-semibold uppercase tracking-[0.18em] text-muted-foreground">Fields</div>
                   {propertyRows.map((property: any) => (
@@ -632,7 +632,7 @@ function InspectorPane({ selectedItem, graphSelection }: { selectedItem: TreeNod
                 </CardContent>
               </Card>
             ) : (
-              <div className="flex flex-col items-center justify-center rounded-lg border border-dashed border-border px-4 py-10 text-center">
+              <div className="flex flex-col items-center justify-center rounded-md border border-dashed border-border px-4 py-10 text-center">
                 <Settings2 className="mb-3 h-10 w-10 text-muted-foreground/30" />
                 <p className="text-sm text-muted-foreground">选择一个资源查看属性</p>
               </div>
@@ -662,10 +662,10 @@ function InspectorPane({ selectedItem, graphSelection }: { selectedItem: TreeNod
           </div>
           <div className="space-y-3 p-3">
             {reconciliationAlerts.map((alert) => (
-              <div
-                key={alert.id}
-                className={[
-                  "rounded-lg border p-3",
+                <div
+                  key={alert.id}
+                  className={[
+                    "rounded-md border p-3",
                   alert.type === "warning" ? "border-[var(--status-warning)]/40 bg-[var(--status-warning)]/8" : "",
                   alert.type === "error" ? "border-destructive/40 bg-destructive/8" : "",
                   alert.type === "info" ? "border-[var(--status-info)]/40 bg-[var(--status-info)]/8" : "",
@@ -705,7 +705,7 @@ function InspectorPane({ selectedItem, graphSelection }: { selectedItem: TreeNod
                 <div
                   key={entry.version}
                   className={[
-                    "rounded-lg border p-3",
+                    "rounded-md border p-3",
                     index === 0 ? "border-primary/40 bg-primary/6" : "border-border",
                   ].join(" ")}
                 >
@@ -797,11 +797,11 @@ export default function SemantierPage() {
       <header className="flex h-12 items-center justify-between border-b bg-card px-4">
         <div className="flex items-center gap-4">
           <div className="flex items-center gap-2">
-            <div className="flex h-7 w-7 items-center justify-center rounded-md bg-primary text-primary-foreground">
+            <div className="flex h-7 w-7 items-center justify-center rounded-sm bg-primary text-primary-foreground">
               <Layers3 className="h-4 w-4" />
             </div>
             <span className="font-semibold text-foreground">Semantier Studio</span>
-            <div className="rounded bg-secondary px-1.5 py-0.5 text-[10px] font-medium text-secondary-foreground">Beta</div>
+            <div className="rounded-sm bg-secondary px-1.5 py-0.5 text-[10px] font-medium text-secondary-foreground">Beta</div>
           </div>
           <div className="hidden text-xs text-muted-foreground md:block">
             Ontology objects define structure. Execution rules stay in a separate layer.
