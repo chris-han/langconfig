@@ -37,15 +37,16 @@ export default function LibraryContentPanel({
   return (
     <div className="h-full flex flex-col">
       {/* Tab Navigation */}
-      <div className="flex-shrink-0 border-b border-gray-200 dark:border-border-dark bg-white dark:bg-panel-dark">
+      <div className="flex-shrink-0 border-b border-border bg-card">
         <div className="flex items-center justify-between px-6 py-4">
           <div className="flex gap-1">
             <button
               onClick={() => setActiveTab('workflows')}
               className={`px-4 py-2 text-sm font-medium rounded-lg transition-colors ${activeTab === 'workflows'
                 ? 'bg-primary/10 text-primary'
-                : 'text-gray-600 dark:text-text-muted hover:bg-gray-100 dark:hover:bg-white/5'
+                : 'hover:bg-white/5'
                 }`}
+              style={activeTab === 'workflows' ? undefined : { color: 'var(--color-text-muted)' }}
             >
               <span className="flex items-center gap-2">
                 <span className="material-symbols-outlined text-base">account_tree</span>
@@ -56,8 +57,9 @@ export default function LibraryContentPanel({
               onClick={() => setActiveTab('projects')}
               className={`px-4 py-2 text-sm font-medium rounded-lg transition-colors ${activeTab === 'projects'
                 ? 'bg-primary/10 text-primary'
-                : 'text-gray-600 dark:text-text-muted hover:bg-gray-100 dark:hover:bg-white/5'
+                : 'hover:bg-white/5'
                 }`}
+              style={activeTab === 'projects' ? undefined : { color: 'var(--color-text-muted)' }}
             >
               <span className="flex items-center gap-2">
                 <span className="material-symbols-outlined text-base">folder</span>
@@ -68,8 +70,9 @@ export default function LibraryContentPanel({
               onClick={() => setActiveTab('files')}
               className={`px-4 py-2 text-sm font-medium rounded-lg transition-colors ${activeTab === 'files'
                 ? 'bg-primary/10 text-primary'
-                : 'text-gray-600 dark:text-text-muted hover:bg-gray-100 dark:hover:bg-white/5'
+                : 'hover:bg-white/5'
                 }`}
+              style={activeTab === 'files' ? undefined : { color: 'var(--color-text-muted)' }}
             >
               <span className="flex items-center gap-2">
                 <span className="material-symbols-outlined text-base">folder_open</span>
@@ -80,8 +83,9 @@ export default function LibraryContentPanel({
               onClick={() => setActiveTab('learn')}
               className={`px-4 py-2 text-sm font-medium rounded-lg transition-colors ${activeTab === 'learn'
                 ? 'bg-primary/10 text-primary'
-                : 'text-gray-600 dark:text-text-muted hover:bg-gray-100 dark:hover:bg-white/5'
+                : 'hover:bg-white/5'
                 }`}
+              style={activeTab === 'learn' ? undefined : { color: 'var(--color-text-muted)' }}
             >
               <span className="flex items-center gap-2">
                 <span className="material-symbols-outlined text-base">school</span>
@@ -92,8 +96,9 @@ export default function LibraryContentPanel({
               onClick={() => setActiveTab('best-practices')}
               className={`px-4 py-2 text-sm font-medium rounded-lg transition-colors ${activeTab === 'best-practices'
                 ? 'bg-primary/10 text-primary'
-                : 'text-gray-600 dark:text-text-muted hover:bg-gray-100 dark:hover:bg-white/5'
+                : 'hover:bg-white/5'
                 }`}
+              style={activeTab === 'best-practices' ? undefined : { color: 'var(--color-text-muted)' }}
             >
               <span className="flex items-center gap-2">
                 <span className="material-symbols-outlined text-base">workspace_premium</span>
@@ -157,10 +162,10 @@ export default function LibraryContentPanel({
                   {/* Projects Card */}
                   <button
                     onClick={() => setActiveTab('projects')}
-                    className="group p-6 rounded-lg border border-gray-200 dark:border-border-dark bg-white dark:bg-panel-dark hover:bg-primary/5 hover:border-primary/20 transition-all text-left"
+                    className="group rounded-lg border border-border bg-card p-6 text-left transition-all hover:border-primary/20 hover:bg-primary/5"
                   >
                     <div className="flex items-start gap-4 mb-4">
-                      <div className="w-12 h-12 rounded-lg bg-gray-100 dark:bg-background-dark border border-gray-200 dark:border-border-dark flex items-center justify-center flex-shrink-0">
+                      <div className="flex h-12 w-12 flex-shrink-0 items-center justify-center rounded-lg border border-border bg-background">
                         <span className="material-symbols-outlined text-2xl text-primary">folder</span>
                       </div>
                       <div className="flex-1">
@@ -181,10 +186,10 @@ export default function LibraryContentPanel({
                   {/* Workflows Card */}
                   <button
                     onClick={onCreateWorkflow}
-                    className="group p-6 rounded-lg border border-gray-200 dark:border-border-dark bg-white dark:bg-panel-dark hover:bg-primary/5 hover:border-primary/20 transition-all text-left"
+                    className="group rounded-lg border border-border bg-card p-6 text-left transition-all hover:border-primary/20 hover:bg-primary/5"
                   >
                     <div className="flex items-start gap-4 mb-4">
-                      <div className="w-12 h-12 rounded-lg bg-gray-100 dark:bg-background-dark border border-gray-200 dark:border-border-dark flex items-center justify-center flex-shrink-0">
+                      <div className="flex h-12 w-12 flex-shrink-0 items-center justify-center rounded-lg border border-border bg-background">
                         <span className="material-symbols-outlined text-2xl text-primary">account_tree</span>
                       </div>
                       <div className="flex-1">
@@ -205,10 +210,10 @@ export default function LibraryContentPanel({
                   {/* Learn LangChain Card */}
                   <button
                     onClick={() => setActiveTab('learn')}
-                    className="group p-6 rounded-lg border border-gray-200 dark:border-border-dark bg-white dark:bg-panel-dark hover:bg-primary/5 hover:border-primary/20 transition-all text-left"
+                    className="group rounded-lg border border-border bg-card p-6 text-left transition-all hover:border-primary/20 hover:bg-primary/5"
                   >
                     <div className="flex items-start gap-4 mb-4">
-                      <div className="w-12 h-12 rounded-lg bg-gray-100 dark:bg-background-dark border border-gray-200 dark:border-border-dark flex items-center justify-center flex-shrink-0">
+                      <div className="flex h-12 w-12 flex-shrink-0 items-center justify-center rounded-lg border border-border bg-background">
                         <span className="material-symbols-outlined text-2xl text-primary">school</span>
                       </div>
                       <div className="flex-1">
@@ -229,10 +234,10 @@ export default function LibraryContentPanel({
                   {/* Best Practices Card */}
                   <button
                     onClick={() => setActiveTab('best-practices')}
-                    className="group p-6 rounded-lg border border-gray-200 dark:border-border-dark bg-white dark:bg-panel-dark hover:bg-primary/5 hover:border-primary/20 transition-all text-left"
+                    className="group rounded-lg border border-border bg-card p-6 text-left transition-all hover:border-primary/20 hover:bg-primary/5"
                   >
                     <div className="flex items-start gap-4 mb-4">
-                      <div className="w-12 h-12 rounded-lg bg-gray-100 dark:bg-background-dark border border-gray-200 dark:border-border-dark flex items-center justify-center flex-shrink-0">
+                      <div className="flex h-12 w-12 flex-shrink-0 items-center justify-center rounded-lg border border-border bg-background">
                         <span className="material-symbols-outlined text-2xl text-primary">workspace_premium</span>
                       </div>
                       <div className="flex-1">
@@ -253,9 +258,9 @@ export default function LibraryContentPanel({
 
                 {/* Active Project Info (if project selected) */}
                 {activeProject && (
-                  <div className="p-5 rounded-lg border border-gray-200 dark:border-border-dark bg-white dark:bg-panel-dark">
+                  <div className="rounded-lg border border-border bg-card p-5">
                     <div className="flex items-start gap-4">
-                      <div className="w-12 h-12 rounded-lg bg-gray-100 dark:bg-background-dark border border-gray-200 dark:border-border-dark flex items-center justify-center flex-shrink-0">
+                      <div className="flex h-12 w-12 flex-shrink-0 items-center justify-center rounded-lg border border-border bg-background">
                         <span className="material-symbols-outlined text-2xl text-primary">folder</span>
                       </div>
                       <div className="flex-1">
@@ -290,14 +295,14 @@ export default function LibraryContentPanel({
                 )}
 
                 {/* Quick Tip */}
-                <div className="p-4 rounded-lg border border-blue-200 dark:border-blue-500/30 bg-blue-50 dark:bg-blue-500/10">
+                <div className="rounded-lg border border-primary/25 bg-primary/10 p-4">
                   <div className="flex gap-3">
-                    <span className="material-symbols-outlined text-blue-600 dark:text-blue-400 flex-shrink-0 text-xl">tips_and_updates</span>
+                    <span className="material-symbols-outlined flex-shrink-0 text-xl text-primary">tips_and_updates</span>
                     <div>
-                      <h4 className="text-sm font-semibold mb-2 text-blue-800 dark:text-blue-300">
+                      <h4 className="mb-2 text-sm font-semibold" style={{ color: 'var(--color-text-primary)' }}>
                         Pro Tip
                       </h4>
-                      <p className="text-sm text-blue-700 dark:text-blue-400/90 leading-relaxed">
+                      <p className="text-sm leading-relaxed" style={{ color: 'var(--color-text-muted)' }}>
                         Start with the "Learn LangChain" tab to understand core concepts, then check out "Best Practices" for production-ready patterns. When you're ready, create your first workflow and experiment with different agent configurations!
                       </p>
                     </div>

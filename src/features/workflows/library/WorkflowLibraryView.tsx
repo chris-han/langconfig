@@ -324,7 +324,7 @@ export default function WorkflowLibraryView({
 
   if (loading) {
     return (
-      <div className="h-full flex items-center justify-center bg-background-light dark:bg-background-dark">
+      <div className="h-full flex items-center justify-center bg-background text-foreground">
         <div className="text-center">
           <div className="inline-block animate-spin rounded-full h-8 w-8 border-b-2 border-primary mb-4"></div>
           <p className="text-sm" style={{ color: 'var(--color-text-muted)' }}>Loading workflows...</p>
@@ -334,11 +334,11 @@ export default function WorkflowLibraryView({
   }
 
   return (
-    <div className="h-full flex overflow-hidden bg-background-light dark:bg-background-dark">
+    <div className="h-full flex overflow-hidden bg-background text-foreground">
       {/* Left Panel - Project-Grouped Workflows */}
-      <div className="w-96 flex flex-col border-r border-gray-200 dark:border-border-dark bg-white dark:bg-panel-dark">
+      <div className="flex w-96 flex-col border-r border-border bg-card">
         {/* Header */}
-        <div className="p-4 border-b border-gray-200 dark:border-border-dark">
+        <div className="border-b border-border p-4">
           <div className="flex items-center justify-between mb-4">
             <h2 className="text-xl font-bold" style={{ color: 'var(--color-text-primary)' }}>
               Workflow Library
@@ -365,7 +365,7 @@ export default function WorkflowLibraryView({
               placeholder="Search workflows..."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              className="w-full pl-10 pr-4 py-2 text-sm border border-gray-300 dark:border-border-dark rounded-lg focus:outline-none focus:ring-2 focus:ring-primary"
+              className="w-full rounded-lg border border-border py-2 pr-4 pl-10 text-sm focus:outline-none focus:ring-2 focus:ring-primary"
               style={{
                 backgroundColor: 'var(--color-input-background)',
                 color: 'var(--color-text-primary)'

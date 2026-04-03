@@ -72,7 +72,7 @@ export default function SettingsView() {
   const [providerToAdd, setProviderToAdd] = useState('openrouter');
 
   // Theme state
-  const [currentTheme, setCurrentTheme] = useState<ThemeName>('dark');
+  const [currentTheme, setCurrentTheme] = useState<ThemeName>('semantier');
 
   // Type definitions for settings
   interface LocalModelsSettings {

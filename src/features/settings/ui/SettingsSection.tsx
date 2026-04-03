@@ -21,7 +21,7 @@ export default function SettingsSection({
   icon
 }: SettingsSectionProps) {
   return (
-    <section className="bg-white dark:bg-panel-dark border border-gray-200 dark:border-border-dark rounded-lg p-5 mb-4">
+    <section className="mb-4 rounded-lg border border-border bg-card p-5">
       {/* Section Header */}
       <div className="mb-4">
         <div className="flex items-center gap-2 mb-1">
@@ -83,7 +83,7 @@ export function SettingsInput({
         onChange={(e) => onChange(e.target.value)}
         placeholder={placeholder}
         disabled={disabled}
-        className="px-3 py-1.5 text-sm border border-gray-300 dark:border-border-dark rounded-lg focus:outline-none focus:ring-2 focus:ring-primary disabled:opacity-50 disabled:cursor-not-allowed"
+        className="rounded-lg border border-border px-3 py-1.5 text-sm focus:outline-none focus:ring-2 focus:ring-primary disabled:cursor-not-allowed disabled:opacity-50"
         style={{
           backgroundColor: 'var(--color-input-background)',
           color: 'var(--color-text-primary)'
@@ -128,7 +128,7 @@ export function SettingsSelect({
         value={value}
         onChange={(e) => onChange(e.target.value)}
         disabled={disabled}
-        className="px-3 py-2 border border-gray-300 dark:border-border-dark rounded-lg focus:outline-none focus:ring-2 focus:ring-primary disabled:opacity-50 disabled:cursor-not-allowed"
+        className="rounded-lg border border-border px-3 py-2 focus:outline-none focus:ring-2 focus:ring-primary disabled:cursor-not-allowed disabled:opacity-50"
         style={{
           backgroundColor: 'var(--color-input-background)',
           color: 'var(--color-text-primary)'
@@ -172,7 +172,7 @@ export function SettingsCheckbox({
         checked={checked}
         onChange={(e) => onChange(e.target.checked)}
         disabled={disabled}
-        className="mt-0.5 w-4 h-4 text-primary bg-white dark:bg-background-dark border-gray-300 dark:border-border-dark rounded focus:ring-2 focus:ring-primary disabled:opacity-50 disabled:cursor-not-allowed"
+        className="mt-0.5 h-4 w-4 rounded border-border bg-background text-primary focus:ring-2 focus:ring-primary disabled:cursor-not-allowed disabled:opacity-50"
       />
       <div className="flex-1">
         <label className="text-sm font-medium cursor-pointer" style={{ color: 'var(--color-text-primary)' }}>

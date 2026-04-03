@@ -33,9 +33,9 @@ export default function SettingsSidebar({
   onCategoryChange
 }: SettingsSidebarProps) {
   return (
-    <aside className="w-60 border-r border-gray-200 dark:border-border-dark bg-white dark:bg-panel-dark flex flex-col">
+    <aside className="flex w-60 flex-col border-r border-border bg-card">
       {/* Header */}
-      <div className="px-4 py-6 border-b border-gray-200 dark:border-border-dark">
+      <div className="border-b border-border px-4 py-6">
         <h2 className="text-lg font-semibold flex items-center gap-2" style={{ color: 'var(--color-text-primary)' }}>
           <span className="material-symbols-outlined text-xl">settings</span>
           Settings
@@ -54,7 +54,7 @@ export default function SettingsSidebar({
               className={`w-full flex items-center gap-3 px-4 py-3 text-sm font-medium transition-colors ${
                 isActive
                   ? 'bg-primary/10 dark:bg-primary/20'
-                  : 'hover:bg-gray-50 dark:hover:bg-white/5'
+                  : 'hover:bg-white/5'
               }`}
               style={{
                 color: isActive ? 'var(--color-primary)' : 'var(--color-text-muted)',

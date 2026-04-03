@@ -58,7 +58,7 @@ export default function ProjectSection({
         onClick={onToggle}
         className={`w-full flex items-center gap-3 px-4 py-3 rounded-lg transition-colors ${isActive
           ? 'bg-primary/10 border border-primary/30'
-          : 'bg-white dark:bg-panel-dark hover:bg-gray-50 dark:hover:bg-white/5 border border-gray-200 dark:border-border-dark'
+          : 'border border-border bg-card hover:bg-white/5'
           }`}
       >
         {/* Expand/Collapse Icon */}
@@ -72,7 +72,7 @@ export default function ProjectSection({
 
         {/* Project Icon */}
         <div
-          className={`w-8 h-8 rounded-lg flex items-center justify-center ${isActive ? 'bg-primary/20' : 'bg-gray-100 dark:bg-white/5'
+          className={`w-8 h-8 rounded-lg flex items-center justify-center ${isActive ? 'bg-primary/20' : 'bg-background'
             }`}
         >
           <span
@@ -108,7 +108,7 @@ export default function ProjectSection({
         {/* Workflow Count Badge */}
         <div className="flex items-center gap-2">
           <span
-            className="px-2 py-1 text-xs font-medium rounded-md bg-gray-100 dark:bg-white/10"
+            className="rounded-md bg-background px-2 py-1 text-xs font-medium"
             style={{ color: 'var(--color-text-primary)' }}
           >
             {workflows.length} workflow{workflows.length !== 1 ? 's' : ''}
@@ -143,8 +143,8 @@ export default function ProjectSection({
                   onClick={() => onSelectWorkflow(workflow)}
                   onContextMenu={(e) => handleContextMenu(e, workflow)}
                   className={`w-full flex items-center gap-3 px-3 py-2 rounded-xl transition-all duration-200 border ${isSelected
-                    ? 'bg-white dark:bg-gray-800 border-primary shadow-sm ring-1 ring-primary/20'
-                    : 'bg-white dark:bg-gray-900 border-gray-200 dark:border-gray-800 hover:border-primary/50 hover:shadow-md'
+                    ? 'border-primary bg-primary/10 shadow-sm ring-1 ring-primary/20'
+                    : 'border-border bg-background hover:border-primary/50 hover:shadow-md'
                     }`}
                 >
                   {/* Workflow Icon */}

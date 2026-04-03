@@ -572,9 +572,9 @@ export default function ModernAgentLibrary({
   };
 
   return (
-    <aside className="w-80 flex flex-col bg-white dark:bg-panel-dark border-r border-gray-200 dark:border-border-dark overflow-hidden relative">
+    <div className="w-80 flex flex-col bg-sidebar border-r border-sidebar-border overflow-hidden relative">
       {/* Header with Tabs */}
-      <div className="border-b border-gray-200 dark:border-border-dark">
+      <div className="border-b border-sidebar-border">
         {/* Tab Buttons */}
         <div className="flex gap-1 p-1">
           <button
@@ -603,9 +603,9 @@ export default function ModernAgentLibrary({
         </div>
 
         {/* Search */}
-        <div className="p-3">
+        <div className="p-3 border-b border-sidebar-border">
           <div className="relative">
-            <span className="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-sm" style={{ color: 'var(--color-text-muted, #6b7280)' }}>
+            <span className="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-sm" style={{ color: 'var(--muted-foreground)' }}>
               search
             </span>
             <input
@@ -613,8 +613,8 @@ export default function ModernAgentLibrary({
               placeholder={activePanel === 'agents' ? 'Search agents...' : 'Search tasks...'}
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              className="w-full pl-9 pr-3 py-2 bg-gray-50 dark:bg-background-dark border border-gray-200 dark:border-border-dark rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent"
-              style={{ color: 'var(--color-text-primary, #1a1a1a)' }}
+              className="w-full pl-9 pr-3 py-2 bg-background border border-sidebar-border rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-primary transition-all"
+              style={{ color: 'var(--foreground)' }}
             />
           </div>
         </div>
@@ -666,7 +666,7 @@ export default function ModernAgentLibrary({
                       onClick={() => onSelectHistoryTask?.(task)}
                       className={`group p-3 rounded-lg border cursor-pointer transition-all ${isSelected
                           ? 'border-primary bg-primary/5 ring-1 ring-primary/20'
-                          : 'border-gray-200 dark:border-border-dark hover:border-primary/50 hover:bg-gray-50 dark:hover:bg-white/5'
+                          : 'border-sidebar-border hover:border-primary/50 hover:bg-gray-50 dark:hover:bg-white/5'
                         }`}
                     >
                       <div className="flex items-center justify-between mb-1.5">
@@ -713,7 +713,7 @@ export default function ModernAgentLibrary({
           <>
             {/* Workflow Recipes Section */}
             {recipes.length > 0 && (
-              <div className="border-b border-gray-200 dark:border-border-dark">
+              <div className="border-b border-sidebar-border">
                 {/* Recipe Category Header */}
                 <button
                   onClick={() => toggleCategory('workflow-recipes')}
@@ -747,14 +747,14 @@ export default function ModernAgentLibrary({
 
                 {/* Recipes List */}
                 {expandedCategories.has('workflow-recipes') && (
-                  <div className="bg-gray-50 dark:bg-background-dark divide-y divide-gray-200 dark:divide-border-dark p-2">
+                  <div className="bg-background divide-y divide-border p-2">
                     {recipes.map(recipe => (
                       <button
                         key={recipe.recipe_id}
                         onClick={() => handleRecipeClick(recipe)}
                         className={`w-full px-4 py-3 text-left transition-all duration-200 border rounded-xl mb-2 ${selectedRecipe?.recipe_id === recipe.recipe_id
-                          ? 'bg-white dark:bg-gray-800 border-primary shadow-sm ring-1 ring-primary/20'
-                          : 'bg-white dark:bg-gray-900 border-gray-200 dark:border-gray-800 hover:border-primary/50 hover:shadow-md'
+                          ? 'bg-card border-primary shadow-sm ring-1 ring-primary/20'
+                          : 'bg-card border-border hover:border-primary/50 hover:shadow-md'
                           }`}
                       >
                         <div className="flex items-start gap-3">
@@ -783,7 +783,7 @@ export default function ModernAgentLibrary({
             )}
 
             {filteredCategories.map(category => (
-              <div key={category.id} className="border-b border-gray-200 dark:border-border-dark">
+              <div key={category.id} className="border-b border-sidebar-border">
                 {/* Category Header */}
                 <button
                   onClick={() => toggleCategory(category.id)}
@@ -814,14 +814,14 @@ export default function ModernAgentLibrary({
 
                 {/* Agents List */}
                 {expandedCategories.has(category.id) && (
-                  <div className="bg-gray-50 dark:bg-background-dark divide-y divide-gray-200 dark:divide-border-dark">
+                  <div className="bg-background divide-y divide-border">
                     {category.agents.map(agent => (
                       <button
                         key={agent.id}
                         onClick={() => handleAgentClick(agent)}
                         className={`w-full px-4 py-3 text-left transition-all duration-200 border rounded-xl mb-2 ${selectedAgent?.id === agent.id
-                          ? 'bg-white dark:bg-gray-800 border-primary shadow-sm ring-1 ring-primary/20'
-                          : 'bg-white dark:bg-gray-900 border-gray-200 dark:border-gray-800 hover:border-primary/50 hover:shadow-md'
+                          ? 'bg-card border-primary shadow-sm ring-1 ring-primary/20'
+                          : 'bg-card border-border hover:border-primary/50 hover:shadow-md'
                           }`}
                       >
                         <div className="flex items-start gap-3">
@@ -859,7 +859,7 @@ export default function ModernAgentLibrary({
       </div>
 
       {/* Footer with Stats and Create Button */}
-      <div className="p-4 border-t border-gray-200 dark:border-border-dark bg-gray-50 dark:bg-background-dark">
+      <div className="border-t border-sidebar-border bg-background p-4">
         {loading && (
           <div className="text-center text-sm mb-3" style={{ color: 'var(--color-text-muted, #6b7280)' }}>
             Loading agents...
@@ -885,9 +885,9 @@ export default function ModernAgentLibrary({
 
       {/* Agent Detail Panel (Slide-over) */}
       {selectedAgent && (
-        <div className="absolute inset-0 z-50 flex flex-col bg-white dark:bg-panel-dark border-l border-gray-200 dark:border-border-dark">
+        <div className="absolute inset-0 z-50 flex flex-col border-l border-sidebar-border bg-card">
           {/* Detail Header */}
-          <div className="p-4 border-b border-gray-200 dark:border-border-dark flex items-center justify-between">
+          <div className="p-4 border-b border-sidebar-border flex items-center justify-between">
             <h3 className="text-lg font-semibold" style={{ color: 'var(--color-text-primary, #1a1a1a)' }}>
               Agent Details
             </h3>
@@ -900,10 +900,10 @@ export default function ModernAgentLibrary({
           </div>
 
           {/* Detail Content */}
-          <div className="flex-1 overflow-y-auto p-4 space-y-4 bg-white dark:bg-panel-dark">
+          <div className="flex-1 overflow-y-auto bg-card p-4 space-y-4">
             {/* Icon & Name */}
             <div className="flex items-start gap-3">
-              <div className="w-12 h-12 rounded-lg bg-gray-100 dark:bg-background-dark border border-gray-200 dark:border-border-dark flex items-center justify-center flex-shrink-0">
+              <div className="w-12 h-12 rounded-lg bg-gray-100 dark:bg-background-dark border border-sidebar-border flex items-center justify-center flex-shrink-0">
                 <span className="material-symbols-outlined text-primary" style={{ fontSize: '24px' }}>
                   {selectedAgent.icon}
                 </span>
@@ -958,7 +958,7 @@ export default function ModernAgentLibrary({
                     {selectedAgent.tags.map(tag => (
                       <span
                         key={tag}
-                        className="inline-block px-2 py-0.5 text-xs font-medium bg-gray-100 dark:bg-background-dark text-primary rounded border border-gray-200 dark:border-border-dark"
+                        className="inline-block px-2 py-0.5 text-xs font-medium bg-gray-100 dark:bg-background-dark text-primary rounded border border-sidebar-border"
                       >
                         {tag}
                       </span>
@@ -999,7 +999,7 @@ export default function ModernAgentLibrary({
 
               <div>
                 <label className="block text-xs font-medium mb-2 uppercase" style={{ color: 'var(--color-text-primary, #1a1a1a)' }}>System Prompt</label>
-                <div className="mt-1 p-3 bg-gray-50 dark:bg-background-dark rounded-lg border border-gray-200 dark:border-border-dark">
+                <div className="mt-1 p-3 bg-gray-50 dark:bg-background-dark rounded-lg border border-sidebar-border">
                   <pre className="text-xs whitespace-pre-wrap font-mono" style={{ color: 'var(--color-text-primary, #1a1a1a)' }}>
                     {selectedAgent.system_prompt}
                   </pre>
@@ -1009,7 +1009,7 @@ export default function ModernAgentLibrary({
           </div>
 
           {/* Detail Footer - Add Button */}
-          <div className="p-4 border-t border-gray-200 dark:border-border-dark bg-gray-50 dark:bg-background-dark">
+          <div className="p-4 border-t border-sidebar-border bg-gray-50 dark:bg-background-dark">
             <button
               onClick={handleAddToWorkflow}
               className="w-full flex items-center justify-center gap-2 px-4 py-2.5 bg-primary rounded-lg hover:opacity-90 transition-opacity font-medium text-white"
@@ -1023,9 +1023,9 @@ export default function ModernAgentLibrary({
 
       {/* Recipe Detail Panel (Slide-over) */}
       {selectedRecipe && (
-        <div className="absolute inset-0 z-50 flex flex-col bg-white dark:bg-panel-dark border-l border-gray-200 dark:border-border-dark">
+        <div className="absolute inset-0 z-50 flex flex-col border-l border-sidebar-border bg-card">
           {/* Detail Header */}
-          <div className="p-4 border-b border-gray-200 dark:border-border-dark flex items-center justify-between" style={{ backgroundColor: 'var(--color-primary)' }}>
+          <div className="p-4 border-b border-sidebar-border flex items-center justify-between" style={{ backgroundColor: 'var(--color-primary)' }}>
             <div className="flex items-center gap-2">
               <h3 className="text-lg font-semibold text-white">
                 Workflow Recipe
@@ -1043,10 +1043,10 @@ export default function ModernAgentLibrary({
           </div>
 
           {/* Detail Content */}
-          <div className="flex-1 overflow-y-auto p-4 space-y-4 bg-white dark:bg-panel-dark">
+          <div className="flex-1 overflow-y-auto bg-card p-4 space-y-4">
             {/* Icon & Name */}
             <div className="flex items-start gap-3">
-              <div className="w-12 h-12 rounded-lg bg-gray-100 dark:bg-background-dark border border-gray-200 dark:border-border-dark flex items-center justify-center flex-shrink-0">
+              <div className="w-12 h-12 rounded-lg bg-gray-100 dark:bg-background-dark border border-sidebar-border flex items-center justify-center flex-shrink-0">
                 <span className="material-symbols-outlined text-primary" style={{ fontSize: '24px' }}>
                   {selectedRecipe.icon}
                 </span>
@@ -1087,7 +1087,7 @@ export default function ModernAgentLibrary({
                   {selectedRecipe.tags.map(tag => (
                     <span
                       key={tag}
-                      className="inline-block px-2 py-0.5 text-xs font-medium bg-gray-100 dark:bg-background-dark text-primary rounded border border-gray-200 dark:border-border-dark"
+                      className="inline-block px-2 py-0.5 text-xs font-medium bg-gray-100 dark:bg-background-dark text-primary rounded border border-sidebar-border"
                     >
                       {tag}
                     </span>
@@ -1103,7 +1103,7 @@ export default function ModernAgentLibrary({
                 {selectedRecipe.nodes.map((node: any) => (
                   <div
                     key={node.id}
-                    className="flex items-center gap-2 p-2 rounded-lg bg-gray-50 dark:bg-background-dark border border-gray-200 dark:border-border-dark"
+                    className="flex items-center gap-2 p-2 rounded-lg bg-gray-50 dark:bg-background-dark border border-sidebar-border"
                   >
                     <span className="material-symbols-outlined text-sm text-primary">smart_toy</span>
                     <span className="text-sm font-medium" style={{ color: 'var(--color-text-primary, #1a1a1a)' }}>
@@ -1135,7 +1135,7 @@ export default function ModernAgentLibrary({
           </div>
 
           {/* Detail Footer - Insert Button */}
-          <div className="p-4 border-t border-gray-200 dark:border-border-dark bg-gray-50 dark:bg-background-dark">
+          <div className="p-4 border-t border-sidebar-border bg-gray-50 dark:bg-background-dark">
             <button
               onClick={handleInsertRecipe}
               disabled={!onSelectRecipe}
@@ -1151,7 +1151,7 @@ export default function ModernAgentLibrary({
       {/* Agent Type Selector Modal */}
       {showTypeSelector && (
         <div className="fixed inset-0 flex items-center justify-center z-[60] p-4" style={{ backgroundColor: 'rgba(0, 0, 0, 0.7)' }}>
-          <div className="border border-gray-200 dark:border-border-dark rounded-xl w-full max-w-2xl shadow-2xl" style={{ backgroundColor: 'var(--color-panel-dark)' }}>
+          <div className="border border-sidebar-border rounded-xl w-full max-w-2xl shadow-2xl" style={{ backgroundColor: 'var(--color-panel-dark)' }}>
 
             {/* Header */}
             <div className="p-6 border-b border-gray-200 dark:border-gray-800">
@@ -1238,7 +1238,7 @@ export default function ModernAgentLibrary({
       {/* Agent Builder Modal */}
       {showAgentBuilder && (
         <div className="fixed inset-0 flex items-center justify-center z-[60] p-4" style={{ backgroundColor: 'rgba(0, 0, 0, 0.7)' }}>
-          <div className="border border-gray-200 dark:border-border-dark rounded-xl w-full max-w-6xl h-[90vh] shadow-2xl flex flex-col" style={{ backgroundColor: 'var(--color-panel-dark)' }}>
+          <div className="border border-sidebar-border rounded-xl w-full max-w-6xl h-[90vh] shadow-2xl flex flex-col" style={{ backgroundColor: 'var(--color-panel-dark)' }}>
             <DeepAgentBuilder
               initialConfig={undefined}
               agentType={agentType}
@@ -1256,7 +1256,7 @@ export default function ModernAgentLibrary({
       {/* Post-Creation Prompt Modal */}
       {newlyCreatedAgent && (
         <div className="fixed inset-0 flex items-center justify-center z-[60] p-4" style={{ backgroundColor: 'rgba(0, 0, 0, 0.7)' }}>
-          <div className="border border-gray-200 dark:border-border-dark rounded-xl w-full max-w-md shadow-2xl" style={{ backgroundColor: 'var(--color-panel-dark)' }}>
+          <div className="border border-sidebar-border rounded-xl w-full max-w-md shadow-2xl" style={{ backgroundColor: 'var(--color-panel-dark)' }}>
 
             {/* Header */}
             <div className="p-6 border-b border-gray-200 dark:border-gray-800">
@@ -1295,6 +1295,6 @@ export default function ModernAgentLibrary({
 
       {/* Notification Modal */}
       <NotificationModal />
-    </aside>
+    </div>
   );
 }

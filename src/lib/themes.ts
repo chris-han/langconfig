@@ -73,6 +73,8 @@ export interface Theme {
   }>;
 }
 
+const DEFAULT_THEME_NAME: ThemeName = 'semantier';
+const LEGACY_DEFAULT_THEME_NAME: ThemeName = 'langconfig';
 const darkThemes = new Set<ThemeName>(['semantier', 'dark', 'midnight', 'ocean', 'forest', 'botanical', 'godspeed']);
 
 function setSemanticThemeTokens(theme: Theme, isDarkTheme: boolean) {
@@ -434,8 +436,14 @@ export function applyTheme(theme: Theme) {
 }
 
 export function loadTheme(): Theme {
-  const savedTheme = localStorage.getItem('langconfig-theme') as ThemeName;
-  return themes[savedTheme] || themes.langconfig;
+  const savedTheme = localStorage.getItem('langconfig-theme') as ThemeName | null;
+
+  if (!savedTheme || savedTheme === LEGACY_DEFAULT_THEME_NAME) {
+    localStorage.setItem('langconfig-theme', DEFAULT_THEME_NAME);
+    return themes[DEFAULT_THEME_NAME];
+  }
+
+  return themes[savedTheme] || themes[DEFAULT_THEME_NAME];
 }
 
 export function initializeTheme() {

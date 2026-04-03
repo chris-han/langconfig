@@ -102,13 +102,13 @@ const WorkflowToolbar = memo(function WorkflowToolbar({
   hasUnsavedChanges,
 }: WorkflowToolbarProps) {
   const tabClass = (tab: Tab) =>
-    `px-4 py-2 text-sm font-semibold border-b-2 transition-all ${
+    `px-4 py-2 text-xs font-semibold uppercase tracking-wider border-b-2 transition-all ${
       activeTab === tab
-        ? 'border-primary text-primary'
-        : 'border-transparent text-gray-600 dark:text-text-muted hover:text-gray-900 dark:hover:text-white'
+        ? 'border-primary text-primary bg-transparent'
+        : 'border-transparent text-muted-foreground hover:text-foreground'
     }`;
   return (
-    <div className="bg-background border-b border-border px-4 py-1.5">
+    <div className="bg-card border-b border-sidebar-border px-4 py-1.5">
       <div className="flex items-center">
         {/* LEFT SECTION: Workflow Switcher + Save + Versions + Settings */}
         <div className="flex items-center gap-2">

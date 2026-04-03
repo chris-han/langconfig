@@ -90,7 +90,7 @@ export default function ModelDefaultsSettings({
                   <select
                     value={model}
                     onChange={(e) => handleFallbackModelChange(index, e.target.value)}
-                    className="w-full px-3 py-2 bg-white dark:bg-background-dark border border-gray-300 dark:border-border-dark rounded-lg focus:outline-none focus:ring-2 focus:ring-primary"
+                    className="w-full rounded-lg border border-border bg-background px-3 py-2 focus:outline-none focus:ring-2 focus:ring-primary"
                     style={{ color: 'var(--color-text-primary)' }}
                   >
                     <option value="">Select fallback model {index + 1}</option>
@@ -103,7 +103,7 @@ export default function ModelDefaultsSettings({
                 </div>
                 <button
                   onClick={() => removeFallbackModel(index)}
-                  className="px-3 py-2 text-red-600 dark:text-red-400 bg-white dark:bg-background-dark border border-gray-300 dark:border-border-dark rounded-lg hover:bg-red-50 dark:hover:bg-red-500/10 transition-colors"
+                  className="rounded-lg border border-border bg-background px-3 py-2 text-red-400 transition-colors hover:bg-red-500/10"
                   title="Remove fallback model"
                 >
                   <span className="material-symbols-outlined text-base">delete</span>
@@ -114,7 +114,7 @@ export default function ModelDefaultsSettings({
             {settings.fallbackModels.length < 3 && (
               <button
                 onClick={addFallbackModel}
-                className="inline-flex items-center gap-2 px-3 py-2 text-sm font-medium bg-white dark:bg-background-dark border border-gray-300 dark:border-border-dark rounded-lg hover:bg-gray-50 dark:hover:bg-white/5 transition-colors"
+                className="inline-flex items-center gap-2 rounded-lg border border-border bg-background px-3 py-2 text-sm font-medium transition-colors hover:bg-white/5"
                 style={{ color: 'var(--color-text-primary)' }}
               >
                 <span className="material-symbols-outlined text-base">add</span>
@@ -146,7 +146,7 @@ export default function ModelDefaultsSettings({
             step="0.1"
             value={settings.temperature}
             onChange={(e) => onSettingsChange({ ...settings, temperature: parseFloat(e.target.value) })}
-            className="w-full h-2 bg-gray-200 dark:bg-border-dark rounded-lg appearance-none cursor-pointer"
+            className="h-2 w-full cursor-pointer appearance-none rounded-lg bg-border"
           />
           <p className="text-xs mt-1" style={{ color: 'var(--color-text-muted)' }}>
             Controls randomness. Lower = more focused, higher = more creative. Range: 0.0-2.0
@@ -177,7 +177,7 @@ export default function ModelDefaultsSettings({
             step="0.05"
             value={settings.topP}
             onChange={(e) => onSettingsChange({ ...settings, topP: parseFloat(e.target.value) })}
-            className="w-full h-2 bg-gray-200 dark:bg-border-dark rounded-lg appearance-none cursor-pointer"
+            className="h-2 w-full cursor-pointer appearance-none rounded-lg bg-border"
           />
           <p className="text-xs mt-1" style={{ color: 'var(--color-text-muted)' }}>
             Alternative to temperature. Consider only tokens with top_p probability mass. Range: 0.0-1.0

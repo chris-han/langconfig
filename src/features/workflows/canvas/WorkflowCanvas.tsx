@@ -1984,7 +1984,7 @@ if __name__ == "__main__":
         />
 
         {/* Canvas Area */}
-        <div className="flex-1 bg-background relative overflow-hidden" id="workflow-canvas-container">
+        <div className="flex-1 bg-[var(--editor-bg)] relative overflow-hidden" id="workflow-canvas-container">
           {/* Studio Tab - Keep ReactFlow mounted to preserve node selection */}
           <div style={{ display: activeTab === 'studio' ? 'flex' : 'none', flexDirection: 'column', height: '100%' }}>
             {nodes.length === 0 ? (
@@ -2034,14 +2034,14 @@ if __name__ == "__main__":
                     variant={BackgroundVariant.Dots}
                     gap={16}
                     size={1}
-                    className="bg-gray-50 dark:bg-background-dark"
+                    className="bg-transparent"
                   />
 
                   {/* Controls - repositioned to top-left */}
                   <Controls
                     showInteractive={false}
                     position="top-left"
-                    className="!bg-white dark:!bg-panel-dark !border-2 !border-gray-200 dark:!border-border-dark !rounded-lg !shadow-lg"
+                    className="!bg-sidebar !border-sidebar-border !rounded-lg !shadow-lg"
                   />
 
                   {/* Control Buttons - Top Right */}
@@ -2064,9 +2064,9 @@ if __name__ == "__main__":
                       nodeColor={() => 'var(--color-primary)'}
                       maskColor="rgba(0, 0, 0, 0.1)"
                       position="bottom-left"
-                      className="!bg-white dark:!bg-panel-dark !border-2 !border-gray-200 dark:!border-border-dark !rounded-lg !shadow-lg"
+                      className="!bg-sidebar !border-sidebar-border !rounded-lg !shadow-lg"
                       style={{
-                        backgroundColor: 'var(--color-panel-dark)',
+                        backgroundColor: 'var(--sidebar)',
                         width: '120px',
                         height: '80px'
                       }}

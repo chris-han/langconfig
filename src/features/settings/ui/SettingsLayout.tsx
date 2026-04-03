@@ -31,7 +31,7 @@ export default function SettingsLayout({
   onCategoryChange
 }: SettingsLayoutProps) {
   return (
-    <div className="flex h-full w-full overflow-hidden bg-background-light dark:bg-background-dark">
+    <div className="flex h-full w-full overflow-hidden bg-background text-foreground">
       {/* Centered Container for Sidebar + Content */}
       <div className="flex max-w-[1200px] w-full mx-auto h-full overflow-hidden">
         {/* Left Sidebar - 240px fixed */}

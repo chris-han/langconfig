@@ -363,7 +363,7 @@ function AppContent() {
   const selectedNodeConfig = selectedNodeId ? nodeConfigs[selectedNodeId] : null;
 
   return (
-    <div className="relative flex h-screen w-full flex-col bg-background-light dark:bg-background-dark overflow-hidden">
+    <div className="relative flex h-screen w-full flex-col bg-background text-foreground overflow-hidden">
       {/* Modern Header */}
       <ModernHeader
         currentView={currentView}

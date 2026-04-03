@@ -77,7 +77,7 @@ export default function LocalWorkspaceSettings({
             <button
               onClick={handleBrowse}
               disabled={isSelectingFolder}
-              className="px-4 py-2 text-sm font-medium bg-white dark:bg-background-dark border border-gray-300 dark:border-border-dark rounded-lg hover:bg-gray-50 dark:hover:bg-white/5 transition-colors disabled:opacity-50"
+              className="rounded-lg border border-border bg-background px-4 py-2 text-sm font-medium transition-colors hover:bg-white/5 disabled:opacity-50"
               style={{ color: 'var(--color-text-primary)' }}
             >
               {isSelectingFolder ? 'Selecting...' : 'Browse...'}
