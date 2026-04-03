@@ -145,6 +145,7 @@ function AppContent() {
     completionTokens: number;
     costString: string;
   } | null>(null);
+  const [nodeTokenCosts, setNodeTokenCosts] = useState<Record<string, { promptTokens: number; completionTokens: number; totalTokens: number; costString: string }>>({});
 
   // Task history state (shared between WorkflowCanvas and ModernAgentLibrary)
   const [taskHistory, setTaskHistory] = useState<TaskHistoryEntry[]>([]);
@@ -268,6 +269,9 @@ function AppContent() {
           id: nodeId,
           ...nodeData,
           ...nodeData.config,  // Spread config fields to top level
+          // Preserve top-level fields that must not be overwritten by config
+          label: nodeData.label,
+          tokenCost: nodeData.tokenCost,
           // Preserve arrays from both levels
           tools: nodeData.config.tools || nodeData.tools || [],
           native_tools: nodeData.config.native_tools || nodeData.config.mcp_tools || nodeData.native_tools || [],
@@ -418,6 +422,7 @@ function AppContent() {
               onTabChange={handleTabChange}
               initialTab={workflowTab}
               onTokenCostUpdate={setTokenCostInfo}
+              onNodeTokenCostsUpdate={setNodeTokenCosts}
               onTaskHistoryUpdate={setTaskHistory}
               onSelectedTaskChange={setSelectedHistoryTask}
               externalSelectedTask={selectedHistoryTask}
@@ -470,7 +475,14 @@ function AppContent() {
             }}
             onSave={handleNodeConfigSave}
             onDelete={handleNodeDelete}
-            tokenCostInfo={tokenCostInfo || undefined}
+            tokenCostInfo={(() => {
+              // Live per-node cost keyed by node label — never falls back to global total
+              const label = selectedNodeData?.label;
+              if (label && nodeTokenCosts[label]) return nodeTokenCosts[label];
+              // Fallback: tokenCost embedded in node.data at click time (same per-node source)
+              if (selectedNodeData?.tokenCost) return selectedNodeData.tokenCost;
+              return undefined;
+            })()}
           />
         )}
       </main>

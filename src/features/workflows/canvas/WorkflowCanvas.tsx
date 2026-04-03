@@ -208,6 +208,7 @@ interface WorkflowCanvasProps {
   onTabChange?: (tab: 'studio' | 'results') => void;
   initialTab?: 'studio' | 'results';
   onTokenCostUpdate?: (tokenInfo: { totalTokens: number; promptTokens: number; completionTokens: number; costString: string; }) => void;
+  onNodeTokenCostsUpdate?: (costs: Record<string, { promptTokens: number; completionTokens: number; totalTokens: number; costString: string }>) => void;
   // Task history callbacks for left sidebar
   onTaskHistoryUpdate?: (tasks: TaskHistoryEntry[]) => void;
   onSelectedTaskChange?: (task: TaskHistoryEntry | null) => void;
@@ -235,6 +236,7 @@ const WorkflowCanvas = forwardRef<WorkflowCanvasRef, WorkflowCanvasProps>(({
   onTabChange,
   initialTab,
   onTokenCostUpdate,
+  onNodeTokenCostsUpdate,
   onTaskHistoryUpdate,
   onSelectedTaskChange,
   externalSelectedTask,
@@ -993,6 +995,13 @@ if __name__ == "__main__":
     taskHistory,
     selectedHistoryTask,
   });
+
+  // Fire per-node costs update whenever nodeTokenCosts changes
+  useEffect(() => {
+    if (onNodeTokenCostsUpdate) {
+      onNodeTokenCostsUpdate(nodeTokenCosts);
+    }
+  }, [nodeTokenCosts, onNodeTokenCostsUpdate]);
 
   // Use extracted hook for token cost calculation
   const tokenCostInfo = useTokenCostInfo({

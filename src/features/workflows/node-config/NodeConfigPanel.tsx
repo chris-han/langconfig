@@ -68,10 +68,10 @@ interface NodeConfigPanelProps {
   onSave: (nodeId: string, config: any) => void;
   onDelete: (nodeId: string) => void;
   tokenCostInfo?: {
-    prompt_tokens: number;
-    completion_tokens: number;
-    total_tokens: number;
-    total_cost: number;
+    promptTokens: number;
+    completionTokens: number;
+    totalTokens: number;
+    costString: string;
   };
 }
 
@@ -708,32 +708,32 @@ const NodeConfigPanel = ({
           </div>
 
           {/* Token Cost Info */}
-          {tokenCostInfo && (
-            <div>
-              <button
-                onClick={() => setTokenUsageCollapsed(!tokenUsageCollapsed)}
-                className="w-full flex items-center justify-between text-xs font-semibold text-muted-foreground uppercase tracking-wide mb-2"
-              >
-                <span className="flex items-center gap-1.5">
-                  <Cpu className="w-3.5 h-3.5 text-primary" />
-                  Token Usage
-                </span>
-                {tokenUsageCollapsed ? <ChevronRight className="w-3.5 h-3.5" /> : <ChevronDown className="w-3.5 h-3.5" />}
-              </button>
-              {!tokenUsageCollapsed && (
-                <div className="bg-muted rounded-md p-3 border border-border">
-                  <div className="grid grid-cols-2 gap-x-4 gap-y-1 text-xs">
-                    <span className="text-muted-foreground">Prompt</span>
-                    <span className="text-right text-foreground font-mono">{tokenCostInfo.prompt_tokens?.toLocaleString?.() ?? '—'}</span>
-                    <span className="text-muted-foreground">Completion</span>
-                    <span className="text-right text-foreground font-mono">{tokenCostInfo.completion_tokens?.toLocaleString?.() ?? '—'}</span>
-                    <span className="text-muted-foreground">Total</span>
-                    <span className="text-right text-foreground font-mono">{tokenCostInfo.total_tokens?.toLocaleString?.() ?? '—'}</span>
-                  </div>
+          <div>
+            <button
+              onClick={() => setTokenUsageCollapsed(!tokenUsageCollapsed)}
+              className="w-full flex items-center justify-between text-xs font-semibold text-muted-foreground uppercase tracking-wide mb-2"
+            >
+              <span className="flex items-center gap-1.5">
+                <Cpu className="w-3.5 h-3.5 text-primary" />
+                Token Usage
+              </span>
+              {tokenUsageCollapsed ? <ChevronRight className="w-3.5 h-3.5" /> : <ChevronDown className="w-3.5 h-3.5" />}
+            </button>
+            {!tokenUsageCollapsed && (
+              <div className="bg-muted rounded-md p-3 border border-border">
+                <div className="grid grid-cols-2 gap-x-4 gap-y-1 text-xs">
+                  <span className="text-muted-foreground">Prompt</span>
+                  <span className="text-right text-foreground font-mono">{tokenCostInfo?.promptTokens?.toLocaleString?.() ?? '0'}</span>
+                  <span className="text-muted-foreground">Completion</span>
+                  <span className="text-right text-foreground font-mono">{tokenCostInfo?.completionTokens?.toLocaleString?.() ?? '0'}</span>
+                  <span className="text-muted-foreground">Total</span>
+                  <span className="text-right text-foreground font-mono">{tokenCostInfo?.totalTokens?.toLocaleString?.() ?? '0'}</span>
+                  <span className="text-muted-foreground">Cost</span>
+                  <span className="text-right text-foreground font-mono">{tokenCostInfo?.costString || '$0.00'}</span>
                 </div>
-              )}
-            </div>
-          )}
+              </div>
+            )}
+          </div>
 
           {/* Delete Node */}
           <div className="pt-1">
