@@ -6,7 +6,7 @@
  */
 
 import { useState, useEffect, useMemo, useCallback } from 'react';
-import { Plus, X, History, Bot, Trash2 } from 'lucide-react';
+import { Plus, X, History, Bot, Trash2, ChevronDown } from 'lucide-react';
 import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { getModelDisplayName } from '../../../lib/modelDisplayNames';
 import DeepAgentBuilder from './DeepAgentBuilder';
@@ -727,9 +727,7 @@ export default function ModernAgentLibrary({
                       EXP
                     </span>
                   </div>
-                  <span className={`material-symbols-outlined text-sm transition-transform ${expandedCategories.has('workflow-recipes') ? 'rotate-180' : ''}`} style={{ color: 'var(--color-text-muted, #6b7280)' }}>
-                    arrow_drop_down
-                  </span>
+                  <ChevronDown size={16} className={`transition-transform ${expandedCategories.has('workflow-recipes') ? 'rotate-180' : ''}`} style={{ color: 'var(--color-text-muted, #6b7280)' }} />
                 </button>
 
                 {/* Recipes List */}
@@ -784,9 +782,7 @@ export default function ModernAgentLibrary({
                       {category.agents.length}
                     </span>
                   </div>
-                  <span className={`material-symbols-outlined text-sm transition-transform ${expandedCategories.has(category.id) ? 'rotate-180' : ''}`} style={{ color: 'var(--color-text-muted, #6b7280)' }}>
-                    arrow_drop_down
-                  </span>
+                  <ChevronDown size={16} className={`transition-transform ${expandedCategories.has(category.id) ? 'rotate-180' : ''}`} style={{ color: 'var(--color-text-muted, #6b7280)' }} />
                 </button>
 
                 {/* Agents List - Card Style */}

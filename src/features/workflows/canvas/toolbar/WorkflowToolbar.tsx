@@ -6,7 +6,7 @@
  */
 
 import { memo } from 'react';
-import { Save, History as HistoryIcon, Settings, FolderOpen, Image, Camera } from 'lucide-react';
+import { Save, History as HistoryIcon, Settings, FolderOpen, Image, Camera, ChevronDown } from 'lucide-react';
 
 interface WorkflowVersion {
   id: number;
@@ -230,7 +230,7 @@ const WorkflowToolbar = memo(function WorkflowToolbar({
               >
                 <HistoryIcon className="w-4 h-4" />
                 <span>{currentVersion ? `v${currentVersion.version_number}` : 'v1'}</span>
-                <span className="text-xs opacity-60">▼</span>
+                <span className="text-xs opacity-60"><ChevronDown size={16} /></span>
               </button>
 
               {showVersionDropdown && (

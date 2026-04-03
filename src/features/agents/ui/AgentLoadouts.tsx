@@ -7,7 +7,7 @@
 
 import { useState, useEffect } from 'react';
 import { useSearchParams } from 'react-router-dom';
-import { Search, Plus, Trash2, Edit, Download, Copy, Upload, Sparkles, Code, Database, Terminal, X, Save, BookOpen, Tag, Clock, TrendingUp, Settings, AlertTriangle } from 'lucide-react';
+import { Search, Plus, Trash2, Edit, Download, Copy, Upload, Sparkles, Code, Database, Terminal, X, Save, BookOpen, Tag, Clock, TrendingUp, Settings, AlertTriangle, ChevronDown, ChevronRight } from 'lucide-react';
 import DeepAgentBuilder from './DeepAgentBuilder';
 import SkillBuilderModal from './SkillBuilderModal';
 import CustomToolBuilder from '../../tools/ui/CustomToolBuilder';
@@ -1082,7 +1082,7 @@ print(result)
                                 toggleSubagentExpanded(index);
                               }}
                             >
-                              {isExpanded ? '▼' : '▶'}
+                              {isExpanded? <ChevronDown size={16} /> : <ChevronRight size={16} />}
                             </button>
                             <div className="flex-1">
                               <div className="text-sm font-semibold" style={{ color: 'var(--color-text-primary)' }}>
@@ -3368,7 +3368,7 @@ const AgentLoadouts = () => {
                           </span>
                         </div>
                         <span style={{ color: 'var(--color-text-muted)' }}>
-                          {expandedSections.has('regular') ? '▼' : '▶'}
+                          {expandedSections.has('regular') ? <ChevronDown size={16} /> : <ChevronRight size={16} />}
                         </span>
                       </button>
                       {expandedSections.has('regular') && (
@@ -3431,7 +3431,7 @@ const AgentLoadouts = () => {
                           </span>
                         </div>
                         <span style={{ color: 'var(--color-text-muted)' }}>
-                          {expandedSections.has('deep') ? '▼' : '▶'}
+                                                    {expandedSections.has('deep') ? <ChevronDown size={16} /> : <ChevronRight size={16} />}
                         </span>
                       </button>
                       {expandedSections.has('deep') && (
