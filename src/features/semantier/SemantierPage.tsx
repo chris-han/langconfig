@@ -21,7 +21,6 @@ import {
 } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
-import { Card, CardContent } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { ResizableHandle, ResizablePanel, ResizablePanelGroup } from "@/components/ui/resizable";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
@@ -583,78 +582,81 @@ function InspectorPane({ selectedItem, graphSelection }: { selectedItem: TreeNod
           </TabsTrigger>
         </TabsList>
 
-        <TabsContent value="properties" className="m-0 flex-1 overflow-auto p-3">
-          <div className="space-y-4">
-            <div className="rounded-md border border-primary/40 bg-card/60 p-3">
-              <div className="flex items-center gap-2 text-primary">
-                <Settings2 className="h-4 w-4" />
-                <span className="text-sm font-medium">Inspector</span>
-              </div>
-              <div className="mt-3 text-lg font-semibold text-foreground">{title || "Select a resource"}</div>
-              <div className="mt-1 text-xs leading-relaxed text-muted-foreground">
-                {description || "Choose an ontology item, graph node, or edge to inspect its contract."}
-              </div>
+        <TabsContent value="properties" className="m-0 flex-1 overflow-auto p-4">
+          <div className="space-y-5">
+            {/* Header */}
+            <div>
+              <div className="text-lg font-semibold text-foreground">{title || "Select a resource"}</div>
+              {identityLabel && (
+                <span className="mt-1 inline-block text-xs px-2 py-0.5 rounded-full bg-primary/10 text-primary font-medium">
+                  {identityLabel}
+                </span>
+              )}
+              {description && (
+                <div className="mt-2 text-xs leading-relaxed text-muted-foreground">{description}</div>
+              )}
+              {!title && !description && (
+                <div className="flex flex-col items-center justify-center rounded-md border border-dashed border-border px-4 py-10 text-center mt-4">
+                  <Settings2 className="mb-3 h-10 w-10 text-muted-foreground/30" />
+                  <p className="text-sm text-muted-foreground">选择一个资源查看属性</p>
+                </div>
+              )}
             </div>
 
+            {/* Relationship — edge only */}
             {graphSelection?.type === "edge" && (
-                <Card className="gap-3 rounded-md border-primary/40 py-4">
-                <CardContent className="px-4">
-                  <div className="text-xs font-semibold uppercase tracking-[0.18em] text-muted-foreground">Relationship</div>
-                  <div className="mt-3 text-sm font-semibold text-foreground">{edgeData?.source} {"->"} {edgeData?.target}</div>
-                  <div className="mt-1 text-xs text-muted-foreground">{edgeData?.data?.category}</div>
-                </CardContent>
-              </Card>
-            )}
-
-            {(title || identityLabel) && (
-                <Card className="gap-3 rounded-md border-primary/40 py-4">
-                <CardContent className="px-4">
-                  <div className="text-xs font-semibold uppercase tracking-[0.18em] text-muted-foreground">Identity</div>
-                  <div className="mt-3 space-y-1 text-sm font-semibold text-foreground">
-                    {title && <div>{title}</div>}
-                    {identityLabel && <div className="text-xs font-normal text-muted-foreground">{identityLabel}</div>}
-                  </div>
-                </CardContent>
-              </Card>
-            )}
-
-            {propertyRows.length > 0 ? (
-                <Card className="gap-3 rounded-md border-primary/40 py-4">
-                <CardContent className="space-y-3 px-4">
-                  <div className="text-xs font-semibold uppercase tracking-[0.18em] text-muted-foreground">Fields</div>
-                  {propertyRows.map((property: any) => (
-                    <div key={property.name} className="grid grid-cols-[1fr_auto] gap-3 rounded-md border border-primary/20 bg-muted/40 px-3 py-3">
-                      <div>
-                        <div className="text-sm font-medium text-foreground">{property.name}</div>
-                        <div className="mt-1 text-xs text-muted-foreground">{property.type}</div>
-                      </div>
-                      <div className={`self-start rounded-full px-2 py-1 text-[11px] font-semibold ${property.required ? "bg-amber-500/15 text-amber-300" : "bg-emerald-500/15 text-emerald-300"}`}>
-                        {property.required ? "required" : "optional"}
-                      </div>
-                    </div>
-                  ))}
-                </CardContent>
-              </Card>
-            ) : (
-              <div className="flex flex-col items-center justify-center rounded-md border border-dashed border-primary/40 px-4 py-10 text-center">
-                <Settings2 className="mb-3 h-10 w-10 text-muted-foreground/30" />
-                <p className="text-sm text-muted-foreground">选择一个资源查看属性</p>
+              <div>
+                <label className="text-xs font-semibold text-muted-foreground uppercase tracking-wide mb-2 flex items-center gap-1.5">
+                  <Link2 className="w-3.5 h-3.5 text-primary" />
+                  Relationship
+                </label>
+                <div className="bg-muted border border-border rounded-md px-3 py-2">
+                  <div className="text-sm font-medium text-foreground">{edgeData?.source} → {edgeData?.target}</div>
+                  {edgeData?.data?.category && (
+                    <div className="mt-0.5 text-xs text-muted-foreground">{edgeData.data.category}</div>
+                  )}
+                </div>
               </div>
             )}
 
-            {actions.length > 0 && (
-              <Card className="gap-3 border-primary/40 py-4">
-                <CardContent className="px-4">
-                  <div className="text-xs font-semibold uppercase tracking-[0.18em] text-muted-foreground">Actions</div>
-                  <div className="mt-3 flex flex-wrap gap-2">
-                    {actions.map((action: string) => (
-                      <div key={action} className="rounded-full bg-primary/12 px-3 py-1 text-xs font-medium text-primary">
-                        {action}
+            {/* Fields */}
+            {propertyRows.length > 0 && (
+              <div>
+                <label className="text-xs font-semibold text-muted-foreground uppercase tracking-wide mb-2 block">
+                  Fields
+                </label>
+                <div className="space-y-1.5">
+                  {propertyRows.map((property: any) => (
+                    <div key={property.name} className="flex items-center gap-2.5 px-3 py-2 rounded-md bg-muted border border-transparent">
+                      <div className="min-w-0 flex-1">
+                        <div className="text-xs font-medium text-foreground">{property.name}</div>
+                        <div className="text-[10px] text-muted-foreground">{property.type}</div>
                       </div>
-                    ))}
-                  </div>
-                </CardContent>
-              </Card>
+                      <span className={`shrink-0 rounded-full px-2 py-0.5 text-[10px] font-semibold ${
+                        property.required ? "bg-amber-500/15 text-amber-300" : "bg-emerald-500/15 text-emerald-300"
+                      }`}>
+                        {property.required ? "required" : "optional"}
+                      </span>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
+
+            {/* Actions */}
+            {actions.length > 0 && (
+              <div>
+                <label className="text-xs font-semibold text-muted-foreground uppercase tracking-wide mb-2 block">
+                  Actions
+                </label>
+                <div className="flex flex-wrap gap-2">
+                  {actions.map((action: string) => (
+                    <div key={action} className="rounded-full bg-primary/10 px-3 py-1 text-xs font-medium text-primary">
+                      {action}
+                    </div>
+                  ))}
+                </div>
+              </div>
             )}
           </div>
         </TabsContent>
