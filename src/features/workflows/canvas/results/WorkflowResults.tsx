@@ -467,12 +467,12 @@ const WorkflowResults = memo(function WorkflowResults({
                                     </button>
                                   )}
                                   {!isLatestTask && (
-                                    <span className="text-xs px-2 py-0.5 rounded bg-gray-100 dark:bg-gray-800 text-gray-600 dark:text-gray-400">
+                                    <span className="text-xs px-2 py-0.5 rounded bg-muted text-muted-foreground">
                                       Historical
                                     </span>
                                   )}
                                   {isLatestTask && (
-                                    <span className="text-xs px-2 py-0.5 rounded bg-green-100 dark:bg-green-900/30 text-green-700 dark:text-green-400 font-semibold">
+                                    <span className="text-xs px-2 py-0.5 rounded bg-status-success/10 text-status-success font-semibold">
                                       Latest
                                     </span>
                                   )}
@@ -491,7 +491,7 @@ const WorkflowResults = memo(function WorkflowResults({
                                 {/* Toggle Animation Button */}
                                 <button
                                   onClick={() => setShowAnimatedReveal(!showAnimatedReveal)}
-                                  className="p-2 rounded-md hover:bg-gray-100 dark:hover:bg-white/10"
+                                  className="p-2 rounded-md hover:bg-muted"
                                   title={showAnimatedReveal ? "Show static view" : "Show animated reveal"}
                                 >
                                   <span className="material-symbols-outlined text-lg">
@@ -505,7 +505,7 @@ const WorkflowResults = memo(function WorkflowResults({
                                     onClick={() => setCompareMode(!compareMode)}
                                     className={`p-2 rounded-md ${compareMode
                                       ? 'bg-primary text-white'
-                                      : 'hover:bg-gray-100 dark:hover:bg-white/10'
+                                      : 'hover:bg-muted'
                                       }`}
                                     title="Compare workflow versions"
                                   >
@@ -523,13 +523,13 @@ const WorkflowResults = memo(function WorkflowResults({
                                     setCopiedToClipboard(true);
                                     setTimeout(() => setCopiedToClipboard(false), 2000);
                                   }}
-                                  className="p-2 rounded-md hover:bg-gray-100 dark:hover:bg-white/10"
+                                  className="p-2 rounded-md hover:bg-muted"
                                   title="Copy results to clipboard"
                                 >
                                   {copiedToClipboard ? (
-                                    <Check className="w-4 h-4 text-green-600 dark:text-green-400" />
+                                    <Check className="w-4 h-4 text-status-success" />
                                   ) : (
-                                    <Copy className="w-4 h-4 text-gray-600 dark:text-text-muted" />
+                                    <Copy className="w-4 h-4 text-muted-foreground" />
                                   )}
                                 </button>
 
@@ -550,10 +550,10 @@ const WorkflowResults = memo(function WorkflowResults({
                                       alert('Failed to export PDF. Please try again.');
                                     }
                                   }}
-                                  className="p-2 rounded-md hover:bg-gray-100 dark:hover:bg-white/10"
+                                  className="p-2 rounded-md hover:bg-muted"
                                   title="Export to PDF"
                                 >
-                                  <Download className="w-4 h-4 text-gray-600 dark:text-text-muted" />
+                                  <Download className="w-4 h-4 text-muted-foreground" />
                                 </button>
 
                                 {/* Export to Word Button */}
@@ -580,10 +580,10 @@ const WorkflowResults = memo(function WorkflowResults({
                                       alert('Failed to export Word document. Please try again.');
                                     }
                                   }}
-                                  className="p-2 rounded-md hover:bg-gray-100 dark:hover:bg-white/10"
+                                  className="p-2 rounded-md hover:bg-muted"
                                   title="Export to Word (.docx)"
                                 >
-                                  <span className="material-symbols-outlined text-base text-gray-600 dark:text-text-muted">
+                                  <span className="material-symbols-outlined text-base text-muted-foreground">
                                     description
                                   </span>
                                 </button>
@@ -591,13 +591,13 @@ const WorkflowResults = memo(function WorkflowResults({
                                 {/* View Raw Output Toggle */}
                                 <button
                                   onClick={() => setShowRawOutput(!showRawOutput)}
-                                  className="p-2 rounded-md hover:bg-gray-100 dark:hover:bg-white/10"
+                                  className="p-2 rounded-md hover:bg-muted"
                                   title={showRawOutput ? "Hide raw output" : "Show raw output"}
                                 >
                                   {showRawOutput ? (
-                                    <EyeOff className="w-4 h-4 text-gray-600 dark:text-text-muted" />
+                                    <EyeOff className="w-4 h-4 text-muted-foreground" />
                                   ) : (
-                                    <Eye className="w-4 h-4 text-gray-600 dark:text-text-muted" />
+                                    <Eye className="w-4 h-4 text-muted-foreground" />
                                   )}
                                 </button>
 

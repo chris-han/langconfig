@@ -691,11 +691,29 @@ function OntologyGraphInner({ onSelectItem }: { onSelectItem?: (type: "node" | "
       if (tagName === "INPUT" || tagName === "TEXTAREA") {
         return;
       }
+
+      setNodes((current) => {
+        const selectedNodeIds = new Set(current.filter((n) => n.selected).map((n) => n.id));
+        if (selectedNodeIds.size === 0) return current;
+
+        setEdges((eds) =>
+          eds.filter(
+            (ed) =>
+              !ed.selected &&
+              !selectedNodeIds.has(ed.source) &&
+              !selectedNodeIds.has(ed.target),
+          ),
+        );
+
+        onSelectItem?.("node", null);
+        return current.filter((n) => !selectedNodeIds.has(n.id));
+      });
+
       setEdges((current) => current.filter((edge) => !edge.selected));
     };
     document.addEventListener("keydown", handleKey);
     return () => document.removeEventListener("keydown", handleKey);
-  }, []);
+  }, [onSelectItem]);
 
   const onNodesChange = useCallback((changes: NodeChange[]) => {
     setNodes((current) => applyNodeChanges(changes, current) as Node<NodeData>[]);

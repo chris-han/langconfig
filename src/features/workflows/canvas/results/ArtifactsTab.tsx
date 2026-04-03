@@ -312,7 +312,7 @@ export default function ArtifactsTab({ artifacts, loading, onCreatePresentation 
                   {/* Select All / Deselect All */}
                   <button
                     onClick={toggleSelectAll}
-                    className="px-3 py-1.5 text-sm flex items-center gap-1.5 rounded-lg border transition-colors hover:bg-white/5"
+                    className="px-3 py-1.5 text-sm flex items-center gap-1.5 rounded-lg border transition-colors hover:bg-muted"
                     style={{ borderColor: 'var(--color-border-dark)', color: 'var(--color-text-muted)' }}
                     title={selectedCount === downloadableImages.length ? "Deselect All" : "Select All"}
                   >
@@ -362,7 +362,7 @@ export default function ArtifactsTab({ artifacts, loading, onCreatePresentation 
                         setLocalSelectedItems(new Set());
                       }
                     }}
-                    className="px-3 py-1.5 text-sm flex items-center gap-1.5 rounded-lg border transition-colors hover:bg-white/5"
+                    className="px-3 py-1.5 text-sm flex items-center gap-1.5 rounded-lg border transition-colors hover:bg-muted"
                     style={{ borderColor: 'var(--color-border-dark)', color: 'var(--color-text-muted)' }}
                     title="Cancel selection"
                   >
@@ -375,7 +375,7 @@ export default function ArtifactsTab({ artifacts, loading, onCreatePresentation 
                   {/* Enter selection mode */}
                   <button
                     onClick={() => setIsSelecting(true)}
-                    className="px-3 py-1.5 text-sm flex items-center gap-1.5 rounded-lg border transition-colors hover:bg-white/5"
+                    className="px-3 py-1.5 text-sm flex items-center gap-1.5 rounded-lg border transition-colors hover:bg-muted"
                     style={{ borderColor: 'var(--color-border-dark)', color: 'var(--color-text-muted)' }}
                     title="Select images to download"
                   >
