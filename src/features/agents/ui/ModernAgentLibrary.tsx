@@ -6,7 +6,7 @@
  */
 
 import { useState, useEffect, useMemo, useCallback } from 'react';
-import { Plus, X, History, Bot, Trash2, ChevronDown } from 'lucide-react';
+import { Plus, X, History, Bot, Trash2, ChevronDown, ChevronRight } from 'lucide-react';
 import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { getModelDisplayName } from '../../../lib/modelDisplayNames';
 import DeepAgentBuilder from './DeepAgentBuilder';
@@ -714,20 +714,23 @@ export default function ModernAgentLibrary({
                 {/* Recipe Category Header */}
                 <button
                   onClick={() => toggleCategory('workflow-recipes')}
-                  className="w-full flex items-center justify-between px-3 py-2 text-left transition-colors hover:bg-gray-50 dark:hover:bg-white/5"
+                  className="w-full flex items-center justify-between px-2 py-1.5 rounded hover:bg-opacity-80 transition-colors"
+                  style={{ backgroundColor: 'var(--color-background-dark)' }}
                 >
                   <div className="flex items-center gap-2">
-                    <span className="text-sm font-semibold" style={{ color: 'var(--color-text-primary, #1a1a1a)' }}>
+                    <span className="text-sm font-semibold" style={{ color: 'var(--color-text-primary)' }}>
                       Workflow Recipes
                     </span>
-                    <span className="text-xs px-1.5 py-0.5 rounded bg-gray-100 dark:bg-white/10" style={{ color: 'var(--color-text-muted, #6b7280)' }}>
+                    <span className="text-xs px-1.5 py-0.5 rounded" style={{ backgroundColor: 'var(--color-background-light)', color: 'var(--color-text-muted)' }}>
                       {recipes.length}
                     </span>
                     <span className="inline-flex items-center px-1.5 py-0.5 text-[9px] font-bold bg-primary/20 text-primary rounded uppercase">
                       EXP
                     </span>
                   </div>
-                  <ChevronDown size={16} className={`transition-transform ${expandedCategories.has('workflow-recipes') ? 'rotate-180' : ''}`} style={{ color: 'var(--color-text-muted, #6b7280)' }} />
+                  <span style={{ color: 'var(--color-text-muted)' }}>
+                    {expandedCategories.has('workflow-recipes') ? <ChevronDown size={16} /> : <ChevronRight size={16} />}
+                  </span>
                 </button>
 
                 {/* Recipes List */}
@@ -737,13 +740,13 @@ export default function ModernAgentLibrary({
                       <button
                         key={recipe.recipe_id}
                         onClick={() => handleRecipeClick(recipe)}
-                        className={`w-full flex items-start gap-3 p-3 rounded-md border text-left transition-all duration-200 ${selectedRecipe?.recipe_id === recipe.recipe_id
+                        className={`group w-full flex items-start gap-3 p-3 rounded-md border text-left transition-all duration-200 ${selectedRecipe?.recipe_id === recipe.recipe_id
                           ? 'bg-card border-primary shadow-sm ring-1 ring-primary/20'
                           : 'bg-card border-border hover:border-primary/50 hover:shadow-md'
                           }`}
                       >
-                        <div className="w-10 h-10 rounded-md bg-gray-100 dark:bg-background-dark border border-sidebar-border flex items-center justify-center flex-shrink-0">
-                          <span className="material-symbols-outlined text-primary" style={{ fontSize: '20px' }}>
+                        <div className={`w-10 h-10 rounded-md flex items-center justify-center flex-shrink-0 transition-colors ${selectedRecipe?.recipe_id === recipe.recipe_id ? 'bg-primary/10 text-primary' : 'bg-muted text-muted-foreground group-hover:text-primary group-hover:bg-primary/5'}`}>
+                          <span className="material-symbols-outlined text-xl">
                             {recipe.icon}
                           </span>
                         </div>
@@ -772,17 +775,20 @@ export default function ModernAgentLibrary({
                 {/* Category Header */}
                 <button
                   onClick={() => toggleCategory(category.id)}
-                  className="w-full flex items-center justify-between px-3 py-2 text-left transition-colors hover:bg-gray-50 dark:hover:bg-white/5"
+                  className="w-full flex items-center justify-between px-2 py-1.5 rounded hover:bg-opacity-80 transition-colors"
+                  style={{ backgroundColor: 'var(--color-background-dark)' }}
                 >
                   <div className="flex items-center gap-2">
-                    <span className="text-sm font-semibold" style={{ color: 'var(--color-text-primary, #1a1a1a)' }}>
+                    <span className="text-sm font-semibold" style={{ color: 'var(--color-text-primary)' }}>
                       {category.name}
                     </span>
-                    <span className="text-xs px-1.5 py-0.5 rounded bg-gray-100 dark:bg-white/10" style={{ color: 'var(--color-text-muted, #6b7280)' }}>
+                    <span className="text-xs px-1.5 py-0.5 rounded" style={{ backgroundColor: 'var(--color-background-light)', color: 'var(--color-text-muted)' }}>
                       {category.agents.length}
                     </span>
                   </div>
-                  <ChevronDown size={16} className={`transition-transform ${expandedCategories.has(category.id) ? 'rotate-180' : ''}`} style={{ color: 'var(--color-text-muted, #6b7280)' }} />
+                  <span style={{ color: 'var(--color-text-muted)' }}>
+                    {expandedCategories.has(category.id) ? <ChevronDown size={16} /> : <ChevronRight size={16} />}
+                  </span>
                 </button>
 
                 {/* Agents List - Card Style */}
@@ -792,13 +798,13 @@ export default function ModernAgentLibrary({
                       <button
                         key={agent.id}
                         onClick={() => handleAgentClick(agent)}
-                        className={`w-full flex items-start gap-3 p-3 rounded-md border text-left transition-all duration-200 ${selectedAgent?.id === agent.id
+                        className={`group w-full flex items-start gap-3 p-3 rounded-md border text-left transition-all duration-200 ${selectedAgent?.id === agent.id
                           ? 'bg-card border-primary shadow-sm ring-1 ring-primary/20'
                           : 'bg-card border-border hover:border-primary/50 hover:shadow-md'
                           }`}
                       >
-                        <div className="w-10 h-10 rounded-md bg-gray-100 dark:bg-background-dark border border-sidebar-border flex items-center justify-center flex-shrink-0">
-                          <span className="material-symbols-outlined text-primary" style={{ fontSize: '20px' }}>
+                        <div className={`w-10 h-10 rounded-md flex items-center justify-center flex-shrink-0 transition-colors ${selectedAgent?.id === agent.id ? 'bg-primary/10 text-primary' : 'bg-muted text-muted-foreground group-hover:text-primary group-hover:bg-primary/5'}`}>
+                          <span className="material-symbols-outlined text-xl">
                             {agent.icon}
                           </span>
                         </div>
