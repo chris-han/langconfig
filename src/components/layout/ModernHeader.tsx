@@ -6,9 +6,10 @@
  */
 
 import { useState } from 'react';
-import { MessageSquare } from 'lucide-react';
+import { Bell, ChevronDown, HelpCircle, Settings, User } from 'lucide-react';
 import { useProject } from "../../contexts/ProjectContext";
 import { useChat } from '../../features/chat/state/ChatContext';
+import { Button } from '../ui/button';
 
 interface ModernHeaderProps {
   currentView: 'studio' | 'library' | 'settings' | 'knowledge' | 'agents' | 'skills' | 'home' | 'community' | 'semantier';
@@ -23,236 +24,103 @@ export default function ModernHeader({
   const { openChat } = useChat();
   const [showProjectDropdown, setShowProjectDropdown] = useState(false);
 
+  const navItems: { key: ModernHeaderProps['currentView']; label: string; icon: string }[] = [
+    { key: 'studio',    label: 'Studio',    icon: 'account_tree' },
+    { key: 'agents',    label: 'Agents',    icon: 'psychology' },
+    { key: 'library',   label: 'Library',   icon: 'folder' },
+    { key: 'knowledge', label: 'Knowledge', icon: 'database' },
+    { key: 'community', label: 'Community', icon: 'groups' },
+    { key: 'semantier', label: 'Semantier', icon: 'schema' },
+  ];
+
   return (
-    <header className="flex items-center justify-between whitespace-nowrap border-b px-4 py-4 z-20 shrink-0 h-20" style={{ backgroundColor: 'var(--color-primary)', borderBottomColor: 'var(--color-border-dark)' }}>
-      {/* Left: Logo - centered over agent library sidebar */}
-      <div className="flex items-center h-full justify-center" style={{ width: '320px', marginLeft: '-16px' }}>
+    <header className="h-12 flex items-center px-4 bg-card border-b border-border shrink-0 z-20 gap-4">
 
-        <button
-          onClick={() => onViewChange('home')}
-          style={{
-            backgroundColor: 'transparent',
-            borderRadius: '0',
-            padding: '0',
-            boxShadow: 'none',
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            gap: '16px',
-            overflow: 'visible',
-            height: '70px',
-            maxWidth: '280px',
-            border: 'none',
-            cursor: 'pointer',
-          }}
-        >
-          {/* GhostPeony Avatar Icon - rotated 45deg right */}
-          <img
-            src="/GhostPeony.png"
-            alt="GhostPeony"
-            style={{
-              height: '68px',
-              width: '68px',
-              display: 'block',
-              borderRadius: '14px',
-              objectFit: 'cover',
-              transform: 'rotate(-45deg)', // 45 degrees to the right
-            }}
-          />
-          {/* LangConfig Logo */}
-          <img
-            src="/langconfignewlogo.png"
-            alt="LangConfig"
-            style={{
-              height: '100px',
-              width: 'auto',
-              display: 'block',
-              filter: 'brightness(0) invert(1)', // Makes the logo white
-              margin: '0',
-              marginTop: '15px', // Shift logo down slightly
-            }}
-          />
-        </button>
-      </div>
+      {/* Brand */}
+      <button
+        onClick={() => onViewChange('home')}
+        className="flex items-center gap-2 shrink-0 focus:outline-none"
+      >
+        <img
+          src="/GhostPeony.png"
+          alt="GhostPeony"
+          className="h-7 w-7 rounded-md object-cover"
+          style={{ transform: 'rotate(-45deg)' }}
+        />
+        <img
+          src="/langconfignewlogo.png"
+          alt="LangConfig"
+          className="h-5 w-auto"
+        />
+      </button>
 
-      {/* Center: Navigation Tabs */}
-      <nav className="flex items-center gap-2 absolute left-1/2 transform -translate-x-1/2">
-        <button
-          onClick={() => onViewChange('studio')}
-          className={`px-4 py-2 text-sm rounded-lg transition-all border ${currentView === 'studio'
-            ? 'bg-white/30 text-white font-semibold border-white/40'
-            : 'text-white/90 font-medium hover:bg-white/15 hover:text-white border-transparent hover:border-white/20'
-            } `}
-          style={{
-            textShadow: currentView === 'studio' ? '0 1px 2px rgba(0, 0, 0, 0.25)' : '0 1px 2px rgba(0, 0, 0, 0.15)',
-            backdropFilter: currentView === 'studio' ? 'blur(8px)' : 'none'
-          }}
-        >
-          <span className="flex items-center gap-2">
-            <span className="material-symbols-outlined text-base">account_tree</span>
-            Studio
-          </span>
-        </button>
-        <button
-          onClick={() => onViewChange('agents')}
-          className={`px-4 py-2 text-sm rounded-lg transition-all border ${currentView === 'agents'
-            ? 'bg-white/30 text-white font-semibold border-white/40'
-            : 'text-white/90 font-medium hover:bg-white/15 hover:text-white border-transparent hover:border-white/20'
-            } `}
-          style={{
-            textShadow: currentView === 'agents' ? '0 1px 2px rgba(0, 0, 0, 0.25)' : '0 1px 2px rgba(0, 0, 0, 0.15)',
-            backdropFilter: currentView === 'agents' ? 'blur(8px)' : 'none'
-          }}
-        >
-          <span className="flex items-center gap-2">
-            <span className="material-symbols-outlined text-base">psychology</span>
-            Agents
-          </span>
-        </button>
-        <button
-          onClick={() => onViewChange('library')}
-          className={`px-4 py-2 text-sm rounded-lg transition-all border ${currentView === 'library'
-            ? 'bg-white/30 text-white font-semibold border-white/40'
-            : 'text-white/90 font-medium hover:bg-white/15 hover:text-white border-transparent hover:border-white/20'
-            } `}
-          style={{
-            textShadow: currentView === 'library' ? '0 1px 2px rgba(0, 0, 0, 0.25)' : '0 1px 2px rgba(0, 0, 0, 0.15)',
-            backdropFilter: currentView === 'library' ? 'blur(8px)' : 'none'
-          }}
-        >
-          <span className="flex items-center gap-2">
-            <span className="material-symbols-outlined text-base">folder</span>
-            Library
-          </span>
-        </button>
-        <button
-          onClick={() => onViewChange('knowledge')}
-          className={`px-4 py-2 text-sm rounded-lg transition-all border ${currentView === 'knowledge'
-            ? 'bg-white/30 text-white font-semibold border-white/40'
-            : 'text-white/90 font-medium hover:bg-white/15 hover:text-white border-transparent hover:border-white/20'
+      {/* Nav tabs — left-anchored, natural flow */}
+      <nav className="flex items-center gap-1">
+        {navItems.map(({ key, label, icon }) => (
+          <button
+            key={key}
+            onClick={() => onViewChange(key)}
+            className={`flex items-center gap-1.5 px-3 h-8 text-sm rounded-md transition-colors ${
+              currentView === key
+                ? 'bg-accent text-accent-foreground font-semibold'
+                : 'text-muted-foreground hover:bg-accent hover:text-accent-foreground'
             }`}
-          style={{
-            textShadow: currentView === 'knowledge' ? '0 1px 2px rgba(0, 0, 0, 0.25)' : '0 1px 2px rgba(0, 0, 0, 0.15)',
-            backdropFilter: currentView === 'knowledge' ? 'blur(8px)' : 'none'
-          }}
-        >
-          <span className="flex items-center gap-2">
-            <span className="material-symbols-outlined text-base">database</span>
-            Knowledge
-          </span>
-        </button>
-        <button
-          onClick={() => onViewChange('community')}
-          className={`px-4 py-2 text-sm rounded-lg transition-all border ${currentView === 'community'
-            ? 'bg-white/30 text-white font-semibold border-white/40'
-            : 'text-white/90 font-medium hover:bg-white/15 hover:text-white border-transparent hover:border-white/20'
-            }`}
-          style={{
-            textShadow: currentView === 'community' ? '0 1px 2px rgba(0, 0, 0, 0.25)' : '0 1px 2px rgba(0, 0, 0, 0.15)',
-            backdropFilter: currentView === 'community' ? 'blur(8px)' : 'none'
-          }}
-        >
-          <span className="flex items-center gap-2">
-            <span className="material-symbols-outlined text-base">groups</span>
-            Community
-          </span>
-        </button>
-        <button
-          onClick={() => onViewChange('semantier')}
-          className={`px-4 py-2 text-sm rounded-lg transition-all border ${currentView === 'semantier'
-            ? 'bg-white/30 text-white font-semibold border-white/40'
-            : 'text-white/90 font-medium hover:bg-white/15 hover:text-white border-transparent hover:border-white/20'
-            }`}
-          style={{
-            textShadow: currentView === 'semantier' ? '0 1px 2px rgba(0, 0, 0, 0.25)' : '0 1px 2px rgba(0, 0, 0, 0.15)',
-            backdropFilter: currentView === 'semantier' ? 'blur(8px)' : 'none'
-          }}
-        >
-          <span className="flex items-center gap-2">
-            <span className="material-symbols-outlined text-base">schema</span>
-            Semantier
-          </span>
-        </button>
+          >
+            <span className="material-symbols-outlined" style={{ fontSize: '15px' }}>{icon}</span>
+            {label}
+          </button>
+        ))}
       </nav>
 
-      {/* Right: Project Selector & Action Buttons */}
-      <div className="flex items-center gap-2">
-        {/* Chat Button */}
-        <button
-          onClick={() => openChat()}
-          className="flex items-center justify-center h-10 w-10 rounded-lg hover:bg-white/15 transition-all text-white/90 hover:text-white border border-transparent hover:border-white/20"
-          title="Chat (Ctrl+K)"
-          style={{
-            textShadow: '0 1px 2px rgba(0, 0, 0, 0.15)'
-          }}
-        >
-          <MessageSquare className="w-5 h-5" />
-        </button>
+      {/* Spacer */}
+      <div className="flex-1" />
 
-        {/* Project Selector */}
+      {/* Right actions */}
+      <div className="flex items-center gap-1">
+
+        {/* Chat / message */}
+        <Button variant="ghost" size="icon" className="h-8 w-8" title="Chat (Ctrl+K)" onClick={openChat}>
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="h-4 w-4"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+        </Button>
+
+        <div className="w-px h-5 bg-border mx-1" />
+
+        {/* Project selector */}
         <div className="relative">
-          <button
+          <Button
+            variant="ghost"
+            size="sm"
+            className="h-8 text-xs gap-1.5 min-w-[120px] justify-start"
             onClick={() => setShowProjectDropdown(!showProjectDropdown)}
-            className="flex items-center gap-2 px-3 py-2 rounded-lg hover:bg-white/15 transition-all text-white/90 hover:text-white border border-white/20 hover:border-white/40"
-            style={{
-              textShadow: '0 1px 2px rgba(0, 0, 0, 0.15)',
-              minWidth: '150px'
-            }}
           >
-            <span className="material-symbols-outlined text-base">folder_open</span>
-            <span className="text-sm font-medium truncate">
-              {loading ? 'Loading...' : activeProject?.name || 'No Project'}
-            </span>
-            <span className="material-symbols-outlined text-base ml-auto">
-              {showProjectDropdown ? 'expand_less' : 'expand_more'}
-            </span>
-          </button>
+            <span className="material-symbols-outlined text-muted-foreground" style={{ fontSize: '15px' }}>folder_open</span>
+            <span className="truncate">{loading ? 'Loading…' : activeProject?.name || 'No Project'}</span>
+            <ChevronDown className="h-3.5 w-3.5 ml-auto shrink-0 text-muted-foreground" />
+          </Button>
 
-          {/* Dropdown */}
           {showProjectDropdown && (
             <>
-              <div
-                className="fixed inset-0 z-30"
-                onClick={() => setShowProjectDropdown(false)}
-              />
-              <div
-                className="absolute right-0 mt-2 w-64 rounded-lg shadow-lg border z-40 max-h-96 overflow-auto"
-                style={{
-                  backgroundColor: 'var(--color-panel-dark)',
-                  borderColor: 'var(--color-border-dark)'
-                }}
-              >
+              <div className="fixed inset-0 z-30" onClick={() => setShowProjectDropdown(false)} />
+              <div className="absolute right-0 mt-1 w-56 rounded-md shadow-md border bg-card border-border z-40 py-1 max-h-80 overflow-auto">
                 {projects.length === 0 ? (
-                  <div className="px-4 py-3 text-sm" style={{ color: 'var(--color-text-muted)' }}>
-                    No projects found
-                  </div>
+                  <div className="px-3 py-2 text-xs text-muted-foreground">No projects found</div>
                 ) : (
                   projects.map(project => (
                     <button
                       key={project.id}
-                      onClick={() => {
-                        setActiveProjectId(project.id);
-                        setShowProjectDropdown(false);
-                      }}
-                      className="w-full px-4 py-2 text-left hover:bg-white/5 transition-all flex items-center justify-between"
+                      onClick={() => { setActiveProjectId(project.id); setShowProjectDropdown(false); }}
+                      className="w-full px-3 py-1.5 text-left text-sm hover:bg-accent flex items-center justify-between gap-2"
                     >
                       <div className="flex-1 min-w-0">
-                        <div
-                          className="text-sm font-medium truncate"
-                          style={{ color: activeProject?.id === project.id ? 'var(--color-primary)' : 'var(--color-text-primary)' }}
-                        >
+                        <div className={`font-medium truncate ${activeProject?.id === project.id ? 'text-primary' : 'text-foreground'}`}>
                           {project.name}
                         </div>
                         {project.description && (
-                          <div className="text-xs truncate" style={{ color: 'var(--color-text-muted)' }}>
-                            {project.description}
-                          </div>
+                          <div className="text-xs text-muted-foreground truncate">{project.description}</div>
                         )}
                       </div>
                       {activeProject?.id === project.id && (
-                        <span className="material-symbols-outlined text-base ml-2" style={{ color: 'var(--color-primary)' }}>
-                          check
-                        </span>
+                        <span className="material-symbols-outlined text-primary shrink-0" style={{ fontSize: '14px' }}>check</span>
                       )}
                     </button>
                   ))
@@ -262,17 +130,32 @@ export default function ModernHeader({
           )}
         </div>
 
-        <button
-          onClick={() => onViewChange('settings')}
-          className="flex items-center justify-center h-10 w-10 rounded-lg hover:bg-white/15 transition-all text-white/90 hover:text-white border border-transparent hover:border-white/20"
-          title="Settings"
-          style={{
-            textShadow: '0 1px 2px rgba(0, 0, 0, 0.15)'
-          }}
-        >
-          <span className="material-symbols-outlined text-base">settings</span>
-        </button>
+        <div className="w-px h-5 bg-border mx-1" />
+
+        {/* Bell */}
+        <Button variant="ghost" size="icon" className="h-8 w-8 relative">
+          <Bell className="h-4 w-4" />
+          <span className="absolute top-1.5 right-1.5 h-1.5 w-1.5 rounded-full bg-destructive" />
+        </Button>
+
+        {/* Help */}
+        <Button variant="ghost" size="icon" className="h-8 w-8">
+          <HelpCircle className="h-4 w-4" />
+        </Button>
+
+        {/* Settings */}
+        <Button variant="ghost" size="icon" className="h-8 w-8" onClick={() => onViewChange('settings')}>
+          <Settings className="h-4 w-4" />
+        </Button>
+
+        {/* User */}
+        <Button variant="ghost" size="icon" className="h-8 w-8 rounded-full">
+          <div className="h-6 w-6 rounded-full bg-primary/20 flex items-center justify-center">
+            <User className="h-3.5 w-3.5 text-primary" />
+          </div>
+        </Button>
       </div>
+
     </header>
   );
 }

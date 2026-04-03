@@ -3,16 +3,15 @@ import Editor, { useMonaco } from "@monaco-editor/react";
 import "reactflow/dist/style.css";
 import {
   AlertTriangle,
-  BookOpen,
+  Box,
   CheckCircle2,
-  CircleDot,
   FileCode2,
   GitBranch,
   History,
   Info,
   Layers3,
   Link2,
-  Play,
+  Ratio,
   RefreshCw,
   Search,
   Settings2,
@@ -415,6 +414,7 @@ function ExplorerPane({
 
   useEffect(() => {
     setExpandedIds(new Set(groups[activeTab].map((node) => node.id)));
+    setQuery("");
   }, [activeTab, groups]);
 
   const normalizedQuery = query.trim().toLowerCase();
@@ -433,7 +433,8 @@ function ExplorerPane({
     }
 
     const isFolder = node.type === "folder";
-    const expanded = expandedIds.has(node.id);
+    const hasChildren = isFolder && Boolean(node.children?.length);
+    const expanded = hasChildren && expandedIds.has(node.id);
     const selected = selectedItem?.id === node.id;
 
     return (
@@ -450,6 +451,9 @@ function ExplorerPane({
           }}
           onClick={() => {
             if (isFolder) {
+              if (!hasChildren) {
+                return;
+              }
               setExpandedIds((current) => {
                 const next = new Set(current);
                 if (next.has(node.id)) {
@@ -470,19 +474,21 @@ function ExplorerPane({
           ].join(" ")}
           style={{ paddingLeft: `${12 + level * 16}px` }}
         >
-          <span className={`material-symbols-outlined text-base text-muted-foreground transition-transform ${isFolder && expanded ? "rotate-90" : ""}`}>
-            chevron_right
-          </span>
-          {!isFolder && node.type === "ontology" && <FileCode2 className="h-4 w-4 text-primary" />}
-          {!isFolder && node.type === "dimension" && <CircleDot className="h-4 w-4 text-sky-400" />}
+          {hasChildren ? (
+            <span className={`material-symbols-outlined text-base text-muted-foreground transition-transform ${expanded ? "rotate-90" : ""}`}>
+              chevron_right
+            </span>
+          ) : (
+            <span className="w-4 shrink-0" aria-hidden />
+          )}
+          {!isFolder && node.type === "ontology" && <Box className="h-4 w-4 text-primary" />}
+          {!isFolder && node.type === "dimension" && <Ratio className="h-4 w-4 text-sky-400" />}
           {!isFolder && node.type === "rule" && <Workflow className="h-4 w-4 text-amber-400" />}
           {isFolder && <Layers3 className="h-4 w-4 text-primary" />}
-          <div className="min-w-0 flex-1">
-            <div className={`truncate ${isFolder ? "font-semibold text-muted-foreground" : "font-medium text-foreground"}`}>{node.name}</div>
-            {!isFolder && (
-              <div className="truncate text-xs text-muted-foreground">
-                {[node.prefix, node.version].filter(Boolean).join(" ")}
-              </div>
+          <div className="min-w-0 flex-1 flex items-center justify-between gap-2">
+            <span className={`truncate ${isFolder ? "font-semibold text-muted-foreground" : "font-medium text-foreground"}`}>{node.name}</span>
+            {!isFolder && node.version && (
+              <span className="shrink-0 text-xs text-muted-foreground">{node.version}</span>
             )}
           </div>
         </button>
@@ -493,39 +499,32 @@ function ExplorerPane({
 
   return (
     <div className="flex h-full flex-col bg-sidebar border-r border-sidebar-border">
-      <div className="border-b border-sidebar-border p-3">
-        <div className="mb-3 flex items-center gap-2">
-          <Layers3 className="h-5 w-5 text-primary" />
-          <div>
-            <div className="text-sm font-semibold text-sidebar-foreground">Resource Explorer</div>
-            <div className="text-xs text-muted-foreground">Ontology, dimensions, and rules</div>
-          </div>
-        </div>
-        <div className="relative">
-          <Search className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
-          <Input
-            value={query}
-            onChange={(event) => setQuery(event.target.value)}
-            placeholder="Search resources"
-            className="h-8 border-sidebar-border bg-sidebar-accent pl-9 text-sm"
-          />
-        </div>
-      </div>
       <Tabs value={activeTab} onValueChange={(value) => onTabChange(value as ExplorerTab)} className="flex min-h-0 flex-1 flex-col">
         <TabsList className="h-auto w-full justify-start rounded-none border-b border-sidebar-border bg-transparent p-0">
-          <TabsTrigger value="ontology" className="rounded-none border-b border-transparent px-3 py-2 text-xs data-[state=active]:border-primary data-[state=active]:bg-transparent">
-            <BookOpen className="h-3.5 w-3.5" />
+          <TabsTrigger value="ontology" className="flex-none rounded-none border-x-0 border-t-0 border-b-2 border-transparent px-3 py-2 text-xs font-normal text-muted-foreground shadow-none bg-transparent data-[state=active]:border-primary data-[state=active]:bg-transparent data-[state=active]:text-foreground data-[state=active]:shadow-none">
+            <Box className="h-3.5 w-3.5" />
             Ontology
           </TabsTrigger>
-          <TabsTrigger value="dimensions" className="rounded-none border-b border-transparent px-3 py-2 text-xs data-[state=active]:border-primary data-[state=active]:bg-transparent">
-            <GitBranch className="h-3.5 w-3.5" />
+          <TabsTrigger value="dimensions" className="flex-none rounded-none border-x-0 border-t-0 border-b-2 border-transparent px-3 py-2 text-xs font-normal text-muted-foreground shadow-none bg-transparent data-[state=active]:border-primary data-[state=active]:bg-transparent data-[state=active]:text-foreground data-[state=active]:shadow-none">
+            <Ratio className="h-3.5 w-3.5" />
             Dimensions
           </TabsTrigger>
-          <TabsTrigger value="rules" className="rounded-none border-b border-transparent px-3 py-2 text-xs data-[state=active]:border-primary data-[state=active]:bg-transparent">
+          <TabsTrigger value="rules" className="flex-none rounded-none border-x-0 border-t-0 border-b-2 border-transparent px-3 py-2 text-xs font-normal text-muted-foreground shadow-none bg-transparent data-[state=active]:border-primary data-[state=active]:bg-transparent data-[state=active]:text-foreground data-[state=active]:shadow-none">
             <Workflow className="h-3.5 w-3.5" />
             Rules
           </TabsTrigger>
         </TabsList>
+        <div className="border-b border-sidebar-border px-3 py-2">
+          <div className="relative">
+            <Search className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+            <Input
+              value={query}
+              onChange={(event) => setQuery(event.target.value)}
+              placeholder={`Search ${activeTab}`}
+              className="h-8 border-sidebar-border bg-sidebar-accent pl-9 text-sm"
+            />
+          </div>
+        </div>
         <TabsContent value={activeTab} className="m-0 min-h-0 flex-1 overflow-auto p-2">
           <div className="space-y-1">{groups[activeTab].map((node) => renderNode(node))}</div>
         </TabsContent>
@@ -562,18 +561,18 @@ function InspectorPane({ selectedItem, graphSelection }: { selectedItem: TreeNod
     <div className="flex h-full flex-col bg-sidebar border-l border-sidebar-border">
       <Tabs defaultValue="properties" className="flex min-h-0 flex-1 flex-col">
         <TabsList className="h-auto w-full justify-start rounded-none border-b border-sidebar-border bg-transparent p-0">
-          <TabsTrigger value="properties" className="rounded-none border-b border-transparent px-3 py-2 text-xs data-[state=active]:border-primary data-[state=active]:bg-transparent">
+          <TabsTrigger value="properties" className="flex-none rounded-none border-x-0 border-t-0 border-b-2 border-transparent px-3 py-2 text-xs bg-transparent shadow-none data-[state=active]:border-primary data-[state=active]:bg-transparent data-[state=active]:shadow-none">
             <Settings2 className="h-3.5 w-3.5" />
             属性
           </TabsTrigger>
-          <TabsTrigger value="reconciliation" className="rounded-none border-b border-transparent px-3 py-2 text-xs data-[state=active]:border-primary data-[state=active]:bg-transparent">
+          <TabsTrigger value="reconciliation" className="flex-none rounded-none border-x-0 border-t-0 border-b-2 border-transparent px-3 py-2 text-xs bg-transparent shadow-none data-[state=active]:border-primary data-[state=active]:bg-transparent data-[state=active]:shadow-none">
             <Link2 className="h-3.5 w-3.5" />
             勾稽
             <span className="ml-1 rounded bg-destructive px-1 py-0 text-[10px] font-semibold text-destructive-foreground">
               {reconciliationAlerts.length}
             </span>
           </TabsTrigger>
-          <TabsTrigger value="versions" className="rounded-none border-b border-transparent px-3 py-2 text-xs data-[state=active]:border-primary data-[state=active]:bg-transparent">
+          <TabsTrigger value="versions" className="flex-none rounded-none border-x-0 border-t-0 border-b-2 border-transparent px-3 py-2 text-xs bg-transparent shadow-none data-[state=active]:border-primary data-[state=active]:bg-transparent data-[state=active]:shadow-none">
             <History className="h-3.5 w-3.5" />
             版本
           </TabsTrigger>
@@ -581,7 +580,7 @@ function InspectorPane({ selectedItem, graphSelection }: { selectedItem: TreeNod
 
         <TabsContent value="properties" className="m-0 flex-1 overflow-auto p-3">
           <div className="space-y-4">
-            <div className="rounded-md border border-border bg-card/60 p-3">
+            <div className="rounded-md border border-primary/40 bg-card/60 p-3">
               <div className="flex items-center gap-2 text-primary">
                 <Settings2 className="h-4 w-4" />
                 <span className="text-sm font-medium">Inspector</span>
@@ -593,7 +592,7 @@ function InspectorPane({ selectedItem, graphSelection }: { selectedItem: TreeNod
             </div>
 
             {graphSelection?.type === "edge" && (
-                <Card className="gap-3 rounded-md py-4">
+                <Card className="gap-3 rounded-md border-primary/40 py-4">
                 <CardContent className="px-4">
                   <div className="text-xs font-semibold uppercase tracking-[0.18em] text-muted-foreground">Relationship</div>
                   <div className="mt-3 text-sm font-semibold text-foreground">{edgeData?.source} {"->"} {edgeData?.target}</div>
@@ -603,7 +602,7 @@ function InspectorPane({ selectedItem, graphSelection }: { selectedItem: TreeNod
             )}
 
             {(title || identityLabel) && (
-                <Card className="gap-3 rounded-md py-4">
+                <Card className="gap-3 rounded-md border-primary/40 py-4">
                 <CardContent className="px-4">
                   <div className="text-xs font-semibold uppercase tracking-[0.18em] text-muted-foreground">Identity</div>
                   <div className="mt-3 space-y-1 text-sm font-semibold text-foreground">
@@ -615,11 +614,11 @@ function InspectorPane({ selectedItem, graphSelection }: { selectedItem: TreeNod
             )}
 
             {propertyRows.length > 0 ? (
-                <Card className="gap-3 rounded-md py-4">
+                <Card className="gap-3 rounded-md border-primary/40 py-4">
                 <CardContent className="space-y-3 px-4">
                   <div className="text-xs font-semibold uppercase tracking-[0.18em] text-muted-foreground">Fields</div>
                   {propertyRows.map((property: any) => (
-                    <div key={property.name} className="grid grid-cols-[1fr_auto] gap-3 rounded-lg border bg-muted/40 px-3 py-3">
+                    <div key={property.name} className="grid grid-cols-[1fr_auto] gap-3 rounded-lg border border-primary/20 bg-muted/40 px-3 py-3">
                       <div>
                         <div className="text-sm font-medium text-foreground">{property.name}</div>
                         <div className="mt-1 text-xs text-muted-foreground">{property.type}</div>
@@ -632,14 +631,14 @@ function InspectorPane({ selectedItem, graphSelection }: { selectedItem: TreeNod
                 </CardContent>
               </Card>
             ) : (
-              <div className="flex flex-col items-center justify-center rounded-md border border-dashed border-border px-4 py-10 text-center">
+              <div className="flex flex-col items-center justify-center rounded-md border border-dashed border-primary/40 px-4 py-10 text-center">
                 <Settings2 className="mb-3 h-10 w-10 text-muted-foreground/30" />
                 <p className="text-sm text-muted-foreground">选择一个资源查看属性</p>
               </div>
             )}
 
             {actions.length > 0 && (
-              <Card className="gap-3 py-4">
+              <Card className="gap-3 border-primary/40 py-4">
                 <CardContent className="px-4">
                   <div className="text-xs font-semibold uppercase tracking-[0.18em] text-muted-foreground">Actions</div>
                   <div className="mt-3 flex flex-wrap gap-2">
@@ -794,39 +793,6 @@ export default function SemantierPage() {
 
   return (
     <div className="flex h-full min-h-0 flex-col overflow-hidden bg-background text-foreground">
-      <header className="flex h-12 items-center justify-between border-b bg-card px-4">
-        <div className="flex items-center gap-4">
-          <div className="flex items-center gap-2">
-            <div className="flex h-7 w-7 items-center justify-center rounded-sm bg-primary text-primary-foreground">
-              <Layers3 className="h-4 w-4" />
-            </div>
-            <span className="font-semibold text-foreground">Semantier Studio</span>
-            <div className="rounded-sm bg-secondary px-1.5 py-0.5 text-[10px] font-medium text-secondary-foreground">Beta</div>
-          </div>
-          <div className="hidden text-xs text-muted-foreground md:block">
-            Ontology objects define structure. Execution rules stay in a separate layer.
-          </div>
-        </div>
-        <div className="flex items-center gap-2">
-          <Button
-            variant="ghost"
-            size="sm"
-            className="h-8 text-xs"
-            onClick={() => {
-              setEditorValue(executionRulesCode);
-              setWorkspaceTab("rules");
-            }}
-          >
-            <Sparkles className="h-3.5 w-3.5" />
-            Load rules
-          </Button>
-          <Button size="sm" className="h-8 text-xs" onClick={() => setValidationState("passed")}>
-            <Play className="h-3.5 w-3.5" />
-            Validate
-          </Button>
-        </div>
-      </header>
-
       <div className="min-h-0 flex-1">
         <ResizablePanelGroup direction="horizontal">
           <ResizablePanel defaultSize={400} minSize={300} maxSize={500}>
@@ -867,15 +833,15 @@ export default function SemantierPage() {
               </div>
               <Tabs value={workspaceTab} onValueChange={(value) => setWorkspaceTab(value as WorkspaceTab)} className="flex min-h-0 flex-1 flex-col overflow-hidden">
                 <TabsList className="h-auto w-full justify-start rounded-none border-b bg-card px-4 py-0">
-                  <TabsTrigger value="graph" className="rounded-none border-b border-transparent px-4 py-2.5 text-sm data-[state=active]:border-primary data-[state=active]:bg-transparent">
+                  <TabsTrigger value="graph" className="flex-none rounded-none border-x-0 border-t-0 border-b-2 border-transparent px-4 py-2.5 text-sm bg-transparent shadow-none data-[state=active]:border-primary data-[state=active]:bg-transparent data-[state=active]:shadow-none">
                     <GitBranch className="h-4 w-4" />
                     Graph Modeling
                   </TabsTrigger>
-                  <TabsTrigger value="rules" className="rounded-none border-b border-transparent px-4 py-2.5 text-sm data-[state=active]:border-primary data-[state=active]:bg-transparent">
+                  <TabsTrigger value="rules" className="flex-none rounded-none border-x-0 border-t-0 border-b-2 border-transparent px-4 py-2.5 text-sm bg-transparent shadow-none data-[state=active]:border-primary data-[state=active]:bg-transparent data-[state=active]:shadow-none">
                     <Workflow className="h-4 w-4" />
                     Execution Rules
                   </TabsTrigger>
-                  <TabsTrigger value="editor" className="rounded-none border-b border-transparent px-4 py-2.5 text-sm data-[state=active]:border-primary data-[state=active]:bg-transparent">
+                  <TabsTrigger value="editor" className="flex-none rounded-none border-x-0 border-t-0 border-b-2 border-transparent px-4 py-2.5 text-sm bg-transparent shadow-none data-[state=active]:border-primary data-[state=active]:bg-transparent data-[state=active]:shadow-none">
                     <FileCode2 className="h-4 w-4" />
                     Code View
                   </TabsTrigger>
