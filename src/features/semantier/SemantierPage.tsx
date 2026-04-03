@@ -542,6 +542,8 @@ function InspectorPane({ selectedItem, graphSelection }: { selectedItem: TreeNod
   const [fieldsCollapsed, setFieldsCollapsed] = useState(false);
   const [actionsCollapsed, setActionsCollapsed] = useState(false);
   const [relationshipCollapsed, setRelationshipCollapsed] = useState(false);
+  const [reconciliationCollapsed, setReconciliationCollapsed] = useState(false);
+  const [versionsCollapsed, setVersionsCollapsed] = useState(false);
 
   const graphData = graphSelection?.type === "node" ? graphSelection.data?.data : graphSelection?.data?.data;
   const edgeData = graphSelection?.type === "edge" ? graphSelection.data : null;
@@ -700,12 +702,21 @@ function InspectorPane({ selectedItem, graphSelection }: { selectedItem: TreeNod
 
         <TabsContent value="reconciliation" className="m-0 flex-1 overflow-auto flex flex-col">
           <div className="flex-1 overflow-auto p-4 space-y-2">
-            <label className="text-xs font-semibold text-muted-foreground uppercase tracking-wide mb-3 flex items-center gap-1.5">
-              <Link2 className="w-3.5 h-3.5 text-primary" />
-              实时勾稽检查
-            </label>
-            <p className="text-xs text-muted-foreground mb-3">监测跨域数据一致性，确保业财税三位一体</p>
-            {reconciliationAlerts.map((alert) => (
+            <button
+              onClick={() => setReconciliationCollapsed(!reconciliationCollapsed)}
+              className="w-full flex items-center justify-between text-xs font-semibold text-muted-foreground uppercase tracking-wide mb-2"
+            >
+              <span className="flex items-center gap-1.5">
+                <Link2 className="w-3.5 h-3.5 text-primary" />
+                实时勾稽检查
+                <span className="bg-primary/10 text-primary px-1.5 rounded text-[10px] font-medium normal-case tracking-normal">
+                  {reconciliationAlerts.length}
+                </span>
+              </span>
+              {reconciliationCollapsed ? <ChevronRight className="w-3.5 h-3.5" /> : <ChevronDown className="w-3.5 h-3.5" />}
+            </button>
+            {!reconciliationCollapsed && <p className="text-xs text-muted-foreground mb-3">监测跨域数据一致性，确保业财税三位一体</p>}
+            {!reconciliationCollapsed && reconciliationAlerts.map((alert) => (
               <div
                 key={alert.id}
                 className={[
@@ -738,13 +749,20 @@ function InspectorPane({ selectedItem, graphSelection }: { selectedItem: TreeNod
 
         <TabsContent value="versions" className="m-0 flex-1 overflow-auto p-4">
           <div className="space-y-5">
-            <div className="flex items-center justify-between">
-              <label className="text-xs font-semibold text-muted-foreground uppercase tracking-wide flex items-center gap-1.5">
+            <button
+              onClick={() => setVersionsCollapsed(!versionsCollapsed)}
+              className="w-full flex items-center justify-between text-xs font-semibold text-muted-foreground uppercase tracking-wide mb-2"
+            >
+              <span className="flex items-center gap-1.5">
                 <History className="w-3.5 h-3.5 text-primary" />
                 版本历史
-              </label>
-              <span className="text-xs px-2 py-0.5 rounded-full bg-primary/10 text-primary font-medium">语义版本控制</span>
-            </div>
+                <span className="bg-primary/10 text-primary px-1.5 rounded text-[10px] font-medium normal-case tracking-normal">
+                  {versionHistory.length}
+                </span>
+              </span>
+              {versionsCollapsed ? <ChevronRight className="w-3.5 h-3.5" /> : <ChevronDown className="w-3.5 h-3.5" />}
+            </button>
+            {!versionsCollapsed && (
             <div className="space-y-1.5">
               {versionHistory.map((entry, index) => (
                 <button
@@ -768,6 +786,7 @@ function InspectorPane({ selectedItem, graphSelection }: { selectedItem: TreeNod
                 </button>
               ))}
             </div>
+            )}
           </div>
         </TabsContent>
       </Tabs>
