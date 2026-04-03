@@ -292,8 +292,7 @@ export function useWorkflowPersistence({
               data: { label: e.label },
               reconnectable: true,
               animated: false,
-              style: { stroke: '#39d0cf', strokeWidth: 2 },
-              markerEnd: { type: 'arrowclosed', color: '#39d0cf', width: 16, height: 16 },
+              markerEnd: { type: 'arrowclosed', width: 16, height: 16 },
             }));
             setEdges(restoredEdges);
           }

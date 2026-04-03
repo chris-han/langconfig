@@ -42,11 +42,12 @@ export function useNodeManagement({
   // Handle node selection
   const handleNodeClick = useCallback(
     (_event: React.MouseEvent, node: Node) => {
+      setEdges((eds) => eds.map((edge) => ({ ...edge, selected: false, zIndex: 0 })));
       if (onNodeSelect) {
         onNodeSelect(node.id, node.data);
       }
     },
-    [onNodeSelect]
+    [onNodeSelect, setEdges]
   );
 
   // Handle node deletion

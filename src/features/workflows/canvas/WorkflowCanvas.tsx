@@ -27,8 +27,8 @@ import WorkflowEdge from './edges/WorkflowEdge';
 /** Semantier-equivalent CSS animations injected into the canvas */
 const GRAPH_CSS = `
 @keyframes v0-node-blink {
-  0%,100% { box-shadow: 0 0 0 2px rgba(45,212,191,.5), 0 0 10px rgba(45,212,191,.3); border-color: rgba(45,212,191,.8) !important; }
-  50% { box-shadow: 0 0 0 3px rgba(45,212,191,.9), 0 0 24px rgba(45,212,191,.6); border-color: rgba(45,212,191,1) !important; }
+  0%,100% { box-shadow: 0 0 0 2px rgba(234,179,8,.5), 0 0 10px rgba(234,179,8,.3); border-color: rgba(234,179,8,.8) !important; }
+  50% { box-shadow: 0 0 0 3px rgba(234,179,8,.9), 0 0 24px rgba(234,179,8,.6); border-color: rgba(234,179,8,1) !important; }
 }
 .node-blink { animation: v0-node-blink 1.5s ease-in-out infinite; z-index: 1000; }
 @keyframes node-running-pulse {
@@ -36,10 +36,23 @@ const GRAPH_CSS = `
   50% { box-shadow: 0 0 0 3px rgba(59,130,246,.8), 0 0 20px rgba(59,130,246,.6); }
 }
 .node-running { animation: node-running-pulse 1s ease-in-out infinite; }
+.react-flow__edge path.react-flow__edge-path {
+  stroke: rgb(57,208,207);
+  stroke-width: 2px;
+}
+.react-flow__arrowhead path,
+.react-flow__arrowhead polyline,
+.react-flow__arrowhead polygon {
+  stroke: rgb(57,208,207);
+  fill: rgb(57,208,207);
+}
+@keyframes v0-edge-glow {
+  0%,100% { stroke: rgba(250,204,21,.85); stroke-width: 2.5px; filter: drop-shadow(0 0 2px rgba(250,204,21,.9)); }
+  50% { stroke: rgba(255,220,50,1); stroke-width: 3.5px; filter: drop-shadow(0 0 4px rgba(255,220,50,1)); }
+}
 .react-flow__edge.selected path.react-flow__edge-path {
-  stroke: rgba(45,212,191,1) !important;
-  stroke-width: 3px !important;
-  filter: drop-shadow(0 0 4px rgba(45,212,191,.8));
+  animation: v0-edge-glow 1s ease-in-out infinite;
+  stroke: rgba(250,204,21,1) !important;
 }
 .react-flow__edge.selected path.react-flow__edge-interaction { stroke-width: 28px; cursor: pointer; }
 @keyframes handle-valid-breathe {
@@ -317,6 +330,29 @@ const WorkflowCanvas = forwardRef<WorkflowCanvasRef, WorkflowCanvasProps>(({
   const [nodes, setNodes, onNodesChangeBase] = useNodesState(initialNodes);
   const [edges, setEdges, onEdgesChange] = useEdgesState(initialEdges);
 
+  // Strip legacy edge styling from in-memory state so CSS owns the visual presentation
+  useEffect(() => {
+    setEdges((current) =>
+      current.map((edge) => {
+        const {
+          style: _style,
+          labelStyle: _labelStyle,
+          labelBgStyle: _labelBgStyle,
+          labelBgPadding: _labelBgPadding,
+          labelBgBorderRadius: _labelBgBorderRadius,
+          ...restEdge
+        } = edge as any;
+
+        return {
+          ...restEdge,
+          reconnectable: restEdge.reconnectable ?? true,
+          animated: false,
+          markerEnd: { type: 'arrowclosed' as const, width: 16, height: 16 },
+        };
+      })
+    );
+  }, [setEdges]);
+
   // Wrap onNodesChange with position validation
   const onNodesChange = useCallback((changes: any[]) => {
     const validatedChanges = changes.map((change) => {
@@ -343,20 +379,63 @@ const WorkflowCanvas = forwardRef<WorkflowCanvasRef, WorkflowCanvasProps>(({
 
   const onReconnect = useCallback((oldEdge: Edge, connection: Connection) => {
     edgeReconnectSuccessful.current = true;
-    setEdges((current) => reconnectEdge(oldEdge, connection, current));
-  }, [setEdges]);
+    const updatedSelectedEdge = {
+      ...oldEdge,
+      source: connection.source ?? oldEdge.source,
+      target: connection.target ?? oldEdge.target,
+      sourceHandle: connection.sourceHandle ?? oldEdge.sourceHandle,
+      targetHandle: connection.targetHandle ?? oldEdge.targetHandle,
+      selected: true,
+      zIndex: 1000,
+    };
+
+    setEdges((current) =>
+      reconnectEdge(oldEdge, connection, current).map((edge) => ({
+        ...edge,
+        selected: edge.id === oldEdge.id,
+        zIndex: edge.id === oldEdge.id ? 1000 : 0,
+      }))
+    );
+    onEdgeSelect?.(updatedSelectedEdge as Edge);
+  }, [setEdges, onEdgeSelect]);
 
   const onReconnectEnd = useCallback((_: MouseEvent | TouchEvent, edge: Edge) => {
     if (!edgeReconnectSuccessful.current) {
       setEdges((current) => current.filter((e) => e.id !== edge.id));
+      onEdgeSelect?.(null);
     }
-  }, [setEdges]);
+  }, [setEdges, onEdgeSelect]);
 
   const onEdgeClick = useCallback((_: React.MouseEvent, clickedEdge: Edge) => {
-    // Deselect all nodes when an edge is selected
+    // Deselect all nodes and bring the selected/cycled edge to the top, mirroring Semantier behavior
     setNodes((current) => current.map((n) => ({ ...n, selected: false })));
-    setEdges((current) => current.map((e) => ({ ...e, selected: e.id === clickedEdge.id })));
-    onEdgeSelect?.(clickedEdge);
+
+    let selectedEdgeForInspector: Edge = clickedEdge;
+    setEdges((current) => {
+      const stacked = current
+        .filter((edge) => (
+          edge.source === clickedEdge.source &&
+          edge.target === clickedEdge.target &&
+          edge.sourceHandle === clickedEdge.sourceHandle &&
+          edge.targetHandle === clickedEdge.targetHandle
+        ))
+        .sort((a, b) => a.id.localeCompare(b.id));
+
+      if (stacked.length > 1) {
+        const selectedInStack = stacked.findIndex((edge) => edge.selected);
+        const clickedIndex = stacked.findIndex((edge) => edge.id === clickedEdge.id);
+        const baseIndex = selectedInStack >= 0 ? selectedInStack : clickedIndex;
+        selectedEdgeForInspector = stacked[(baseIndex + 1) % stacked.length] ?? clickedEdge;
+      }
+
+      return current.map((edge) => ({
+        ...edge,
+        selected: edge.id === selectedEdgeForInspector.id,
+        zIndex: edge.id === selectedEdgeForInspector.id ? 1000 : 0,
+      }));
+    });
+
+    onEdgeSelect?.(selectedEdgeForInspector);
   }, [setNodes, setEdges, onEdgeSelect]);
 
   const onUpdateEdgeLabel = useCallback((edgeId: string, label: string) => {
@@ -1352,13 +1431,8 @@ if __name__ == "__main__":
         data: { label: edgeLabel },
         animated: false,
         reconnectable: true,
-        style: {
-          stroke: '#39d0cf',
-          strokeWidth: 2,
-        },
         markerEnd: {
           type: 'arrowclosed' as const,
-          color: '#39d0cf',
           width: 16,
           height: 16,
         },
@@ -1614,9 +1688,6 @@ if __name__ == "__main__":
         },
       }));
 
-      // Get primary color for edges
-      const primaryColor = getComputedStyle(document.documentElement).getPropertyValue('--color-primary').trim() || '#6366f1';
-
       // Create new edges with updated source/target IDs and unique edge IDs
       const newEdges: Edge[] = selectedRecipe.edges.map((recipeEdge: any, idx: number) => ({
         ...recipeEdge,
@@ -1628,8 +1699,7 @@ if __name__ == "__main__":
         data: { label: recipeEdge.label },
         reconnectable: true,
         animated: false,
-        style: { stroke: '#39d0cf', strokeWidth: 2 },
-        markerEnd: { type: 'arrowclosed' as const, color: '#39d0cf', width: 16, height: 16 },
+        markerEnd: { type: 'arrowclosed' as const, width: 16, height: 16 },
       }));
 
       // Add nodes and edges to canvas
@@ -1913,18 +1983,28 @@ if __name__ == "__main__":
         };
       });
 
-      // Validate and theme edges correctly
-      const restoredEdges = (config.edges || []).map((e: any) => ({
-        ...e,
-        id: e.id || `e-${e.source}-${e.target}-${Date.now()}`,
-        type: 'workflow',
-        label: e.label || e.data?.label,
-        data: { label: e.label || e.data?.label },
-        reconnectable: true,
-        animated: false,
-        style: { stroke: '#39d0cf', strokeWidth: 2 },
-        markerEnd: { type: 'arrowclosed', color: '#39d0cf', width: 16, height: 16 },
-      }));
+      // Normalize restored edges and strip any persisted visual styling
+      const restoredEdges = (config.edges || []).map((e: any) => {
+        const {
+          style: _style,
+          labelStyle: _labelStyle,
+          labelBgStyle: _labelBgStyle,
+          labelBgPadding: _labelBgPadding,
+          labelBgBorderRadius: _labelBgBorderRadius,
+          ...restEdge
+        } = e;
+
+        return {
+          ...restEdge,
+          id: e.id || `e-${e.source}-${e.target}-${Date.now()}`,
+          type: 'workflow',
+          label: e.label || e.data?.label,
+          data: { label: e.label || e.data?.label },
+          reconnectable: true,
+          animated: false,
+          markerEnd: { type: 'arrowclosed', width: 16, height: 16 },
+        };
+      });
 
       // Always update the canvas state, even for empty workflows
       setNodes(validatedNodes);

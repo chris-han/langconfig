@@ -4,7 +4,6 @@
  * edge label rendered via EdgeLabelRenderer as a tinted monospace chip,
  * and a wider invisible interaction band for easier selection.
  */
-import type { CSSProperties } from 'react';
 import type { EdgeProps } from 'reactflow';
 import { BaseEdge, EdgeLabelRenderer, getSmoothStepPath } from 'reactflow';
 
@@ -32,7 +31,6 @@ export default function WorkflowEdge({
   });
 
   const edgeLabel = (data as any)?.label ?? (label as string | undefined) ?? '';
-  const stroke = (style as CSSProperties)?.stroke as string | undefined;
 
   return (
     <>
@@ -49,8 +47,7 @@ export default function WorkflowEdge({
             className="nodrag nopan"
           >
             <span
-              className="text-[10px] font-mono px-1.5 py-0.5 rounded-full bg-card/90 border border-border/60 backdrop-blur"
-              style={{ color: stroke ?? 'var(--muted-foreground)' }}
+              className="text-[10px] font-mono px-1.5 py-0.5 rounded-full border border-border/60 backdrop-blur text-primary bg-[rgba(20,24,32,0.9)]"
             >
               {edgeLabel}
             </span>

@@ -97,7 +97,7 @@ const CustomNode = memo(function CustomNode({ id, data, selected }: NodeProps) {
 
   // Execution state CSS class (Semantier pattern — no inline border color)
   const stateClass = useMemo(() => {
-    if (selected) return 'border-primary node-blink';
+    if (selected) return 'border-yellow-400 node-blink';
     if (!executionStatus || executionStatus.state === 'idle') return 'border-primary/40';
     switch (executionStatus.state) {
       case 'running':
