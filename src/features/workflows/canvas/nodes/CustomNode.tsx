@@ -333,7 +333,7 @@ const CustomNode = memo(function CustomNode({ id, data, selected }: NodeProps) {
             e.stopPropagation();
             setIsPanelExpanded(!isPanelExpanded);
           }}
-          className="nodrag nopan w-full flex items-center justify-center py-1 border-t border-border/50 hover:bg-muted/50 transition-colors rounded-b-md"
+          className="nodrag nopan w-full flex items-center justify-center py-1 border-t border-border/50 hover:bg-primary/20 transition-colors rounded-b-md"
         >
           <span
             className="material-symbols-outlined text-muted-foreground"
