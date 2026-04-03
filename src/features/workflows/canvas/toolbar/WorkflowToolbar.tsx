@@ -128,14 +128,12 @@ const WorkflowToolbar = memo(function WorkflowToolbar({
                   }
                 }}
                 autoFocus
-                className="px-2 py-1.5 text-sm font-semibold bg-card border border-primary rounded-md focus:outline-none focus:ring-2 focus:ring-primary"
-                style={{ color: 'var(--color-text-primary, #1a1a1a)', minWidth: '180px' }}
+                className="px-2 py-1.5 text-sm font-semibold bg-card border border-primary rounded-md focus:outline-none focus:ring-2 focus:ring-primary text-foreground min-w-[180px]"
               />
             ) : (
               <button
                 onClick={handleToggleWorkflowDropdown}
-                className="inline-flex items-center gap-1.5 px-2 py-1.5 text-sm font-semibold bg-card border border-border rounded-md hover:bg-accent/10 transition-colors"
-                style={{ color: 'var(--color-text-primary)' }}
+                className="inline-flex items-center gap-1.5 px-2 py-1.5 text-sm font-semibold bg-card border border-border rounded-md hover:bg-accent/10 transition-colors text-foreground"
                 title="Click to switch workflow or double-click name to rename"
               >
                 <span
@@ -144,7 +142,7 @@ const WorkflowToolbar = memo(function WorkflowToolbar({
                 >
                   {workflowName}
                 </span>
-                <span className="material-symbols-outlined text-base" style={{ color: 'var(--color-text-muted)' }}>
+                <span className="material-symbols-outlined text-base text-muted-foreground">
                   expand_more
                 </span>
               </button>
@@ -155,20 +153,18 @@ const WorkflowToolbar = memo(function WorkflowToolbar({
               <>
                 <div className="fixed inset-0 z-40" onClick={handleCloseWorkflowDropdown} />
                 <div
-                  className="absolute top-full left-0 mt-1 w-80 rounded-md shadow-xl z-50 max-h-96 overflow-hidden flex flex-col border bg-card"
-                  style={{ borderColor: 'var(--color-border-dark)' }}
+                  className="absolute top-full left-0 mt-1 w-80 rounded-md shadow-xl z-50 max-h-96 overflow-hidden flex flex-col border-2 border-primary/50 bg-card"
                 >
-                  <div className="p-3 border-b" style={{ borderColor: 'var(--color-border-dark)' }}>
+                  <div className="p-3 border-b border-border">
                     <input
                       type="text"
                       placeholder="Search workflows..."
                       value={workflowSearchQuery}
                       onChange={handleWorkflowSearchChange}
-                    className="w-full px-3 py-2 text-sm rounded-md border focus:outline-none focus:ring-2 transition-all bg-background"
-                      style={{ borderColor: 'var(--color-border-dark)', color: 'var(--color-text-primary)' }}
+                      className="w-full px-3 py-2 text-sm rounded-md border focus:outline-none focus:ring-2 transition-all bg-background text-foreground border-border"
                     />
                   </div>
-                  <div className="p-2 border-b" style={{ borderColor: 'var(--color-border-dark)' }}>
+                  <div className="p-2 border-b border-border">
                     <button
                       onClick={onShowCreateWorkflowModal}
                     className="w-full px-3 py-2 text-sm font-medium text-primary-foreground bg-primary rounded-md hover:opacity-90 transition-opacity flex items-center justify-center gap-2"
@@ -179,7 +175,7 @@ const WorkflowToolbar = memo(function WorkflowToolbar({
                   </div>
                   <div className="overflow-y-auto">
                     {filteredWorkflows.length === 0 ? (
-                      <div className="p-4 text-center text-sm" style={{ color: 'var(--color-text-muted)' }}>
+                      <div className="p-4 text-center text-sm text-muted-foreground">
                         No workflows found
                       </div>
                     ) : (
@@ -189,20 +185,15 @@ const WorkflowToolbar = memo(function WorkflowToolbar({
                           <button
                             key={workflow.id}
                             onClick={() => handleWorkflowSwitch(workflow.id)}
-                            className="w-full px-3 py-2.5 text-left transition-colors border-b last:border-0"
-                            style={{
-                              borderColor: 'var(--color-border-dark)',
-                              backgroundColor: isActive ? 'var(--color-primary-alpha, rgba(139, 92, 246, 0.1))' : 'transparent',
-                              borderLeftWidth: isActive ? '3px' : '0px',
-                              borderLeftColor: isActive ? 'var(--color-primary)' : 'transparent'
-                            }}
-                            onMouseEnter={(e) => { if (!isActive) e.currentTarget.style.backgroundColor = 'var(--color-background-light, rgba(255, 255, 255, 0.03))'; }}
-                            onMouseLeave={(e) => { if (!isActive) e.currentTarget.style.backgroundColor = 'transparent'; }}
+                            className={`w-full px-3 py-2.5 text-left transition-colors border-b last:border-0 border-border hover:bg-muted ${
+                              isActive ? 'border-l-2 border-l-primary bg-primary/10' : 'border-l-2 border-l-transparent'
+                            }`}
                           >
                             <div
-                              className="font-semibold text-sm leading-tight"
+                              className={`font-semibold text-sm leading-tight ${
+                                isActive ? 'text-primary' : 'text-foreground'
+                              }`}
                               style={{
-                                color: isActive ? 'var(--color-primary)' : 'var(--color-text-primary)',
                                 wordBreak: 'break-word', overflowWrap: 'break-word',
                                 display: '-webkit-box', WebkitLineClamp: 2, WebkitBoxOrient: 'vertical', overflow: 'hidden'
                               }}
@@ -222,7 +213,7 @@ const WorkflowToolbar = memo(function WorkflowToolbar({
           {/* Save Button */}
           <button
             onClick={() => handleSave(false)}
-            className="px-3 py-1.5 rounded-lg transition-all hover:opacity-90 bg-primary text-white flex items-center gap-1.5 text-sm font-medium"
+            className="px-3 py-1.5 rounded-lg transition-all hover:opacity-90 bg-primary text-primary-foreground flex items-center gap-1.5 text-sm font-medium"
             title="Save workflow"
           >
             <Save className="w-4 h-4" />
@@ -234,8 +225,7 @@ const WorkflowToolbar = memo(function WorkflowToolbar({
             <div className="relative">
               <button
                 onClick={() => setShowVersionDropdown(!showVersionDropdown)}
-                className="inline-flex items-center gap-1.5 px-2 py-1.5 text-sm font-medium bg-white dark:bg-background-dark border border-gray-300 dark:border-border-dark rounded-lg hover:bg-gray-50 dark:hover:bg-white/5 transition-colors"
-                style={{ color: 'var(--color-text-primary)' }}
+                className="inline-flex items-center gap-1.5 px-2 py-1.5 text-sm font-medium bg-card border border-border rounded-lg hover:bg-muted transition-colors"
                 title="Versions"
               >
                 <HistoryIcon className="w-4 h-4" />
@@ -246,12 +236,12 @@ const WorkflowToolbar = memo(function WorkflowToolbar({
               {showVersionDropdown && (
                 <>
                   <div className="fixed inset-0 z-40" onClick={() => setShowVersionDropdown(false)} />
-                  <div className="absolute top-full mt-1 left-0 w-72 bg-white dark:bg-panel-dark border border-gray-200 dark:border-border-dark rounded-lg shadow-xl z-50 max-h-80 overflow-hidden flex flex-col">
+                  <div className="absolute top-full mt-1 left-0 w-72 bg-card border-2 border-primary/50 rounded-lg shadow-xl z-50 max-h-80 overflow-hidden flex flex-col">
                     {/* Create Snapshot at top */}
-                    <div className="p-2 border-b border-gray-200 dark:border-border-dark">
+                    <div className="p-2 border-b border-border">
                       <button
                         onClick={() => { handleSaveVersion(); setShowVersionDropdown(false); }}
-                        className="w-full px-3 py-2 text-sm font-medium text-white bg-primary rounded-lg hover:opacity-90 transition-opacity flex items-center justify-center gap-2"
+                        className="w-full px-3 py-2 text-sm font-medium text-card-foreground bg-card rounded-lg hover:bg-muted transition-colors flex items-center justify-center gap-2 border border-border"
                       >
                         <Camera className="w-4 h-4" />
                         Create Snapshot
@@ -261,9 +251,9 @@ const WorkflowToolbar = memo(function WorkflowToolbar({
                     {/* Version List */}
                     <div className="overflow-y-auto flex-1">
                       {loadingVersions ? (
-                        <div className="p-4 text-center text-gray-500 dark:text-gray-400 text-sm">Loading...</div>
+                        <div className="p-4 text-center text-muted-foreground text-sm">Loading...</div>
                       ) : versions.length === 0 ? (
-                        <div className="p-4 text-center text-gray-500 dark:text-gray-400 text-sm">
+                        <div className="p-4 text-center text-muted-foreground text-sm">
                           No snapshots yet
                         </div>
                       ) : (
@@ -271,24 +261,23 @@ const WorkflowToolbar = memo(function WorkflowToolbar({
                           <button
                             key={version.id}
                             onClick={() => { handleLoadVersion(version.version_number); setShowVersionDropdown(false); }}
-                            className={`w-full px-3 py-2.5 text-left hover:bg-gray-50 dark:hover:bg-white/5 transition-colors border-b last:border-0 border-l-4 ${
-                              version.is_current ? 'border-l-green-500 bg-green-50/50 dark:bg-green-900/20' : 'border-l-transparent'
+                            className={`w-full px-3 py-2.5 text-left hover:bg-muted transition-colors border-b last:border-0 border-l-4 border-border ${
+                              version.is_current ? 'border-l-status-success bg-status-success/10' : 'border-l-transparent'
                             }`}
-                            style={{ borderBottomColor: 'var(--color-border-dark)' }}
                           >
                             <div className="flex items-center justify-between">
-                              <span className="text-sm font-semibold text-gray-900 dark:text-white">
+                              <span className="text-sm font-semibold text-foreground">
                                 v{version.version_number}
                                 {version.is_current && (
-                                  <span className="ml-2 px-1.5 py-0.5 text-xs bg-green-500 text-white rounded">Current</span>
+                                  <span className="ml-2 px-1.5 py-0.5 text-xs bg-status-success text-status-success-foreground rounded">Current</span>
                                 )}
                               </span>
-                              <span className="text-xs text-gray-500 dark:text-gray-400">
+                              <span className="text-xs text-muted-foreground">
                                 {new Date(version.created_at).toLocaleDateString()}
                               </span>
                             </div>
                             {version.notes && (
-                              <p className="text-xs text-gray-600 dark:text-gray-400 mt-1 line-clamp-1">{version.notes}</p>
+                              <p className="text-xs text-muted-foreground mt-1 line-clamp-1">{version.notes}</p>
                             )}
                           </button>
                         ))
@@ -338,7 +327,7 @@ const WorkflowToolbar = memo(function WorkflowToolbar({
 
           {/* Workflow ID */}
           {currentWorkflowId && (
-            <div className="text-xs font-mono text-text-muted dark:text-text-muted px-2 py-1 rounded bg-gray-100 dark:bg-white/5">
+            <div className="text-xs font-mono text-muted-foreground px-2 py-1 rounded bg-muted">
               #{currentWorkflowId}
             </div>
           )}

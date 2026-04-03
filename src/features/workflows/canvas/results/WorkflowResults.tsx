@@ -267,7 +267,7 @@ const WorkflowResults = memo(function WorkflowResults({
     code: ({ inline, className, children, ...props }: any) => {
       if (inline) {
         return (
-          <code className="px-1.5 py-0.5 rounded text-sm font-mono bg-gray-100 dark:bg-gray-800"
+          <code className="px-1.5 py-0.5 rounded text-sm font-mono bg-muted"
             style={{ color: 'var(--color-primary)' }}
             {...props}>
             {children}
@@ -312,11 +312,11 @@ const WorkflowResults = memo(function WorkflowResults({
                 </div>
               ) : taskHistory.length === 0 ? (
                 <div className="flex flex-col items-center justify-center py-16 text-center">
-                  <HistoryIcon className="w-16 h-16 text-gray-300 dark:text-text-muted/30 mb-4" />
-                  <p className="text-lg font-medium text-gray-600 dark:text-text-muted">
+                  <HistoryIcon className="w-16 h-16 text-muted-foreground/30 mb-4" />
+                  <p className="text-lg font-medium text-muted-foreground">
                     No results yet
                   </p>
-                  <p className="text-sm text-gray-500 dark:text-text-muted/70 mt-2">
+                  <p className="text-sm text-muted-foreground/70 mt-2">
                     Execute this workflow to see results here.
                   </p>
                 </div>
@@ -326,9 +326,9 @@ const WorkflowResults = memo(function WorkflowResults({
                   <div className="flex-1 flex justify-center overflow-y-auto">
                     <div className="w-full max-w-6xl px-6 py-4">
                       {!taskOutput ? (
-                        <div className="bg-white dark:bg-panel-dark border border-gray-200 dark:border-gray-700 rounded-lg shadow-lg max-w-3xl mx-auto">
+                        <div className="bg-card border border-border rounded-lg shadow-lg max-w-3xl mx-auto">
                           {/* Header */}
-                          <div className="px-6 py-4 border-b border-gray-200 dark:border-gray-700">
+                          <div className="px-6 py-4 border-b border-border">
                             <div className="flex items-center justify-between">
                               <div className="flex items-center gap-3">
                                 <span className={`w-3 h-3 rounded-full ${displayTask?.status === 'failed' ? 'bg-red-500' :
@@ -339,8 +339,8 @@ const WorkflowResults = memo(function WorkflowResults({
                                   Task #{displayTask?.id}
                                 </span>
                                 <span className={`text-xs px-2 py-0.5 rounded font-semibold uppercase ${displayTask?.status === 'failed'
-                                    ? 'bg-red-100 dark:bg-red-900/30 text-red-700 dark:text-red-400'
-                                    : 'bg-yellow-100 dark:bg-yellow-900/30 text-yellow-700 dark:text-yellow-400'
+                                    ? 'bg-status-error/10 text-status-error'
+                                    : 'bg-status-warning/10 text-status-warning'
                                   }`}>
                                   {displayTask?.status || 'No Result'}
                                 </span>
@@ -380,7 +380,7 @@ const WorkflowResults = memo(function WorkflowResults({
                           {/* Error Message (if failed) */}
                           {(displayTask?.status === 'failed' || displayTask?.error) && (
                             <div className="px-6 pb-4">
-                              <h4 className="text-sm font-semibold mb-3 flex items-center gap-2 text-red-600 dark:text-red-400">
+                              <h4 className="text-sm font-semibold mb-3 flex items-center gap-2 text-status-error">
                                 <span className="material-symbols-outlined text-base">
                                   error
                                 </span>
@@ -395,7 +395,7 @@ const WorkflowResults = memo(function WorkflowResults({
                           )}
 
                           {/* Task Metadata */}
-                          <div className="px-6 py-4 border-t border-gray-200 dark:border-gray-700">
+                          <div className="px-6 py-4 border-t border-border">
                             <div className="flex items-center justify-between">
                               <div className="text-xs space-y-1" style={{ color: 'var(--color-text-muted)' }}>
                                 {displayTask?.duration_seconds && (
@@ -440,13 +440,13 @@ const WorkflowResults = memo(function WorkflowResults({
                           </div>
                         </div>
                       ) : (
-                        <div className="bg-white dark:bg-panel-dark border border-gray-200 dark:border-gray-700 rounded-lg shadow-lg">
+                        <div className="bg-card border border-border rounded-lg shadow-lg">
                           {/* Task Header */}
-                          <div className="px-8 py-4 border-b border-gray-200 dark:border-gray-700">
+                          <div className="px-8 py-4 border-b border-border">
                             <div className="flex items-center justify-between">
                               <div className="flex-1 min-w-0 mr-4">
                                 <div className="flex items-center gap-3">
-                                  <span className="text-xs font-mono text-gray-500 dark:text-text-muted">
+                                  <span className="text-xs font-mono text-muted-foreground">
                                     Task #{displayTask.id}
                                   </span>
                                   {displayTask?.status === 'running' && (
@@ -460,7 +460,7 @@ const WorkflowResults = memo(function WorkflowResults({
                                           }
                                         }
                                       }}
-                                      className="text-xs px-2 py-0.5 rounded bg-red-100 dark:bg-red-900/30 text-red-700 dark:text-red-400 font-semibold hover:bg-red-200 dark:hover:bg-red-900/50 transition-colors flex items-center gap-1"
+                                      className="text-xs px-2 py-0.5 rounded bg-status-error/10 text-status-error font-semibold hover:bg-status-error/20 transition-colors flex items-center gap-1"
                                     >
                                       <XCircle className="w-3 h-3" />
                                       Stop Execution

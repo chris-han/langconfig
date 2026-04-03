@@ -27,6 +27,7 @@ import ReactFlow, {
 } from "reactflow";
 import dagre from "dagre";
 import { ArrowRight, Box, CircleDot, Grip, LayoutTemplate } from "lucide-react";
+import { SEMANTIER_NODE_DRAG_MIME } from "./dragDropContract";
 
 type NodeType = "entity" | "dimension" | "event";
 type RelCategory = "structural" | "interoperation";
@@ -49,6 +50,23 @@ interface TreeDropNode {
   type: string;
   prefix?: string;
 }
+
+const resolveDroppedTreeNode = (event: React.DragEvent): TreeDropNode | null => {
+  const raw = event.dataTransfer.getData(SEMANTIER_NODE_DRAG_MIME) || event.dataTransfer.getData("text/plain");
+  if (!raw) {
+    return null;
+  }
+
+  try {
+    const parsed = JSON.parse(raw) as TreeDropNode;
+    if (!parsed?.id || !parsed?.name || !parsed?.type) {
+      return null;
+    }
+    return parsed;
+  } catch {
+    return null;
+  }
+};
 
 const RELATIONSHIP_DEFS: Record<string, { category: RelCategory; stroke: string; strokeWidth: number; strokeDasharray?: string }> = {
   participates: { category: "structural", stroke: "#2dd4bf", strokeWidth: 2 },
@@ -82,6 +100,28 @@ function buildEdge(source: string, target: string, relType: string): Edge {
     data: { relType, category: definition.category },
   };
 }
+
+const defaultPropertiesForNodeType = (nodeType: NodeType): Array<{ name: string; type: string; required: boolean }> => {
+  if (nodeType === "entity") {
+    return [
+      { name: "id", type: "string", required: true },
+      { name: "name", type: "string", required: true },
+      { name: "status", type: "enum", required: false },
+    ];
+  }
+
+  if (nodeType === "dimension") {
+    return [
+      { name: "id", type: "string", required: true },
+      { name: "name", type: "string", required: true },
+    ];
+  }
+
+  return [
+    { name: "ruleId", type: "string", required: true },
+    { name: "condition", type: "string", required: true },
+  ];
+};
 
 const INITIAL_NODES: Node<NodeData>[] = [
   {
@@ -636,7 +676,7 @@ function OntologyGraphInner({ onSelectItem }: { onSelectItem?: (type: "node" | "
   const [nodes, setNodes] = useState<Node<NodeData>[]>(initialGraph.nodes);
   const [edges, setEdges] = useState<Edge[]>(initialGraph.edges);
   const edgeReconnectSuccessful = useRef(true);
-  const { screenToFlowPosition } = useReactFlow();
+  const { fitView, screenToFlowPosition } = useReactFlow();
 
   useEffect(() => {
     setNodes((current) => syncPortStates(current, edges));
@@ -781,29 +821,43 @@ function OntologyGraphInner({ onSelectItem }: { onSelectItem?: (type: "node" | "
 
   const onDragOver = useCallback((event: React.DragEvent) => {
     event.preventDefault();
-    event.dataTransfer.dropEffect = "move";
+    event.dataTransfer.dropEffect = "copy";
   }, []);
 
   const onDrop = useCallback((event: React.DragEvent) => {
     event.preventDefault();
-    const raw = event.dataTransfer.getData("application/semantier-node");
-    if (!raw) {
+    const treeNode = resolveDroppedTreeNode(event);
+    if (!treeNode) {
       return;
     }
-    let treeNode: TreeDropNode;
-    try {
-      treeNode = JSON.parse(raw);
-    } catch {
+    if (treeNode.type === "folder") {
       return;
     }
-    if (treeNode.type === "folder" || nodes.some((node) => node.id === treeNode.id)) {
-      return;
-    }
+
     const graphTypeMap: Record<string, NodeType> = {
       ontology: "entity",
       dimension: "dimension",
       rule: "event",
     };
+    const existingNode = nodes.find((node) => node.id === treeNode.id);
+    if (existingNode) {
+      fitView({
+        nodes: [existingNode],
+        duration: 400,
+        padding: 0.5,
+      });
+      setNodes((current) =>
+        current.map((node) => ({
+          ...node,
+          selected: node.id === treeNode.id,
+          data: { ...node.data, isRelated: false, connectState: null },
+        })),
+      );
+      onSelectItem?.("node", existingNode);
+      return;
+    }
+
+    const nodeType = graphTypeMap[treeNode.type] ?? "entity";
     const newNode: Node<NodeData> = {
       id: treeNode.id,
       position: screenToFlowPosition({ x: event.clientX, y: event.clientY }),
@@ -811,20 +865,21 @@ function OntologyGraphInner({ onSelectItem }: { onSelectItem?: (type: "node" | "
       data: {
         id: treeNode.id,
         label: treeNode.name,
-        type: graphTypeMap[treeNode.type] ?? "entity",
+        type: nodeType,
         description: treeNode.prefix ? `${treeNode.prefix}${treeNode.name}` : "",
-        properties: [],
+        properties: defaultPropertiesForNodeType(nodeType),
         actions: [],
       },
     };
     setNodes((current) => syncPortStates([...current, newNode], edges));
-  }, [edges, nodes, screenToFlowPosition]);
+    onSelectItem?.("node", newNode);
+  }, [edges, fitView, nodes, onSelectItem, screenToFlowPosition]);
 
   const nodeTypes = useMemo(() => ({ custom: OntologyNode }), []);
   const edgeTypes = useMemo(() => ({ ontology: OntologyEdge }), []);
 
   return (
-    <div className="relative w-full h-full bg-background">
+    <div className="relative w-full h-full bg-background" onDragOver={onDragOver} onDrop={onDrop}>
       <style>{GRAPH_CSS}</style>
       <ReactFlow
         nodes={nodes}
@@ -841,8 +896,6 @@ function OntologyGraphInner({ onSelectItem }: { onSelectItem?: (type: "node" | "
         onNodeClick={onNodeClick}
         onEdgeClick={onEdgeClick}
         onPaneClick={onPaneClick}
-        onDragOver={onDragOver}
-        onDrop={onDrop}
         nodeTypes={nodeTypes}
         edgeTypes={edgeTypes}
         connectionMode={ConnectionMode.Loose}

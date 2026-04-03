@@ -45,9 +45,13 @@
     --interactive-selection-foreground: #eefdfd;
 
     --status-success: #3ccf91;
+    --status-success-foreground: #071417;
     --status-warning: #f2b94b;
+    --status-warning-foreground: #1a1505;
     --status-error: #f06a7f;
+    --status-error-foreground: #fff6f8;
     --status-info: #5ca7ff;
+    --status-info-foreground: #0a1525;
 
     --primary-base: var(--primary);
 
@@ -233,4 +237,8 @@
   --color-sem-warning: var(--sem-warning);
   --color-sem-success: var(--sem-success);
   --color-sem-info: var(--sem-info);
+  --color-status-success: var(--status-success);
+  --color-status-warning: var(--status-warning);
+  --color-status-error: var(--status-error);
+  --color-status-info: var(--status-info);
 }

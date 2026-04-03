@@ -60,7 +60,7 @@ export default function ModernHeader({
           <button
             key={key}
             onClick={() => onViewChange(key)}
-            className={`flex items-center gap-1.5 px-3 h-8 text-sm rounded-md transition-colors ${
+            className={`flex items-center gap-1.5 px-3 h-8 text-sm rounded-sm transition-colors ${
               currentView === key
                 ? 'bg-accent text-accent-foreground font-semibold'
                 : 'text-muted-foreground hover:bg-accent hover:text-accent-foreground'

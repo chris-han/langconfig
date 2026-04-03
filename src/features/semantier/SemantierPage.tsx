@@ -24,6 +24,7 @@ import { Input } from "@/components/ui/input";
 import { ResizableHandle, ResizablePanel, ResizablePanelGroup } from "@/components/ui/resizable";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import OntologyGraph from "./OntologyGraph";
+import { SEMANTIER_NODE_DRAG_MIME } from "./dragDropContract";
 import {
   SDSL_LANGUAGE_ID,
   languageConfiguration,
@@ -445,8 +446,10 @@ function ExplorerPane({
               event.preventDefault();
               return;
             }
-            event.dataTransfer.setData("application/semantier-node", JSON.stringify(node));
-            event.dataTransfer.effectAllowed = "move";
+            const payload = JSON.stringify(node);
+            event.dataTransfer.setData(SEMANTIER_NODE_DRAG_MIME, payload);
+            event.dataTransfer.setData("text/plain", payload);
+            event.dataTransfer.effectAllowed = "copy";
           }}
           onClick={() => {
             if (isFolder) {
@@ -468,7 +471,7 @@ function ExplorerPane({
           }}
           className={[
             "group flex w-full items-center gap-1.5 rounded-sm border px-3 py-2 text-left text-sm transition-colors",
-            selected ? "border-primary/60 bg-transparent text-foreground" : "border-transparent hover:border-primary/30 hover:bg-transparent",
+            selected ? "border-primary/60 bg-primary/20 text-foreground" : "border-transparent hover:border-primary/30 hover:bg-transparent",
             !isFolder ? "cursor-grab active:cursor-grabbing" : "",
           ].join(" ")}
           style={{ paddingLeft: `${2 + level * 16}px` }}
