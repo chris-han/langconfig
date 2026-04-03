@@ -416,7 +416,7 @@ export default function ArtifactsTab({ artifacts, loading, onCreatePresentation 
               onClick={() => setViewMode('gallery')}
               className={`px-3 py-1.5 text-sm flex items-center gap-1.5 ${viewMode === 'gallery'
                 ? 'bg-primary/10'
-                : 'hover:bg-white/5'
+                : 'hover:bg-muted'
                 }`}
               style={{ color: viewMode === 'gallery' ? 'var(--color-primary)' : 'var(--color-text-muted)' }}
               title="Gallery View"
@@ -428,7 +428,7 @@ export default function ArtifactsTab({ artifacts, loading, onCreatePresentation 
               onClick={() => setViewMode('list')}
               className={`px-3 py-1.5 text-sm flex items-center gap-1.5 border-l ${viewMode === 'list'
                 ? 'bg-primary/10'
-                : 'hover:bg-white/5'
+                : 'hover:bg-muted'
                 }`}
               style={{
                 color: viewMode === 'list' ? 'var(--color-primary)' : 'var(--color-text-muted)',
@@ -467,12 +467,12 @@ export default function ArtifactsTab({ artifacts, loading, onCreatePresentation 
                   >
                     <div className={`w-6 h-6 rounded-md flex items-center justify-center transition-colors ${isItemSelected(key)
                       ? 'bg-primary'
-                      : 'bg-black/40 hover:bg-black/60'
+                      : 'bg-muted hover:bg-muted/80'
                       }`}>
                       {isItemSelected(key) ? (
-                        <CheckSquare className="w-4 h-4 text-white" />
+                        <CheckSquare className="w-4 h-4 text-primary-foreground" />
                       ) : (
-                        <Square className="w-4 h-4 text-white" />
+                        <Square className="w-4 h-4 text-primary-foreground" />
                       )}
                     </div>
                   </div>
@@ -523,7 +523,7 @@ export default function ArtifactsTab({ artifacts, loading, onCreatePresentation 
                       className="p-2 rounded-full bg-white/20 hover:bg-white/30 transition-colors"
                       title="View details"
                     >
-                      <Maximize2 className="w-5 h-5 text-white" />
+                      <Maximize2 className="w-5 h-5 text-primary-foreground" />
                     </button>
                     {isImageBlock(block) && (
                       <button
@@ -531,10 +531,10 @@ export default function ArtifactsTab({ artifacts, loading, onCreatePresentation 
                           e.stopPropagation();
                           downloadSingleImage(block, artifact, index);
                         }}
-                        className="p-2 rounded-full bg-white/20 hover:bg-white/30 transition-colors"
+                        className="p-2 rounded-full bg-primary/20 hover:bg-primary/30 transition-colors"
                         title="Download image"
                       >
-                        <Download className="w-5 h-5 text-white" />
+                        <Download className="w-5 h-5 text-primary-foreground" />
                       </button>
                     )}
                   </div>
@@ -548,7 +548,7 @@ export default function ArtifactsTab({ artifacts, loading, onCreatePresentation 
             {filteredBlocks.map(({ artifact, block, index }) => (
               <div
                 key={`${artifact.id}-${index}`}
-                className="flex items-center gap-4 p-3 rounded-lg border cursor-pointer transition-colors hover:bg-white/5"
+                className="flex items-center gap-4 p-3 rounded-lg border cursor-pointer transition-colors hover:bg-muted"
                 style={{
                   backgroundColor: 'var(--color-panel-dark)',
                   borderColor: 'var(--color-border-dark)'
@@ -597,7 +597,7 @@ export default function ArtifactsTab({ artifacts, loading, onCreatePresentation 
                       e.stopPropagation();
                       setSelectedArtifact(artifact);
                     }}
-                    className="p-2 rounded hover:bg-white/10 transition-colors"
+                    className="p-2 rounded hover:bg-muted transition-colors"
                     style={{ color: 'var(--color-text-muted)' }}
                     title="View details"
                   >
@@ -632,7 +632,7 @@ export default function ArtifactsTab({ artifacts, loading, onCreatePresentation 
               </div>
               <button
                 onClick={() => setSelectedArtifact(null)}
-                className="p-2 rounded hover:bg-white/10 transition-colors"
+                className="p-2 rounded hover:bg-muted transition-colors"
                 style={{ color: 'var(--color-text-muted)' }}
               >
                 <X className="w-5 h-5" />
@@ -655,7 +655,7 @@ export default function ArtifactsTab({ artifacts, loading, onCreatePresentation 
         >
           <button
             onClick={() => setFullscreenImage(null)}
-            className="absolute top-4 right-4 p-2 bg-white/10 hover:bg-white/20 rounded-full text-white transition-colors"
+            className="absolute top-4 right-4 p-2 bg-primary/20 hover:bg-primary/30 rounded-full text-primary-foreground transition-colors"
           >
             <X className="w-6 h-6" />
           </button>
