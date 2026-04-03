@@ -5,6 +5,8 @@ import {
   AlertTriangle,
   Box,
   CheckCircle2,
+  ChevronDown,
+  ChevronRight,
   FileCode2,
   GitBranch,
   History,
@@ -476,22 +478,24 @@ function ExplorerPane({
           ].join(" ")}
           style={{ paddingLeft: `${2 + level * 16}px` }}
         >
-          {hasChildren ? (
-            <span className={`material-symbols-outlined text-base text-primary transition-transform ${expanded ? "rotate-90" : ""}`}>
-              chevron_right
-            </span>
-          ) : (
-            <span className="w-2 shrink-0" aria-hidden />
+          {!isFolder && (
+            <div className={`w-7 h-7 rounded-md flex items-center justify-center shrink-0 transition-colors ${selected ? "bg-primary/10 text-primary" : "bg-muted text-muted-foreground group-hover:bg-primary/5 group-hover:text-primary"}`}>
+              {node.type === "ontology"  && <Box      className="h-3.5 w-3.5" />}
+              {node.type === "dimension" && <Ratio    className="h-3.5 w-3.5" />}
+              {node.type === "rule"      && <Workflow className="h-3.5 w-3.5" />}
+            </div>
           )}
-          {!isFolder && node.type === "ontology" && <Box className="h-4 w-4 text-primary" />}
-          {!isFolder && node.type === "dimension" && <Ratio className="h-4 w-4 text-sky-400" />}
-          {!isFolder && node.type === "rule" && <Workflow className="h-4 w-4 text-amber-400" />}
           <div className="min-w-0 flex-1 flex items-center justify-between gap-2">
             <span className={`truncate ${isFolder ? "font-semibold text-muted-foreground" : "font-medium text-foreground"}`}>{node.name}</span>
             {!isFolder && node.version && (
-              <span className="shrink-0 text-xs text-muted-foreground">{node.version}</span>
+              <span className="shrink-0 inline-flex items-center px-1.5 py-0.5 text-[10px] font-medium bg-primary/10 text-primary rounded">{node.version}</span>
             )}
           </div>
+          {hasChildren && (
+            <span className="shrink-0" style={{ color: 'var(--color-text-muted)' }}>
+              {expanded ? <ChevronDown size={16} /> : <ChevronRight size={16} />}
+            </span>
+          )}
         </button>
         {isFolder && expanded && node.children?.map((child) => renderNode(child, level + 1))}
       </div>
@@ -562,18 +566,18 @@ function InspectorPane({ selectedItem, graphSelection }: { selectedItem: TreeNod
     <div className="flex h-full flex-col bg-sidebar border-l border-sidebar-border">
       <Tabs defaultValue="properties" className="flex min-h-0 flex-1 flex-col">
         <TabsList className="h-auto w-full justify-start rounded-none border-b border-sidebar-border bg-transparent p-0">
-          <TabsTrigger value="properties" className="flex-none rounded-none border-x-0 border-t-0 border-b-2 border-transparent px-3 py-2 text-xs bg-transparent shadow-none data-[state=active]:border-primary data-[state=active]:bg-transparent data-[state=active]:shadow-none">
+          <TabsTrigger value="properties" className="flex-none rounded-none border-x-0 border-t-0 border-b-2 border-transparent px-3 py-2 text-xs text-muted-foreground bg-transparent shadow-none data-[state=active]:border-primary data-[state=active]:bg-transparent data-[state=active]:text-foreground data-[state=active]:shadow-none">
             <Settings2 className="h-3.5 w-3.5" />
             属性
           </TabsTrigger>
-          <TabsTrigger value="reconciliation" className="flex-none rounded-none border-x-0 border-t-0 border-b-2 border-transparent px-3 py-2 text-xs bg-transparent shadow-none data-[state=active]:border-primary data-[state=active]:bg-transparent data-[state=active]:shadow-none">
+          <TabsTrigger value="reconciliation" className="flex-none rounded-none border-x-0 border-t-0 border-b-2 border-transparent px-3 py-2 text-xs text-muted-foreground bg-transparent shadow-none data-[state=active]:border-primary data-[state=active]:bg-transparent data-[state=active]:text-foreground data-[state=active]:shadow-none">
             <Link2 className="h-3.5 w-3.5" />
             勾稽
             <span className="ml-1 rounded bg-destructive px-1 py-0 text-[10px] font-semibold text-destructive-foreground">
               {reconciliationAlerts.length}
             </span>
           </TabsTrigger>
-          <TabsTrigger value="versions" className="flex-none rounded-none border-x-0 border-t-0 border-b-2 border-transparent px-3 py-2 text-xs bg-transparent shadow-none data-[state=active]:border-primary data-[state=active]:bg-transparent data-[state=active]:shadow-none">
+          <TabsTrigger value="versions" className="flex-none rounded-none border-x-0 border-t-0 border-b-2 border-transparent px-3 py-2 text-xs text-muted-foreground bg-transparent shadow-none data-[state=active]:border-primary data-[state=active]:bg-transparent data-[state=active]:text-foreground data-[state=active]:shadow-none">
             <History className="h-3.5 w-3.5" />
             版本
           </TabsTrigger>
@@ -586,7 +590,7 @@ function InspectorPane({ selectedItem, graphSelection }: { selectedItem: TreeNod
                 <Settings2 className="h-4 w-4" />
                 <span className="text-sm font-medium">Inspector</span>
               </div>
-              <div className="mt-3 text-lg font-semibold text-sidebar-foreground">{title || "Select a resource"}</div>
+              <div className="mt-3 text-lg font-semibold text-foreground">{title || "Select a resource"}</div>
               <div className="mt-1 text-xs leading-relaxed text-muted-foreground">
                 {description || "Choose an ontology item, graph node, or edge to inspect its contract."}
               </div>
@@ -834,15 +838,15 @@ export default function SemantierPage() {
               </div>
               <Tabs value={workspaceTab} onValueChange={(value) => setWorkspaceTab(value as WorkspaceTab)} className="flex min-h-0 flex-1 flex-col overflow-hidden">
                 <TabsList className="h-auto w-full justify-start rounded-none border-b bg-card px-4 py-0">
-                  <TabsTrigger value="graph" className="flex-none rounded-none border-x-0 border-t-0 border-b-2 border-transparent px-4 py-2.5 text-sm bg-transparent shadow-none data-[state=active]:border-primary data-[state=active]:bg-transparent data-[state=active]:shadow-none">
+                  <TabsTrigger value="graph" className="flex-none rounded-none border-x-0 border-t-0 border-b-2 border-transparent px-4 py-2.5 text-sm text-muted-foreground bg-transparent shadow-none data-[state=active]:border-primary data-[state=active]:bg-transparent data-[state=active]:text-foreground data-[state=active]:shadow-none">
                     <GitBranch className="h-4 w-4" />
                     Graph Modeling
                   </TabsTrigger>
-                  <TabsTrigger value="rules" className="flex-none rounded-none border-x-0 border-t-0 border-b-2 border-transparent px-4 py-2.5 text-sm bg-transparent shadow-none data-[state=active]:border-primary data-[state=active]:bg-transparent data-[state=active]:shadow-none">
+                  <TabsTrigger value="rules" className="flex-none rounded-none border-x-0 border-t-0 border-b-2 border-transparent px-4 py-2.5 text-sm text-muted-foreground bg-transparent shadow-none data-[state=active]:border-primary data-[state=active]:bg-transparent data-[state=active]:text-foreground data-[state=active]:shadow-none">
                     <Workflow className="h-4 w-4" />
                     Execution Rules
                   </TabsTrigger>
-                  <TabsTrigger value="editor" className="flex-none rounded-none border-x-0 border-t-0 border-b-2 border-transparent px-4 py-2.5 text-sm bg-transparent shadow-none data-[state=active]:border-primary data-[state=active]:bg-transparent data-[state=active]:shadow-none">
+                  <TabsTrigger value="editor" className="flex-none rounded-none border-x-0 border-t-0 border-b-2 border-transparent px-4 py-2.5 text-sm text-muted-foreground bg-transparent shadow-none data-[state=active]:border-primary data-[state=active]:bg-transparent data-[state=active]:text-foreground data-[state=active]:shadow-none">
                     <FileCode2 className="h-4 w-4" />
                     Code View
                   </TabsTrigger>

@@ -38,24 +38,11 @@ const NodeContextMenu = memo(function NodeContextMenu({
   onConfigureNode,
   onDeleteNode,
 }: NodeContextMenuProps) {
-  const menuButtonStyle = {
-    color: 'var(--color-text-primary)',
-    backgroundColor: '#ffffff',
-  };
+  const menuButtonBase =
+    'w-full text-left px-4 py-2 text-sm transition-colors flex items-center gap-2 text-foreground hover:bg-muted';
 
-  const handleMouseEnter = (e: React.MouseEvent<HTMLButtonElement>, isDelete = false) => {
-    e.currentTarget.style.backgroundColor = isDelete ? '#dc2626' : 'var(--color-primary)';
-    e.currentTarget.style.color = '#ffffff';
-    const icon = e.currentTarget.querySelector('svg');
-    if (icon) (icon as unknown as HTMLElement).style.color = '#ffffff';
-  };
-
-  const handleMouseLeave = (e: React.MouseEvent<HTMLButtonElement>, isDelete = false) => {
-    e.currentTarget.style.backgroundColor = '#ffffff';
-    e.currentTarget.style.color = isDelete ? '#dc2626' : 'var(--color-text-primary)';
-    const icon = e.currentTarget.querySelector('svg');
-    if (icon && !isDelete) (icon as unknown as HTMLElement).style.color = 'var(--color-primary)';
-  };
+  const menuButtonLargeBase =
+    'w-full text-left px-4 py-2.5 text-sm transition-colors flex items-center gap-3 text-foreground hover:bg-muted';
 
   return (
     <>
@@ -65,84 +52,67 @@ const NodeContextMenu = memo(function NodeContextMenu({
         onClick={onClose}
       />
       <div
-        className="fixed z-[9999] border rounded-md shadow-2xl py-1 min-w-[200px]"
+        className="fixed z-[9999] bg-card border border-primary/50 rounded-md shadow-2xl py-1 min-w-[200px]"
         style={{
           left: `${x}px`,
           top: `${y}px`,
-          backgroundColor: '#ffffff',
-          borderColor: 'var(--color-border-dark)',
         }}
         onClick={(e) => e.stopPropagation()}
       >
         {/* Chat with Agent */}
         <button
           onClick={() => onChatWithAgent(nodeId, nodeData)}
-          className="w-full text-left px-4 py-2.5 text-sm transition-all flex items-center gap-3 rounded-t-lg"
-          style={menuButtonStyle}
-          onMouseEnter={(e) => handleMouseEnter(e)}
-          onMouseLeave={(e) => handleMouseLeave(e)}
+          className={`${menuButtonLargeBase} rounded-t-sm`}
         >
-          <Brain className="w-4 h-4 transition-colors" style={{ color: 'var(--color-primary)' }} />
+          <Brain className="w-4 h-4 shrink-0 text-primary" />
           <div>
             <div className="font-medium">Chat with Agent</div>
-            <div className="text-xs opacity-60">Open chat interface for this agent</div>
+            <div className="text-xs text-muted-foreground">Open chat interface for this agent</div>
           </div>
         </button>
 
         {/* Divider */}
-        <div className="h-px my-1" style={{ backgroundColor: 'var(--color-border-dark)' }} />
+        <div className="h-px my-1 bg-border" />
 
         {/* Save to Agent Library */}
         <button
           onClick={() => onSaveToLibrary(nodeId, nodeData)}
-          className="w-full text-left px-4 py-2.5 text-sm transition-all flex items-center gap-3"
-          style={menuButtonStyle}
-          onMouseEnter={(e) => handleMouseEnter(e)}
-          onMouseLeave={(e) => handleMouseLeave(e)}
+          className={menuButtonLargeBase}
         >
-          <Database className="w-4 h-4 transition-colors" style={{ color: 'var(--color-primary)' }} />
+          <Database className="w-4 h-4 shrink-0 text-primary" />
           <div>
             <div className="font-medium">Save to Library</div>
-            <div className="text-xs opacity-60">Reuse this agent in other workflows</div>
+            <div className="text-xs text-muted-foreground">Reuse this agent in other workflows</div>
           </div>
         </button>
 
         {/* Divider */}
-        <div className="h-px my-1" style={{ backgroundColor: 'var(--color-border-dark)' }} />
+        <div className="h-px my-1 bg-border" />
 
         {/* Copy LangChain Code */}
         <button
           onClick={() => onCopyLangChainCode(nodeId, nodeData)}
-          className="w-full text-left px-4 py-2 text-sm transition-all flex items-center gap-2"
-          style={menuButtonStyle}
-          onMouseEnter={(e) => handleMouseEnter(e)}
-          onMouseLeave={(e) => handleMouseLeave(e)}
+          className={menuButtonBase}
         >
-          <FileIcon className="w-4 h-4" />
+          <FileIcon className="w-4 h-4 shrink-0 text-primary" />
           Copy LangChain Code
         </button>
 
         {/* Duplicate Node */}
         <button
           onClick={() => onDuplicateNode(nodeId, nodeData)}
-          className="w-full text-left px-4 py-2 text-sm transition-all flex items-center gap-2"
-          style={menuButtonStyle}
-          onMouseEnter={(e) => handleMouseEnter(e)}
-          onMouseLeave={(e) => handleMouseLeave(e)}
+          className={menuButtonBase}
         >
-          <Copy className="w-4 h-4" />
+          <Copy className="w-4 h-4 shrink-0 text-primary" />
           Duplicate Node
         </button>
 
         {/* Configure Node */}
         <button
           onClick={() => onConfigureNode(nodeId)}
-          className="w-full text-left px-4 py-2 text-sm transition-all flex items-center gap-2"
-          style={menuButtonStyle}
-          onMouseEnter={(e) => handleMouseEnter(e)}
-          onMouseLeave={(e) => handleMouseLeave(e)}
+          className={menuButtonBase}
         >
-          <Settings className="w-4 h-4" />
+          <Settings className="w-4 h-4 shrink-0 text-primary" />
           Configure
         </button>
 
@@ -150,15 +120,12 @@ const NodeContextMenu = memo(function NodeContextMenu({
         {nodeData.executionStatus?.tokenCost && (
           <button
             onClick={() => onConfigureNode(nodeId)}
-            className="w-full text-left px-4 py-2 text-sm transition-all flex items-center gap-2"
-            style={menuButtonStyle}
-            onMouseEnter={(e) => handleMouseEnter(e)}
-            onMouseLeave={(e) => handleMouseLeave(e)}
+            className={menuButtonBase}
           >
-            <Brain className="w-4 h-4" />
+            <Brain className="w-4 h-4 shrink-0 text-primary" />
             <div className="flex-1 flex items-center justify-between">
               <span>View Metrics</span>
-              <span className="text-xs font-mono">
+              <span className="text-xs font-mono text-muted-foreground">
                 {nodeData.executionStatus.tokenCost.costString}
               </span>
             </div>
@@ -166,17 +133,14 @@ const NodeContextMenu = memo(function NodeContextMenu({
         )}
 
         {/* Divider */}
-        <div className="h-px my-1" style={{ backgroundColor: 'var(--color-border-dark)' }} />
+        <div className="h-px my-1 bg-border" />
 
         {/* Delete Node */}
         <button
           onClick={() => onDeleteNode(nodeId)}
-          className="w-full text-left px-4 py-2 text-sm transition-all flex items-center gap-2"
-          style={{ color: '#dc2626', backgroundColor: '#ffffff' }}
-          onMouseEnter={(e) => handleMouseEnter(e, true)}
-          onMouseLeave={(e) => handleMouseLeave(e, true)}
+          className="w-full text-left px-4 py-2 text-sm transition-colors flex items-center gap-2 text-destructive hover:bg-destructive/10 rounded-b-sm"
         >
-          <Trash2 className="w-4 h-4" />
+          <Trash2 className="w-4 h-4 shrink-0" />
           Delete Node
         </button>
       </div>
