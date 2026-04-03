@@ -7,7 +7,7 @@
 
 import { memo, useState, useRef, useEffect, useMemo } from 'react';
 import { Handle, Position, NodeProps } from 'reactflow';
-import { MessageSquare } from 'lucide-react';
+import { MessageSquare, Grip } from 'lucide-react';
 import { useAvailableModels } from '@/hooks/useAvailableModels';
 import { getModelDisplayName } from '@/lib/model-utils';
 import type { NodeExecutionStatus } from '@/hooks/useNodeExecutionStatus';
@@ -95,175 +95,57 @@ const CustomNode = memo(function CustomNode({ id, data, selected }: NodeProps) {
     prevStatusRef.current = executionStatus;
   }, [executionStatus]);
 
-  // Determine if we're in a dark theme (check if background is dark) - MEMOIZED
-  const isDarkTheme = useMemo(() => {
-    if (typeof document === 'undefined') return false;
-    const theme = document.documentElement.getAttribute('data-theme');
-    return theme ? ['dark', 'midnight', 'ocean', 'forest', 'botanical', 'godspeed'].includes(theme) : false;
-  }, []); // Empty deps - theme doesn't change during node drag
+  // Execution state CSS class (Semantier pattern — no inline border color)
+  const stateClass = useMemo(() => {
+    if (selected) return 'border-primary node-blink';
+    if (!executionStatus || executionStatus.state === 'idle') return 'border-primary/40';
+    switch (executionStatus.state) {
+      case 'running':
+      case 'thinking': return 'border-[#3b82f6] node-running';
+      case 'completed': return 'border-[#3ccf91]';
+      case 'error': return 'border-[#f06a7f]';
+      default: return 'border-primary/40';
+    }
+  }, [selected, executionStatus]);
 
   return (
     <div
       ref={nodeRef}
-      className={`group px-5 py-6 shadow-xl ${agentType === 'TOOL_NODE' ? 'rounded-md' : 'rounded-md'
-        } relative min-w-[220px] max-w-[220px] border-2 ${selected ? '' : 'hover:border-primary/50 hover:shadow-2xl'
-        }`}
-      style={{
-        background: isDarkTheme
-          ? `linear-gradient(135deg, var(--color-panel-dark) 0%, var(--color-background-dark) 100%)`
-          : 'var(--color-primary)',
-        backgroundColor: isDarkTheme ? 'var(--color-panel-dark)' : 'var(--color-primary)',
-        borderColor: borderColor,
-        opacity: (isControlNode && agentType !== 'TOOL_NODE') ? controlStyle?.opacity : 1,
-        boxShadow: selected
-          ? '0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04)'
-          : '0 10px 15px -3px rgba(0, 0, 0, 0.1)',
-      }}
+      className={`group w-52 rounded-md border-2 shadow-lg transition-colors duration-200 bg-card backdrop-blur-sm relative ${stateClass}`}
+      style={(isControlNode && agentType !== 'TOOL_NODE') ? { opacity: controlStyle?.opacity } : undefined}
       onContextMenu={(e) => {
         e.preventDefault();
         openNodeContextMenu(id, data, e.clientX, e.clientY);
       }}
     >
-      {/* Simple decorative overlay - no animation */}
-      {!isControlNode && (
-        <div
-          className="absolute inset-0 rounded-md pointer-events-none"
-          style={{
-            background: isDarkTheme
-              ? 'linear-gradient(135deg, var(--color-primary) 0%, transparent 100%)'
-              : 'linear-gradient(135deg, rgba(0, 0, 0, 0.1) 0%, transparent 100%)',
-            opacity: isDarkTheme ? 0.05 : 0.03,
-          }}
-        />
-      )}
 
-      {/* Conversation Context Badge - Top Left */}
-      {!isControlNode && data.config?.enable_conversation_context && (
-        <div
-          className="absolute top-2 left-2 flex items-center justify-center w-6 h-6 rounded-full"
-          style={{
-            backgroundColor: 'rgba(59, 130, 246, 0.2)',
-            border: '1.5px solid #3b82f6',
-            filter: 'drop-shadow(0 2px 4px rgba(0, 0, 0, 0.3))',
-          }}
-          title="Conversation context enabled"
-        >
-          <MessageSquare
-            className="w-3.5 h-3.5"
-            style={{
-              color: '#3b82f6',
-              strokeWidth: 2.5
-            }}
-          />
+      {/* ── Header row (Semantier pattern) ── */}
+      <div className="flex items-center gap-2 px-3 py-2 border-b border-border/50">
+        <Grip className="h-3 w-3 text-muted-foreground cursor-grab shrink-0" />
+        <div className="p-0.5 rounded bg-primary/20 shrink-0">
+          {isControlNode
+            ? <span className="material-symbols-outlined text-[13px] text-primary">{controlStyle?.icon ?? 'settings'}</span>
+            : <span className="material-symbols-outlined text-[13px] text-primary">smart_toy</span>}
         </div>
-      )}
-
-      {/* Tool Count Badge - Top Right */}
-      {!isControlNode && (() => {
-        const nativeToolCount = data.config?.native_tools?.length || 0;
-        const builtInToolCount = data.config?.tools?.length || 0;
-        const customToolCount = data.config?.custom_tools?.length || 0;
-        const toolCount = nativeToolCount + builtInToolCount + customToolCount;
-
-        if (toolCount === 0) return null;
-
-        return (
-          <div
-            className="absolute top-2 right-2 flex items-center gap-1"
-            style={{
-              filter: 'drop-shadow(0 2px 4px rgba(0, 0, 0, 0.3))',
-            }}
-            title={`Tools: ${nativeToolCount} Native${customToolCount > 0 ? `, ${customToolCount} Custom` : ''}`}
-          >
-            <span
-              className="material-symbols-outlined"
-              style={{
-                fontSize: '16px',
-                color: customToolCount > 0 ? '#f59e0b' : (isDarkTheme ? 'var(--color-primary)' : 'var(--color-background-light)'),
-                fontWeight: 600
-              }}
-            >
-              construction
-            </span>
-            <span
-              className="text-sm font-bold"
-              style={{
-                color: customToolCount > 0 ? '#f59e0b' : (isDarkTheme ? 'var(--color-primary)' : 'var(--color-background-light)')
-              }}
-            >
-              {toolCount}
-            </span>
-          </div>
-        );
-      })()}
-
-      {/* Warning Badge - Top Left */}
-      {!isControlNode && executionStatus?.warnings && executionStatus.warnings.length > 0 && (
-        <div
-          className="absolute top-2 left-2 flex items-center gap-1 px-2 py-1 rounded-full cursor-help"
-          style={{
-            backgroundColor: executionStatus.warnings.some((w: { severity: string }) => w.severity === 'error') ? '#ef4444' : '#f59e0b',
-            filter: 'drop-shadow(0 2px 4px rgba(0, 0, 0, 0.3))',
-          }}
-          title={executionStatus.warnings.map((w: { message: string }) => w.message).join('\n')}
-        >
-          <span
-            className="material-symbols-outlined"
-            style={{
-              fontSize: '14px',
-              color: 'white',
-              fontWeight: 600
-            }}
-          >
-            {executionStatus.warnings.some((w: { severity: string }) => w.severity === 'error') ? 'error' : 'warning'}
-          </span>
-          <span className="text-xs font-bold text-white">
-            {executionStatus.warnings.length}
-          </span>
-        </div>
-      )}
-
-      {/* Input Handle (Left) - Hidden for START nodes */}
-      {agentType !== 'START_NODE' && (
-        <Handle
-          type="target"
-          position={Position.Left}
-          style={{
-            width: '14px',
-            height: '14px',
-            backgroundColor: 'var(--color-primary)',
-            border: '3px solid var(--color-primary)',
-            boxShadow: '0 2px 8px rgba(0,0,0,0.15)',
-          }}
-          className="transition-transform hover:scale-125"
-          id="input"
-        />
-      )}
-
-      {/* Node Header - Center aligned for better visual balance */}
-      <div className="flex flex-col items-center text-center gap-2 relative z-10 w-full">
-        {/* Optional icon from agent data */}
-        {!isControlNode && data.icon && (
-          <div className="flex-shrink-0">
-            <span className="material-symbols-outlined" style={{
-              fontSize: '28px',
-              color: isDarkTheme ? 'var(--color-primary)' : 'var(--color-background-light)'
-            }}>
-              {data.icon}
-            </span>
-          </div>
+        <span className="font-medium text-sm truncate flex-1">
+          {agentType === 'TOOL_NODE' && data.config?.tool_id ? data.config.tool_id : data.label}
+        </span>
+        {/* Conversation context badge */}
+        {!isControlNode && data.config?.enable_conversation_context && (
+          <MessageSquare className="w-3 h-3 text-[#3b82f6] shrink-0" aria-label="Conversation context" />
         )}
+        {/* Tool count badge */}
+        {!isControlNode && (() => {
+          const total = (data.config?.native_tools?.length || 0) + (data.config?.tools?.length || 0) + (data.config?.custom_tools?.length || 0);
+          if (!total) return null;
+          const color = (data.config?.custom_tools?.length || 0) > 0 ? 'text-[#f59e0b]' : 'text-primary';
+          return <span className={`text-[10px] font-mono font-bold ${color}`}>{total}T</span>;
+        })()}
+      </div>
 
-        {/* Agent Name - Larger and bold */}
-        <div className="font-bold text-lg leading-tight px-2" style={{
-          color: isDarkTheme ? 'var(--color-text-primary)' : 'var(--color-background-light)'
-        }}>
-          {agentType === 'TOOL_NODE' && data.config?.tool_id
-            ? data.config.tool_id
-            : data.label}
-        </div>
-
-        {/* Model Name - Clickable to change model */}
+      {/* ── Body rows (Semantier pattern) ── */}
+      <div className="p-2 space-y-1">
+        {/* Model row — clickable */}
         {modelName && modelName !== 'none' && (
           <div className="relative" style={{ zIndex: 9999 }}>
             <button
@@ -271,15 +153,11 @@ const CustomNode = memo(function CustomNode({ id, data, selected }: NodeProps) {
                 e.stopPropagation();
                 setShowModelDropdown(!showModelDropdown);
               }}
-              className="text-xs font-medium px-3 py-1 rounded-full nodrag"
-              style={{
-                color: isDarkTheme ? 'var(--color-text-muted)' : 'var(--color-background-light)',
-                backgroundColor: isDarkTheme
-                  ? 'rgba(var(--color-primary-rgb, 99, 102, 241), 0.15)'
-                  : 'rgba(255, 255, 255, 0.25)',
-              }}
+              className="nodrag flex w-full items-center gap-2 text-xs rounded hover:bg-muted/50 px-1 py-0.5 transition-colors"
             >
-              {getModelDisplayName(modelName)}
+              <span className="w-1.5 h-1.5 rounded-full shrink-0 bg-primary" />
+              <span className="text-foreground truncate">{getModelDisplayName(modelName)}</span>
+              <span className="text-muted-foreground ml-auto font-mono text-[10px]">model</span>
             </button>
 
             {/* Model Dropdown */}
@@ -400,64 +278,66 @@ const CustomNode = memo(function CustomNode({ id, data, selected }: NodeProps) {
           </div>
         )}
 
-        {/* Control Node Label */}
-        {isControlNode && (
-          <div className="text-xs font-medium italic opacity-70" style={{ color: 'var(--color-text-muted)' }}>
-            Control Node
+        {/* Execution status row */}
+        {executionStatus && executionStatus.state !== 'idle' && (
+          <div className="flex items-center gap-2 text-xs">
+            <span className={`w-1.5 h-1.5 rounded-full shrink-0 ${
+              executionStatus.state === 'running' || executionStatus.state === 'thinking'
+                ? 'bg-[#3b82f6] animate-pulse'
+                : executionStatus.state === 'completed' ? 'bg-[#3ccf91]' : 'bg-[#f06a7f]'
+            }`} />
+            <span className="text-muted-foreground">{executionStatus.state}</span>
+            {tokenCost && tokenCost.totalTokens > 0 && (
+              <span className="text-muted-foreground ml-auto font-mono text-[10px]">{tokenCost.costString}</span>
+            )}
+          </div>
+        )}
+        {/* Warning row */}
+        {!isControlNode && executionStatus?.warnings && executionStatus.warnings.length > 0 && (
+          <div
+            className="flex items-center gap-1.5 text-xs cursor-help"
+            title={executionStatus.warnings.map((w: { message: string }) => w.message).join('\n')}
+          >
+            <span className={`w-1.5 h-1.5 rounded-full shrink-0 ${
+              executionStatus.warnings.some((w: { severity: string }) => w.severity === 'error') ? 'bg-[#f06a7f]' : 'bg-[#f59e0b]'
+            }`} />
+            <span className="text-muted-foreground">{executionStatus.warnings.length} warning{executionStatus.warnings.length > 1 ? 's' : ''}</span>
           </div>
         )}
       </div>
 
-      {/* Output Handle (Right) - Hidden for END nodes */}
+      {/* ── Handles (Semantier PortHandle style) ── */}
+      {agentType !== 'START_NODE' && (
+        <Handle
+          type="target"
+          position={Position.Left}
+          id="input"
+          style={{ left: 0, top: '50%', transform: 'translate(calc(-50% - 1px), -50%)' }}
+          className="!rounded-full !border-2 !w-3 !h-3 !bg-teal-700 !border-teal-400 hover:!bg-teal-600 hover:!border-teal-300 transition-all duration-200"
+        />
+      )}
       {agentType !== 'END_NODE' && (
         <Handle
           type="source"
           position={Position.Right}
-          style={{
-            width: '14px',
-            height: '14px',
-            backgroundColor: 'var(--color-primary)',
-            border: '3px solid var(--color-primary)',
-            boxShadow: '0 2px 8px rgba(0,0,0,0.15)',
-          }}
-          className="transition-transform hover:scale-125"
           id="output"
+          style={{ left: '100%', top: '50%', transform: 'translate(calc(-50% + 1px), -50%)' }}
+          className="!rounded-full !border-2 !w-3 !h-3 !bg-teal-700 !border-teal-400 hover:!bg-teal-600 hover:!border-teal-300 transition-all duration-200"
         />
       )}
 
-      {/* Selection indicator */}
-      {selected && !isControlNode && (
-        <div className="absolute -inset-1 bg-primary/10 rounded-md -z-10 animate-pulse" />
-      )}
-
-      {/* Expand/Collapse Button - Only for regular agent nodes */}
+      {/* Expand/Collapse Button (Semantier: subtle bottom bar) */}
       {!isControlNode && (
         <button
           onClick={(e) => {
             e.stopPropagation();
             setIsPanelExpanded(!isPanelExpanded);
           }}
-          className="absolute -bottom-3 left-1/2 transform -translate-x-1/2 nodrag nopan z-20 transition-all hover:scale-110"
-          style={{
-            width: '24px',
-            height: '24px',
-            borderRadius: '50%',
-            backgroundColor: 'var(--color-primary)',
-            border: '2px solid var(--color-background-dark)',
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            boxShadow: '0 2px 8px rgba(0,0,0,0.2)',
-          }}
+          className="nodrag nopan w-full flex items-center justify-center py-1 border-t border-border/50 hover:bg-muted/50 transition-colors rounded-b-md"
         >
           <span
-            className="material-symbols-outlined"
-            style={{
-              fontSize: '16px',
-              color: 'white',
-              transform: isPanelExpanded ? 'rotate(180deg)' : 'rotate(0deg)',
-              transition: 'transform 0.2s'
-            }}
+            className="material-symbols-outlined text-muted-foreground"
+            style={{ fontSize: '14px', transform: isPanelExpanded ? 'rotate(180deg)' : 'rotate(0deg)', transition: 'transform 0.2s' }}
           >
             expand_more
           </span>

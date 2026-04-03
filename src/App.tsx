@@ -13,6 +13,8 @@ import WorkflowCanvas, { WorkflowCanvasRef, WorkflowRecipe } from './features/wo
 import { TaskHistoryEntry } from './features/workflows/canvas/types';
 import WorkflowLibraryView from './features/workflows/library/WorkflowLibraryView';
 import NodeConfigPanel from './features/workflows/node-config/NodeConfigPanel';
+import EdgeInspectorPanel from './features/workflows/canvas/edges/EdgeInspectorPanel';
+import type { Edge } from 'reactflow';
 import SettingsView from './pages/SettingsPage';
 import KnowledgeBaseView from './features/knowledge/ui/KnowledgeBaseView';
 import AgentLoadouts from './features/agents/ui/AgentLoadouts';
@@ -127,6 +129,7 @@ function AppContent() {
   const [workflowTab, setWorkflowTab] = useState<'studio' | 'results'>('studio');
   const [selectedNodeId, setSelectedNodeId] = useState<string | null>(null);
   const [selectedNodeData, setSelectedNodeData] = useState<SelectedNodeData | null>(null);
+  const [selectedEdge, setSelectedEdge] = useState<Edge | null>(null);
 
   // Close node config panel when chat opens
   useEffect(() => {
@@ -256,6 +259,7 @@ function AppContent() {
   };
 
   const handleNodeSelect = (nodeId: string | null, nodeData?: any) => {
+    setSelectedEdge(null);
     setSelectedNodeId(nodeId);
     if (nodeId && nodeData) {
 
@@ -293,6 +297,14 @@ function AppContent() {
       setSelectedNodeData(null);
     }
   };
+
+  const handleEdgeSelect = useCallback((edge: Edge | null) => {
+    setSelectedEdge(edge);
+    if (edge) {
+      setSelectedNodeId(null);
+      setSelectedNodeData(null);
+    }
+  }, []);
 
   const handleAgentAdded = () => {
     // Clear selected agent after it's been added to the canvas
@@ -426,6 +438,7 @@ function AppContent() {
               onTaskHistoryUpdate={setTaskHistory}
               onSelectedTaskChange={setSelectedHistoryTask}
               externalSelectedTask={selectedHistoryTask}
+              onEdgeSelect={handleEdgeSelect}
             />
           )}
           {currentView === 'library' && (
@@ -483,6 +496,16 @@ function AppContent() {
               if (selectedNodeData?.tokenCost) return selectedNodeData.tokenCost;
               return undefined;
             })()}
+          />
+        )}
+        {currentView === 'studio' && workflowTab === 'studio' && selectedEdge && !selectedNodeId && (
+          <EdgeInspectorPanel
+            edge={selectedEdge}
+            onClose={() => setSelectedEdge(null)}
+            onLabelChange={(edgeId, label) => {
+              workflowCanvasRef.current?.updateEdgeLabel(edgeId, label);
+              setSelectedEdge(prev => prev?.id === edgeId ? { ...prev, label, data: { ...prev.data, label } } : prev);
+            }}
           />
         )}
       </main>

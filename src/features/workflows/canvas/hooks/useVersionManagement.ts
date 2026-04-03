@@ -194,10 +194,15 @@ export function useVersionManagement({
           id: e.id || `e${e.source}-${e.target}`,
           source: e.source,
           target: e.target,
+          sourceHandle: e.sourceHandle,
+          targetHandle: e.targetHandle,
           label: e.label,
-          data: e.data,
-          type: e.type || 'smoothstep',
-          animated: e.animated ?? true
+          data: { label: e.label },
+          type: 'workflow',
+          reconnectable: true,
+          animated: false,
+          style: { stroke: '#39d0cf', strokeWidth: 2 },
+          markerEnd: { type: 'arrowclosed', color: '#39d0cf', width: 16, height: 16 },
         }));
 
         setNodes(restoredNodes);

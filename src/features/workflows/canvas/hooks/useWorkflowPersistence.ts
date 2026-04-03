@@ -282,11 +282,18 @@ export function useWorkflowPersistence({
 
           if (config.edges) {
             const restoredEdges = config.edges.map((e: any) => ({
-              id: `${e.source}-${e.target}`,
+              id: e.id || `${e.source}-${e.target}`,
               source: e.source,
               target: e.target,
-              type: 'smoothstep',
-              animated: true
+              sourceHandle: e.sourceHandle,
+              targetHandle: e.targetHandle,
+              type: 'workflow',
+              label: e.label,
+              data: { label: e.label },
+              reconnectable: true,
+              animated: false,
+              style: { stroke: '#39d0cf', strokeWidth: 2 },
+              markerEnd: { type: 'arrowclosed', color: '#39d0cf', width: 16, height: 16 },
             }));
             setEdges(restoredEdges);
           }

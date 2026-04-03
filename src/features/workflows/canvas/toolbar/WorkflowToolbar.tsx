@@ -6,7 +6,8 @@
  */
 
 import { memo } from 'react';
-import { Save, History as HistoryIcon, Settings, FolderOpen, Image, Camera, ChevronDown } from 'lucide-react';
+import { Save, History as HistoryIcon, Settings, FolderOpen, Image, Camera, ChevronDown, LayoutDashboard, ListChecks } from 'lucide-react';
+import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs';
 
 interface WorkflowVersion {
   id: number;
@@ -101,12 +102,11 @@ const WorkflowToolbar = memo(function WorkflowToolbar({
   artifactsCount,
   hasUnsavedChanges,
 }: WorkflowToolbarProps) {
-  const tabClass = (tab: Tab) =>
-    `flex-none rounded-none border-x-0 border-t-0 border-b-2 border-transparent px-4 py-2.5 text-sm transition-colors bg-transparent ${
-      activeTab === tab
-        ? 'border-primary text-foreground'
-        : 'text-muted-foreground hover:text-foreground'
-    }`;
+  const triggerClass =
+    'flex-none rounded-none border-x-0 border-t-0 border-b-2 border-transparent px-4 py-2.5 text-sm bg-transparent shadow-none ' +
+    'text-muted-foreground ' +
+    'data-[state=active]:border-primary data-[state=active]:bg-transparent data-[state=active]:text-foreground data-[state=active]:shadow-none ' +
+    'hover:text-foreground transition-colors gap-1.5';
   return (
     <div className="bg-card border-b border-sidebar-border px-4 py-0">
       <div className="flex items-center">
@@ -290,26 +290,45 @@ const WorkflowToolbar = memo(function WorkflowToolbar({
           )}
 
           {/* Tabs */}
-          <div className="flex items-center">
-            <button onClick={() => onTabChange('studio')} className={tabClass('studio')}>
-              Studio
-            </button>
-            <button onClick={() => onTabChange('results')} className={tabClass('results')}>
-              Results {taskHistoryCount > 0 && <span className="ml-1 text-xs opacity-70">({taskHistoryCount})</span>}
-            </button>
-            <button onClick={() => onTabChange('files')} className={`${tabClass('files')} flex items-center gap-1.5`}>
-              <FolderOpen className="w-4 h-4" />
-              Files {filesCount > 0 && <span className="text-xs opacity-70">({filesCount})</span>}
-            </button>
-            <button onClick={() => onTabChange('artifacts')} className={`${tabClass('artifacts')} flex items-center gap-1.5`}>
-              <Image className="w-4 h-4" />
-              Artifacts {artifactsCount > 0 && <span className="text-xs opacity-70">({artifactsCount})</span>}
-            </button>
-            <button onClick={() => onTabChange('settings')} className={`${tabClass('settings')} flex items-center gap-1.5`}>
-              <Settings className="w-4 h-4" />
-              Settings
-            </button>
-          </div>
+          <Tabs value={activeTab} onValueChange={(v) => onTabChange(v as Tab)} className="flex items-end">
+            <TabsList className="h-auto justify-start rounded-none border-0 bg-transparent p-0">
+              <TabsTrigger value="studio" className={triggerClass}>
+                <LayoutDashboard className="h-3.5 w-3.5" />
+                Studio
+              </TabsTrigger>
+              <TabsTrigger value="results" className={triggerClass}>
+                <ListChecks className="h-3.5 w-3.5" />
+                Results
+                {taskHistoryCount > 0 && (
+                  <span className="ml-0.5 inline-flex items-center px-1.5 py-0.5 rounded text-[10px] font-medium bg-muted text-muted-foreground">
+                    {taskHistoryCount}
+                  </span>
+                )}
+              </TabsTrigger>
+              <TabsTrigger value="files" className={triggerClass}>
+                <FolderOpen className="h-3.5 w-3.5" />
+                Files
+                {filesCount > 0 && (
+                  <span className="ml-0.5 inline-flex items-center px-1.5 py-0.5 rounded text-[10px] font-medium bg-muted text-muted-foreground">
+                    {filesCount}
+                  </span>
+                )}
+              </TabsTrigger>
+              <TabsTrigger value="artifacts" className={triggerClass}>
+                <Image className="h-3.5 w-3.5" />
+                Artifacts
+                {artifactsCount > 0 && (
+                  <span className="ml-0.5 inline-flex items-center px-1.5 py-0.5 rounded text-[10px] font-medium bg-muted text-muted-foreground">
+                    {artifactsCount}
+                  </span>
+                )}
+              </TabsTrigger>
+              <TabsTrigger value="settings" className={triggerClass}>
+                <Settings className="h-3.5 w-3.5" />
+                Settings
+              </TabsTrigger>
+            </TabsList>
+          </Tabs>
         </div>
 
         {/* SPACER */}
@@ -319,7 +338,7 @@ const WorkflowToolbar = memo(function WorkflowToolbar({
         <div className="flex items-center gap-3">
           {/* Unsaved Changes Indicator */}
           {hasUnsavedChanges && (
-            <div className="flex items-center gap-1.5 text-xs font-medium text-yellow-600 dark:text-yellow-500 animate-pulse">
+            <div className="flex items-center gap-1.5 text-xs font-medium animate-pulse" style={{ color: 'var(--status-warning)' }}>
               <span className="material-symbols-outlined" style={{ fontSize: '14px' }}>warning</span>
               <span>Unsaved</span>
             </div>

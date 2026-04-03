@@ -17,8 +17,75 @@ import ReactFlow, {
   Connection,
   BackgroundVariant,
   MiniMap,
+  getBezierPath,
+  Position,
+  reconnectEdge,
 } from 'reactflow';
 import 'reactflow/dist/style.css';
+import WorkflowEdge from './edges/WorkflowEdge';
+
+/** Semantier-equivalent CSS animations injected into the canvas */
+const GRAPH_CSS = `
+@keyframes v0-node-blink {
+  0%,100% { box-shadow: 0 0 0 2px rgba(45,212,191,.5), 0 0 10px rgba(45,212,191,.3); border-color: rgba(45,212,191,.8) !important; }
+  50% { box-shadow: 0 0 0 3px rgba(45,212,191,.9), 0 0 24px rgba(45,212,191,.6); border-color: rgba(45,212,191,1) !important; }
+}
+.node-blink { animation: v0-node-blink 1.5s ease-in-out infinite; z-index: 1000; }
+@keyframes node-running-pulse {
+  0%,100% { box-shadow: 0 0 0 2px rgba(59,130,246,.4), 0 0 8px rgba(59,130,246,.3); }
+  50% { box-shadow: 0 0 0 3px rgba(59,130,246,.8), 0 0 20px rgba(59,130,246,.6); }
+}
+.node-running { animation: node-running-pulse 1s ease-in-out infinite; }
+.react-flow__edge.selected path.react-flow__edge-path {
+  stroke: rgba(45,212,191,1) !important;
+  stroke-width: 3px !important;
+  filter: drop-shadow(0 0 4px rgba(45,212,191,.8));
+}
+.react-flow__edge.selected path.react-flow__edge-interaction { stroke-width: 28px; cursor: pointer; }
+@keyframes handle-valid-breathe {
+  0%,100% { transform: scale(1.3); opacity:.9; }
+  50% { transform: scale(1.55); opacity:1; }
+}
+.react-flow__handle-valid {
+  background-color: rgb(45,212,191) !important;
+  box-shadow: 0 0 0 3px rgba(45,212,191,.5), 0 0 16px rgba(45,212,191,.8) !important;
+  animation: handle-valid-breathe .8s ease-in-out infinite !important;
+  z-index: 10 !important;
+}
+.react-flow__handle-invalid {
+  background-color: rgb(240,106,127) !important;
+  box-shadow: 0 0 8px rgba(240,106,127,.8) !important;
+}
+@keyframes conn-dash-flow { 0% { stroke-dashoffset: 30; } 100% { stroke-dashoffset: 0; } }
+.conn-line-valid { animation: conn-dash-flow .5s linear infinite; }
+`;
+
+/** Magnetic glow line shown while dragging a new connection */
+function MagneticConnectionLine({
+  fromX, fromY, toX, toY, fromPosition, toPosition, connectionStatus,
+}: {
+  fromX: number; fromY: number; toX: number; toY: number;
+  fromPosition: Position; toPosition: Position;
+  connectionStatus: 'valid' | 'invalid' | null;
+}) {
+  const [path] = getBezierPath({
+    sourceX: fromX, sourceY: fromY, sourcePosition: fromPosition,
+    targetX: toX, targetY: toY, targetPosition: toPosition,
+  });
+  const isInvalid = connectionStatus === 'invalid';
+  const stroke = isInvalid ? '#f06a7f' : '#2dd4bf';
+  const glow = isInvalid ? 'rgba(240,106,127,0.35)' : 'rgba(45,212,191,0.35)';
+  return (
+    <g>
+      <path d={path} stroke={glow} strokeWidth={isInvalid ? 8 : 14} fill="none" />
+      <path d={path} stroke={stroke} strokeWidth={2} fill="none"
+        strokeDasharray={isInvalid ? '4,3' : '10,5'}
+        className={isInvalid ? undefined : 'conn-line-valid'}
+      />
+      <circle cx={toX} cy={toY} r={connectionStatus === 'valid' ? 6 : 4} fill={stroke} opacity={0.9} />
+    </g>
+  );
+}
 import apiClient from '@/lib/api-client';
 import ConflictDialog from '../ui/ConflictDialog';
 import RealtimeExecutionPanel from '@/features/workflows/execution/RealtimeExecutionPanel';
@@ -156,6 +223,7 @@ export interface WorkflowCanvasRef {
   saveWorkflow: (silent?: boolean) => Promise<void>;
   hasUnsavedChanges: () => boolean;
   clearCanvas: () => void;
+  updateEdgeLabel: (edgeId: string, label: string) => void;
 }
 
 function getDeepAgentTemplateId(agent: Agent): number | null {
@@ -213,6 +281,8 @@ interface WorkflowCanvasProps {
   onTaskHistoryUpdate?: (tasks: TaskHistoryEntry[]) => void;
   onSelectedTaskChange?: (task: TaskHistoryEntry | null) => void;
   externalSelectedTask?: TaskHistoryEntry | null;
+  /** Called when an edge is clicked. Null = deselected. */
+  onEdgeSelect?: (edge: Edge | null) => void;
 }
 
 const initialNodes: Node[] = [];
@@ -240,6 +310,7 @@ const WorkflowCanvas = forwardRef<WorkflowCanvasRef, WorkflowCanvasProps>(({
   onTaskHistoryUpdate,
   onSelectedTaskChange,
   externalSelectedTask,
+  onEdgeSelect,
 }, ref) => {
   const { showSuccess, logError, showWarning, NotificationModal } = useNotification();
   const { openChat } = useChat();
@@ -262,6 +333,42 @@ const WorkflowCanvas = forwardRef<WorkflowCanvasRef, WorkflowCanvasProps>(({
 
     onNodesChangeBase(validatedChanges);
   }, [onNodesChangeBase]);
+
+  // Edge reconnection tracking (mirrors OntologyGraph pattern)
+  const edgeReconnectSuccessful = useRef(true);
+
+  const onReconnectStart = useCallback(() => {
+    edgeReconnectSuccessful.current = false;
+  }, []);
+
+  const onReconnect = useCallback((oldEdge: Edge, connection: Connection) => {
+    edgeReconnectSuccessful.current = true;
+    setEdges((current) => reconnectEdge(oldEdge, connection, current));
+  }, [setEdges]);
+
+  const onReconnectEnd = useCallback((_: MouseEvent | TouchEvent, edge: Edge) => {
+    if (!edgeReconnectSuccessful.current) {
+      setEdges((current) => current.filter((e) => e.id !== edge.id));
+    }
+  }, [setEdges]);
+
+  const onEdgeClick = useCallback((_: React.MouseEvent, clickedEdge: Edge) => {
+    // Deselect all nodes when an edge is selected
+    setNodes((current) => current.map((n) => ({ ...n, selected: false })));
+    setEdges((current) => current.map((e) => ({ ...e, selected: e.id === clickedEdge.id })));
+    onEdgeSelect?.(clickedEdge);
+  }, [setNodes, setEdges, onEdgeSelect]);
+
+  const onUpdateEdgeLabel = useCallback((edgeId: string, label: string) => {
+    setEdges((current) =>
+      current.map((e) =>
+        e.id === edgeId ? { ...e, label, data: { ...e.data, label } } : e
+      )
+    );
+  }, [setEdges]);
+
+  // Expose onUpdateEdgeLabel for EdgeInspectorPanel via prop threading
+  // (App.tsx will proxy it through onEdgeSelect + its own ref to WorkflowCanvas)
 
   const [nodeIdCounter, setNodeIdCounter] = useState(1);
   const [currentWorkflowId, setCurrentWorkflowId] = useState<number | null>(workflowId || null);
@@ -562,6 +669,11 @@ const WorkflowCanvas = forwardRef<WorkflowCanvasRef, WorkflowCanvasProps>(({
   // Memoize nodeTypes to prevent React Flow warnings about recreation
   const nodeTypes = useMemo(() => ({
     custom: CustomNode,
+  }), []);
+
+  // Semantier-style edge type
+  const edgeTypes = useMemo(() => ({
+    workflow: WorkflowEdge,
   }), []);
 
   // Validate nodes and edges before passing to ReactFlow to prevent NaN rendering errors
@@ -1231,27 +1343,25 @@ if __name__ == "__main__":
         edgeData = { label: edgeLabel };
       }
 
-      // Add edge with enhanced styling using theme colors
-      const primaryColor = getComputedStyle(document.documentElement).getPropertyValue('--color-primary').trim();
+      // Semantier-style edge — teal primary, smooth-step path via WorkflowEdge
       const newEdge = {
         ...params,
         id: `e-${params.source}-${params.target}-${Date.now()}`,
-        type: 'smoothstep',
+        type: 'workflow',
         label: edgeLabel,
-        data: edgeData,
+        data: { label: edgeLabel },
         animated: false,
+        reconnectable: true,
         style: {
-          stroke: primaryColor || '#6366f1',
-          strokeWidth: 2.5,
+          stroke: '#39d0cf',
+          strokeWidth: 2,
         },
         markerEnd: {
           type: 'arrowclosed' as const,
-          color: primaryColor || '#6366f1',
+          color: '#39d0cf',
+          width: 16,
+          height: 16,
         },
-        labelStyle: { fill: primaryColor || '#6366f1', fontWeight: 700 },
-        labelBgStyle: { fill: '#ffffff', fillOpacity: 0.8 },
-        labelBgPadding: [8, 4],
-        labelBgBorderRadius: 4,
       };
       setEdges((eds: Edge[]) => addEdge(newEdge, eds));
     },
@@ -1513,16 +1623,13 @@ if __name__ == "__main__":
         id: `recipe-edge-${nodeIdCounter}-${idx}`,
         source: idMap[recipeEdge.source] || recipeEdge.source,
         target: idMap[recipeEdge.target] || recipeEdge.target,
-        type: recipeEdge.type || 'smoothstep',
+        type: 'workflow',
+        label: recipeEdge.label,
+        data: { label: recipeEdge.label },
+        reconnectable: true,
         animated: false,
-        style: {
-          stroke: primaryColor,
-          strokeWidth: 2.5,
-        },
-        markerEnd: {
-          type: 'arrowclosed' as const,
-          color: primaryColor,
-        },
+        style: { stroke: '#39d0cf', strokeWidth: 2 },
+        markerEnd: { type: 'arrowclosed' as const, color: '#39d0cf', width: 16, height: 16 },
       }));
 
       // Add nodes and edges to canvas
@@ -1659,8 +1766,9 @@ if __name__ == "__main__":
     deleteNode: handleNodeDelete,
     saveWorkflow: handleSave,
     hasUnsavedChanges: () => hasUnsavedChanges,
-    clearCanvas
-  }), [updateNodeConfig, handleNodeDelete, handleSave, hasUnsavedChanges, clearCanvas]);
+    clearCanvas,
+    updateEdgeLabel: onUpdateEdgeLabel,
+  }), [updateNodeConfig, handleNodeDelete, handleSave, hasUnsavedChanges, clearCanvas, onUpdateEdgeLabel]);
 
   // ADDED: Debug workflow function
   const handleDebugWorkflow = useCallback(async () => {
@@ -1806,25 +1914,16 @@ if __name__ == "__main__":
       });
 
       // Validate and theme edges correctly
-      const primaryColor = getComputedStyle(document.documentElement).getPropertyValue('--color-primary').trim() || '#6366f1';
       const restoredEdges = (config.edges || []).map((e: any) => ({
         ...e,
         id: e.id || `e-${e.source}-${e.target}-${Date.now()}`,
-        type: 'smoothstep',
+        type: 'workflow',
         label: e.label || e.data?.label,
+        data: { label: e.label || e.data?.label },
+        reconnectable: true,
         animated: false,
-        style: {
-          stroke: primaryColor,
-          strokeWidth: 2.5,
-        },
-        markerEnd: {
-          type: 'arrowclosed',
-          color: primaryColor,
-        },
-        labelStyle: { fill: primaryColor, fontWeight: 700 },
-        labelBgStyle: { fill: '#ffffff', fillOpacity: 0.8 },
-        labelBgPadding: [8, 4],
-        labelBgBorderRadius: 4,
+        style: { stroke: '#39d0cf', strokeWidth: 2 },
+        markerEnd: { type: 'arrowclosed', color: '#39d0cf', width: 16, height: 16 },
       }));
 
       // Always update the canvas state, even for empty workflows
@@ -2000,12 +2099,17 @@ if __name__ == "__main__":
               <EmptyCanvasState />
             ) : (
               <ErrorBoundary>
+                <style>{GRAPH_CSS}</style>
                 <ReactFlow
                   nodes={validatedNodes}
                   edges={validatedEdges}
                   onNodesChange={onNodesChange}
                   onEdgesChange={onEdgesChange}
                   onConnect={onConnect}
+                  onEdgeClick={onEdgeClick}
+                  onReconnect={onReconnect}
+                  onReconnectStart={onReconnectStart}
+                  onReconnectEnd={onReconnectEnd}
                   onNodeClick={handleNodeClick}
                   onEdgeDoubleClick={onEdgeDoubleClick}
                   onNodeDragStart={onNodeDragStart}
@@ -2028,6 +2132,8 @@ if __name__ == "__main__":
                     }
                   }}
                   nodeTypes={nodeTypes}
+                  edgeTypes={edgeTypes}
+                  connectionLineComponent={MagneticConnectionLine as any}
                   className="w-full h-full"
                   deleteKeyCode={["Backspace", "Delete"]}
                   multiSelectionKeyCode="Shift"
@@ -2041,9 +2147,9 @@ if __name__ == "__main__":
                 >
                   <Background
                     variant={BackgroundVariant.Dots}
-                    gap={16}
+                    color="var(--color-border)"
+                    gap={24}
                     size={1}
-                    className="bg-transparent"
                   />
 
                   {/* Controls - repositioned to top-left */}
