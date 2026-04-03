@@ -101,7 +101,7 @@ export default function ChatHeader({
         {/* Close Button */}
         <button
           onClick={closeChat}
-          className="p-2 rounded-lg hover:bg-gray-100 transition-colors"
+          className="p-2 rounded-md hover:bg-gray-100 transition-colors"
           style={{ color: 'var(--color-text-muted)' }}
           title="Close (ESC)"
         >

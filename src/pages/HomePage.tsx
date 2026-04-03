@@ -119,7 +119,7 @@ export default function HomePage() {
             className="flex items-center gap-4 p-6 rounded-md border border-border bg-card transition-all hover:shadow-lg group text-left"
           >
             <div
-              className="p-3 rounded-lg transition-all group-hover:scale-110"
+              className="p-3 rounded-md transition-all group-hover:scale-110"
               style={{ backgroundColor: 'var(--color-primary)', color: 'white' }}
             >
               <FolderPlus size={24} />
@@ -143,7 +143,7 @@ export default function HomePage() {
             className="flex items-center gap-4 p-6 rounded-md border border-border bg-card transition-all hover:shadow-lg group text-left"
           >
             <div
-              className="p-3 rounded-lg transition-all group-hover:scale-110"
+              className="p-3 rounded-md transition-all group-hover:scale-110"
               style={{
                 backgroundColor: 'var(--color-background-light)',
                 border: '2px solid var(--color-border-dark)',
@@ -234,7 +234,7 @@ export default function HomePage() {
             {projects.length > 3 && (
               <button
                 onClick={() => setShowOpenModal(true)}
-                className="w-full mt-2 p-2 rounded-lg text-xs font-medium transition-all hover:bg-white/5"
+                className="w-full mt-2 p-2 rounded-md text-xs font-medium transition-all hover:bg-white/5"
                 style={{ color: 'var(--color-text-muted)' }}
               >
                 View all {projects.length} projects →
@@ -252,7 +252,7 @@ export default function HomePage() {
             onClick={() => setShowCreateModal(false)}
           />
           <div
-            className="fixed top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 z-50 w-full max-w-md rounded-xl shadow-2xl border border-gray-200 dark:border-border-dark bg-white dark:bg-panel-dark"
+            className="fixed top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 z-50 w-full max-w-md rounded-md shadow-2xl border border-gray-200 dark:border-border-dark bg-white dark:bg-panel-dark"
           >
             <div className="p-6">
               <h2
@@ -276,7 +276,7 @@ export default function HomePage() {
                     value={createForm.name}
                     onChange={(e) => setCreateForm(prev => ({ ...prev, name: e.target.value }))}
                     placeholder="My AI Workflow"
-                    className="w-full px-4 py-2 rounded-lg border border-gray-200 dark:border-border-dark bg-white dark:bg-panel-dark transition-all focus:outline-none focus:ring-2"
+                    className="w-full px-4 py-2 rounded-md border border-gray-200 dark:border-border-dark bg-white dark:bg-panel-dark transition-all focus:outline-none focus:ring-2"
                     style={{
                       color: 'var(--color-text-primary)'
                     }}
@@ -296,7 +296,7 @@ export default function HomePage() {
                     onChange={(e) => setCreateForm(prev => ({ ...prev, description: e.target.value }))}
                     placeholder="Optional project description..."
                     rows={3}
-                    className="w-full px-4 py-2 rounded-lg border border-gray-200 dark:border-border-dark bg-white dark:bg-panel-dark transition-all focus:outline-none focus:ring-2"
+                    className="w-full px-4 py-2 rounded-md border border-gray-200 dark:border-border-dark bg-white dark:bg-panel-dark transition-all focus:outline-none focus:ring-2"
                     style={{
                       color: 'var(--color-text-primary)'
                     }}
@@ -318,14 +318,14 @@ export default function HomePage() {
                       onChange={(e) => setCreateForm(prev => ({ ...prev, directory_path: e.target.value }))}
                       placeholder="No directory selected"
                       readOnly
-                      className="flex-1 px-4 py-2 rounded-lg border border-gray-200 dark:border-border-dark bg-gray-100 dark:bg-background-dark"
+                      className="flex-1 px-4 py-2 rounded-md border border-gray-200 dark:border-border-dark bg-gray-100 dark:bg-background-dark"
                       style={{
                         color: 'var(--color-text-muted)'
                       }}
                     />
                     <button
                       onClick={handleDirectorySelect}
-                      className="px-4 py-2 rounded-lg border transition-all hover:bg-white/5"
+                      className="px-4 py-2 rounded-md border transition-all hover:bg-white/5"
                       style={{
                         borderColor: 'var(--color-border-dark)',
                         color: 'var(--color-text-primary)'
@@ -351,7 +351,7 @@ export default function HomePage() {
               <div className="flex gap-3 mt-6">
                 <button
                   onClick={() => setShowCreateModal(false)}
-                  className="flex-1 px-4 py-2 rounded-lg border transition-all hover:bg-white/5"
+                  className="flex-1 px-4 py-2 rounded-md border transition-all hover:bg-white/5"
                   style={{
                     borderColor: 'var(--color-border-dark)',
                     color: 'var(--color-text-primary)'
@@ -362,7 +362,7 @@ export default function HomePage() {
                 <button
                   onClick={handleCreateProject}
                   disabled={creating || !createForm.name.trim()}
-                  className="flex-1 px-4 py-2 rounded-lg font-semibold transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+                  className="flex-1 px-4 py-2 rounded-md font-semibold transition-all disabled:opacity-50 disabled:cursor-not-allowed"
                   style={{
                     backgroundColor: 'var(--color-primary)',
                     color: 'white'
@@ -384,7 +384,7 @@ export default function HomePage() {
             onClick={() => setShowOpenModal(false)}
           />
           <div
-            className="fixed top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 z-50 w-full max-w-2xl max-h-[80vh] rounded-xl shadow-2xl border border-gray-200 dark:border-border-dark bg-white dark:bg-panel-dark overflow-hidden flex flex-col"
+            className="fixed top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 z-50 w-full max-w-2xl max-h-[80vh] rounded-md shadow-2xl border border-gray-200 dark:border-border-dark bg-white dark:bg-panel-dark overflow-hidden flex flex-col"
           >
             <div className="p-6 border-b" style={{ borderColor: 'var(--color-border-dark)' }}>
               <h2
@@ -410,7 +410,7 @@ export default function HomePage() {
                     <button
                       key={project.id}
                       onClick={() => handleOpenProject(project.id)}
-                      className="p-4 rounded-lg border-2 border-gray-200 dark:border-border-dark bg-white dark:bg-panel-dark transition-all hover:scale-105 hover:shadow-lg text-left"
+                      className="p-4 rounded-md border-2 border-gray-200 dark:border-border-dark bg-white dark:bg-panel-dark transition-all hover:scale-105 hover:shadow-lg text-left"
                     >
                       <div
                         className="font-bold text-lg mb-2"
@@ -448,7 +448,7 @@ export default function HomePage() {
             <div className="p-4 border-t" style={{ borderColor: 'var(--color-border-dark)' }}>
               <button
                 onClick={() => setShowOpenModal(false)}
-                className="w-full px-4 py-2 rounded-lg border transition-all hover:bg-white/5"
+                className="w-full px-4 py-2 rounded-md border transition-all hover:bg-white/5"
                 style={{
                   borderColor: 'var(--color-border-dark)',
                   color: 'var(--color-text-primary)'

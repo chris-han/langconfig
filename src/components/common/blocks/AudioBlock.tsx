@@ -46,7 +46,7 @@ export const AudioBlock: React.FC<AudioBlockProps> = ({ block, className = '' })
 
   if (!src) {
     return (
-      <div className={`p-4 bg-gray-100 dark:bg-gray-800 rounded-lg text-gray-500 ${className}`}>
+      <div className={`p-4 bg-gray-100 dark:bg-gray-800 rounded-md text-gray-500 ${className}`}>
         Audio data unavailable
       </div>
     );
@@ -60,7 +60,7 @@ export const AudioBlock: React.FC<AudioBlockProps> = ({ block, className = '' })
   };
 
   return (
-    <div className={`my-4 p-4 bg-gray-100 dark:bg-gray-800 rounded-lg ${className}`}>
+    <div className={`my-4 p-4 bg-gray-100 dark:bg-gray-800 rounded-md ${className}`}>
       <div className="flex items-center gap-3 mb-2">
         <Volume2 className="w-5 h-5 text-gray-600 dark:text-gray-400" />
         <span className="text-sm font-medium text-gray-700 dark:text-gray-300">Audio Output</span>

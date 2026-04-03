@@ -272,7 +272,7 @@ export default function AttachmentUploader({
               return (
                 <div
                   key={att.id}
-                  className="flex items-center gap-1.5 px-2 py-1 rounded-lg text-xs border"
+                  className="flex items-center gap-1.5 px-2 py-1 rounded-md text-xs border"
                   style={{
                     backgroundColor: 'var(--color-background-dark)',
                     borderColor: 'var(--color-border-dark)'
@@ -332,7 +332,7 @@ export default function AttachmentUploader({
           onDragLeave={handleDragLeave}
           onClick={() => fileInputRef.current?.click()}
           className={`
-            border-2 border-dashed rounded-lg p-4 text-center cursor-pointer transition-colors
+            border-2 border-dashed rounded-md p-4 text-center cursor-pointer transition-colors
             ${isDragOver ? 'border-primary bg-primary/10' : 'border-gray-600 hover:border-gray-500'}
           `}
           style={{ backgroundColor: isDragOver ? 'rgba(var(--color-primary-rgb), 0.1)' : 'var(--color-background-dark)' }}
@@ -371,7 +371,7 @@ export default function AttachmentUploader({
             return (
               <div
                 key={att.id}
-                className="flex items-center gap-3 p-2 rounded-lg border"
+                className="flex items-center gap-3 p-2 rounded-md border"
                 style={{
                   backgroundColor: 'var(--color-background-dark)',
                   borderColor: 'var(--color-border-dark)'

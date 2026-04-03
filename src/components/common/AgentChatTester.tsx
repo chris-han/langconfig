@@ -313,7 +313,7 @@ export default function AgentChatTester({
 
   return (
     <div className="fixed inset-0 z-50 bg-black/50 backdrop-blur-sm flex items-center justify-center p-4">
-      <div className="bg-[#0a0a0a] border border-gray-800 rounded-xl w-full max-w-7xl h-[90vh] flex flex-col shadow-2xl">
+      <div className="bg-[#0a0a0a] border border-gray-800 rounded-md w-full max-w-7xl h-[90vh] flex flex-col shadow-2xl">
 
         {/* Header */}
         <div className="flex items-center justify-between p-4 border-b border-gray-800">
@@ -378,7 +378,7 @@ export default function AgentChatTester({
                     )}
 
                     <div
-                      className={`flex-1 rounded-lg p-3 ${message.role === 'user'
+                      className={`flex-1 rounded-md p-3 ${message.role === 'user'
                         ? 'bg-blue-600 text-white'
                         : message.role === 'assistant'
                           ? 'bg-gray-800 text-gray-100'
@@ -416,7 +416,7 @@ export default function AgentChatTester({
 
               {isStreaming && (
                 <div className="flex justify-start">
-                  <div className="bg-gray-800 rounded-lg p-3">
+                  <div className="bg-gray-800 rounded-md p-3">
                     <div className="flex items-center gap-2 text-gray-400">
                       <Activity className="w-4 h-4 animate-pulse" />
                       <span className="text-sm">Agent is thinking...</span>
@@ -430,7 +430,7 @@ export default function AgentChatTester({
 
             {/* Error Display */}
             {error && (
-              <div className="mx-4 mb-2 p-3 bg-red-600/20 border border-red-600/50 rounded-lg flex items-center gap-2 text-red-400">
+              <div className="mx-4 mb-2 p-3 bg-red-600/20 border border-red-600/50 rounded-md flex items-center gap-2 text-red-400">
                 <AlertCircle className="w-4 h-4" />
                 <span className="text-sm">{error}</span>
                 <button
@@ -453,13 +453,13 @@ export default function AgentChatTester({
                   onKeyPress={handleKeyPress}
                   placeholder="Type your message..."
                   disabled={isLoading || !sessionId}
-                  className="flex-1 px-4 py-3 bg-gray-800 border border-gray-700 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-white placeholder-gray-500"
+                  className="flex-1 px-4 py-3 bg-gray-800 border border-gray-700 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 text-white placeholder-gray-500"
                 />
 
                 <button
                   onClick={sendMessage}
                   disabled={isLoading || !inputValue.trim() || !sessionId}
-                  className="px-6 py-3 bg-blue-600 hover:bg-blue-700 disabled:bg-gray-700 disabled:cursor-not-allowed rounded-lg transition-colors"
+                  className="px-6 py-3 bg-blue-600 hover:bg-blue-700 disabled:bg-gray-700 disabled:cursor-not-allowed rounded-md transition-colors"
                 >
                   <Send className="w-5 h-5" />
                 </button>

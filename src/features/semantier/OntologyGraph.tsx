@@ -395,7 +395,7 @@ function OntologyNode({ data, selected }: NodeProps<NodeData>) {
   return (
     <div
       className={[
-        "w-52 rounded-lg border-2 shadow-lg transition-colors duration-200",
+        "w-52 rounded-md border-2 shadow-lg transition-colors duration-200",
         "bg-card backdrop-blur-sm border-primary/40",
         selected ? "node-blink" : "",
         data.isRelated && !selected ? "node-related-blink" : "",
@@ -641,7 +641,7 @@ const GRAPH_CSS = `
 
 function RelationLegend() {
   return (
-    <div className="absolute top-3 right-3 bg-card/90 backdrop-blur border border-border rounded-lg p-3 z-10 text-xs pointer-events-none">
+    <div className="absolute top-3 right-3 bg-card/90 backdrop-blur border border-border rounded-md p-3 z-10 text-xs pointer-events-none">
       <p className="text-muted-foreground font-semibold mb-2 uppercase tracking-wider text-[10px]">Relationships</p>
       <div className="flex flex-col gap-2">
         <div className="flex items-center gap-2">

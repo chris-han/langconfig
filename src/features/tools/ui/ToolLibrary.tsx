@@ -198,7 +198,7 @@ const ToolLibrary = () => {
           </div>
           <div className="flex items-center gap-3">
             {/* Import */}
-            <label className="cursor-pointer px-4 py-2 border rounded-lg flex items-center gap-2 text-sm transition-colors" style={{ borderColor: 'var(--color-border-dark)', color: 'var(--color-text-primary)' }}
+            <label className="cursor-pointer px-4 py-2 border rounded-md flex items-center gap-2 text-sm transition-colors" style={{ borderColor: 'var(--color-border-dark)', color: 'var(--color-text-primary)' }}
               onMouseEnter={(e) => e.currentTarget.style.backgroundColor = 'var(--color-background-dark)'}
               onMouseLeave={(e) => e.currentTarget.style.backgroundColor = 'transparent'}>
               <Upload size={16} />
@@ -216,7 +216,7 @@ const ToolLibrary = () => {
                 setEditingTool(null);
                 setShowBuilder(true);
               }}
-              className="px-4 py-2 text-white rounded-lg flex items-center gap-2 transition-colors"
+              className="px-4 py-2 text-white rounded-md flex items-center gap-2 transition-colors"
               style={{ backgroundColor: 'var(--color-primary)' }}
               onMouseEnter={(e) => e.currentTarget.style.opacity = '0.9'}
               onMouseLeave={(e) => e.currentTarget.style.opacity = '1'}
@@ -229,18 +229,18 @@ const ToolLibrary = () => {
 
         {/* Stats Row */}
         <div className="mt-4 flex gap-4">
-          <div className="rounded-lg px-4 py-2 border" style={{ backgroundColor: 'var(--color-background-dark)', borderColor: 'var(--color-border-dark)' }}>
+          <div className="rounded-md px-4 py-2 border" style={{ backgroundColor: 'var(--color-background-dark)', borderColor: 'var(--color-border-dark)' }}>
             <div className="text-xs" style={{ color: 'var(--color-text-muted)' }}>Total Tools</div>
             <div className="text-2xl font-bold" style={{ color: 'var(--color-text-primary)' }}>{stats.total}</div>
           </div>
-          <div className="rounded-lg px-4 py-2 border" style={{ backgroundColor: 'var(--color-background-dark)', borderColor: 'var(--color-border-dark)' }}>
+          <div className="rounded-md px-4 py-2 border" style={{ backgroundColor: 'var(--color-background-dark)', borderColor: 'var(--color-border-dark)' }}>
             <div className="text-xs" style={{ color: 'var(--color-text-muted)' }}>Total Usage</div>
             <div className="text-2xl font-bold" style={{ color: 'var(--color-text-primary)' }}>{stats.totalUsage}</div>
           </div>
           {stats.byCategory.map((cat) => (
             <div
               key={cat.name}
-              className="rounded-lg px-4 py-2 border"
+              className="rounded-md px-4 py-2 border"
               style={{ backgroundColor: 'var(--color-background-dark)', borderColor: 'var(--color-border-dark)' }}
             >
               <div className="text-xs" style={{ color: 'var(--color-text-muted)' }}>{cat.name}</div>
@@ -263,7 +263,7 @@ const ToolLibrary = () => {
               placeholder="Search tools by name, description, or tags..."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              className="w-full pl-10 pr-4 py-2 border rounded-lg focus:ring-2 focus:border-transparent"
+              className="w-full pl-10 pr-4 py-2 border rounded-md focus:ring-2 focus:border-transparent"
               style={{
                 backgroundColor: 'var(--color-input-background)',
                 borderColor: 'var(--color-border-dark)',
@@ -277,7 +277,7 @@ const ToolLibrary = () => {
           <select
             value={selectedCategory}
             onChange={(e) => setSelectedCategory(e.target.value)}
-            className="px-4 py-2 border rounded-lg focus:ring-2"
+            className="px-4 py-2 border rounded-md focus:ring-2"
             style={{
               backgroundColor: 'var(--color-input-background)',
               borderColor: 'var(--color-border-dark)',
@@ -317,7 +317,7 @@ const ToolLibrary = () => {
                   setEditingTool(null);
                   setShowBuilder(true);
                 }}
-                className="px-6 py-3 text-white rounded-lg flex items-center gap-2 transition-opacity"
+                className="px-6 py-3 text-white rounded-md flex items-center gap-2 transition-opacity"
                 style={{ backgroundColor: 'var(--color-primary)' }}
                 onMouseEnter={(e) => e.currentTarget.style.opacity = '0.9'}
                 onMouseLeave={(e) => e.currentTarget.style.opacity = '1'}
@@ -332,7 +332,7 @@ const ToolLibrary = () => {
             {filteredTools.map((tool) => (
               <div
                 key={tool.id}
-                className="rounded-lg border transition-colors p-5 relative"
+                className="rounded-md border transition-colors p-5 relative"
                 style={{
                   backgroundColor: 'var(--color-panel-dark)',
                   borderColor: 'var(--color-border-dark)',
@@ -343,19 +343,19 @@ const ToolLibrary = () => {
               >
                 {/* Delete Confirmation Overlay */}
                 {deleteConfirm === tool.tool_id && (
-                  <div className="absolute inset-0 bg-red-500 bg-opacity-95 rounded-lg flex flex-col items-center justify-center z-10 p-4">
+                  <div className="absolute inset-0 bg-red-500 bg-opacity-95 rounded-md flex flex-col items-center justify-center z-10 p-4">
                     <AlertCircle size={32} className="text-white mb-2" />
                     <p className="text-white font-semibold mb-4 text-center">Delete this tool?</p>
                     <div className="flex gap-3">
                       <button
                         onClick={() => handleDelete(tool.tool_id)}
-                        className="px-4 py-2 bg-white text-red-600 rounded-lg hover:bg-gray-100 font-medium"
+                        className="px-4 py-2 bg-white text-red-600 rounded-md hover:bg-gray-100 font-medium"
                       >
                         Delete
                       </button>
                       <button
                         onClick={() => setDeleteConfirm(null)}
-                        className="px-4 py-2 bg-red-700 text-white rounded-lg hover:bg-red-800"
+                        className="px-4 py-2 bg-red-700 text-white rounded-md hover:bg-red-800"
                       >
                         Cancel
                       </button>
@@ -479,7 +479,7 @@ const ToolLibrary = () => {
       {/* Tool Builder Modal */}
       {showBuilder && (
         <div className="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center p-4">
-          <div className="w-full h-full max-w-7xl rounded-lg shadow-2xl overflow-hidden" style={{ backgroundColor: 'var(--color-panel-dark)' }}>
+          <div className="w-full h-full max-w-7xl rounded-md shadow-2xl overflow-hidden" style={{ backgroundColor: 'var(--color-panel-dark)' }}>
             <CustomToolBuilder
               existingToolId={editingTool || undefined}
               onClose={() => {
@@ -495,7 +495,7 @@ const ToolLibrary = () => {
       {/* Test Modal */}
       {showTestModal && testingTool && (
         <div className="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center p-4">
-          <div className="rounded-lg shadow-2xl max-w-3xl w-full max-h-[80vh] overflow-hidden flex flex-col" style={{ backgroundColor: 'var(--color-panel-dark)' }}>
+          <div className="rounded-md shadow-2xl max-w-3xl w-full max-h-[80vh] overflow-hidden flex flex-col" style={{ backgroundColor: 'var(--color-panel-dark)' }}>
             {/* Header */}
             <div className="border-b px-6 py-4 flex items-center justify-between" style={{ borderBottomColor: 'var(--color-border-dark)' }}>
               <div>
@@ -532,7 +532,7 @@ const ToolLibrary = () => {
                 <textarea
                   value={testInput}
                   onChange={(e) => setTestInput(e.target.value)}
-                  className="w-full h-32 px-3 py-2 border rounded-lg font-mono text-sm focus:ring-2"
+                  className="w-full h-32 px-3 py-2 border rounded-md font-mono text-sm focus:ring-2"
                   style={{
                     backgroundColor: 'var(--color-input-background)',
                     borderColor: 'var(--color-border-dark)',
@@ -547,7 +547,7 @@ const ToolLibrary = () => {
               <button
                 onClick={handleTest}
                 disabled={testLoading}
-                className="w-full px-4 py-3 text-white rounded-lg disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2 transition-opacity"
+                className="w-full px-4 py-3 text-white rounded-md disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2 transition-opacity"
                 style={{ backgroundColor: 'var(--color-primary)' }}
                 onMouseEnter={(e) => !testLoading && (e.currentTarget.style.opacity = '0.9')}
                 onMouseLeave={(e) => e.currentTarget.style.opacity = '1'}
@@ -572,7 +572,7 @@ const ToolLibrary = () => {
                     Result
                   </label>
                   <div
-                    className={`p-4 rounded-lg border ${
+                    className={`p-4 rounded-md border ${
                       testResult.success
                         ? 'bg-green-50 dark:bg-green-900 border-green-200 dark:border-green-700'
                         : 'bg-red-50 dark:bg-red-900 border-red-200 dark:border-red-700'

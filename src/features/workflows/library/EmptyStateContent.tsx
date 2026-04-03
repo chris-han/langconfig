@@ -52,9 +52,9 @@ export default function EmptyStateContent({
 
       {/* Project Info Card (if project selected) */}
       {activeProject && (
-        <div className="p-4 rounded-lg border border-gray-200 dark:border-border-dark bg-white dark:bg-panel-dark">
+        <div className="p-4 rounded-md border border-gray-200 dark:border-border-dark bg-white dark:bg-panel-dark">
           <div className="flex items-start gap-4">
-            <div className="w-12 h-12 rounded-lg bg-primary/10 flex items-center justify-center flex-shrink-0">
+            <div className="w-12 h-12 rounded-md bg-primary/10 flex items-center justify-center flex-shrink-0">
               <span className="material-symbols-outlined text-2xl text-primary">folder</span>
             </div>
             <div className="flex-1">
@@ -89,16 +89,16 @@ export default function EmptyStateContent({
       )}
 
       {/* Quick Actions Panel */}
-      <div className="p-6 rounded-lg border border-gray-200 dark:border-border-dark bg-gradient-to-br from-primary/5 to-transparent">
+      <div className="p-6 rounded-md border border-gray-200 dark:border-border-dark bg-gradient-to-br from-primary/5 to-transparent">
         <h3 className="text-lg font-semibold mb-4" style={{ color: 'var(--color-text-primary)' }}>
           Quick Actions
         </h3>
         <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
           <button
             onClick={onCreateWorkflow}
-            className="flex items-center gap-3 p-4 rounded-lg border border-gray-200 dark:border-border-dark bg-white dark:bg-panel-dark hover:border-primary transition-colors group"
+            className="flex items-center gap-3 p-4 rounded-md border border-gray-200 dark:border-border-dark bg-white dark:bg-panel-dark hover:border-primary transition-colors group"
           >
-            <div className="w-10 h-10 rounded-lg bg-primary/10 group-hover:bg-primary/20 flex items-center justify-center transition-colors">
+            <div className="w-10 h-10 rounded-md bg-primary/10 group-hover:bg-primary/20 flex items-center justify-center transition-colors">
               <span className="material-symbols-outlined text-xl text-primary">add_circle</span>
             </div>
             <div className="text-left">
@@ -114,9 +114,9 @@ export default function EmptyStateContent({
           {onImportWorkflow && (
             <button
               onClick={onImportWorkflow}
-              className="flex items-center gap-3 p-4 rounded-lg border border-gray-200 dark:border-border-dark bg-white dark:bg-panel-dark hover:border-primary transition-colors group"
+              className="flex items-center gap-3 p-4 rounded-md border border-gray-200 dark:border-border-dark bg-white dark:bg-panel-dark hover:border-primary transition-colors group"
             >
-              <div className="w-10 h-10 rounded-lg bg-blue-500/10 group-hover:bg-blue-500/20 flex items-center justify-center transition-colors">
+              <div className="w-10 h-10 rounded-md bg-blue-500/10 group-hover:bg-blue-500/20 flex items-center justify-center transition-colors">
                 <span className="material-symbols-outlined text-xl text-blue-600 dark:text-blue-400">upload_file</span>
               </div>
               <div className="text-left">
@@ -133,9 +133,9 @@ export default function EmptyStateContent({
           {onViewSettings && (
             <button
               onClick={onViewSettings}
-              className="flex items-center gap-3 p-4 rounded-lg border border-gray-200 dark:border-border-dark bg-white dark:bg-panel-dark hover:border-primary transition-colors group"
+              className="flex items-center gap-3 p-4 rounded-md border border-gray-200 dark:border-border-dark bg-white dark:bg-panel-dark hover:border-primary transition-colors group"
             >
-              <div className="w-10 h-10 rounded-lg bg-purple-500/10 group-hover:bg-purple-500/20 flex items-center justify-center transition-colors">
+              <div className="w-10 h-10 rounded-md bg-purple-500/10 group-hover:bg-purple-500/20 flex items-center justify-center transition-colors">
                 <span className="material-symbols-outlined text-xl text-purple-600 dark:text-purple-400">settings</span>
               </div>
               <div className="text-left">
@@ -159,7 +159,7 @@ export default function EmptyStateContent({
         <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
 
         {/* Section 1: Understanding Workflows */}
-        <div className="border border-gray-200 dark:border-border-dark rounded-lg overflow-hidden bg-white dark:bg-panel-dark">
+        <div className="border border-gray-200 dark:border-border-dark rounded-md overflow-hidden bg-white dark:bg-panel-dark">
           <button
             onClick={() => toggleSection('understanding')}
             className="w-full flex items-center justify-between p-4 hover:bg-gray-50 dark:hover:bg-white/5 transition-colors"
@@ -197,7 +197,7 @@ export default function EmptyStateContent({
         </div>
 
         {/* Section 2: Creating Your First Agent */}
-        <div className="border border-gray-200 dark:border-border-dark rounded-lg overflow-hidden bg-white dark:bg-panel-dark">
+        <div className="border border-gray-200 dark:border-border-dark rounded-md overflow-hidden bg-white dark:bg-panel-dark">
           <button
             onClick={() => toggleSection('creating')}
             className="w-full flex items-center justify-between p-4 hover:bg-gray-50 dark:hover:bg-white/5 transition-colors"
@@ -231,7 +231,7 @@ export default function EmptyStateContent({
         </div>
 
         {/* Section 3: Connecting Nodes */}
-        <div className="border border-gray-200 dark:border-border-dark rounded-lg overflow-hidden bg-white dark:bg-panel-dark">
+        <div className="border border-gray-200 dark:border-border-dark rounded-md overflow-hidden bg-white dark:bg-panel-dark">
           <button
             onClick={() => toggleSection('connecting')}
             className="w-full flex items-center justify-between p-4 hover:bg-gray-50 dark:hover:bg-white/5 transition-colors"
@@ -267,7 +267,7 @@ export default function EmptyStateContent({
         </div>
 
         {/* Section 4: Running Workflows */}
-        <div className="border border-gray-200 dark:border-border-dark rounded-lg overflow-hidden bg-white dark:bg-panel-dark">
+        <div className="border border-gray-200 dark:border-border-dark rounded-md overflow-hidden bg-white dark:bg-panel-dark">
           <button
             onClick={() => toggleSection('running')}
             className="w-full flex items-center justify-between p-4 hover:bg-gray-50 dark:hover:bg-white/5 transition-colors"
@@ -306,7 +306,7 @@ export default function EmptyStateContent({
       </div>
 
       {/* Tips & Best Practices */}
-      <div className="p-4 rounded-lg border border-blue-200 dark:border-blue-500/30 bg-blue-50 dark:bg-blue-500/10">
+      <div className="p-4 rounded-md border border-blue-200 dark:border-blue-500/30 bg-blue-50 dark:bg-blue-500/10">
         <div className="flex gap-3">
           <span className="material-symbols-outlined text-blue-600 dark:text-blue-400 flex-shrink-0">tips_and_updates</span>
           <div>

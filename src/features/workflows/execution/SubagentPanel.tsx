@@ -95,7 +95,7 @@ export const SubAgentPanel: React.FC<SubAgentPanelProps> = ({
 
   return (
     <div
-      className={`flex flex-col rounded-lg overflow-hidden transition-all duration-300 ${isExpanded ? 'flex-1' : ''
+      className={`flex flex-col rounded-md overflow-hidden transition-all duration-300 ${isExpanded ? 'flex-1' : ''
         }`}
       style={{
         backgroundColor: 'transparent',
@@ -185,7 +185,7 @@ export const SubAgentPanel: React.FC<SubAgentPanelProps> = ({
 
         {/* Tool calls section */}
         {toolCalls.map((tool, idx) => (
-          <div key={idx} className="mb-3 rounded-lg overflow-hidden" style={{ backgroundColor: 'white' }}>
+          <div key={idx} className="mb-3 rounded-md overflow-hidden" style={{ backgroundColor: 'white' }}>
             <div className="flex items-center gap-2 px-3 py-2 border-b" style={{ borderColor: 'var(--color-border-dark)' }}>
               {tool.status === 'running' ? (
                 <Loader2 className="w-3.5 h-3.5 animate-spin" style={{ color: 'var(--color-primary)' }} />
@@ -285,7 +285,7 @@ export const SubAgentPanelStack: React.FC<SubAgentPanelStackProps> = ({
 
       {visibleSubagents.length > 3 && (
         <div
-          className="text-xs text-center py-2 px-4 rounded-lg"
+          className="text-xs text-center py-2 px-4 rounded-md"
           style={{ backgroundColor: 'var(--color-background-dark)', color: 'var(--color-text-muted)' }}
         >
           +{visibleSubagents.length - 3} more subagents

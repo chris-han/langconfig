@@ -41,7 +41,7 @@ export const FileBlock: React.FC<FileBlockProps> = ({ block, className = '' }) =
   };
 
   return (
-    <div className={`my-4 p-4 bg-gray-100 dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700 ${className}`}>
+    <div className={`my-4 p-4 bg-gray-100 dark:bg-gray-800 rounded-md border border-gray-200 dark:border-gray-700 ${className}`}>
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-3">
           <FileText className="w-5 h-5 text-gray-600 dark:text-gray-400" />
@@ -55,7 +55,7 @@ export const FileBlock: React.FC<FileBlockProps> = ({ block, className = '' }) =
         {(block.data || block.text) && (
           <button
             onClick={handleDownload}
-            className="p-2 hover:bg-gray-200 dark:hover:bg-gray-700 rounded-lg text-gray-600 dark:text-gray-400 transition-colors"
+            className="p-2 hover:bg-gray-200 dark:hover:bg-gray-700 rounded-md text-gray-600 dark:text-gray-400 transition-colors"
             title="Download file"
           >
             <Download className="w-5 h-5" />

@@ -140,7 +140,7 @@ export const MemoryManager: React.FC<MemoryManagerProps> = ({
 
   return (
     <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
-      <div className="bg-white dark:bg-gray-800 rounded-lg shadow-xl w-full max-w-4xl max-h-[80vh] flex flex-col">
+      <div className="bg-white dark:bg-gray-800 rounded-md shadow-xl w-full max-w-4xl max-h-[80vh] flex flex-col">
         {/* Header */}
         <div className="flex items-center justify-between p-4 border-b border-gray-200 dark:border-gray-700">
           <div className="flex items-center gap-2">
@@ -156,14 +156,14 @@ export const MemoryManager: React.FC<MemoryManagerProps> = ({
             <button
               onClick={loadMemoryItems}
               disabled={loading}
-              className="p-2 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg transition-colors"
+              className="p-2 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-md transition-colors"
               title="Refresh"
             >
               <RefreshCw className={`w-4 h-4 text-gray-600 dark:text-gray-400 ${loading ? 'animate-spin' : ''}`} />
             </button>
             <button
               onClick={onClose}
-              className="p-2 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg transition-colors"
+              className="p-2 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-md transition-colors"
             >
               <X className="w-5 h-5 text-gray-600 dark:text-gray-400" />
             </button>
@@ -172,7 +172,7 @@ export const MemoryManager: React.FC<MemoryManagerProps> = ({
 
         {/* Error Message */}
         {error && (
-          <div className="mx-4 mt-4 p-3 bg-red-100 dark:bg-red-900/30 border border-red-300 dark:border-red-700 rounded-lg text-red-800 dark:text-red-400 text-sm">
+          <div className="mx-4 mt-4 p-3 bg-red-100 dark:bg-red-900/30 border border-red-300 dark:border-red-700 rounded-md text-red-800 dark:text-red-400 text-sm">
             {error}
           </div>
         )}
@@ -183,7 +183,7 @@ export const MemoryManager: React.FC<MemoryManagerProps> = ({
           {!showAddForm && (
             <button
               onClick={() => setShowAddForm(true)}
-              className="w-full mb-4 p-3 border-2 border-dashed border-gray-300 dark:border-gray-600 rounded-lg hover:border-primary dark:hover:border-primary transition-colors flex items-center justify-center gap-2 text-gray-600 dark:text-gray-400 hover:text-primary"
+              className="w-full mb-4 p-3 border-2 border-dashed border-gray-300 dark:border-gray-600 rounded-md hover:border-primary dark:hover:border-primary transition-colors flex items-center justify-center gap-2 text-gray-600 dark:text-gray-400 hover:text-primary"
             >
               <Plus className="w-4 h-4" />
               <span>Add Memory Item</span>
@@ -192,7 +192,7 @@ export const MemoryManager: React.FC<MemoryManagerProps> = ({
 
           {/* Add Item Form */}
           {showAddForm && (
-            <div className="mb-4 p-4 border border-primary dark:border-primary/50 rounded-lg bg-primary/5 dark:bg-primary/10">
+            <div className="mb-4 p-4 border border-primary dark:border-primary/50 rounded-md bg-primary/5 dark:bg-primary/10">
               <h3 className="font-semibold text-gray-900 dark:text-white mb-3">Add Memory Item</h3>
               <div className="space-y-3">
                 <div>
@@ -204,7 +204,7 @@ export const MemoryManager: React.FC<MemoryManagerProps> = ({
                     value={newKey}
                     onChange={(e) => setNewKey(e.target.value)}
                     placeholder="e.g., user_preferences, api_endpoint"
-                    className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
+                    className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
                   />
                 </div>
                 <div>
@@ -216,14 +216,14 @@ export const MemoryManager: React.FC<MemoryManagerProps> = ({
                     onChange={(e) => setNewValue(e.target.value)}
                     placeholder='{"key": "value"} or plain text'
                     rows={4}
-                    className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white font-mono text-sm"
+                    className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-gray-700 text-gray-900 dark:text-white font-mono text-sm"
                   />
                 </div>
                 <div className="flex gap-2">
                   <button
                     onClick={addMemoryItem}
                     disabled={loading}
-                    className="px-4 py-2 bg-primary text-white rounded-lg hover:bg-primary/90 transition-colors disabled:opacity-50"
+                    className="px-4 py-2 bg-primary text-white rounded-md hover:bg-primary/90 transition-colors disabled:opacity-50"
                   >
                     Add
                   </button>
@@ -234,7 +234,7 @@ export const MemoryManager: React.FC<MemoryManagerProps> = ({
                       setNewValue('');
                       setError(null);
                     }}
-                    className="px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors"
+                    className="px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-md hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors"
                   >
                     Cancel
                   </button>
@@ -255,7 +255,7 @@ export const MemoryManager: React.FC<MemoryManagerProps> = ({
           {items.map((item, index) => (
             <div
               key={index}
-              className="mb-3 p-4 border border-gray-200 dark:border-gray-700 rounded-lg hover:border-primary dark:hover:border-primary/50 transition-colors"
+              className="mb-3 p-4 border border-gray-200 dark:border-gray-700 rounded-md hover:border-primary dark:hover:border-primary/50 transition-colors"
             >
               <div className="flex items-start justify-between mb-2">
                 <div className="flex-1">
@@ -271,13 +271,13 @@ export const MemoryManager: React.FC<MemoryManagerProps> = ({
                 <button
                   onClick={() => deleteMemoryItem(item.key)}
                   disabled={loading}
-                  className="p-2 hover:bg-red-100 dark:hover:bg-red-900/30 rounded-lg transition-colors"
+                  className="p-2 hover:bg-red-100 dark:hover:bg-red-900/30 rounded-md transition-colors"
                   title="Delete"
                 >
                   <Trash2 className="w-4 h-4 text-red-600 dark:text-red-400" />
                 </button>
               </div>
-              <div className="mt-2 p-3 bg-gray-50 dark:bg-gray-900/50 rounded-lg">
+              <div className="mt-2 p-3 bg-gray-50 dark:bg-gray-900/50 rounded-md">
                 <pre className="text-xs text-gray-800 dark:text-gray-200 overflow-x-auto whitespace-pre-wrap">
                   {JSON.stringify(item.value, null, 2)}
                 </pre>
@@ -291,13 +291,13 @@ export const MemoryManager: React.FC<MemoryManagerProps> = ({
           <button
             onClick={clearAllMemory}
             disabled={loading || items.length === 0}
-            className="px-4 py-2 text-red-600 dark:text-red-400 hover:bg-red-100 dark:hover:bg-red-900/30 rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+            className="px-4 py-2 text-red-600 dark:text-red-400 hover:bg-red-100 dark:hover:bg-red-900/30 rounded-md transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
           >
             Clear All Memory
           </button>
           <button
             onClick={onClose}
-            className="px-4 py-2 bg-gray-200 dark:bg-gray-700 text-gray-800 dark:text-gray-200 rounded-lg hover:bg-gray-300 dark:hover:bg-gray-600 transition-colors"
+            className="px-4 py-2 bg-gray-200 dark:bg-gray-700 text-gray-800 dark:text-gray-200 rounded-md hover:bg-gray-300 dark:hover:bg-gray-600 transition-colors"
           >
             Close
           </button>

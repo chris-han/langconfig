@@ -42,7 +42,7 @@ export default function SkillCard({ skill, isSelected, onClick, compact = false 
     return (
       <div
         onClick={onClick}
-        className="p-3 rounded-lg border cursor-pointer transition-all"
+        className="p-3 rounded-md border cursor-pointer transition-all"
         style={{
           backgroundColor: isSelected ? 'var(--color-primary)' : 'var(--color-panel-dark)',
           borderColor: isSelected ? 'var(--color-primary)' : 'var(--color-border-dark)',
@@ -71,7 +71,7 @@ export default function SkillCard({ skill, isSelected, onClick, compact = false 
   return (
     <div
       onClick={onClick}
-      className="p-4 rounded-xl border cursor-pointer transition-all hover:shadow-lg"
+      className="p-4 rounded-md border cursor-pointer transition-all hover:shadow-lg"
       style={{
         backgroundColor: isSelected ? 'var(--color-node-background-light)' : 'var(--color-panel-dark)',
         borderColor: isSelected ? 'var(--color-primary)' : 'var(--color-border-dark)',
@@ -80,7 +80,7 @@ export default function SkillCard({ skill, isSelected, onClick, compact = false 
       {/* Header */}
       <div className="flex items-start justify-between mb-3">
         <div className="flex items-center gap-2">
-          <div className="p-2 rounded-lg" style={{ backgroundColor: `var(--color-primary)20` }}>
+          <div className="p-2 rounded-md" style={{ backgroundColor: `var(--color-primary)20` }}>
             <Zap className="w-5 h-5" style={{ color: 'var(--color-primary)' }} />
           </div>
           <div>

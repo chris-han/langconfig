@@ -852,7 +852,7 @@ export default function FilesLibraryTab() {
         <p className="text-sm text-gray-500 dark:text-text-muted/70 mt-2">{error}</p>
         <button
           onClick={fetchFiles}
-          className="mt-4 px-4 py-2 rounded-lg bg-primary/10 hover:bg-primary/20 transition-colors text-sm font-medium flex items-center gap-2"
+          className="mt-4 px-4 py-2 rounded-md bg-primary/10 hover:bg-primary/20 transition-colors text-sm font-medium flex items-center gap-2"
           style={{ color: 'var(--color-primary)' }}
         >
           <RefreshCw className="w-4 h-4" />
@@ -887,7 +887,7 @@ export default function FilesLibraryTab() {
               placeholder="Search files..."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              className="pl-8 pr-3 py-1.5 text-sm rounded-lg border border-gray-200 dark:border-border-dark bg-white dark:bg-panel-dark w-64 focus:outline-none focus:ring-2 focus:ring-primary/50"
+              className="pl-8 pr-3 py-1.5 text-sm rounded-md border border-gray-200 dark:border-border-dark bg-white dark:bg-panel-dark w-64 focus:outline-none focus:ring-2 focus:ring-primary/50"
             />
           </div>
 
@@ -899,7 +899,7 @@ export default function FilesLibraryTab() {
               setSortBy(sort as 'name' | 'date' | 'size');
               setSortDesc(order === 'desc');
             }}
-            className="px-3 py-1.5 text-sm rounded-lg border border-gray-200 dark:border-border-dark bg-white dark:bg-panel-dark focus:outline-none focus:ring-2 focus:ring-primary/50"
+            className="px-3 py-1.5 text-sm rounded-md border border-gray-200 dark:border-border-dark bg-white dark:bg-panel-dark focus:outline-none focus:ring-2 focus:ring-primary/50"
           >
             <option value="date-desc">Newest First</option>
             <option value="date-asc">Oldest First</option>
@@ -914,14 +914,14 @@ export default function FilesLibraryTab() {
           {/* Refresh */}
           <button
             onClick={fetchFiles}
-            className="p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-white/10 transition-colors"
+            className="p-2 rounded-md hover:bg-gray-100 dark:hover:bg-white/10 transition-colors"
             title="Refresh"
           >
             <RefreshCw className="w-4 h-4 text-gray-600 dark:text-text-muted" />
           </button>
 
           {/* View Toggle */}
-          <div className="flex border border-gray-200 dark:border-border-dark rounded-lg overflow-hidden">
+          <div className="flex border border-gray-200 dark:border-border-dark rounded-md overflow-hidden">
             <button
               onClick={() => setViewMode('tree')}
               className={`px-3 py-1.5 text-sm flex items-center gap-1.5 ${
@@ -1079,7 +1079,7 @@ export default function FilesLibraryTab() {
               <div className="flex items-center gap-2">
                 {/* Code/Preview Toggle for supported file types */}
                 {supportsPreviewMode(selectedFile.extension) && (
-                  <div className="flex items-center bg-gray-200 dark:bg-black/30 rounded-lg p-0.5 mr-2">
+                  <div className="flex items-center bg-gray-200 dark:bg-black/30 rounded-md p-0.5 mr-2">
                     <button
                       onClick={() => setPreviewViewMode('code')}
                       className={`flex items-center gap-1 px-2 py-1 rounded text-xs font-medium transition-colors ${
@@ -1152,7 +1152,7 @@ export default function FilesLibraryTab() {
                   <p className="text-sm mt-1" style={{ color: 'var(--color-text-muted)' }}>{selectedFile.size_human}</p>
                   <button
                     onClick={() => handleDownload(selectedFile)}
-                    className="mt-4 px-4 py-2 rounded-lg bg-primary/10 hover:bg-primary/20 transition-colors text-sm font-medium flex items-center gap-2"
+                    className="mt-4 px-4 py-2 rounded-md bg-primary/10 hover:bg-primary/20 transition-colors text-sm font-medium flex items-center gap-2"
                     style={{ color: 'var(--color-primary)' }}
                   >
                     <Download className="w-4 h-4" />
@@ -1232,7 +1232,7 @@ export default function FilesLibraryTab() {
       {deleteConfirm && (
         <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
           <div
-            className="rounded-lg p-6 max-w-md mx-4 shadow-xl border"
+            className="rounded-md p-6 max-w-md mx-4 shadow-xl border"
             style={{
               backgroundColor: 'var(--color-background-light)',
               borderColor: 'var(--color-border-dark)'
@@ -1253,7 +1253,7 @@ export default function FilesLibraryTab() {
             <div className="flex justify-end gap-3">
               <button
                 onClick={() => setDeleteConfirm(null)}
-                className="px-4 py-2 text-sm rounded-lg border transition-colors"
+                className="px-4 py-2 text-sm rounded-md border transition-colors"
                 style={{
                   borderColor: 'var(--color-border-dark)',
                   color: 'var(--color-text-primary)'
@@ -1263,7 +1263,7 @@ export default function FilesLibraryTab() {
               </button>
               <button
                 onClick={() => handleDelete(deleteConfirm)}
-                className="px-4 py-2 text-sm rounded-lg bg-red-600 text-white hover:bg-red-700 transition-colors"
+                className="px-4 py-2 text-sm rounded-md bg-red-600 text-white hover:bg-red-700 transition-colors"
               >
                 Delete
               </button>
@@ -1275,7 +1275,7 @@ export default function FilesLibraryTab() {
       {/* Context Menu */}
       {contextMenu.visible && contextMenu.file && (
         <div
-          className="fixed z-50 w-56 rounded-lg shadow-xl border py-1"
+          className="fixed z-50 w-56 rounded-md shadow-xl border py-1"
           style={{
             left: contextMenu.x,
             top: contextMenu.y,
@@ -1371,7 +1371,7 @@ export default function FilesLibraryTab() {
       {tagsModalOpen && tagsModalFile && (
         <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
           <div
-            className="rounded-lg p-6 max-w-md w-full mx-4 shadow-xl border"
+            className="rounded-md p-6 max-w-md w-full mx-4 shadow-xl border"
             style={{
               backgroundColor: 'var(--color-background-light)',
               borderColor: 'var(--color-border-dark)'
@@ -1420,7 +1420,7 @@ export default function FilesLibraryTab() {
                 value={newTag}
                 onChange={(e) => setNewTag(e.target.value)}
                 onKeyDown={(e) => { if (e.key === 'Enter') { e.preventDefault(); addTag(); } }}
-                className="flex-1 px-3 py-2 text-sm rounded-lg border focus:outline-none focus:ring-2 focus:ring-primary/50"
+                className="flex-1 px-3 py-2 text-sm rounded-md border focus:outline-none focus:ring-2 focus:ring-primary/50"
                 style={{
                   backgroundColor: 'var(--color-input-background)',
                   borderColor: 'var(--color-border-dark)',
@@ -1429,7 +1429,7 @@ export default function FilesLibraryTab() {
               />
               <button
                 onClick={addTag}
-                className="px-4 py-2 text-sm rounded-lg bg-primary/10 hover:bg-primary/20 transition-colors"
+                className="px-4 py-2 text-sm rounded-md bg-primary/10 hover:bg-primary/20 transition-colors"
                 style={{ color: 'var(--color-primary)' }}
               >
                 Add
@@ -1439,7 +1439,7 @@ export default function FilesLibraryTab() {
             <div className="flex justify-end gap-3">
               <button
                 onClick={() => { setTagsModalOpen(false); setTagsModalFile(null); setEditingTags([]); }}
-                className="px-4 py-2 text-sm rounded-lg border transition-colors"
+                className="px-4 py-2 text-sm rounded-md border transition-colors"
                 style={{
                   borderColor: 'var(--color-border-dark)',
                   color: 'var(--color-text-primary)'
@@ -1449,7 +1449,7 @@ export default function FilesLibraryTab() {
               </button>
               <button
                 onClick={handleSaveTags}
-                className="px-4 py-2 text-sm rounded-lg text-white transition-colors"
+                className="px-4 py-2 text-sm rounded-md text-white transition-colors"
                 style={{ backgroundColor: 'var(--color-primary)' }}
               >
                 Save Tags
@@ -1463,7 +1463,7 @@ export default function FilesLibraryTab() {
       {kbModalOpen && kbModalFile && (
         <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
           <div
-            className="rounded-lg p-6 max-w-md w-full mx-4 shadow-xl border"
+            className="rounded-md p-6 max-w-md w-full mx-4 shadow-xl border"
             style={{
               backgroundColor: 'var(--color-background-light)',
               borderColor: 'var(--color-border-dark)'
@@ -1492,7 +1492,7 @@ export default function FilesLibraryTab() {
               <select
                 value={kbProjectId}
                 onChange={(e) => setKbProjectId(e.target.value)}
-                className="w-full px-3 py-2.5 text-sm rounded-lg border focus:outline-none focus:ring-2 focus:ring-primary/50"
+                className="w-full px-3 py-2.5 text-sm rounded-md border focus:outline-none focus:ring-2 focus:ring-primary/50"
                 style={{
                   backgroundColor: 'var(--color-input-background)',
                   borderColor: 'var(--color-border-dark)',
@@ -1517,7 +1517,7 @@ export default function FilesLibraryTab() {
             <div className="flex justify-end gap-3">
               <button
                 onClick={() => { setKbModalOpen(false); setKbModalFile(null); setKbProjectId(''); }}
-                className="px-4 py-2 text-sm rounded-lg border transition-colors"
+                className="px-4 py-2 text-sm rounded-md border transition-colors"
                 style={{
                   borderColor: 'var(--color-border-dark)',
                   color: 'var(--color-text-primary)'
@@ -1529,7 +1529,7 @@ export default function FilesLibraryTab() {
               <button
                 onClick={handleConfirmIndexToKnowledgeBase}
                 disabled={!kbProjectId || kbIndexing}
-                className="px-4 py-2 text-sm rounded-lg text-white flex items-center gap-2 disabled:opacity-50 transition-colors"
+                className="px-4 py-2 text-sm rounded-md text-white flex items-center gap-2 disabled:opacity-50 transition-colors"
                 style={{ backgroundColor: 'var(--color-primary)' }}
               >
                 {kbIndexing ? (
@@ -1552,7 +1552,7 @@ export default function FilesLibraryTab() {
       {/* Folder Context Menu */}
       {folderContextMenu.visible && folderContextMenu.node && (
         <div
-          className="fixed z-50 w-56 rounded-lg shadow-xl border py-1"
+          className="fixed z-50 w-56 rounded-md shadow-xl border py-1"
           style={{
             left: folderContextMenu.x,
             top: folderContextMenu.y,
@@ -1613,7 +1613,7 @@ export default function FilesLibraryTab() {
       {bulkKbModalOpen && bulkKbFiles.length > 0 && (
         <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
           <div
-            className="rounded-lg p-6 max-w-lg w-full mx-4 shadow-xl border"
+            className="rounded-md p-6 max-w-lg w-full mx-4 shadow-xl border"
             style={{
               backgroundColor: 'var(--color-background-light)',
               borderColor: 'var(--color-border-dark)'
@@ -1634,7 +1634,7 @@ export default function FilesLibraryTab() {
 
             {/* File list preview */}
             <div
-              className="mb-4 max-h-32 overflow-y-auto rounded-lg border p-2"
+              className="mb-4 max-h-32 overflow-y-auto rounded-md border p-2"
               style={{
                 backgroundColor: 'var(--color-panel-dark)',
                 borderColor: 'var(--color-border-dark)'
@@ -1663,7 +1663,7 @@ export default function FilesLibraryTab() {
               <select
                 value={bulkKbProjectId}
                 onChange={(e) => setBulkKbProjectId(e.target.value)}
-                className="w-full px-3 py-2.5 text-sm rounded-lg border focus:outline-none focus:ring-2 focus:ring-primary/50"
+                className="w-full px-3 py-2.5 text-sm rounded-md border focus:outline-none focus:ring-2 focus:ring-primary/50"
                 style={{
                   backgroundColor: 'var(--color-input-background)',
                   borderColor: 'var(--color-border-dark)',
@@ -1688,7 +1688,7 @@ export default function FilesLibraryTab() {
             <div className="flex justify-end gap-3">
               <button
                 onClick={() => { setBulkKbModalOpen(false); setBulkKbFiles([]); setBulkKbFolderName(''); setBulkKbProjectId(''); }}
-                className="px-4 py-2 text-sm rounded-lg border transition-colors"
+                className="px-4 py-2 text-sm rounded-md border transition-colors"
                 style={{
                   borderColor: 'var(--color-border-dark)',
                   color: 'var(--color-text-primary)'
@@ -1700,7 +1700,7 @@ export default function FilesLibraryTab() {
               <button
                 onClick={handleConfirmBulkIndexToKnowledgeBase}
                 disabled={!bulkKbProjectId || bulkKbIndexing}
-                className="px-4 py-2 text-sm rounded-lg text-white flex items-center gap-2 disabled:opacity-50 transition-colors"
+                className="px-4 py-2 text-sm rounded-md text-white flex items-center gap-2 disabled:opacity-50 transition-colors"
                 style={{ backgroundColor: 'var(--color-primary)' }}
               >
                 {bulkKbIndexing ? (

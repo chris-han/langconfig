@@ -42,7 +42,7 @@ export default function LibraryContentPanel({
           <div className="flex gap-1">
             <button
               onClick={() => setActiveTab('workflows')}
-              className={`px-4 py-2 text-sm font-medium rounded-lg transition-colors ${activeTab === 'workflows'
+              className={`px-4 py-2 text-sm font-medium rounded-md transition-colors ${activeTab === 'workflows'
                 ? 'bg-primary/10 text-primary'
                 : 'hover:bg-white/5'
                 }`}
@@ -55,7 +55,7 @@ export default function LibraryContentPanel({
             </button>
             <button
               onClick={() => setActiveTab('projects')}
-              className={`px-4 py-2 text-sm font-medium rounded-lg transition-colors ${activeTab === 'projects'
+              className={`px-4 py-2 text-sm font-medium rounded-md transition-colors ${activeTab === 'projects'
                 ? 'bg-primary/10 text-primary'
                 : 'hover:bg-white/5'
                 }`}
@@ -68,7 +68,7 @@ export default function LibraryContentPanel({
             </button>
             <button
               onClick={() => setActiveTab('files')}
-              className={`px-4 py-2 text-sm font-medium rounded-lg transition-colors ${activeTab === 'files'
+              className={`px-4 py-2 text-sm font-medium rounded-md transition-colors ${activeTab === 'files'
                 ? 'bg-primary/10 text-primary'
                 : 'hover:bg-white/5'
                 }`}
@@ -81,7 +81,7 @@ export default function LibraryContentPanel({
             </button>
             <button
               onClick={() => setActiveTab('learn')}
-              className={`px-4 py-2 text-sm font-medium rounded-lg transition-colors ${activeTab === 'learn'
+              className={`px-4 py-2 text-sm font-medium rounded-md transition-colors ${activeTab === 'learn'
                 ? 'bg-primary/10 text-primary'
                 : 'hover:bg-white/5'
                 }`}
@@ -94,7 +94,7 @@ export default function LibraryContentPanel({
             </button>
             <button
               onClick={() => setActiveTab('best-practices')}
-              className={`px-4 py-2 text-sm font-medium rounded-lg transition-colors ${activeTab === 'best-practices'
+              className={`px-4 py-2 text-sm font-medium rounded-md transition-colors ${activeTab === 'best-practices'
                 ? 'bg-primary/10 text-primary'
                 : 'hover:bg-white/5'
                 }`}
@@ -121,7 +121,7 @@ export default function LibraryContentPanel({
                 placeholder="Search content..."
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
-                className="pl-10 pr-4 py-1.5 text-sm border rounded-lg w-64 focus:outline-none focus:ring-2 focus:ring-primary"
+                className="pl-10 pr-4 py-1.5 text-sm border rounded-md w-64 focus:outline-none focus:ring-2 focus:ring-primary"
                 style={{
                   backgroundColor: 'var(--color-input-background)',
                   borderColor: 'var(--color-border-dark)',
@@ -162,10 +162,10 @@ export default function LibraryContentPanel({
                   {/* Projects Card */}
                   <button
                     onClick={() => setActiveTab('projects')}
-                    className="group rounded-lg border border-border bg-card p-6 text-left transition-all hover:border-primary/20 hover:bg-primary/5"
+                    className="group rounded-md border border-border bg-card p-6 text-left transition-all hover:border-primary/20 hover:bg-primary/5"
                   >
                     <div className="flex items-start gap-4 mb-4">
-                      <div className="flex h-12 w-12 flex-shrink-0 items-center justify-center rounded-lg border border-border bg-background">
+                      <div className="flex h-12 w-12 flex-shrink-0 items-center justify-center rounded-md border border-border bg-background">
                         <span className="material-symbols-outlined text-2xl text-primary">folder</span>
                       </div>
                       <div className="flex-1">
@@ -186,10 +186,10 @@ export default function LibraryContentPanel({
                   {/* Workflows Card */}
                   <button
                     onClick={onCreateWorkflow}
-                    className="group rounded-lg border border-border bg-card p-6 text-left transition-all hover:border-primary/20 hover:bg-primary/5"
+                    className="group rounded-md border border-border bg-card p-6 text-left transition-all hover:border-primary/20 hover:bg-primary/5"
                   >
                     <div className="flex items-start gap-4 mb-4">
-                      <div className="flex h-12 w-12 flex-shrink-0 items-center justify-center rounded-lg border border-border bg-background">
+                      <div className="flex h-12 w-12 flex-shrink-0 items-center justify-center rounded-md border border-border bg-background">
                         <span className="material-symbols-outlined text-2xl text-primary">account_tree</span>
                       </div>
                       <div className="flex-1">
@@ -210,10 +210,10 @@ export default function LibraryContentPanel({
                   {/* Learn LangChain Card */}
                   <button
                     onClick={() => setActiveTab('learn')}
-                    className="group rounded-lg border border-border bg-card p-6 text-left transition-all hover:border-primary/20 hover:bg-primary/5"
+                    className="group rounded-md border border-border bg-card p-6 text-left transition-all hover:border-primary/20 hover:bg-primary/5"
                   >
                     <div className="flex items-start gap-4 mb-4">
-                      <div className="flex h-12 w-12 flex-shrink-0 items-center justify-center rounded-lg border border-border bg-background">
+                      <div className="flex h-12 w-12 flex-shrink-0 items-center justify-center rounded-md border border-border bg-background">
                         <span className="material-symbols-outlined text-2xl text-primary">school</span>
                       </div>
                       <div className="flex-1">
@@ -234,10 +234,10 @@ export default function LibraryContentPanel({
                   {/* Best Practices Card */}
                   <button
                     onClick={() => setActiveTab('best-practices')}
-                    className="group rounded-lg border border-border bg-card p-6 text-left transition-all hover:border-primary/20 hover:bg-primary/5"
+                    className="group rounded-md border border-border bg-card p-6 text-left transition-all hover:border-primary/20 hover:bg-primary/5"
                   >
                     <div className="flex items-start gap-4 mb-4">
-                      <div className="flex h-12 w-12 flex-shrink-0 items-center justify-center rounded-lg border border-border bg-background">
+                      <div className="flex h-12 w-12 flex-shrink-0 items-center justify-center rounded-md border border-border bg-background">
                         <span className="material-symbols-outlined text-2xl text-primary">workspace_premium</span>
                       </div>
                       <div className="flex-1">
@@ -258,9 +258,9 @@ export default function LibraryContentPanel({
 
                 {/* Active Project Info (if project selected) */}
                 {activeProject && (
-                  <div className="rounded-lg border border-border bg-card p-5">
+                  <div className="rounded-md border border-border bg-card p-5">
                     <div className="flex items-start gap-4">
-                      <div className="flex h-12 w-12 flex-shrink-0 items-center justify-center rounded-lg border border-border bg-background">
+                      <div className="flex h-12 w-12 flex-shrink-0 items-center justify-center rounded-md border border-border bg-background">
                         <span className="material-symbols-outlined text-2xl text-primary">folder</span>
                       </div>
                       <div className="flex-1">
@@ -295,7 +295,7 @@ export default function LibraryContentPanel({
                 )}
 
                 {/* Quick Tip */}
-                <div className="rounded-lg border border-primary/25 bg-primary/10 p-4">
+                <div className="rounded-md border border-primary/25 bg-primary/10 p-4">
                   <div className="flex gap-3">
                     <span className="material-symbols-outlined flex-shrink-0 text-xl text-primary">tips_and_updates</span>
                     <div>
@@ -316,7 +316,7 @@ export default function LibraryContentPanel({
         {activeTab === 'projects' && (
           <div className="h-full flex items-center justify-center p-6 overflow-y-auto">
             <div className="text-center max-w-2xl">
-              <div className="w-16 h-16 mx-auto mb-4 rounded-lg bg-primary/10 flex items-center justify-center">
+              <div className="w-16 h-16 mx-auto mb-4 rounded-md bg-primary/10 flex items-center justify-center">
                 <span className="material-symbols-outlined text-3xl text-primary">folder</span>
               </div>
               <h2 className="text-2xl font-bold mb-3" style={{ color: 'var(--color-text-primary)' }}>
@@ -326,7 +326,7 @@ export default function LibraryContentPanel({
                 Project management features are currently being developed. Soon you'll be able to create projects, organize workflows, manage knowledge bases, and track project-wide metrics.
               </p>
               {activeProject && (
-                <div className="inline-block p-4 rounded-lg border" style={{
+                <div className="inline-block p-4 rounded-md border" style={{
                   borderColor: 'var(--color-border-dark)',
                   backgroundColor: 'var(--color-panel-dark)'
                 }}>

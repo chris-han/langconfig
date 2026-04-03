@@ -65,7 +65,7 @@ const NodeContextMenu = memo(function NodeContextMenu({
         onClick={onClose}
       />
       <div
-        className="fixed z-[9999] border rounded-lg shadow-2xl py-1 min-w-[200px]"
+        className="fixed z-[9999] border rounded-md shadow-2xl py-1 min-w-[200px]"
         style={{
           left: `${x}px`,
           top: `${y}px`,

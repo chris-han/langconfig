@@ -222,7 +222,7 @@ const WorkflowResults = memo(function WorkflowResults({
     ),
     table: ({ children }: any) => (
       <div className="overflow-x-auto my-4">
-        <table className="min-w-full divide-y border rounded-lg"
+        <table className="min-w-full divide-y border rounded-md"
           style={{ borderColor: 'var(--color-border-dark)' }}>
           {children}
         </table>
@@ -281,7 +281,7 @@ const WorkflowResults = memo(function WorkflowResults({
       );
     },
     pre: ({ children }: any) => (
-      <pre className="p-4 rounded-lg overflow-x-auto my-4 bg-gray-900 text-gray-100">
+      <pre className="p-4 rounded-md overflow-x-auto my-4 bg-gray-900 text-gray-100">
         {children}
       </pre>
     ),
@@ -289,7 +289,7 @@ const WorkflowResults = memo(function WorkflowResults({
       <img
         src={src}
         alt={alt || 'Generated image'}
-        className="max-w-full h-auto rounded-lg shadow-md my-4"
+        className="max-w-full h-auto rounded-md shadow-md my-4"
         style={{ maxHeight: '600px' }}
       />
     ),
@@ -326,7 +326,7 @@ const WorkflowResults = memo(function WorkflowResults({
                   <div className="flex-1 flex justify-center overflow-y-auto">
                     <div className="w-full max-w-6xl px-6 py-4">
                       {!taskOutput ? (
-                        <div className="bg-card border border-border rounded-lg shadow-lg max-w-3xl mx-auto">
+                        <div className="bg-card border border-border rounded-md shadow-lg max-w-3xl mx-auto">
                           {/* Header */}
                           <div className="px-6 py-4 border-b border-border">
                             <div className="flex items-center justify-between">
@@ -361,7 +361,7 @@ const WorkflowResults = memo(function WorkflowResults({
                               </span>
                               Your Prompt
                             </h4>
-                            <div className="p-4 rounded-lg border" style={{
+                            <div className="p-4 rounded-md border" style={{
                               backgroundColor: 'var(--color-panel-dark)',
                               borderColor: 'var(--color-border-dark)'
                             }}>
@@ -386,7 +386,7 @@ const WorkflowResults = memo(function WorkflowResults({
                                 </span>
                                 Error Details
                               </h4>
-                              <div className="p-4 rounded-lg border border-red-200 dark:border-red-800 bg-red-50 dark:bg-red-900/20">
+                              <div className="p-4 rounded-md border border-red-200 dark:border-red-800 bg-red-50 dark:bg-red-900/20">
                                 <p className="text-sm whitespace-pre-wrap text-red-700 dark:text-red-300 font-mono">
                                   {displayTask?.error || 'Workflow execution failed. Check the Execution Log for details.'}
                                 </p>
@@ -440,7 +440,7 @@ const WorkflowResults = memo(function WorkflowResults({
                           </div>
                         </div>
                       ) : (
-                        <div className="bg-card border border-border rounded-lg shadow-lg">
+                        <div className="bg-card border border-border rounded-md shadow-lg">
                           {/* Task Header */}
                           <div className="px-8 py-4 border-b border-border">
                             <div className="flex items-center justify-between">
@@ -662,7 +662,7 @@ const WorkflowResults = memo(function WorkflowResults({
 
                             {/* Raw Output */}
                             {showRawOutput && (
-                              <div className="mt-8 p-4 rounded-lg" style={{ backgroundColor: 'var(--color-panel-dark)' }}>
+                              <div className="mt-8 p-4 rounded-md" style={{ backgroundColor: 'var(--color-panel-dark)' }}>
                                 <h4 className="text-sm font-semibold mb-2" style={{ color: 'var(--color-text-primary)' }}>Raw Output</h4>
                                 <pre className="text-xs overflow-auto whitespace-pre-wrap" style={{ color: 'var(--color-text-primary)' }}>
                                   {JSON.stringify(taskOutput, null, 2)}
@@ -674,7 +674,7 @@ const WorkflowResults = memo(function WorkflowResults({
                             {displayTask?.status === 'completed' && onContinueFromTask && (
                               <div className="mt-10 mb-4 border-t pt-8" style={{ borderColor: 'var(--color-border-dark)' }}>
                                 <div
-                                  className="rounded-xl p-6 border cursor-pointer transition-all hover:shadow-lg group"
+                                  className="rounded-md p-6 border cursor-pointer transition-all hover:shadow-lg group"
                                   style={{
                                     backgroundColor: 'var(--color-panel-dark)',
                                     borderColor: 'var(--color-border-dark)',
@@ -844,7 +844,7 @@ const WorkflowResults = memo(function WorkflowResults({
                         )}
 
                         {/* Task Summary */}
-                        <div className="p-3 rounded-lg border"
+                        <div className="p-3 rounded-md border"
                           style={{
                             backgroundColor: 'var(--color-panel-dark)',
                             borderColor: 'var(--color-border-dark)'

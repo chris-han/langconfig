@@ -109,7 +109,7 @@ export default function NodeThinkingOverlay({
 
       {/* Overlay container */}
       <div
-        className="rounded-lg shadow-2xl border transition-all duration-300"
+        className="rounded-md shadow-2xl border transition-all duration-300"
         style={{
           backgroundColor: 'var(--color-panel-dark)',
           borderColor: 'var(--color-border-dark)',
@@ -309,7 +309,7 @@ export function NodeThinkingBadge({
 
   return (
     <div
-      className="mt-2 px-2 py-1.5 rounded-lg border-l-2 cursor-pointer hover:bg-opacity-20 transition-all"
+      className="mt-2 px-2 py-1.5 rounded-md border-l-2 cursor-pointer hover:bg-opacity-20 transition-all"
       style={{
         backgroundColor: isActive ? 'rgba(19, 91, 236, 0.1)' : 'rgba(146, 164, 201, 0.1)',
         borderLeftColor: isActive ? 'var(--color-primary)' : 'var(--color-text-muted)',

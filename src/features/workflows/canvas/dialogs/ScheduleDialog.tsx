@@ -233,7 +233,7 @@ const ScheduleDialog = memo(function ScheduleDialog({
   return (
     <div className="fixed inset-0 z-[100] flex items-center justify-center bg-black/50 backdrop-blur-sm">
       <div
-        className="w-full max-w-lg rounded-xl shadow-2xl overflow-hidden max-h-[90vh] flex flex-col"
+        className="w-full max-w-lg rounded-md shadow-2xl overflow-hidden max-h-[90vh] flex flex-col"
         style={{
           backgroundColor: 'var(--color-panel-dark)',
           border: '1px solid var(--color-border-dark)',
@@ -271,7 +271,7 @@ const ScheduleDialog = memo(function ScheduleDialog({
               value={name}
               onChange={(e) => setName(e.target.value)}
               placeholder="e.g., Daily Report"
-              className="w-full px-3 py-2 rounded-lg text-sm"
+              className="w-full px-3 py-2 rounded-md text-sm"
               style={{
                 backgroundColor: 'var(--color-background-dark)',
                 border: '1px solid var(--color-border-dark)',
@@ -290,7 +290,7 @@ const ScheduleDialog = memo(function ScheduleDialog({
               value={cronExpression}
               onChange={(e) => setCronExpression(e.target.value)}
               placeholder="* * * * *"
-              className="w-full px-3 py-2 rounded-lg text-sm font-mono"
+              className="w-full px-3 py-2 rounded-md text-sm font-mono"
               style={{
                 backgroundColor: 'var(--color-background-dark)',
                 border: '1px solid var(--color-border-dark)',
@@ -365,7 +365,7 @@ const ScheduleDialog = memo(function ScheduleDialog({
             <select
               value={timezone}
               onChange={(e) => setTimezone(e.target.value)}
-              className="w-full px-3 py-2 rounded-lg text-sm"
+              className="w-full px-3 py-2 rounded-md text-sm"
               style={{
                 backgroundColor: 'var(--color-background-dark)',
                 border: '1px solid var(--color-border-dark)',
@@ -492,7 +492,7 @@ const ScheduleDialog = memo(function ScheduleDialog({
 
           {/* Error Message */}
           {error && (
-            <div className="p-3 rounded-lg" style={{ backgroundColor: 'rgba(239, 68, 68, 0.15)' }}>
+            <div className="p-3 rounded-md" style={{ backgroundColor: 'rgba(239, 68, 68, 0.15)' }}>
               <p className="text-sm" style={{ color: '#ef4444' }}>
                 {error}
               </p>
@@ -571,7 +571,7 @@ const ScheduleDialog = memo(function ScheduleDialog({
                 <button
                   onClick={handleTriggerNow}
                   disabled={!enabled}
-                  className="px-3 py-2 rounded-lg text-sm font-medium transition-colors flex items-center gap-2 hover:bg-white/10 disabled:opacity-50"
+                  className="px-3 py-2 rounded-md text-sm font-medium transition-colors flex items-center gap-2 hover:bg-white/10 disabled:opacity-50"
                   style={{
                     border: '1px solid var(--color-border-dark)',
                     color: 'var(--color-text-primary)',
@@ -582,7 +582,7 @@ const ScheduleDialog = memo(function ScheduleDialog({
                 </button>
                 <button
                   onClick={handleDelete}
-                  className="px-3 py-2 rounded-lg text-sm font-medium transition-colors flex items-center gap-2 hover:bg-red-500/20"
+                  className="px-3 py-2 rounded-md text-sm font-medium transition-colors flex items-center gap-2 hover:bg-red-500/20"
                   style={{
                     color: '#ef4444',
                   }}
@@ -596,7 +596,7 @@ const ScheduleDialog = memo(function ScheduleDialog({
           <div className="flex gap-2">
             <button
               onClick={onClose}
-              className="px-4 py-2 rounded-lg text-sm font-medium transition-colors hover:bg-white/10"
+              className="px-4 py-2 rounded-md text-sm font-medium transition-colors hover:bg-white/10"
               style={{ color: 'var(--color-text-muted)' }}
             >
               Cancel
@@ -604,7 +604,7 @@ const ScheduleDialog = memo(function ScheduleDialog({
             <button
               onClick={handleSave}
               disabled={saving || !validation?.valid}
-              className="px-4 py-2 rounded-lg text-sm font-medium transition-colors bg-primary text-white hover:bg-primary/90 disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2"
+              className="px-4 py-2 rounded-md text-sm font-medium transition-colors bg-primary text-white hover:bg-primary/90 disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2"
             >
               {saving && <Loader2 size={14} className="animate-spin" />}
               {isEditing ? 'Save Changes' : 'Create Schedule'}

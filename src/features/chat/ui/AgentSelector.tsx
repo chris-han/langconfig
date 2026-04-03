@@ -97,7 +97,7 @@ export default function AgentSelector({
     <div className="relative">
       <button
         onClick={() => setIsOpen(!isOpen)}
-        className="flex items-center gap-2 px-4 py-2 rounded-lg border transition-colors hover:bg-gray-50"
+        className="flex items-center gap-2 px-4 py-2 rounded-md border transition-colors hover:bg-gray-50"
         style={{
           borderColor: 'var(--color-border-dark)',
           backgroundColor: 'white',
@@ -117,7 +117,7 @@ export default function AgentSelector({
             onClick={() => setIsOpen(false)}
           />
           <div
-            className="absolute left-0 mt-2 w-96 rounded-lg shadow-lg border z-50 max-h-[32rem] overflow-hidden flex flex-col"
+            className="absolute left-0 mt-2 w-96 rounded-md shadow-lg border z-50 max-h-[32rem] overflow-hidden flex flex-col"
             style={{
               backgroundColor: 'white',
               borderColor: 'var(--color-border-dark)',

@@ -375,7 +375,7 @@ const NodeConfigPanel = ({
 
       {showToolConfigModal && selectedToolId && (
         <div className="fixed inset-0 bg-black/50 flex items-center justify-center p-4 z-50" onClick={() => setShowToolConfigModal(false)}>
-          <div className="bg-background border border-sidebar-border rounded-xl w-full max-w-6xl h-[90vh] flex flex-col shadow-2xl overflow-hidden" onClick={e => e.stopPropagation()}>
+          <div className="bg-background border border-sidebar-border rounded-md w-full max-w-6xl h-[90vh] flex flex-col shadow-2xl overflow-hidden" onClick={e => e.stopPropagation()}>
             <CustomToolBuilder existingToolId={selectedToolId} skipTemplateStep={false} onClose={() => setShowToolConfigModal(false)} />
           </div>
         </div>

@@ -62,7 +62,7 @@ export default function SearchMetricsDisplay({ metrics, comparisonMetrics, class
   };
 
   return (
-    <div className={`bg-white dark:bg-panel-dark border border-gray-200 dark:border-border-dark rounded-lg p-4 ${className}`}>
+    <div className={`bg-white dark:bg-panel-dark border border-gray-200 dark:border-border-dark rounded-md p-4 ${className}`}>
       {/* Header */}
       <div className="flex items-center justify-between mb-3">
         <h3 className="text-sm font-semibold" style={{ color: 'var(--color-text-primary)' }}>

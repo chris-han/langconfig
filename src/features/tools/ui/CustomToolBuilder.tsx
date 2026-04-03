@@ -393,7 +393,7 @@ const CustomToolBuilder = ({ onClose, onBack, existingToolId, skipTemplateStep =
                 onChange={(e) => setToolId(e.target.value)}
                 placeholder="my_custom_tool"
                 disabled={!!existingToolId}
-                className="w-full px-4 py-2 rounded-lg border text-sm transition-all"
+                className="w-full px-4 py-2 rounded-md border text-sm transition-all"
                 style={{
                   backgroundColor: existingToolId ? 'var(--color-background-dark)' : 'var(--color-input-background)',
                   borderColor: 'var(--color-border-dark)',
@@ -416,7 +416,7 @@ const CustomToolBuilder = ({ onClose, onBack, existingToolId, skipTemplateStep =
                 value={toolName}
                 onChange={(e) => setToolName(e.target.value)}
                 placeholder="My Custom Tool"
-                className="w-full px-4 py-2 rounded-lg border text-sm transition-all"
+                className="w-full px-4 py-2 rounded-md border text-sm transition-all"
                 style={{
                   backgroundColor: 'var(--color-input-background)',
                   borderColor: 'var(--color-border-dark)',
@@ -439,7 +439,7 @@ const CustomToolBuilder = ({ onClose, onBack, existingToolId, skipTemplateStep =
                 onChange={(e) => setDescription(e.target.value)}
                 placeholder="Describe what this tool does... (This helps the LLM understand when to use it)"
                 rows={4}
-                className="w-full px-4 py-2 rounded-lg border text-sm transition-all"
+                className="w-full px-4 py-2 rounded-md border text-sm transition-all"
                 style={{
                   backgroundColor: 'var(--color-input-background)',
                   borderColor: 'var(--color-border-dark)',
@@ -462,7 +462,7 @@ const CustomToolBuilder = ({ onClose, onBack, existingToolId, skipTemplateStep =
                 value={category}
                 onChange={(e) => setCategory(e.target.value)}
                 placeholder="e.g., notifications, integrations"
-                className="w-full px-4 py-2 rounded-lg border text-sm transition-all"
+                className="w-full px-4 py-2 rounded-md border text-sm transition-all"
                 style={{
                   backgroundColor: 'var(--color-input-background)',
                   borderColor: 'var(--color-border-dark)',
@@ -482,7 +482,7 @@ const CustomToolBuilder = ({ onClose, onBack, existingToolId, skipTemplateStep =
                 value={tags.join(', ')}
                 onChange={(e) => setTags(e.target.value.split(',').map(t => t.trim()).filter(Boolean))}
                 placeholder="slack, notification, alerts"
-                className="w-full px-4 py-2 rounded-lg border text-sm transition-all"
+                className="w-full px-4 py-2 rounded-md border text-sm transition-all"
                 style={{
                   backgroundColor: 'var(--color-input-background)',
                   borderColor: 'var(--color-border-dark)',
@@ -557,7 +557,7 @@ const CustomToolBuilder = ({ onClose, onBack, existingToolId, skipTemplateStep =
               <select
                 value={implementationConfig.provider || 'discord'}
                 onChange={(e) => setImplementationConfig({ ...implementationConfig, provider: e.target.value })}
-                className="w-full px-4 py-2 rounded-lg border text-sm"
+                className="w-full px-4 py-2 rounded-md border text-sm"
                 style={{
                   backgroundColor: 'var(--color-input-background)',
                   borderColor: 'var(--color-border-dark)',
@@ -578,7 +578,7 @@ const CustomToolBuilder = ({ onClose, onBack, existingToolId, skipTemplateStep =
                 value={implementationConfig.webhook_url || ''}
                 onChange={(e) => setImplementationConfig({ ...implementationConfig, webhook_url: e.target.value })}
                 placeholder="https://hooks.slack.com/services/..."
-                className="w-full px-4 py-2 rounded-lg border text-sm transition-all"
+                className="w-full px-4 py-2 rounded-md border text-sm transition-all"
                 style={{
                   backgroundColor: 'var(--color-input-background)',
                   borderColor: 'var(--color-border-dark)',
@@ -587,7 +587,7 @@ const CustomToolBuilder = ({ onClose, onBack, existingToolId, skipTemplateStep =
                 onFocus={(e) => e.currentTarget.style.borderColor = 'var(--color-primary)'}
                 onBlur={(e) => e.currentTarget.style.borderColor = 'var(--color-border-dark)'}
               />
-              <div className="mt-2 p-3 rounded-lg text-sm" style={{ backgroundColor: 'rgba(59, 130, 246, 0.1)', borderColor: 'rgba(59, 130, 246, 0.3)', color: 'var(--color-text-primary)' }}>
+              <div className="mt-2 p-3 rounded-md text-sm" style={{ backgroundColor: 'rgba(59, 130, 246, 0.1)', borderColor: 'rgba(59, 130, 246, 0.3)', color: 'var(--color-text-primary)' }}>
                 <strong>How to get webhook URL:</strong><br />
                 {implementationConfig.provider === 'slack'
                   ? '1. Go to https://api.slack.com/messaging/webhooks\n2. Create Incoming Webhook\n3. Copy the URL'
@@ -605,7 +605,7 @@ const CustomToolBuilder = ({ onClose, onBack, existingToolId, skipTemplateStep =
                   value={implementationConfig.channel || '#general'}
                   onChange={(e) => setImplementationConfig({ ...implementationConfig, channel: e.target.value })}
                   placeholder="#general"
-                  className="w-full px-4 py-2 rounded-lg border text-sm transition-all"
+                  className="w-full px-4 py-2 rounded-md border text-sm transition-all"
                   style={{
                     backgroundColor: 'var(--color-input-background)',
                     borderColor: 'var(--color-border-dark)',
@@ -626,7 +626,7 @@ const CustomToolBuilder = ({ onClose, onBack, existingToolId, skipTemplateStep =
                 onChange={(e) => setImplementationConfig({ ...implementationConfig, message_template: e.target.value })}
                 placeholder="{message}"
                 rows={3}
-                className="w-full px-4 py-2 rounded-lg border text-sm font-mono transition-all"
+                className="w-full px-4 py-2 rounded-md border text-sm font-mono transition-all"
                 style={{
                   backgroundColor: 'var(--color-input-background)',
                   borderColor: 'var(--color-border-dark)',
@@ -648,7 +648,7 @@ const CustomToolBuilder = ({ onClose, onBack, existingToolId, skipTemplateStep =
             {/* Twitter-specific configuration */}
             {implementationConfig.provider === 'twitter' && (
               <>
-                <div className="p-4 rounded-lg border-l-4" style={{
+                <div className="p-4 rounded-md border-l-4" style={{
                   backgroundColor: 'rgba(59, 130, 246, 0.1)',
                   borderLeftColor: 'var(--color-primary)',
                   borderWidth: '0 0 0 4px'
@@ -692,7 +692,7 @@ const CustomToolBuilder = ({ onClose, onBack, existingToolId, skipTemplateStep =
                     value={implementationConfig.api_key || ''}
                     onChange={(e) => setImplementationConfig({ ...implementationConfig, api_key: e.target.value })}
                     placeholder="Your Twitter API Key"
-                    className="w-full px-4 py-2 rounded-lg border text-sm transition-all"
+                    className="w-full px-4 py-2 rounded-md border text-sm transition-all"
                     style={{
                       backgroundColor: 'var(--color-input-background)',
                       borderColor: 'var(--color-border-dark)',
@@ -715,7 +715,7 @@ const CustomToolBuilder = ({ onClose, onBack, existingToolId, skipTemplateStep =
                     value={implementationConfig.api_secret || ''}
                     onChange={(e) => setImplementationConfig({ ...implementationConfig, api_secret: e.target.value })}
                     placeholder="Your Twitter API Secret"
-                    className="w-full px-4 py-2 rounded-lg border text-sm transition-all"
+                    className="w-full px-4 py-2 rounded-md border text-sm transition-all"
                     style={{
                       backgroundColor: 'var(--color-input-background)',
                       borderColor: 'var(--color-border-dark)',
@@ -738,7 +738,7 @@ const CustomToolBuilder = ({ onClose, onBack, existingToolId, skipTemplateStep =
                     value={implementationConfig.access_token || ''}
                     onChange={(e) => setImplementationConfig({ ...implementationConfig, access_token: e.target.value })}
                     placeholder="Your Twitter Access Token"
-                    className="w-full px-4 py-2 rounded-lg border text-sm transition-all"
+                    className="w-full px-4 py-2 rounded-md border text-sm transition-all"
                     style={{
                       backgroundColor: 'var(--color-input-background)',
                       borderColor: 'var(--color-border-dark)',
@@ -761,7 +761,7 @@ const CustomToolBuilder = ({ onClose, onBack, existingToolId, skipTemplateStep =
                     value={implementationConfig.access_token_secret || ''}
                     onChange={(e) => setImplementationConfig({ ...implementationConfig, access_token_secret: e.target.value })}
                     placeholder="Your Twitter Access Token Secret"
-                    className="w-full px-4 py-2 rounded-lg border text-sm transition-all"
+                    className="w-full px-4 py-2 rounded-md border text-sm transition-all"
                     style={{
                       backgroundColor: 'var(--color-input-background)',
                       borderColor: 'var(--color-border-dark)',
@@ -784,7 +784,7 @@ const CustomToolBuilder = ({ onClose, onBack, existingToolId, skipTemplateStep =
                     value={implementationConfig.bearer_token || ''}
                     onChange={(e) => setImplementationConfig({ ...implementationConfig, bearer_token: e.target.value })}
                     placeholder="Bearer Token (alternative to OAuth)"
-                    className="w-full px-4 py-2 rounded-lg border text-sm transition-all"
+                    className="w-full px-4 py-2 rounded-md border text-sm transition-all"
                     style={{
                       backgroundColor: 'var(--color-input-background)',
                       borderColor: 'var(--color-border-dark)',
@@ -798,7 +798,7 @@ const CustomToolBuilder = ({ onClose, onBack, existingToolId, skipTemplateStep =
                   </p>
                 </div>
 
-                <div className="p-3 rounded-lg" style={{ backgroundColor: 'rgba(234, 179, 8, 0.1)', borderColor: 'rgba(234, 179, 8, 0.3)' }}>
+                <div className="p-3 rounded-md" style={{ backgroundColor: 'rgba(234, 179, 8, 0.1)', borderColor: 'rgba(234, 179, 8, 0.3)' }}>
                   <p className="text-xs" style={{ color: 'var(--color-text-muted)' }}>
                     <strong>⚠️ Important:</strong> Your API credentials are encrypted and stored securely. Never share them publicly.
                     For posting tweets, you need Read + Write permissions in your Twitter App settings.
@@ -817,7 +817,7 @@ const CustomToolBuilder = ({ onClose, onBack, existingToolId, skipTemplateStep =
                   <select
                     value={implementationConfig.method || 'GET'}
                     onChange={(e) => setImplementationConfig({ ...implementationConfig, method: e.target.value })}
-                    className="w-full px-4 py-2 rounded-lg border text-sm"
+                    className="w-full px-4 py-2 rounded-md border text-sm"
                     style={{
                       backgroundColor: 'var(--color-input-background)',
                       borderColor: 'var(--color-border-dark)',
@@ -841,7 +841,7 @@ const CustomToolBuilder = ({ onClose, onBack, existingToolId, skipTemplateStep =
                     value={implementationConfig.url || ''}
                     onChange={(e) => setImplementationConfig({ ...implementationConfig, url: e.target.value })}
                     placeholder="https://api.example.com/{endpoint}"
-                    className="w-full px-4 py-2 rounded-lg border text-sm transition-all"
+                    className="w-full px-4 py-2 rounded-md border text-sm transition-all"
                     style={{
                       backgroundColor: 'var(--color-input-background)',
                       borderColor: 'var(--color-border-dark)',
@@ -863,7 +863,7 @@ const CustomToolBuilder = ({ onClose, onBack, existingToolId, skipTemplateStep =
                     type="number"
                     value={implementationConfig.timeout || 30}
                     onChange={(e) => setImplementationConfig({ ...implementationConfig, timeout: parseInt(e.target.value) })}
-                    className="w-full px-4 py-2 rounded-lg border text-sm transition-all"
+                    className="w-full px-4 py-2 rounded-md border text-sm transition-all"
                     style={{
                       backgroundColor: 'var(--color-input-background)',
                       borderColor: 'var(--color-border-dark)',
@@ -897,7 +897,7 @@ const CustomToolBuilder = ({ onClose, onBack, existingToolId, skipTemplateStep =
                     model: defaultModel
                   });
                 }}
-                className="w-full px-4 py-2 rounded-lg border text-sm"
+                className="w-full px-4 py-2 rounded-md border text-sm"
                 style={{
                   backgroundColor: 'var(--color-input-background)',
                   borderColor: 'var(--color-border-dark)',
@@ -916,7 +916,7 @@ const CustomToolBuilder = ({ onClose, onBack, existingToolId, skipTemplateStep =
               <select
                 value={implementationConfig.model || (implementationConfig.provider === 'google' ? 'gemini-2.5-flash-image' : 'dall-e-3')}
                 onChange={(e) => setImplementationConfig({ ...implementationConfig, model: e.target.value })}
-                className="w-full px-4 py-2 rounded-lg border text-sm"
+                className="w-full px-4 py-2 rounded-md border text-sm"
                 style={{
                   backgroundColor: 'var(--color-input-background)',
                   borderColor: 'var(--color-border-dark)',
@@ -941,7 +941,7 @@ const CustomToolBuilder = ({ onClose, onBack, existingToolId, skipTemplateStep =
             </div>
 
             {/* API Key Configuration Note */}
-            <div className="p-3 rounded-lg" style={{
+            <div className="p-3 rounded-md" style={{
               backgroundColor: 'rgba(99, 102, 241, 0.1)',
               border: '1px solid rgba(99, 102, 241, 0.2)'
             }}>
@@ -1052,7 +1052,7 @@ const CustomToolBuilder = ({ onClose, onBack, existingToolId, skipTemplateStep =
             const displayName = editingPropNames[propName] ?? propName;
 
             return (
-              <div key={`prop-${index}`} className="p-4 rounded-lg border" style={{ borderColor: 'var(--color-border-dark)', backgroundColor: 'var(--color-panel-dark)' }}>
+              <div key={`prop-${index}`} className="p-4 rounded-md border" style={{ borderColor: 'var(--color-border-dark)', backgroundColor: 'var(--color-panel-dark)' }}>
                 <div className="grid grid-cols-2 gap-4">
                   <div>
                     <label className="block text-sm font-medium mb-1" style={{ color: 'var(--color-text-primary)' }}>
@@ -1085,7 +1085,7 @@ const CustomToolBuilder = ({ onClose, onBack, existingToolId, skipTemplateStep =
                           e.currentTarget.blur();
                         }
                       }}
-                      className="w-full px-3 py-2 rounded-lg border text-sm"
+                      className="w-full px-3 py-2 rounded-md border text-sm"
                       style={{
                         backgroundColor: 'var(--color-input-background)',
                         borderColor: 'var(--color-border-dark)',
@@ -1101,7 +1101,7 @@ const CustomToolBuilder = ({ onClose, onBack, existingToolId, skipTemplateStep =
                     <select
                       value={prop.type || 'string'}
                       onChange={(e) => updatePropertyData(propName, { type: e.target.value })}
-                      className="w-full px-3 py-2 rounded-lg border text-sm"
+                      className="w-full px-3 py-2 rounded-md border text-sm"
                       style={{
                         backgroundColor: 'var(--color-input-background)',
                         borderColor: 'var(--color-border-dark)',
@@ -1125,7 +1125,7 @@ const CustomToolBuilder = ({ onClose, onBack, existingToolId, skipTemplateStep =
                     value={prop.description || ''}
                     onChange={(e) => updatePropertyData(propName, { description: e.target.value })}
                     placeholder="What is this parameter for?"
-                    className="w-full px-3 py-2 rounded-lg border text-sm"
+                    className="w-full px-3 py-2 rounded-md border text-sm"
                     style={{
                       backgroundColor: 'var(--color-input-background)',
                       borderColor: 'var(--color-border-dark)',
@@ -1159,7 +1159,7 @@ const CustomToolBuilder = ({ onClose, onBack, existingToolId, skipTemplateStep =
 
           <button
             onClick={addProperty}
-            className="w-full p-3 border-2 border-dashed rounded-lg font-medium transition-colors"
+            className="w-full p-3 border-2 border-dashed rounded-md font-medium transition-colors"
             style={{
               borderColor: 'var(--color-border-dark)',
               color: 'var(--color-text-muted)'
@@ -1217,7 +1217,7 @@ const CustomToolBuilder = ({ onClose, onBack, existingToolId, skipTemplateStep =
                 value={testInput[propName] || ''}
                 onChange={(e) => setTestInput({ ...testInput, [propName]: e.target.value })}
                 placeholder={prop.description || `Enter ${propName}`}
-                className="w-full px-4 py-2 rounded-lg border text-sm transition-all"
+                className="w-full px-4 py-2 rounded-md border text-sm transition-all"
                 style={{
                   backgroundColor: 'var(--color-input-background)',
                   borderColor: 'var(--color-border-dark)',
@@ -1234,7 +1234,7 @@ const CustomToolBuilder = ({ onClose, onBack, existingToolId, skipTemplateStep =
         <button
           onClick={handleTest}
           disabled={testing}
-          className="flex items-center gap-2 px-4 py-2 rounded-lg text-white text-sm font-medium disabled:opacity-50 disabled:cursor-not-allowed"
+          className="flex items-center gap-2 px-4 py-2 rounded-md text-white text-sm font-medium disabled:opacity-50 disabled:cursor-not-allowed"
           style={{ backgroundColor: 'var(--color-primary)' }}
         >
           {testing ? (
@@ -1252,7 +1252,7 @@ const CustomToolBuilder = ({ onClose, onBack, existingToolId, skipTemplateStep =
 
         {/* Test Results */}
         {testResult && (
-          <div className={`mt-4 p-4 rounded-lg`} style={{
+          <div className={`mt-4 p-4 rounded-md`} style={{
             backgroundColor: testResult.success ? 'rgba(16, 185, 129, 0.1)' : 'rgba(239, 68, 68, 0.1)',
             borderWidth: '1px',
             borderStyle: 'solid',
@@ -1407,7 +1407,7 @@ ${toolId}_tool = StructuredTool.from_function(
 
         <div className="space-y-4">
           {/* Basic Info */}
-          <div className="p-4 rounded-lg" style={{ backgroundColor: 'var(--color-panel-dark)' }}>
+          <div className="p-4 rounded-md" style={{ backgroundColor: 'var(--color-panel-dark)' }}>
             <h4 className="font-semibold mb-3" style={{ color: 'var(--color-text-primary)' }}>Basic Information</h4>
             <dl className="space-y-2">
               <div className="flex">
@@ -1430,7 +1430,7 @@ ${toolId}_tool = StructuredTool.from_function(
           </div>
 
           {/* Generated LangChain Code */}
-          <div className="p-4 rounded-lg" style={{ backgroundColor: 'var(--color-panel-dark)' }}>
+          <div className="p-4 rounded-md" style={{ backgroundColor: 'var(--color-panel-dark)' }}>
             <div className="flex items-center justify-between mb-3">
               <h4 className="font-semibold" style={{ color: 'var(--color-text-primary)' }}>LangChain Implementation Code</h4>
               <button
@@ -1459,7 +1459,7 @@ ${toolId}_tool = StructuredTool.from_function(
           </div>
 
           {/* Input Schema Summary */}
-          <div className="p-4 rounded-lg" style={{ backgroundColor: 'var(--color-panel-dark)' }}>
+          <div className="p-4 rounded-md" style={{ backgroundColor: 'var(--color-panel-dark)' }}>
             <h4 className="font-semibold mb-3" style={{ color: 'var(--color-text-primary)' }}>Input Parameters</h4>
             <div className="space-y-2">
               {Object.entries(inputSchema.properties || {}).map(([name, prop]: [string, any]) => (
@@ -1479,7 +1479,7 @@ ${toolId}_tool = StructuredTool.from_function(
           </div>
 
           {/* Configuration Summary */}
-          <div className="p-4 rounded-lg" style={{ backgroundColor: 'var(--color-panel-dark)' }}>
+          <div className="p-4 rounded-md" style={{ backgroundColor: 'var(--color-panel-dark)' }}>
             <h4 className="font-semibold mb-3" style={{ color: 'var(--color-text-primary)' }}>Configuration JSON</h4>
             <pre className="text-xs font-mono p-3 rounded border overflow-auto max-h-48" style={{
               backgroundColor: 'var(--color-input-background)',
@@ -1521,7 +1521,7 @@ ${toolId}_tool = StructuredTool.from_function(
                     }
                   }
                 }}
-                className="p-2 transition-all text-white/90 hover:text-white hover:bg-white/15 rounded-lg"
+                className="p-2 transition-all text-white/90 hover:text-white hover:bg-white/15 rounded-md"
                 style={{ textShadow: '0 1px 2px rgba(0, 0, 0, 0.15)' }}
                 title="Back"
               >
@@ -1541,7 +1541,7 @@ ${toolId}_tool = StructuredTool.from_function(
             </div>
             <button
               onClick={onClose}
-              className="transition-all text-white/90 hover:text-white hover:bg-white/15 p-2 rounded-lg"
+              className="transition-all text-white/90 hover:text-white hover:bg-white/15 p-2 rounded-md"
               style={{ textShadow: '0 1px 2px rgba(0, 0, 0, 0.15)' }}
             >
               <X className="w-6 h-6" />
@@ -1563,7 +1563,7 @@ ${toolId}_tool = StructuredTool.from_function(
             <>
               {/* Validation Errors */}
               {validationErrors.length > 0 && (
-                <div className="mb-4 p-4 rounded-lg border-2 shadow-lg" style={{
+                <div className="mb-4 p-4 rounded-md border-2 shadow-lg" style={{
                   backgroundColor: '#fef2f2',
                   borderColor: '#dc2626'
                 }}>
@@ -1593,7 +1593,7 @@ ${toolId}_tool = StructuredTool.from_function(
               <div className="pt-6 border-t flex items-center justify-end gap-3" style={{ borderTopColor: 'var(--color-border-dark)' }}>
                 <button
                   onClick={onClose}
-                  className="px-6 py-2 rounded-lg text-sm font-medium transition-colors"
+                  className="px-6 py-2 rounded-md text-sm font-medium transition-colors"
                   style={{
                     backgroundColor: 'transparent',
                     borderWidth: '1px',
@@ -1614,7 +1614,7 @@ ${toolId}_tool = StructuredTool.from_function(
                 <button
                   onClick={handleSave}
                   disabled={saving || validationErrors.length > 0}
-                  className="flex items-center gap-2 px-6 py-2 rounded-lg text-white text-sm font-medium disabled:opacity-50 disabled:cursor-not-allowed transition-opacity"
+                  className="flex items-center gap-2 px-6 py-2 rounded-md text-white text-sm font-medium disabled:opacity-50 disabled:cursor-not-allowed transition-opacity"
                   style={{ backgroundColor: 'var(--color-primary)' }}
                 >
                   {saving ? (
@@ -1665,7 +1665,7 @@ ${toolId}_tool = StructuredTool.from_function(
                 </h3>
                 <button
                   onClick={() => setShowInfoPanel(false)}
-                  className="p-2 hover:bg-white/10 rounded-lg transition-colors"
+                  className="p-2 hover:bg-white/10 rounded-md transition-colors"
                 >
                   <X className="w-5 h-5 text-white" />
                 </button>
@@ -1765,7 +1765,7 @@ ${toolId}_tool = StructuredTool.from_function(
                 </div>
 
                 {/* Important Notes */}
-                <div className="p-4 rounded-lg border" style={{
+                <div className="p-4 rounded-md border" style={{
                   backgroundColor: 'var(--color-background-dark)',
                   borderColor: 'var(--color-border-dark)'
                 }}>
@@ -1782,7 +1782,7 @@ ${toolId}_tool = StructuredTool.from_function(
                 </div>
 
                 {/* Documentation Link */}
-                <div className="p-4 rounded-lg border" style={{
+                <div className="p-4 rounded-md border" style={{
                   borderColor: 'var(--color-border-dark)',
                   backgroundColor: 'var(--color-background-dark)'
                 }}>

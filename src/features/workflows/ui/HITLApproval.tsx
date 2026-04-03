@@ -110,7 +110,7 @@ export const HITLApproval: React.FC<HITLApprovalProps> = ({
 
   return (
     <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
-      <div className="bg-white dark:bg-gray-800 rounded-lg shadow-xl w-full max-w-2xl max-h-[80vh] flex flex-col">
+      <div className="bg-white dark:bg-gray-800 rounded-md shadow-xl w-full max-w-2xl max-h-[80vh] flex flex-col">
         {/* Header */}
         <div className="p-6 border-b border-gray-200 dark:border-gray-700">
           <div className="flex items-center gap-3">
@@ -130,7 +130,7 @@ export const HITLApproval: React.FC<HITLApprovalProps> = ({
 
         {/* Error Message */}
         {error && (
-          <div className="mx-6 mt-4 p-3 bg-red-100 dark:bg-red-900/30 border border-red-300 dark:border-red-700 rounded-lg text-red-800 dark:text-red-400 text-sm">
+          <div className="mx-6 mt-4 p-3 bg-red-100 dark:bg-red-900/30 border border-red-300 dark:border-red-700 rounded-md text-red-800 dark:text-red-400 text-sm">
             {error}
           </div>
         )}
@@ -142,7 +142,7 @@ export const HITLApproval: React.FC<HITLApprovalProps> = ({
             <h3 className="text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">
               Current State
             </h3>
-            <div className="p-3 bg-gray-50 dark:bg-gray-900/50 rounded-lg">
+            <div className="p-3 bg-gray-50 dark:bg-gray-900/50 rounded-md">
               <pre className="text-xs text-gray-800 dark:text-gray-200 overflow-x-auto whitespace-pre-wrap max-h-40">
                 {JSON.stringify(currentState, null, 2)}
               </pre>
@@ -177,7 +177,7 @@ export const HITLApproval: React.FC<HITLApprovalProps> = ({
             {memoryItems.map((item, index) => (
               <div
                 key={index}
-                className="mb-2 p-3 border border-gray-200 dark:border-gray-700 rounded-lg flex items-start justify-between"
+                className="mb-2 p-3 border border-gray-200 dark:border-gray-700 rounded-md flex items-start justify-between"
               >
                 <div className="flex-1 min-w-0">
                   <div className="font-mono text-xs font-semibold text-primary mb-1 truncate">
@@ -198,7 +198,7 @@ export const HITLApproval: React.FC<HITLApprovalProps> = ({
 
             {/* Add Memory Form */}
             {showMemoryForm && (
-              <div className="p-3 border border-primary dark:border-primary/50 rounded-lg bg-primary/5 dark:bg-primary/10">
+              <div className="p-3 border border-primary dark:border-primary/50 rounded-md bg-primary/5 dark:bg-primary/10">
                 <div className="space-y-2">
                   <input
                     type="text"
@@ -244,7 +244,7 @@ export const HITLApproval: React.FC<HITLApprovalProps> = ({
           <button
             onClick={onReject}
             disabled={isSubmitting}
-            className="px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors disabled:opacity-50 flex items-center gap-2"
+            className="px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-md hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors disabled:opacity-50 flex items-center gap-2"
           >
             <XCircle className="w-4 h-4" />
             Reject
@@ -252,7 +252,7 @@ export const HITLApproval: React.FC<HITLApprovalProps> = ({
           <button
             onClick={handleApprove}
             disabled={isSubmitting}
-            className="px-4 py-2 bg-primary text-white rounded-lg hover:bg-primary/90 transition-colors disabled:opacity-50 flex items-center gap-2"
+            className="px-4 py-2 bg-primary text-white rounded-md hover:bg-primary/90 transition-colors disabled:opacity-50 flex items-center gap-2"
           >
             <CheckCircle className="w-4 h-4" />
             {isSubmitting ? 'Approving...' : 'Approve & Continue'}

@@ -79,7 +79,7 @@ export default function MessagesPanel({
                 Test your agent in real-time with streaming responses. This interface provides:
               </p>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-left">
-                <div className="p-3 rounded-lg" style={{ backgroundColor: 'white', border: '1px solid var(--color-border-dark)' }}>
+                <div className="p-3 rounded-md" style={{ backgroundColor: 'white', border: '1px solid var(--color-border-dark)' }}>
                   <div className="font-medium text-sm mb-1" style={{ color: 'var(--color-primary)' }}>
                     Live Tool Execution
                   </div>
@@ -87,7 +87,7 @@ export default function MessagesPanel({
                     Watch your agent use tools in real-time with live indicators
                   </div>
                 </div>
-                <div className="p-3 rounded-lg" style={{ backgroundColor: 'white', border: '1px solid var(--color-border-dark)' }}>
+                <div className="p-3 rounded-md" style={{ backgroundColor: 'white', border: '1px solid var(--color-border-dark)' }}>
                   <div className="font-medium text-sm mb-1" style={{ color: 'var(--color-primary)' }}>
                     Context Management
                   </div>
@@ -95,7 +95,7 @@ export default function MessagesPanel({
                     Upload documents for RAG retrieval and test context handling
                   </div>
                 </div>
-                <div className="p-3 rounded-lg" style={{ backgroundColor: 'white', border: '1px solid var(--color-border-dark)' }}>
+                <div className="p-3 rounded-md" style={{ backgroundColor: 'white', border: '1px solid var(--color-border-dark)' }}>
                   <div className="font-medium text-sm mb-1" style={{ color: 'var(--color-primary)' }}>
                     Session Persistence
                   </div>
@@ -103,7 +103,7 @@ export default function MessagesPanel({
                     Conversations persist across page reloads for continued testing
                   </div>
                 </div>
-                <div className="p-3 rounded-lg" style={{ backgroundColor: 'white', border: '1px solid var(--color-border-dark)' }}>
+                <div className="p-3 rounded-md" style={{ backgroundColor: 'white', border: '1px solid var(--color-border-dark)' }}>
                   <div className="font-medium text-sm mb-1" style={{ color: 'var(--color-primary)' }}>
                     Token Tracking
                   </div>
@@ -152,7 +152,7 @@ export default function MessagesPanel({
                 <div className={`${message.role === 'system' ? 'text-center w-full' : 'max-w-3xl'}`}>
                   {message.role === 'system' ? (
                     <div
-                      className="text-sm px-4 py-2 rounded-lg inline-block"
+                      className="text-sm px-4 py-2 rounded-md inline-block"
                       style={{
                         color: 'var(--color-text-muted)',
                         backgroundColor: '#e5e7eb',
@@ -330,7 +330,7 @@ export default function MessagesPanel({
                         {message.role === 'assistant' && (
                           <button
                             onClick={() => copyToClipboard(message.content, index)}
-                            className="p-1.5 rounded-lg hover:bg-gray-200 transition-colors"
+                            className="p-1.5 rounded-md hover:bg-gray-200 transition-colors"
                             title="Copy message"
                             style={{ color: 'var(--color-text-muted)' }}
                           >
@@ -518,7 +518,7 @@ export default function MessagesPanel({
 
       {/* Error Display */}
       {error && (
-        <div className="mx-4 mb-2 p-3 rounded-lg flex items-center gap-2 border">
+        <div className="mx-4 mb-2 p-3 rounded-md flex items-center gap-2 border">
           <div
             style={{
               backgroundColor: 'rgba(239, 68, 68, 0.1)',

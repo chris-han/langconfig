@@ -49,7 +49,7 @@ const SaveToLibraryModal = memo(function SaveToLibraryModal({
       onClick={handleClose}
     >
       <div
-        className="rounded-lg shadow-xl p-6 max-w-md w-full mx-4"
+        className="rounded-md shadow-xl p-6 max-w-md w-full mx-4"
         style={{
           backgroundColor: 'var(--color-panel-dark)',
           border: '1px solid var(--color-border-dark)',
@@ -84,7 +84,7 @@ const SaveToLibraryModal = memo(function SaveToLibraryModal({
               }}
               placeholder="Enter agent name..."
               autoFocus
-              className="w-full px-3 py-2 rounded-lg border focus:outline-none focus:ring-2"
+              className="w-full px-3 py-2 rounded-md border focus:outline-none focus:ring-2"
               style={{
                 backgroundColor: 'var(--color-input-background)',
                 borderColor: 'var(--color-border-dark)',
@@ -105,7 +105,7 @@ const SaveToLibraryModal = memo(function SaveToLibraryModal({
               onChange={(e) => setAgentDescription(e.target.value)}
               placeholder="Describe what this agent does..."
               rows={3}
-              className="w-full px-3 py-2 rounded-lg border focus:outline-none focus:ring-2 resize-none"
+              className="w-full px-3 py-2 rounded-md border focus:outline-none focus:ring-2 resize-none"
               style={{
                 backgroundColor: 'var(--color-input-background)',
                 borderColor: 'var(--color-border-dark)',
@@ -118,7 +118,7 @@ const SaveToLibraryModal = memo(function SaveToLibraryModal({
         <div className="flex gap-2 justify-end mt-6">
           <button
             onClick={handleClose}
-            className="px-4 py-2 rounded-lg border transition-colors"
+            className="px-4 py-2 rounded-md border transition-colors"
             style={{
               borderColor: 'var(--color-border-dark)',
               color: 'var(--color-text-muted)',
@@ -129,7 +129,7 @@ const SaveToLibraryModal = memo(function SaveToLibraryModal({
           <button
             onClick={handleSave}
             disabled={!agentName.trim()}
-            className="px-4 py-2 rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+            className="px-4 py-2 rounded-md transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
             style={{
               backgroundColor: 'var(--color-primary)',
               color: 'white',

@@ -90,7 +90,7 @@ const FileCreatedCard = ({ filename, result }: { filename: string; result: strin
 
   return (
     <div
-      className="flex items-center gap-3 p-3 rounded-lg border-2 mt-2"
+      className="flex items-center gap-3 p-3 rounded-md border-2 mt-2"
       style={{
         backgroundColor: 'rgba(16, 185, 129, 0.08)',
         borderColor: 'rgba(16, 185, 129, 0.3)'
@@ -158,7 +158,7 @@ const ToolCallItem = ({
 
   return (
     <div
-      className="group border-2 rounded-lg overflow-hidden transition-all duration-200 mb-2 shadow-md hover:shadow-lg"
+      className="group border-2 rounded-md overflow-hidden transition-all duration-200 mb-2 shadow-md hover:shadow-lg"
       style={{
         borderColor: status === 'error' ? '#ef4444' : status === 'completed' ? '#6ee7b7' : '#f59e0b',
         background: status === 'error'
@@ -1249,7 +1249,7 @@ export default function RealtimeExecutionPanel({
       }}>
         <div className="flex items-center justify-between px-6 py-4">
           <div className="flex items-center gap-3">
-            <div className="p-2 rounded-lg" style={{
+            <div className="p-2 rounded-md" style={{
               backgroundColor: 'rgba(255, 255, 255, 0.2)',
               border: '1px solid rgba(255, 255, 255, 0.3)'
             }}>
@@ -1477,7 +1477,7 @@ export default function RealtimeExecutionPanel({
           {workflowErrors.map((error) => (
             <div
               key={error.id}
-              className="flex items-start gap-3 p-3 rounded-lg"
+              className="flex items-start gap-3 p-3 rounded-md"
               style={{
                 backgroundColor: 'rgba(239, 68, 68, 0.15)',
                 border: '1px solid rgba(239, 68, 68, 0.4)'
@@ -1508,7 +1508,7 @@ export default function RealtimeExecutionPanel({
       {workflowFailed && workflowErrors.length === 0 && (
         <div className="flex-shrink-0 px-4 py-3" style={{ backgroundColor: 'rgba(239, 68, 68, 0.1)', borderBottom: '1px solid rgba(239, 68, 68, 0.3)' }}>
           <div
-            className="flex items-center gap-3 p-3 rounded-lg"
+            className="flex items-center gap-3 p-3 rounded-md"
             style={{
               backgroundColor: 'rgba(239, 68, 68, 0.15)',
               border: '1px solid rgba(239, 68, 68, 0.4)'
@@ -1558,7 +1558,7 @@ export default function RealtimeExecutionPanel({
                   </div>
 
                   <div className="space-y-4">
-                    <div className="p-4 rounded-lg" style={{ backgroundColor: 'var(--color-panel-dark)', border: '1px solid var(--color-border-dark)' }}>
+                    <div className="p-4 rounded-md" style={{ backgroundColor: 'var(--color-panel-dark)', border: '1px solid var(--color-border-dark)' }}>
                       <h4 className="text-sm font-semibold mb-2 flex items-center gap-2" style={{ color: 'var(--color-text-primary)' }}>
                         <span className="material-symbols-outlined text-base" style={{ color: 'var(--color-primary)' }}>help</span>
                         What does this panel show?
@@ -1568,7 +1568,7 @@ export default function RealtimeExecutionPanel({
                       </p>
                     </div>
 
-                    <div className="p-4 rounded-lg" style={{ backgroundColor: 'var(--color-panel-dark)', border: '1px solid var(--color-border-dark)' }}>
+                    <div className="p-4 rounded-md" style={{ backgroundColor: 'var(--color-panel-dark)', border: '1px solid var(--color-border-dark)' }}>
                       <h4 className="text-sm font-semibold mb-2 flex items-center gap-2" style={{ color: 'var(--color-text-primary)' }}>
                         <span className="material-symbols-outlined text-base" style={{ color: 'var(--color-primary)' }}>play_circle</span>
                         How do I start?
@@ -1578,7 +1578,7 @@ export default function RealtimeExecutionPanel({
                       </p>
                     </div>
 
-                    <div className="p-4 rounded-lg" style={{ backgroundColor: 'var(--color-panel-dark)', border: '1px solid var(--color-border-dark)' }}>
+                    <div className="p-4 rounded-md" style={{ backgroundColor: 'var(--color-panel-dark)', border: '1px solid var(--color-border-dark)' }}>
                       <h4 className="text-sm font-semibold mb-2 flex items-center gap-2" style={{ color: 'var(--color-text-primary)' }}>
                         <span className="material-symbols-outlined text-base" style={{ color: 'var(--color-primary)' }}>psychology</span>
                         Thinking vs Panel
@@ -1597,7 +1597,7 @@ export default function RealtimeExecutionPanel({
                       </p>
                       <div
                         key={currentTipIndex}
-                        className="p-4 rounded-lg animate-in fade-in slide-in-from-bottom-2 duration-500"
+                        className="p-4 rounded-md animate-in fade-in slide-in-from-bottom-2 duration-500"
                         style={{
                           backgroundColor: 'var(--color-background-light)',
                           border: '1px solid var(--color-border-dark)'
@@ -1643,7 +1643,7 @@ export default function RealtimeExecutionPanel({
                 return (
                   <div
                     key={`${section.nodeId}-${sectionIdx}`}
-                    className="space-y-2 p-3 mb-3 rounded-lg last:mb-0 transition-all duration-200 shadow-sm"
+                    className="space-y-2 p-3 mb-3 rounded-md last:mb-0 transition-all duration-200 shadow-sm"
                     style={{
                       backgroundColor: 'white',
                       border: '1px solid var(--color-border-dark)'
@@ -1894,7 +1894,7 @@ export default function RealtimeExecutionPanel({
         >
           <button
             onClick={() => onContinueFromTask(currentTaskId)}
-            className="w-full flex items-center justify-center gap-3 px-4 py-3 rounded-lg font-medium text-sm transition-all hover:opacity-90"
+            className="w-full flex items-center justify-center gap-3 px-4 py-3 rounded-md font-medium text-sm transition-all hover:opacity-90"
             style={{
               backgroundColor: 'var(--color-primary)',
               color: 'white',

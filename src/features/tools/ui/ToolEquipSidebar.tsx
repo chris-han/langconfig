@@ -131,7 +131,7 @@ const ToolEquipSidebar = ({ slotType, onEquip, onClose }: ToolEquipSidebarProps)
             placeholder="Search tools..."
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
-            className="w-full pl-9 pr-3 py-2 rounded-lg text-sm border focus:outline-none focus:ring-2"
+            className="w-full pl-9 pr-3 py-2 rounded-md text-sm border focus:outline-none focus:ring-2"
             style={{
               backgroundColor: 'var(--color-input-background)',
               borderColor: 'var(--color-border-dark)',
@@ -143,7 +143,7 @@ const ToolEquipSidebar = ({ slotType, onEquip, onClose }: ToolEquipSidebarProps)
 
         {/* Create Tool Button */}
         <button
-          className="w-full mt-3 px-4 py-2 text-sm rounded-lg border-2 border-dashed flex items-center justify-center gap-2 transition-colors"
+          className="w-full mt-3 px-4 py-2 text-sm rounded-md border-2 border-dashed flex items-center justify-center gap-2 transition-colors"
           style={{
             borderColor: 'var(--color-border-dark)',
             color: 'var(--color-text-muted)'
@@ -174,7 +174,7 @@ const ToolEquipSidebar = ({ slotType, onEquip, onClose }: ToolEquipSidebarProps)
               {searchQuery ? 'No tools found matching your search' : `No ${slotType} tools available`}
             </div>
             <button
-              className="text-xs px-3 py-1.5 rounded-lg transition-opacity"
+              className="text-xs px-3 py-1.5 rounded-md transition-opacity"
               style={{ backgroundColor: 'var(--color-primary)', color: 'white' }}
               onMouseEnter={(e) => e.currentTarget.style.opacity = '0.9'}
               onMouseLeave={(e) => e.currentTarget.style.opacity = '1'}
@@ -189,7 +189,7 @@ const ToolEquipSidebar = ({ slotType, onEquip, onClose }: ToolEquipSidebarProps)
               <button
                 key={tool.tool_id}
                 onClick={() => onEquip(tool.tool_id)}
-                className="w-full text-left p-4 rounded-lg border transition-all"
+                className="w-full text-left p-4 rounded-md border transition-all"
                 style={{
                   backgroundColor: 'var(--color-background-dark)',
                   borderColor: 'var(--color-border-dark)',

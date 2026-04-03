@@ -299,7 +299,7 @@ function SvgPreviewComponent({ content }: SvgPreviewProps) {
 
   return (
     <div className="h-full flex items-center justify-center p-4 bg-white dark:bg-gray-900">
-      <div className="max-w-full max-h-full overflow-auto bg-white dark:bg-white/10 rounded-lg p-4 shadow-sm border border-gray-200 dark:border-border-dark">
+      <div className="max-w-full max-h-full overflow-auto bg-white dark:bg-white/10 rounded-md p-4 shadow-sm border border-gray-200 dark:border-border-dark">
         <img
           src={svgDataUrl}
           alt="SVG Preview"

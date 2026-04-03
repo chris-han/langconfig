@@ -177,7 +177,7 @@ export default function WorkflowRunHistory({
           <button
             onClick={fetchHistory}
             disabled={loading}
-            className="p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-white/5 transition-colors disabled:opacity-50"
+            className="p-2 rounded-md hover:bg-gray-100 dark:hover:bg-white/5 transition-colors disabled:opacity-50"
             title="Refresh"
           >
             <RefreshCw className={`w-5 h-5 text-gray-600 dark:text-text-muted ${loading ? 'animate-spin' : ''}`} />
@@ -185,7 +185,7 @@ export default function WorkflowRunHistory({
 
           <button
             onClick={onClose}
-            className="p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-white/5 transition-colors"
+            className="p-2 rounded-md hover:bg-gray-100 dark:hover:bg-white/5 transition-colors"
             title="Close"
           >
             <X className="w-5 h-5 text-gray-600 dark:text-text-muted" />
@@ -236,7 +236,7 @@ export default function WorkflowRunHistory({
         )}
 
         {error && (
-          <div className="bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-lg p-4">
+          <div className="bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-md p-4">
             <p className="text-sm font-medium text-red-800 dark:text-red-200">
               {error}
             </p>
@@ -265,7 +265,7 @@ export default function WorkflowRunHistory({
               <button
                 key={task.id}
                 onClick={() => onViewResult(task)}
-                className={`w-full text-left p-4 rounded-lg border ${statusDisplay.border} ${statusDisplay.bg} hover:shadow-md transition-all group`}
+                className={`w-full text-left p-4 rounded-md border ${statusDisplay.border} ${statusDisplay.bg} hover:shadow-md transition-all group`}
               >
                 <div className="flex items-start justify-between">
                   <div className="flex items-start gap-3 flex-1 min-w-0">

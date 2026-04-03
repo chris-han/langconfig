@@ -49,7 +49,7 @@ const TotalCostPanel = memo(function TotalCostPanel({
       }}
     >
       <div
-        className="rounded-lg shadow-xl border-2 pointer-events-auto"
+        className="rounded-md shadow-xl border-2 pointer-events-auto"
         style={{
           backgroundColor: 'var(--color-panel-dark)',
           borderColor: 'var(--color-primary)',

@@ -94,7 +94,7 @@ export default function SearchHistoryLog({ projectId, onRerun, className = '' }:
   const formatScore = (score: number) => (score * 100).toFixed(1) + '%';
 
   return (
-    <div className={`bg-white dark:bg-panel-dark border border-gray-200 dark:border-border-dark rounded-lg ${className}`}>
+    <div className={`bg-white dark:bg-panel-dark border border-gray-200 dark:border-border-dark rounded-md ${className}`}>
       {/* Header */}
       <div
         className="flex items-center justify-between p-4 cursor-pointer hover:bg-gray-50 dark:hover:bg-white/5 transition-colors"

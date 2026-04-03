@@ -287,7 +287,7 @@ export default function ArtifactsTab({ artifacts, loading, onCreatePresentation 
           <select
             value={filterType}
             onChange={(e) => setFilterType(e.target.value)}
-            className="px-3 py-1.5 text-sm rounded-lg border focus:outline-none focus:ring-2 focus:ring-primary/50"
+            className="px-3 py-1.5 text-sm rounded-md border focus:outline-none focus:ring-2 focus:ring-primary/50"
             style={{
               backgroundColor: 'var(--color-panel-dark)',
               borderColor: 'var(--color-border-dark)',
@@ -312,7 +312,7 @@ export default function ArtifactsTab({ artifacts, loading, onCreatePresentation 
                   {/* Select All / Deselect All */}
                   <button
                     onClick={toggleSelectAll}
-                    className="px-3 py-1.5 text-sm flex items-center gap-1.5 rounded-lg border transition-colors hover:bg-muted"
+                    className="px-3 py-1.5 text-sm flex items-center gap-1.5 rounded-md border transition-colors hover:bg-muted"
                     style={{ borderColor: 'var(--color-border-dark)', color: 'var(--color-text-muted)' }}
                     title={selectedCount === downloadableImages.length ? "Deselect All" : "Select All"}
                   >
@@ -328,7 +328,7 @@ export default function ArtifactsTab({ artifacts, loading, onCreatePresentation 
                   <button
                     onClick={downloadSelectedAsZip}
                     disabled={selectedCount === 0}
-                    className={`px-3 py-1.5 text-sm flex items-center gap-1.5 rounded-lg transition-colors ${selectedCount > 0
+                    className={`px-3 py-1.5 text-sm flex items-center gap-1.5 rounded-md transition-colors ${selectedCount > 0
                       ? 'bg-primary hover:bg-primary/90'
                       : 'bg-gray-600 cursor-not-allowed'
                       }`}
@@ -343,7 +343,7 @@ export default function ArtifactsTab({ artifacts, loading, onCreatePresentation 
                   {selectedCount > 0 && onCreatePresentation && (
                     <button
                       onClick={onCreatePresentation}
-                      className="px-3 py-1.5 text-sm flex items-center gap-1.5 rounded-lg transition-colors bg-gradient-to-r from-purple-500 to-indigo-500 hover:from-purple-600 hover:to-indigo-600"
+                      className="px-3 py-1.5 text-sm flex items-center gap-1.5 rounded-md transition-colors bg-gradient-to-r from-purple-500 to-indigo-500 hover:from-purple-600 hover:to-indigo-600"
                       style={{ color: 'white' }}
                       title="Create presentation from selected items"
                     >
@@ -362,7 +362,7 @@ export default function ArtifactsTab({ artifacts, loading, onCreatePresentation 
                         setLocalSelectedItems(new Set());
                       }
                     }}
-                    className="px-3 py-1.5 text-sm flex items-center gap-1.5 rounded-lg border transition-colors hover:bg-muted"
+                    className="px-3 py-1.5 text-sm flex items-center gap-1.5 rounded-md border transition-colors hover:bg-muted"
                     style={{ borderColor: 'var(--color-border-dark)', color: 'var(--color-text-muted)' }}
                     title="Cancel selection"
                   >
@@ -375,7 +375,7 @@ export default function ArtifactsTab({ artifacts, loading, onCreatePresentation 
                   {/* Enter selection mode */}
                   <button
                     onClick={() => setIsSelecting(true)}
-                    className="px-3 py-1.5 text-sm flex items-center gap-1.5 rounded-lg border transition-colors hover:bg-muted"
+                    className="px-3 py-1.5 text-sm flex items-center gap-1.5 rounded-md border transition-colors hover:bg-muted"
                     style={{ borderColor: 'var(--color-border-dark)', color: 'var(--color-text-muted)' }}
                     title="Select images to download"
                   >
@@ -398,7 +398,7 @@ export default function ArtifactsTab({ artifacts, loading, onCreatePresentation 
                       // Immediate trigger
                       setTimeout(downloadSelectedAsZip, 100);
                     }}
-                    className="px-3 py-1.5 text-sm flex items-center gap-1.5 rounded-lg transition-colors hover:bg-primary/90"
+                    className="px-3 py-1.5 text-sm flex items-center gap-1.5 rounded-md transition-colors hover:bg-primary/90"
                     style={{ backgroundColor: 'var(--color-primary)', color: 'white' }}
                     title="Download all images as ZIP"
                   >
@@ -411,7 +411,7 @@ export default function ArtifactsTab({ artifacts, loading, onCreatePresentation 
           )}
 
           {/* View Toggle */}
-          <div className="flex border rounded-lg overflow-hidden" style={{ borderColor: 'var(--color-border-dark)' }}>
+          <div className="flex border rounded-md overflow-hidden" style={{ borderColor: 'var(--color-border-dark)' }}>
             <button
               onClick={() => setViewMode('gallery')}
               className={`px-3 py-1.5 text-sm flex items-center gap-1.5 ${viewMode === 'gallery'
@@ -451,7 +451,7 @@ export default function ArtifactsTab({ artifacts, loading, onCreatePresentation 
             {filteredBlocks.map(({ artifact, block, index, key }) => (
               <div
                 key={key}
-                className={`group relative rounded-lg border overflow-hidden cursor-pointer transition-all hover:shadow-lg ${isItemSelected(key) ? 'ring-2 ring-primary' : ''
+                className={`group relative rounded-md border overflow-hidden cursor-pointer transition-all hover:shadow-lg ${isItemSelected(key) ? 'ring-2 ring-primary' : ''
                   }`}
                 style={{
                   backgroundColor: 'var(--color-panel-dark)',
@@ -548,7 +548,7 @@ export default function ArtifactsTab({ artifacts, loading, onCreatePresentation 
             {filteredBlocks.map(({ artifact, block, index }) => (
               <div
                 key={`${artifact.id}-${index}`}
-                className="flex items-center gap-4 p-3 rounded-lg border cursor-pointer transition-colors hover:bg-muted"
+                className="flex items-center gap-4 p-3 rounded-md border cursor-pointer transition-colors hover:bg-muted"
                 style={{
                   backgroundColor: 'var(--color-panel-dark)',
                   borderColor: 'var(--color-border-dark)'
@@ -614,7 +614,7 @@ export default function ArtifactsTab({ artifacts, loading, onCreatePresentation 
       {selectedArtifact && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 p-4" onClick={() => setSelectedArtifact(null)}>
           <div
-            className="relative max-w-4xl w-full max-h-[90vh] rounded-lg overflow-hidden flex flex-col"
+            className="relative max-w-4xl w-full max-h-[90vh] rounded-md overflow-hidden flex flex-col"
             style={{ backgroundColor: 'var(--color-background-light)' }}
             onClick={(e) => e.stopPropagation()}
           >
@@ -662,7 +662,7 @@ export default function ArtifactsTab({ artifacts, loading, onCreatePresentation 
           <img
             src={fullscreenImage}
             alt="Fullscreen view"
-            className="max-w-full max-h-full object-contain rounded-lg"
+            className="max-w-full max-h-full object-contain rounded-md"
             onClick={(e) => e.stopPropagation()}
           />
         </div>

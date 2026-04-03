@@ -63,7 +63,7 @@ function ToastItem({ toast }: { toast: ToastType }) {
   return (
     <div
       id={toast.id}
-      className={`flex items-center gap-3 px-4 py-3 rounded-lg border shadow-lg min-w-[300px] max-w-md animate-in slide-in-from-right ${getTypeStyles()}`}
+      className={`flex items-center gap-3 px-4 py-3 rounded-md border shadow-lg min-w-[300px] max-w-md animate-in slide-in-from-right ${getTypeStyles()}`}
       role="alert"
       aria-live="polite"
     >

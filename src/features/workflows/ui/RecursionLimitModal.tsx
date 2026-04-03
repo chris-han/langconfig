@@ -119,7 +119,7 @@ export default function RecursionLimitModal({
       }}
     >
       <div
-        className="rounded-lg shadow-2xl p-6 max-w-3xl w-full mx-4 max-h-[90vh] overflow-hidden flex flex-col"
+        className="rounded-md shadow-2xl p-6 max-w-3xl w-full mx-4 max-h-[90vh] overflow-hidden flex flex-col"
         style={{ backgroundColor: 'var(--color-panel-dark)' }}
         onClick={(e) => e.stopPropagation()}
       >
@@ -145,7 +145,7 @@ export default function RecursionLimitModal({
           {!isProcessing && (
             <button
               onClick={onClose}
-              className="p-2 rounded-lg hover:bg-opacity-10 hover:bg-white transition-colors"
+              className="p-2 rounded-md hover:bg-opacity-10 hover:bg-white transition-colors"
               style={{ color: 'var(--color-text-muted)' }}
             >
               <X className="w-5 h-5" />
@@ -157,7 +157,7 @@ export default function RecursionLimitModal({
         <div className="flex-1 overflow-y-auto mb-6 space-y-4">
           {/* Explanation */}
           <div
-            className="p-4 rounded-lg"
+            className="p-4 rounded-md"
             style={{
               backgroundColor: 'var(--color-background-light)',
               border: '1px solid rgba(251, 191, 36, 0.3)',
@@ -171,7 +171,7 @@ export default function RecursionLimitModal({
           {/* Detected Issues */}
           {diagnostics?.detected_issues && diagnostics.detected_issues.length > 0 && (
             <div
-              className="p-4 rounded-lg"
+              className="p-4 rounded-md"
               style={{
                 backgroundColor: 'rgba(239, 68, 68, 0.1)',
                 border: '1px solid rgba(239, 68, 68, 0.3)',
@@ -195,7 +195,7 @@ export default function RecursionLimitModal({
           {/* Loop Pattern */}
           {diagnostics?.loop_pattern && (
             <div
-              className="p-4 rounded-lg"
+              className="p-4 rounded-md"
               style={{
                 backgroundColor: 'var(--color-background-dark)',
                 border: '1px solid var(--color-border-dark)',
@@ -224,7 +224,7 @@ export default function RecursionLimitModal({
           {/* Recommendations */}
           {diagnostics?.recommendations && diagnostics.recommendations.length > 0 && (
             <div
-              className="p-4 rounded-lg"
+              className="p-4 rounded-md"
               style={{
                 backgroundColor: 'rgba(34, 197, 94, 0.1)',
                 border: '1px solid rgba(34, 197, 94, 0.3)',
@@ -247,7 +247,7 @@ export default function RecursionLimitModal({
           {/* Stats */}
           <div className="grid grid-cols-2 gap-4">
             <div
-              className="p-4 rounded-lg"
+              className="p-4 rounded-md"
               style={{ backgroundColor: 'var(--color-background-dark)' }}
             >
               <div className="text-xs font-medium mb-1" style={{ color: 'var(--color-text-muted)' }}>
@@ -258,7 +258,7 @@ export default function RecursionLimitModal({
               </div>
             </div>
             <div
-              className="p-4 rounded-lg"
+              className="p-4 rounded-md"
               style={{ backgroundColor: 'var(--color-background-dark)' }}
             >
               <div className="text-xs font-medium mb-1" style={{ color: 'var(--color-text-muted)' }}>
@@ -277,7 +277,7 @@ export default function RecursionLimitModal({
                 Output Generated So Far:
               </h3>
               <div
-                className="p-4 rounded-lg max-h-64 overflow-y-auto"
+                className="p-4 rounded-md max-h-64 overflow-y-auto"
                 style={{
                   backgroundColor: 'var(--color-background-dark)',
                   border: '1px solid var(--color-border-dark)',
@@ -308,7 +308,7 @@ export default function RecursionLimitModal({
                 min={currentLimit + 10}
                 max={1000}
                 step={10}
-                className="flex-1 px-4 py-2 rounded-lg border"
+                className="flex-1 px-4 py-2 rounded-md border"
                 style={{
                   backgroundColor: 'var(--color-input-background)',
                   borderColor: 'var(--color-border-dark)',
@@ -331,7 +331,7 @@ export default function RecursionLimitModal({
           <button
             onClick={handleStop}
             disabled={isProcessing}
-            className="inline-flex items-center gap-2 px-6 py-3 rounded-lg font-medium transition-all hover:opacity-90 disabled:opacity-50 disabled:cursor-not-allowed"
+            className="inline-flex items-center gap-2 px-6 py-3 rounded-md font-medium transition-all hover:opacity-90 disabled:opacity-50 disabled:cursor-not-allowed"
             style={{
               backgroundColor: 'var(--color-background-dark)',
               color: 'var(--color-text-primary)',
@@ -345,7 +345,7 @@ export default function RecursionLimitModal({
           <button
             onClick={handleContinue}
             disabled={isProcessing || newLimit <= currentLimit}
-            className="inline-flex items-center gap-2 px-6 py-3 rounded-lg font-medium transition-all hover:opacity-90 disabled:opacity-50 disabled:cursor-not-allowed text-white"
+            className="inline-flex items-center gap-2 px-6 py-3 rounded-md font-medium transition-all hover:opacity-90 disabled:opacity-50 disabled:cursor-not-allowed text-white"
             style={{
               backgroundColor: 'var(--color-primary)',
             }}

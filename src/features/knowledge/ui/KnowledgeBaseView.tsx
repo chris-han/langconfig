@@ -413,7 +413,7 @@ export default function KnowledgeBaseView() {
       {/* Upload Metadata Modal */}
       {showUploadModal && (
         <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50" onClick={() => setShowUploadModal(false)}>
-          <div className="bg-card border border-border rounded-lg p-6 max-w-md w-full m-4" onClick={(e) => e.stopPropagation()}>
+          <div className="bg-card border border-border rounded-md p-6 max-w-md w-full m-4" onClick={(e) => e.stopPropagation()}>
             <h3 className="text-lg font-semibold mb-4" style={{ color: 'var(--color-text-primary)' }}>
               Upload {uploadFiles?.length} Document{uploadFiles?.length !== 1 ? 's' : ''}
             </h3>
@@ -428,7 +428,7 @@ export default function KnowledgeBaseView() {
                   value={uploadName}
                   onChange={(e) => setUploadName(e.target.value)}
                   placeholder="Enter document name..."
-                  className="w-full px-3 py-2 text-sm border border-border rounded-lg focus:outline-none focus:ring-2 focus:ring-primary"
+                  className="w-full px-3 py-2 text-sm border border-border rounded-md focus:outline-none focus:ring-2 focus:ring-primary"
                   style={{
                     backgroundColor: 'var(--color-input-background)',
                     color: 'var(--color-text-primary)'
@@ -445,7 +445,7 @@ export default function KnowledgeBaseView() {
                   onChange={(e) => setUploadDescription(e.target.value)}
                   placeholder="Brief description of this document..."
                   rows={3}
-                  className="w-full px-3 py-2 text-sm border border-border rounded-lg focus:outline-none focus:ring-2 focus:ring-primary resize-none"
+                  className="w-full px-3 py-2 text-sm border border-border rounded-md focus:outline-none focus:ring-2 focus:ring-primary resize-none"
                   style={{
                     backgroundColor: 'var(--color-input-background)',
                     color: 'var(--color-text-primary)'
@@ -462,7 +462,7 @@ export default function KnowledgeBaseView() {
                   value={uploadTags}
                   onChange={(e) => setUploadTags(e.target.value)}
                   placeholder="tag1, tag2, tag3"
-                  className="w-full px-3 py-2 text-sm border border-border rounded-lg focus:outline-none focus:ring-2 focus:ring-primary"
+                  className="w-full px-3 py-2 text-sm border border-border rounded-md focus:outline-none focus:ring-2 focus:ring-primary"
                   style={{
                     backgroundColor: 'var(--color-input-background)',
                     color: 'var(--color-text-primary)'
@@ -478,7 +478,7 @@ export default function KnowledgeBaseView() {
                 const ext = f.name.split('.').pop()?.toLowerCase();
                 return ['zip', 'tar', 'gz', 'tgz', 'rar', '7z'].includes(ext || '');
               }) && (
-                <div className="flex items-center gap-2 p-3 bg-status-info/10 rounded-lg border border-status-info/30">
+                <div className="flex items-center gap-2 p-3 bg-status-info/10 rounded-md border border-status-info/30">
                   <input
                     type="checkbox"
                     id="extract-archives"
@@ -502,14 +502,14 @@ export default function KnowledgeBaseView() {
                   setUploadDescription('');
                   setUploadTags('');
                 }}
-                className="flex-1 px-4 py-2 text-sm font-medium border border-border rounded-lg hover:bg-muted transition-colors"
+                className="flex-1 px-4 py-2 text-sm font-medium border border-border rounded-md hover:bg-muted transition-colors"
                 style={{ color: 'var(--color-text-primary)' }}
               >
                 Cancel
               </button>
               <button
                 onClick={handleFileUpload}
-                className="flex-1 px-4 py-2 text-sm font-medium bg-primary text-white rounded-lg hover:opacity-90 transition-opacity"
+                className="flex-1 px-4 py-2 text-sm font-medium bg-primary text-white rounded-md hover:opacity-90 transition-opacity"
               >
                 Upload
               </button>
@@ -532,7 +532,7 @@ export default function KnowledgeBaseView() {
             <button
               onClick={() => loadDocuments()}
               disabled={loading}
-              className="flex items-center gap-2 px-3 py-2 bg-muted rounded-lg hover:bg-muted transition-all disabled:opacity-50 border border-border"
+              className="flex items-center gap-2 px-3 py-2 bg-muted rounded-md hover:bg-muted transition-all disabled:opacity-50 border border-border"
               style={{ color: 'var(--color-text-primary)' }}
             >
               <RefreshCw className={`w-4 h-4 ${loading ? 'animate-spin' : ''}`} />
@@ -540,7 +540,7 @@ export default function KnowledgeBaseView() {
             </button>
             <button
               onClick={() => setShowSettings(!showSettings)}
-              className="flex items-center gap-2 px-3 py-2 bg-muted rounded-lg hover:bg-muted transition-all border border-border"
+              className="flex items-center gap-2 px-3 py-2 bg-muted rounded-md hover:bg-muted transition-all border border-border"
               style={{ color: 'var(--color-text-primary)' }}
             >
               <Settings className="w-4 h-4" />
@@ -572,7 +572,7 @@ export default function KnowledgeBaseView() {
               <select
                 value={embeddingModel}
                 onChange={(e) => setEmbeddingModel(e.target.value)}
-                className="w-full px-3 py-2 border border-border rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-primary"
+                className="w-full px-3 py-2 border border-border rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-primary"
                 style={{ backgroundColor: 'var(--color-input-background)', color: 'var(--color-text-primary)' }}
               >
                 <option value="text-embedding-3-large">text-embedding-3-large</option>
@@ -590,7 +590,7 @@ export default function KnowledgeBaseView() {
                 onChange={(e) => setChunkSize(parseInt(e.target.value) || 0)}
                 min={100}
                 max={10000}
-                className="w-full px-3 py-2 border border-border rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-primary"
+                className="w-full px-3 py-2 border border-border rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-primary"
                 style={{ backgroundColor: 'var(--color-input-background)', color: 'var(--color-text-primary)' }}
               />
             </div>
@@ -604,14 +604,14 @@ export default function KnowledgeBaseView() {
                 onChange={(e) => setChunkOverlap(parseInt(e.target.value) || 0)}
                 min={0}
                 max={chunkSize - 1}
-                className="w-full px-3 py-2 border border-border rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-primary"
+                className="w-full px-3 py-2 border border-border rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-primary"
                 style={{ backgroundColor: 'var(--color-input-background)', color: 'var(--color-text-primary)' }}
               />
             </div>
           </div>
 
           {/* LLM Provider Card (for HyDE) */}
-          <div className="mb-4 p-3 rounded-lg border border-yellow-400/40 bg-yellow-500/5">
+          <div className="mb-4 p-3 rounded-md border border-yellow-400/40 bg-yellow-500/5">
             <div className="flex items-start gap-3">
               <div className="flex-1">
                 <label className="block text-xs font-medium mb-1.5" style={{ color: 'var(--color-text-muted)' }}>
@@ -620,7 +620,7 @@ export default function KnowledgeBaseView() {
                 <select
                   value={ragLlmProvider}
                   onChange={(e) => setRagLlmProvider(e.target.value)}
-                  className="w-full px-3 py-2 border border-border rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-primary"
+                  className="w-full px-3 py-2 border border-border rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-primary"
                   style={{ backgroundColor: 'var(--color-input-background)', color: 'var(--color-text-primary)' }}
                 >
                   {availableProviders.map((p) => (
@@ -640,7 +640,7 @@ export default function KnowledgeBaseView() {
             <button
               onClick={saveRAGSettings}
               disabled={savingRAGConfig}
-              className="flex items-center gap-2 px-4 py-2 bg-primary text-white rounded-lg hover:opacity-90 transition-all disabled:opacity-50 disabled:cursor-not-allowed text-sm font-medium"
+              className="flex items-center gap-2 px-4 py-2 bg-primary text-white rounded-md hover:opacity-90 transition-all disabled:opacity-50 disabled:cursor-not-allowed text-sm font-medium"
             >
               {savingRAGConfig ? (
                 <>
@@ -664,7 +664,7 @@ export default function KnowledgeBaseView() {
         <div className="flex-1 flex flex-col gap-4 overflow-hidden">
           {/* Compact Upload Area */}
           <div
-            className={`border-2 border-dashed rounded-lg p-3 transition-all ${isDragging
+            className={`border-2 border-dashed rounded-md p-3 transition-all ${isDragging
               ? 'border-primary bg-primary/5'
               : 'border-border bg-card'
               }`}
@@ -673,7 +673,7 @@ export default function KnowledgeBaseView() {
             onDrop={handleDrop}
           >
             <div className="flex items-center gap-3">
-              <div className="w-10 h-10 rounded-lg bg-primary/10 flex items-center justify-center flex-shrink-0">
+              <div className="w-10 h-10 rounded-md bg-primary/10 flex items-center justify-center flex-shrink-0">
                 {uploading ? (
                   <RefreshCw className="w-5 h-5 text-primary animate-spin" />
                 ) : (
@@ -689,7 +689,7 @@ export default function KnowledgeBaseView() {
                 </p>
               </div>
               <div className="flex items-center gap-2">
-                <label className={`flex items-center gap-2 px-3 py-2 bg-primary text-white rounded-lg hover:opacity-90 transition-all cursor-pointer text-sm font-medium ${uploading ? 'opacity-50 cursor-not-allowed' : ''}`}>
+                <label className={`flex items-center gap-2 px-3 py-2 bg-primary text-white rounded-md hover:opacity-90 transition-all cursor-pointer text-sm font-medium ${uploading ? 'opacity-50 cursor-not-allowed' : ''}`}>
                   <Upload className="w-4 h-4" />
                   <span>Files</span>
                   <input
@@ -704,7 +704,7 @@ export default function KnowledgeBaseView() {
                     disabled={uploading}
                   />
                 </label>
-                <label className={`flex items-center gap-2 px-3 py-2 bg-secondary text-secondary-foreground rounded-lg hover:opacity-90 transition-all cursor-pointer text-sm font-medium ${uploading ? 'opacity-50 cursor-not-allowed' : ''}`}>
+                <label className={`flex items-center gap-2 px-3 py-2 bg-secondary text-secondary-foreground rounded-md hover:opacity-90 transition-all cursor-pointer text-sm font-medium ${uploading ? 'opacity-50 cursor-not-allowed' : ''}`}>
                   <Database className="w-4 h-4" />
                   <span>Folder</span>
                   <input
@@ -726,7 +726,7 @@ export default function KnowledgeBaseView() {
           </div>
 
           {/* Documents List */}
-          <div className="flex-1 bg-card border border-border rounded-lg overflow-hidden flex flex-col">
+          <div className="flex-1 bg-card border border-border rounded-md overflow-hidden flex flex-col">
             <div className="p-4 border-b border-border flex items-center justify-between flex-shrink-0">
               <div>
                 <h3 className="text-sm font-semibold" style={{ color: 'var(--color-text-primary)' }}>
@@ -739,7 +739,7 @@ export default function KnowledgeBaseView() {
               <select
                 value={selectedStatus}
                 onChange={(e) => setSelectedStatus(e.target.value)}
-                className="px-3 py-1.5 border border-border rounded-lg text-xs focus:outline-none focus:ring-1 focus:ring-primary"
+                className="px-3 py-1.5 border border-border rounded-md text-xs focus:outline-none focus:ring-1 focus:ring-primary"
                 style={{ backgroundColor: 'var(--color-input-background)', color: 'var(--color-text-primary)' }}
               >
                 <option value="all">All Status</option>
@@ -774,7 +774,7 @@ export default function KnowledgeBaseView() {
                     className="p-3 hover:bg-muted transition-colors"
                   >
                     <div className="flex items-start gap-3">
-                      <div className="w-10 h-10 rounded-lg bg-primary/10 flex items-center justify-center flex-shrink-0">
+                      <div className="w-10 h-10 rounded-md bg-primary/10 flex items-center justify-center flex-shrink-0">
                         <FileText className="w-5 h-5 text-primary" />
                       </div>
                       <div className="flex-1 min-w-0">
@@ -800,7 +800,7 @@ export default function KnowledgeBaseView() {
                         <button
                           onClick={() => handleManualIndex(doc)}
                           disabled={doc.indexing_status === 'indexing' || indexingDocumentIds.has(doc.id)}
-                          className="px-2.5 py-1.5 rounded-lg border border-border text-xs font-medium hover:bg-muted transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                          className="px-2.5 py-1.5 rounded-md border border-border text-xs font-medium hover:bg-muted transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
                           style={{ color: 'var(--color-text-primary)' }}
                           title={doc.indexing_status === 'ready' ? 'Reindex document' : 'Start indexing'}
                         >
@@ -843,12 +843,12 @@ export default function KnowledgeBaseView() {
         {/* Right Column - Stats & Search (Narrower) */}
         <div className="w-96 flex-shrink-0 overflow-y-auto space-y-4">
           {/* Stats Cards */}
-          <div className="bg-card border border-border rounded-lg p-4">
+          <div className="bg-card border border-border rounded-md p-4">
             <h3 className="text-sm font-semibold mb-3" style={{ color: 'var(--color-text-primary)' }}>
               Statistics
             </h3>
             <div className="grid grid-cols-2 gap-3">
-              <div className="p-3 bg-muted/50 rounded-lg border border-border">
+              <div className="p-3 bg-muted/50 rounded-md border border-border">
                 <div className="flex items-center gap-2 mb-1">
                   <FileText className="w-4 h-4" style={{ color: 'var(--color-primary)' }} />
                   <p className="text-xs" style={{ color: 'var(--color-text-muted)' }}>Documents</p>
@@ -856,7 +856,7 @@ export default function KnowledgeBaseView() {
                 <p className="text-xl font-bold" style={{ color: 'var(--color-primary)' }}>{totalDocuments}</p>
               </div>
 
-              <div className="p-3 bg-muted/50 rounded-lg border border-border">
+              <div className="p-3 bg-muted/50 rounded-md border border-border">
                 <div className="flex items-center gap-2 mb-1">
                   <Filter className="w-4 h-4" style={{ color: 'var(--color-text-muted)' }} />
                   <p className="text-xs" style={{ color: 'var(--color-text-muted)' }}>Indexed</p>
@@ -864,7 +864,7 @@ export default function KnowledgeBaseView() {
                 <p className="text-xl font-bold" style={{ color: 'var(--color-text-primary)' }}>{readyCount}</p>
               </div>
 
-              <div className="p-3 bg-muted/50 rounded-lg border border-border">
+              <div className="p-3 bg-muted/50 rounded-md border border-border">
                 <div className="flex items-center gap-2 mb-1">
                   <Database className="w-4 h-4" style={{ color: 'var(--color-text-muted)' }} />
                   <p className="text-xs" style={{ color: 'var(--color-text-muted)' }}>Chunks</p>
@@ -872,7 +872,7 @@ export default function KnowledgeBaseView() {
                 <p className="text-xl font-bold" style={{ color: 'var(--color-text-primary)' }}>{totalChunks}</p>
               </div>
 
-              <div className="p-3 bg-muted/50 rounded-lg border border-border">
+              <div className="p-3 bg-muted/50 rounded-md border border-border">
                 <div className="flex items-center gap-2 mb-1">
                   <Database className="w-4 h-4" style={{ color: 'var(--color-text-muted)' }} />
                   <p className="text-xs" style={{ color: 'var(--color-text-muted)' }}>Storage</p>
@@ -891,7 +891,7 @@ export default function KnowledgeBaseView() {
           )}
 
           {/* Compact Search Interface */}
-          <div className="bg-card border border-border rounded-lg p-4">
+          <div className="bg-card border border-border rounded-md p-4">
             <div className="flex items-center gap-2 mb-3">
               <Search className="w-4 h-4" style={{ color: 'var(--color-primary)' }} />
               <h3 className="text-sm font-semibold" style={{ color: 'var(--color-text-primary)' }}>
@@ -908,7 +908,7 @@ export default function KnowledgeBaseView() {
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
                   onKeyDown={(e) => e.key === 'Enter' && handleSearch()}
-                  className="w-full pl-10 pr-4 py-2 border border-border rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-primary"
+                  className="w-full pl-10 pr-4 py-2 border border-border rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-primary"
                   style={{ backgroundColor: 'var(--color-input-background)', color: 'var(--color-text-primary)' }}
                 />
               </div>
@@ -946,7 +946,7 @@ export default function KnowledgeBaseView() {
               <button
                 onClick={handleSearch}
                 disabled={searching || !searchQuery.trim()}
-                className="w-full px-4 py-2 bg-primary text-white rounded-lg hover:opacity-90 transition-all disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2 text-sm font-medium"
+                className="w-full px-4 py-2 bg-primary text-white rounded-md hover:opacity-90 transition-all disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2 text-sm font-medium"
               >
                 {searching ? (
                   <>
@@ -964,7 +964,7 @@ export default function KnowledgeBaseView() {
               {showSearchResults && (
                 <button
                   onClick={clearSearch}
-                  className="w-full px-4 py-2 bg-muted rounded-lg hover:bg-muted transition-all border border-border text-sm font-medium"
+                  className="w-full px-4 py-2 bg-muted rounded-md hover:bg-muted transition-all border border-border text-sm font-medium"
                   style={{ color: 'var(--color-text-primary)' }}
                 >
                   Clear Results
@@ -985,7 +985,7 @@ export default function KnowledgeBaseView() {
               )}
 
               {/* Results */}
-              <div className="bg-card border border-border rounded-lg p-4">
+              <div className="bg-card border border-border rounded-md p-4">
                 <h3 className="text-base font-semibold mb-3" style={{ color: 'var(--color-text-primary)' }}>
                   Search Results ({searchResults.length})
                 </h3>
@@ -996,7 +996,7 @@ export default function KnowledgeBaseView() {
                 ) : (
                   <div className="space-y-3">
                     {searchResults.map((result, index) => (
-                      <div key={index} className="bg-muted/50 border border-border rounded-lg p-3">
+                      <div key={index} className="bg-muted/50 border border-border rounded-md p-3">
                         <div className="flex items-center justify-between mb-2">
                           <span className="text-sm font-medium text-primary">{result.document_name}</span>
                           <div className="flex items-center gap-3">

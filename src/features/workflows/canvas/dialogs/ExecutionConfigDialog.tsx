@@ -81,7 +81,7 @@ const ExecutionConfigDialog = memo(function ExecutionConfigDialog({
       onClick={onClose}
     >
       <div
-        className="rounded-xl shadow-2xl w-full max-w-xl mx-4 overflow-hidden bg-white"
+        className="rounded-md shadow-2xl w-full max-w-xl mx-4 overflow-hidden bg-white"
         style={{ maxHeight: '90vh' }}
         onClick={(e) => e.stopPropagation()}
       >
@@ -95,7 +95,7 @@ const ExecutionConfigDialog = memo(function ExecutionConfigDialog({
           </div>
           <button
             onClick={onClose}
-            className="p-1.5 rounded-lg hover:bg-white/20 transition-colors text-white"
+            className="p-1.5 rounded-md hover:bg-white/20 transition-colors text-white"
           >
             <X size={20} />
           </button>
@@ -105,7 +105,7 @@ const ExecutionConfigDialog = memo(function ExecutionConfigDialog({
         <div className="p-6 overflow-y-auto bg-white" style={{ maxHeight: 'calc(90vh - 130px)' }}>
           {/* Continuation Banner */}
           {continueFromTaskId && (
-            <div className="mb-4 px-4 py-3 rounded-lg border flex items-center gap-3"
+            <div className="mb-4 px-4 py-3 rounded-md border flex items-center gap-3"
               style={{
                 backgroundColor: 'rgba(99, 102, 241, 0.06)',
                 borderColor: 'rgba(99, 102, 241, 0.2)',
@@ -132,7 +132,7 @@ const ExecutionConfigDialog = memo(function ExecutionConfigDialog({
                 : 'What should this workflow do?'}
             </label>
             <textarea
-              className="w-full px-4 py-3 border rounded-lg resize-none focus:outline-none focus:ring-2 focus:ring-primary/30 focus:border-primary transition-all text-gray-800"
+              className="w-full px-4 py-3 border rounded-md resize-none focus:outline-none focus:ring-2 focus:ring-primary/30 focus:border-primary transition-all text-gray-800"
               style={{ borderColor: '#e5e7eb' }}
               rows={4}
               placeholder="Describe your task in detail..."
@@ -162,13 +162,13 @@ const ExecutionConfigDialog = memo(function ExecutionConfigDialog({
               <span className="text-xs text-gray-400">Images, documents, videos</span>
             </div>
 
-            <div className="border rounded-lg p-3" style={{ borderColor: '#e5e7eb' }}>
+            <div className="border rounded-md p-3" style={{ borderColor: '#e5e7eb' }}>
               {hasAttachments ? (
                 <div className="flex flex-wrap gap-2 mb-2">
                   {currentAttachments.map((att) => (
                     <div
                       key={att.id}
-                      className="relative group w-16 h-16 rounded-lg overflow-hidden border bg-gray-50"
+                      className="relative group w-16 h-16 rounded-md overflow-hidden border bg-gray-50"
                       style={{ borderColor: '#e5e7eb' }}
                     >
                       {att.thumbnail ? (
@@ -187,7 +187,7 @@ const ExecutionConfigDialog = memo(function ExecutionConfigDialog({
                     </div>
                   ))}
                   {currentAttachments.length < 5 && (
-                    <label className="w-16 h-16 rounded-lg border-2 border-dashed flex items-center justify-center cursor-pointer hover:border-primary hover:bg-gray-50 transition-colors"
+                    <label className="w-16 h-16 rounded-md border-2 border-dashed flex items-center justify-center cursor-pointer hover:border-primary hover:bg-gray-50 transition-colors"
                       style={{ borderColor: '#d1d5db' }}
                     >
                       <Plus size={18} className="text-gray-400" />
@@ -231,7 +231,7 @@ const ExecutionConfigDialog = memo(function ExecutionConfigDialog({
                   )}
                 </div>
               ) : (
-                <label className="flex items-center justify-center gap-2 py-6 cursor-pointer hover:bg-gray-50 rounded-lg transition-colors">
+                <label className="flex items-center justify-center gap-2 py-6 cursor-pointer hover:bg-gray-50 rounded-md transition-colors">
                   <Upload size={18} className="text-gray-400" />
                   <span className="text-sm text-gray-500">Drop files or click to upload</span>
                   <input type="file" accept="image/*,.pdf,.doc,.docx,.txt,.md,video/*" multiple className="hidden"
@@ -283,7 +283,7 @@ const ExecutionConfigDialog = memo(function ExecutionConfigDialog({
               <span className="text-xs text-gray-400 font-normal">(Optional)</span>
             </label>
             <textarea
-              className="w-full px-3 py-2 border rounded-lg resize-none focus:outline-none focus:ring-2 focus:ring-primary/30 focus:border-primary transition-all text-sm text-gray-800"
+              className="w-full px-3 py-2 border rounded-md resize-none focus:outline-none focus:ring-2 focus:ring-primary/30 focus:border-primary transition-all text-sm text-gray-800"
               style={{ borderColor: '#e5e7eb' }}
               rows={2}
               placeholder="Add background information or constraints..."
@@ -304,7 +304,7 @@ const ExecutionConfigDialog = memo(function ExecutionConfigDialog({
                   </span>
                 )}
               </label>
-              <div className="border rounded-lg p-2 max-h-32 overflow-y-auto" style={{ borderColor: '#e5e7eb' }}>
+              <div className="border rounded-md p-2 max-h-32 overflow-y-auto" style={{ borderColor: '#e5e7eb' }}>
                 {availableDocuments.map((doc) => (
                   <label key={doc.id} className="flex items-center gap-2 py-1.5 px-2 rounded cursor-pointer hover:bg-gray-50">
                     <input
@@ -328,10 +328,10 @@ const ExecutionConfigDialog = memo(function ExecutionConfigDialog({
           )}
 
           {/* Execution Settings - Collapsible */}
-          <div className="border rounded-lg" style={{ borderColor: '#e5e7eb' }}>
+          <div className="border rounded-md" style={{ borderColor: '#e5e7eb' }}>
             <button
               onClick={() => setShowSettings(!showSettings)}
-              className="w-full px-4 py-3 flex items-center justify-between hover:bg-gray-50 transition-colors rounded-lg"
+              className="w-full px-4 py-3 flex items-center justify-between hover:bg-gray-50 transition-colors rounded-md"
             >
               <div className="flex items-center gap-2">
                 <Settings size={16} className="text-gray-500" />
@@ -382,14 +382,14 @@ const ExecutionConfigDialog = memo(function ExecutionConfigDialog({
         <div className="px-6 py-4 border-t bg-gray-50 flex items-center justify-end gap-3" style={{ borderColor: '#e5e7eb' }}>
           <button
             onClick={onClose}
-            className="px-4 py-2 rounded-lg text-sm font-medium text-gray-600 hover:bg-gray-100 transition-colors"
+            className="px-4 py-2 rounded-md text-sm font-medium text-gray-600 hover:bg-gray-100 transition-colors"
           >
             Cancel
           </button>
           <button
             onClick={onExecute}
             disabled={!executionConfig.directive.trim()}
-            className="px-6 py-2 rounded-lg text-sm font-medium text-white transition-all disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2"
+            className="px-6 py-2 rounded-md text-sm font-medium text-white transition-all disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2"
             style={{ backgroundColor: 'var(--color-primary)' }}
           >
             <Play size={16} />

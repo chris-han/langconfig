@@ -241,7 +241,7 @@ export default function InlineFilePreview({
         <div className="flex items-center gap-1 flex-shrink-0">
           {/* Code/Preview Toggle for HTML files */}
           {supportsPreview && (
-            <div className="flex items-center bg-gray-200 dark:bg-black/30 rounded-lg p-0.5 mr-2">
+            <div className="flex items-center bg-gray-200 dark:bg-black/30 rounded-md p-0.5 mr-2">
               <button
                 onClick={() => setViewMode('code')}
                 className={`flex items-center gap-1 px-2 py-1 rounded text-xs font-medium transition-colors ${
@@ -328,7 +328,7 @@ export default function InlineFilePreview({
             </p>
             <button
               onClick={() => onDownload(file.path)}
-              className="mt-4 px-4 py-2 rounded-lg bg-primary/10 hover:bg-primary/20 transition-colors text-sm font-medium flex items-center gap-2"
+              className="mt-4 px-4 py-2 rounded-md bg-primary/10 hover:bg-primary/20 transition-colors text-sm font-medium flex items-center gap-2"
               style={{ color: 'var(--color-primary)' }}
             >
               <Download className="w-4 h-4" />

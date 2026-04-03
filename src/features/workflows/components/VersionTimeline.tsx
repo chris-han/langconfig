@@ -183,7 +183,7 @@ export default function VersionTimeline({
               setCompareMode(!compareMode);
               setSelectedVersions([]);
             }}
-            className={`px-3 py-1.5 text-sm rounded-lg flex items-center gap-1.5 transition-colors ${
+            className={`px-3 py-1.5 text-sm rounded-md flex items-center gap-1.5 transition-colors ${
               compareMode ? 'bg-primary/20 ring-1 ring-primary/30' : 'hover:bg-white/5'
             }`}
             style={{ color: compareMode ? 'var(--color-primary)' : 'var(--color-text-muted)' }}
@@ -206,7 +206,7 @@ export default function VersionTimeline({
           <button
             onClick={handleCompare}
             disabled={selectedVersions.length !== 2}
-            className="px-3 py-1 text-xs rounded-lg transition-colors disabled:opacity-50"
+            className="px-3 py-1 text-xs rounded-md transition-colors disabled:opacity-50"
             style={{
               backgroundColor: selectedVersions.length === 2 ? 'var(--color-primary)' : 'transparent',
               color: selectedVersions.length === 2 ? 'white' : 'var(--color-text-muted)',

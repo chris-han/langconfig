@@ -49,7 +49,7 @@ export const ImageBlock: React.FC<ImageBlockProps> = ({ block, onImageClick, cla
 
   if (!src) {
     return (
-      <div className={`p-4 bg-gray-100 dark:bg-gray-800 rounded-lg text-gray-500 ${className}`}>
+      <div className={`p-4 bg-gray-100 dark:bg-gray-800 rounded-md text-gray-500 ${className}`}>
         Image data unavailable
       </div>
     );
@@ -61,7 +61,7 @@ export const ImageBlock: React.FC<ImageBlockProps> = ({ block, onImageClick, cla
         <img
           src={src}
           alt={block.alt_text || 'Tool generated image'}
-          className="w-full h-auto rounded-lg shadow-lg cursor-pointer transition-transform hover:scale-[1.02] border border-gray-200 dark:border-gray-700"
+          className="w-full h-auto rounded-md shadow-lg cursor-pointer transition-transform hover:scale-[1.02] border border-gray-200 dark:border-gray-700"
           style={{ maxHeight: '500px', objectFit: 'contain' }}
           onClick={() => onImageClick?.(src)}
           loading="lazy"
@@ -72,7 +72,7 @@ export const ImageBlock: React.FC<ImageBlockProps> = ({ block, onImageClick, cla
           </p>
         )}
         {/* Hover overlay with actions */}
-        <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity bg-black/10 rounded-lg pointer-events-none">
+        <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity bg-black/10 rounded-md pointer-events-none">
           <span className="text-white bg-black/60 px-3 py-1 rounded-md text-sm font-medium">
             Click to view full size
           </span>

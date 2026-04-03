@@ -258,7 +258,7 @@ const WorkflowSettingsDialog = memo(function WorkflowSettingsDialog({
     <>
       <div className="fixed inset-0 z-[100] flex items-center justify-center bg-black/50 backdrop-blur-sm">
         <div
-          className="w-full max-w-md max-h-[90vh] rounded-xl shadow-2xl overflow-hidden flex flex-col"
+          className="w-full max-w-md max-h-[90vh] rounded-md shadow-2xl overflow-hidden flex flex-col"
           style={{
             backgroundColor: 'var(--color-panel-dark)',
             border: '1px solid var(--color-border-dark)'
@@ -292,7 +292,7 @@ const WorkflowSettingsDialog = memo(function WorkflowSettingsDialog({
                   value={localPath}
                   onChange={handlePathChange}
                   placeholder="e.g., C:\Projects\MyApp\outputs"
-                  className="flex-1 px-3 py-2 rounded-lg text-sm font-mono"
+                  className="flex-1 px-3 py-2 rounded-md text-sm font-mono"
                   style={{
                     backgroundColor: 'var(--color-background-dark)',
                     border: '1px solid var(--color-border-dark)',
@@ -301,7 +301,7 @@ const WorkflowSettingsDialog = memo(function WorkflowSettingsDialog({
                 />
                 <button
                   onClick={() => setShowFolderBrowser(true)}
-                  className="px-3 py-2 rounded-lg text-sm font-medium transition-colors hover:bg-white/10 flex items-center gap-2"
+                  className="px-3 py-2 rounded-md text-sm font-medium transition-colors hover:bg-white/10 flex items-center gap-2"
                   style={{
                     backgroundColor: 'var(--color-background-dark)',
                     border: '1px solid var(--color-border-dark)',
@@ -404,7 +404,7 @@ const WorkflowSettingsDialog = memo(function WorkflowSettingsDialog({
                   step="1"
                   value={globalRecursionLimit}
                   onChange={(e) => setGlobalRecursionLimit(parseInt(e.target.value))}
-                  className="flex-1 h-2 rounded-lg appearance-none cursor-pointer bg-gray-700"
+                  className="flex-1 h-2 rounded-md appearance-none cursor-pointer bg-gray-700"
                 />
                 <span className="text-sm font-mono w-12 text-right" style={{ color: 'var(--color-text-primary)' }}>
                   {globalRecursionLimit}
@@ -448,7 +448,7 @@ const WorkflowSettingsDialog = memo(function WorkflowSettingsDialog({
                     {schedules.map((schedule) => (
                       <div
                         key={schedule.id}
-                        className="p-3 rounded-lg"
+                        className="p-3 rounded-md"
                         style={{
                           backgroundColor: 'var(--color-background-dark)',
                           border: '1px solid var(--color-border-dark)',
@@ -583,7 +583,7 @@ const WorkflowSettingsDialog = memo(function WorkflowSettingsDialog({
                     {triggers.map((trigger) => (
                       <div
                         key={trigger.id}
-                        className="p-3 rounded-lg"
+                        className="p-3 rounded-md"
                         style={{
                           backgroundColor: 'var(--color-background-dark)',
                           border: '1px solid var(--color-border-dark)',
@@ -677,7 +677,7 @@ const WorkflowSettingsDialog = memo(function WorkflowSettingsDialog({
           <div className="px-6 py-4 border-t flex justify-end shrink-0" style={{ borderColor: 'var(--color-border-dark)', backgroundColor: 'var(--color-background-dark)' }}>
             <button
               onClick={onClose}
-              className="px-4 py-2 rounded-lg text-sm font-medium transition-colors bg-primary text-white hover:bg-primary/90"
+              className="px-4 py-2 rounded-md text-sm font-medium transition-colors bg-primary text-white hover:bg-primary/90"
             >
               Done
             </button>

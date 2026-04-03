@@ -32,7 +32,7 @@ export default function LearnLangChainTab() {
           href="https://docs.langchain.com/oss/python/langchain/overview"
           target="_blank"
           rel="noopener noreferrer"
-          className="block p-4 rounded-lg border border-primary/30 bg-primary/5 hover:bg-primary/10 transition-colors"
+          className="block p-4 rounded-md border border-primary/30 bg-primary/5 hover:bg-primary/10 transition-colors"
         >
           <div className="flex items-center gap-3">
             <span className="material-symbols-outlined text-2xl text-primary">menu_book</span>
@@ -51,7 +51,7 @@ export default function LearnLangChainTab() {
         {/* Learning Sections */}
         <div className="space-y-3">
           {/* Section 1: Agent Fundamentals */}
-          <div className="border border-gray-200 dark:border-border-dark rounded-lg overflow-hidden bg-white dark:bg-panel-dark">
+          <div className="border border-gray-200 dark:border-border-dark rounded-md overflow-hidden bg-white dark:bg-panel-dark">
             <button
               onClick={() => toggleSection('agent-fundamentals')}
               className="w-full flex items-center justify-between p-4 hover:bg-gray-50 dark:hover:bg-white/5 transition-colors"
@@ -136,7 +136,7 @@ export default function LearnLangChainTab() {
           </div>
 
           {/* Section 2: LangGraph State Machines */}
-          <div className="border border-gray-200 dark:border-border-dark rounded-lg overflow-hidden bg-white dark:bg-panel-dark">
+          <div className="border border-gray-200 dark:border-border-dark rounded-md overflow-hidden bg-white dark:bg-panel-dark">
             <button
               onClick={() => toggleSection('langgraph')}
               className="w-full flex items-center justify-between p-4 hover:bg-gray-50 dark:hover:bg-white/5 transition-colors"
@@ -204,7 +204,7 @@ export default function LearnLangChainTab() {
           </div>
 
           {/* Section 3: Tools & Function Calling */}
-          <div className="border border-gray-200 dark:border-border-dark rounded-lg overflow-hidden bg-white dark:bg-panel-dark">
+          <div className="border border-gray-200 dark:border-border-dark rounded-md overflow-hidden bg-white dark:bg-panel-dark">
             <button
               onClick={() => toggleSection('tools')}
               className="w-full flex items-center justify-between p-4 hover:bg-gray-50 dark:hover:bg-white/5 transition-colors"
@@ -270,7 +270,7 @@ export default function LearnLangChainTab() {
           </div>
 
           {/* Section 4: RAG Implementation */}
-          <div className="border border-gray-200 dark:border-border-dark rounded-lg overflow-hidden bg-white dark:bg-panel-dark">
+          <div className="border border-gray-200 dark:border-border-dark rounded-md overflow-hidden bg-white dark:bg-panel-dark">
             <button
               onClick={() => toggleSection('rag')}
               className="w-full flex items-center justify-between p-4 hover:bg-gray-50 dark:hover:bg-white/5 transition-colors"
@@ -342,7 +342,7 @@ export default function LearnLangChainTab() {
           </div>
 
           {/* Section 5: Prompt Engineering */}
-          <div className="border border-gray-200 dark:border-border-dark rounded-lg overflow-hidden bg-white dark:bg-panel-dark">
+          <div className="border border-gray-200 dark:border-border-dark rounded-md overflow-hidden bg-white dark:bg-panel-dark">
             <button
               onClick={() => toggleSection('prompts')}
               className="w-full flex items-center justify-between p-4 hover:bg-gray-50 dark:hover:bg-white/5 transition-colors"
@@ -412,7 +412,7 @@ export default function LearnLangChainTab() {
           </div>
 
           {/* Section 6: Multi-Agent Workflows */}
-          <div className="border border-gray-200 dark:border-border-dark rounded-lg overflow-hidden bg-white dark:bg-panel-dark">
+          <div className="border border-gray-200 dark:border-border-dark rounded-md overflow-hidden bg-white dark:bg-panel-dark">
             <button
               onClick={() => toggleSection('multi-agent')}
               className="w-full flex items-center justify-between p-4 hover:bg-gray-50 dark:hover:bg-white/5 transition-colors"
@@ -480,7 +480,7 @@ export default function LearnLangChainTab() {
             )}
           </div>
           {/* Section 7: Deep Agents */}
-          <div className="border border-gray-200 dark:border-border-dark rounded-lg overflow-hidden bg-white dark:bg-panel-dark">
+          <div className="border border-gray-200 dark:border-border-dark rounded-md overflow-hidden bg-white dark:bg-panel-dark">
             <button
               onClick={() => toggleSection('deep-agents')}
               className="w-full flex items-center justify-between p-4 hover:bg-gray-50 dark:hover:bg-white/5 transition-colors"
@@ -544,7 +544,7 @@ export default function LearnLangChainTab() {
           </div>
 
           {/* Section 8: Middleware */}
-          <div className="border border-gray-200 dark:border-border-dark rounded-lg overflow-hidden bg-white dark:bg-panel-dark">
+          <div className="border border-gray-200 dark:border-border-dark rounded-md overflow-hidden bg-white dark:bg-panel-dark">
             <button
               onClick={() => toggleSection('middleware')}
               className="w-full flex items-center justify-between p-4 hover:bg-gray-50 dark:hover:bg-white/5 transition-colors"
@@ -599,7 +599,7 @@ export default function LearnLangChainTab() {
           </div>
 
           {/* Section 9: Action Presets & Tool Safety */}
-          <div className="border border-gray-200 dark:border-border-dark rounded-lg overflow-hidden bg-white dark:bg-panel-dark">
+          <div className="border border-gray-200 dark:border-border-dark rounded-md overflow-hidden bg-white dark:bg-panel-dark">
             <button
               onClick={() => toggleSection('action-presets')}
               className="w-full flex items-center justify-between p-4 hover:bg-gray-50 dark:hover:bg-white/5 transition-colors"
@@ -686,7 +686,7 @@ export default function LearnLangChainTab() {
                   <h4 className="font-semibold mb-2" style={{ color: 'var(--color-text-primary)' }}>
                     Example Configuration
                   </h4>
-                  <pre className="text-xs p-4 rounded-lg bg-gray-50 dark:bg-black/20 overflow-x-auto border border-gray-200 dark:border-border-dark font-mono leading-relaxed" style={{ color: 'var(--color-text-primary)' }}>
+                  <pre className="text-xs p-4 rounded-md bg-gray-50 dark:bg-black/20 overflow-x-auto border border-gray-200 dark:border-border-dark font-mono leading-relaxed" style={{ color: 'var(--color-text-primary)' }}>
 {`{
   "preset_id": "terminal_access",
   "name": "Terminal Access",
@@ -764,7 +764,7 @@ export default function LearnLangChainTab() {
         </div>
 
         {/* Additional Resources */}
-        <div className="mt-8 p-4 rounded-lg border border-gray-200 dark:border-border-dark bg-gradient-to-br from-primary/5 to-transparent">
+        <div className="mt-8 p-4 rounded-md border border-gray-200 dark:border-border-dark bg-gradient-to-br from-primary/5 to-transparent">
           <h3 className="font-semibold mb-3" style={{ color: 'var(--color-text-primary)' }}>
             Additional Resources
           </h3>

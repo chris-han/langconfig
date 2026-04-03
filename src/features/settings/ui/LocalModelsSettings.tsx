@@ -169,7 +169,7 @@ export default function LocalModelsSettings(props: LocalModelsSettingsProps) {
         <div className="mb-4">
           <button
             onClick={handleAddModel}
-            className="inline-flex items-center gap-2 px-4 py-2 text-sm font-medium text-white bg-primary rounded-lg hover:opacity-90 transition-opacity"
+            className="inline-flex items-center gap-2 px-4 py-2 text-sm font-medium text-white bg-primary rounded-md hover:opacity-90 transition-opacity"
           >
             <span className="material-symbols-outlined text-base">add</span>
             Add Local Model
@@ -195,7 +195,7 @@ export default function LocalModelsSettings(props: LocalModelsSettingsProps) {
             {models.map((model) => (
               <div
                 key={model.id}
-                className="border border-gray-200 dark:border-border-dark rounded-lg p-4 hover:bg-gray-50 dark:hover:bg-gray-800/50 transition-colors"
+                className="border border-gray-200 dark:border-border-dark rounded-md p-4 hover:bg-gray-50 dark:hover:bg-gray-800/50 transition-colors"
               >
                 {/* Header Row */}
                 <div className="flex items-start justify-between mb-2">
@@ -253,7 +253,7 @@ export default function LocalModelsSettings(props: LocalModelsSettingsProps) {
                   <button
                     onClick={() => handleValidateModel(model)}
                     disabled={validatingModelId === model.id}
-                    className="inline-flex items-center gap-1 px-3 py-1.5 text-sm font-medium text-primary border border-primary rounded-lg hover:bg-primary hover:text-white disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+                    className="inline-flex items-center gap-1 px-3 py-1.5 text-sm font-medium text-primary border border-primary rounded-md hover:bg-primary hover:text-white disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
                   >
                     <span className="material-symbols-outlined text-base">
                       {validatingModelId === model.id ? 'refresh' : 'link'}
@@ -263,7 +263,7 @@ export default function LocalModelsSettings(props: LocalModelsSettingsProps) {
 
                   <button
                     onClick={() => handleEditModel(model)}
-                    className="inline-flex items-center gap-1 px-3 py-1.5 text-sm font-medium border border-gray-300 dark:border-border-dark rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors"
+                    className="inline-flex items-center gap-1 px-3 py-1.5 text-sm font-medium border border-gray-300 dark:border-border-dark rounded-md hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors"
                     style={{ color: 'var(--color-text-primary)' }}
                   >
                     <span className="material-symbols-outlined text-base">edit</span>
@@ -272,7 +272,7 @@ export default function LocalModelsSettings(props: LocalModelsSettingsProps) {
 
                   <button
                     onClick={() => handleDeleteModel(model)}
-                    className="inline-flex items-center gap-1 px-3 py-1.5 text-sm font-medium text-red-600 dark:text-red-400 border border-red-300 dark:border-red-700 rounded-lg hover:bg-red-50 dark:hover:bg-red-900/20 transition-colors"
+                    className="inline-flex items-center gap-1 px-3 py-1.5 text-sm font-medium text-red-600 dark:text-red-400 border border-red-300 dark:border-red-700 rounded-md hover:bg-red-50 dark:hover:bg-red-900/20 transition-colors"
                   >
                     <span className="material-symbols-outlined text-base">delete</span>
                     Delete
@@ -446,7 +446,7 @@ function LocalModelModal({ model, onClose, onSave }: LocalModelModalProps) {
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50" onClick={onClose}>
       <div
-        className="bg-white rounded-lg shadow-2xl max-w-2xl w-full max-h-[90vh] overflow-hidden flex flex-col"
+        className="bg-white rounded-md shadow-2xl max-w-2xl w-full max-h-[90vh] overflow-hidden flex flex-col"
         onClick={(e) => e.stopPropagation()}
       >
         {/* Header with Primary Color */}
@@ -555,7 +555,7 @@ function LocalModelModal({ model, onClose, onSave }: LocalModelModalProps) {
 
             {/* Error Message */}
             {error && (
-              <div className="p-3 bg-red-50 border border-red-200 rounded-lg">
+              <div className="p-3 bg-red-50 border border-red-200 rounded-md">
                 <p className="text-sm text-red-600">{error}</p>
               </div>
             )}
@@ -568,7 +568,7 @@ function LocalModelModal({ model, onClose, onSave }: LocalModelModalProps) {
             <button
               onClick={handleSave}
               disabled={isSaving}
-              className="flex-1 px-4 py-2.5 text-sm font-medium text-white rounded-lg hover:opacity-90 disabled:opacity-50 disabled:cursor-not-allowed transition-opacity"
+              className="flex-1 px-4 py-2.5 text-sm font-medium text-white rounded-md hover:opacity-90 disabled:opacity-50 disabled:cursor-not-allowed transition-opacity"
               style={{ backgroundColor: 'var(--color-primary)' }}
             >
               {isSaving ? 'Saving...' : isEditing ? 'Update Model' : 'Create Model'}
@@ -576,7 +576,7 @@ function LocalModelModal({ model, onClose, onSave }: LocalModelModalProps) {
             <button
               onClick={onClose}
               disabled={isSaving}
-              className="px-4 py-2.5 text-sm font-medium border border-gray-300 rounded-lg hover:bg-gray-100 transition-colors"
+              className="px-4 py-2.5 text-sm font-medium border border-gray-300 rounded-md hover:bg-gray-100 transition-colors"
               style={{ color: 'var(--color-text-primary)' }}
             >
               Cancel

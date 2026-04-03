@@ -70,14 +70,14 @@ export default function ProjectsView({ onProjectSelect }: ProjectsViewProps) {
   };
 
   return (
-    <section className="flex-1 flex flex-col rounded-xl frosted-glass overflow-hidden p-6">
+    <section className="flex-1 flex flex-col rounded-md frosted-glass overflow-hidden p-6">
       <div className="flex items-center justify-between mb-6">
         <h2 className="text-2xl font-bold text-[var(--text-light-primary)] dark:text-[var(--text-dark-primary)]">
           Projects
         </h2>
         <button
           onClick={() => setShowCreateModal(true)}
-          className="flex items-center gap-2 px-4 py-2 rounded-lg bg-[var(--primary)] text-white hover:opacity-90 transition-all button-90s"
+          className="flex items-center gap-2 px-4 py-2 rounded-md bg-[var(--primary)] text-white hover:opacity-90 transition-all button-90s"
         >
           <span className="material-symbols-outlined">add</span>
           New Project
@@ -105,7 +105,7 @@ export default function ProjectsView({ onProjectSelect }: ProjectsViewProps) {
             <div
               key={project.id}
               onClick={() => onProjectSelect(project.id)}
-              className="p-4 rounded-lg bg-[var(--background-light)] dark:bg-[var(--background-dark)]/50 hover:border-[var(--primary)] border border-transparent cursor-pointer transition-all"
+              className="p-4 rounded-md bg-[var(--background-light)] dark:bg-[var(--background-dark)]/50 hover:border-[var(--primary)] border border-transparent cursor-pointer transition-all"
             >
               <div className="flex items-start gap-3">
                 <span className="material-symbols-outlined text-[var(--primary)] text-3xl">folder</span>
@@ -138,7 +138,7 @@ export default function ProjectsView({ onProjectSelect }: ProjectsViewProps) {
       {/* Create Project Modal */}
       {showCreateModal && (
         <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 cursor-pointer" onClick={() => setShowCreateModal(false)}>
-          <div className="bg-[var(--background-light)] dark:bg-[var(--background-dark)] rounded-xl p-6 w-full max-w-md frosted-glass" onClick={(e) => e.stopPropagation()}>
+          <div className="bg-[var(--background-light)] dark:bg-[var(--background-dark)] rounded-md p-6 w-full max-w-md frosted-glass" onClick={(e) => e.stopPropagation()}>
             <h3 className="text-xl font-bold text-[var(--text-light-primary)] dark:text-[var(--text-dark-primary)] mb-4">
               Create New Project
             </h3>
@@ -151,7 +151,7 @@ export default function ProjectsView({ onProjectSelect }: ProjectsViewProps) {
                   type="text"
                   value={newProject.name}
                   onChange={(e) => setNewProject({ ...newProject, name: e.target.value })}
-                  className="w-full px-3 py-2 rounded-lg shadow-inner-90s bg-[var(--background-light)] dark:bg-[var(--background-dark)] text-[var(--text-light-primary)] dark:text-[var(--text-dark-primary)] border-none focus:outline-none focus:ring-2 focus:ring-[var(--primary)]"
+                  className="w-full px-3 py-2 rounded-md shadow-inner-90s bg-[var(--background-light)] dark:bg-[var(--background-dark)] text-[var(--text-light-primary)] dark:text-[var(--text-dark-primary)] border-none focus:outline-none focus:ring-2 focus:ring-[var(--primary)]"
                   placeholder="My Awesome Project"
                 />
               </div>
@@ -162,7 +162,7 @@ export default function ProjectsView({ onProjectSelect }: ProjectsViewProps) {
                 <textarea
                   value={newProject.description}
                   onChange={(e) => setNewProject({ ...newProject, description: e.target.value })}
-                  className="w-full px-3 py-2 rounded-lg shadow-inner-90s bg-[var(--background-light)] dark:bg-[var(--background-dark)] text-[var(--text-light-primary)] dark:text-[var(--text-dark-primary)] border-none focus:outline-none focus:ring-2 focus:ring-[var(--primary)] min-h-[80px]"
+                  className="w-full px-3 py-2 rounded-md shadow-inner-90s bg-[var(--background-light)] dark:bg-[var(--background-dark)] text-[var(--text-light-primary)] dark:text-[var(--text-dark-primary)] border-none focus:outline-none focus:ring-2 focus:ring-[var(--primary)] min-h-[80px]"
                   placeholder="Describe what this project is about..."
                 />
               </div>
@@ -170,13 +170,13 @@ export default function ProjectsView({ onProjectSelect }: ProjectsViewProps) {
             <div className="flex gap-3 mt-6">
               <button
                 onClick={() => setShowCreateModal(false)}
-                className="flex-1 px-4 py-2 rounded-lg bg-gray-500/20 text-[var(--text-light-primary)] dark:text-[var(--text-dark-primary)] hover:bg-gray-500/30 transition-all"
+                className="flex-1 px-4 py-2 rounded-md bg-gray-500/20 text-[var(--text-light-primary)] dark:text-[var(--text-dark-primary)] hover:bg-gray-500/30 transition-all"
               >
                 Cancel
               </button>
               <button
                 onClick={handleCreateProject}
-                className="flex-1 px-4 py-2 rounded-lg bg-[var(--primary)] text-white hover:opacity-90 transition-all button-90s"
+                className="flex-1 px-4 py-2 rounded-md bg-[var(--primary)] text-white hover:opacity-90 transition-all button-90s"
                 disabled={!newProject.name.trim()}
               >
                 Create

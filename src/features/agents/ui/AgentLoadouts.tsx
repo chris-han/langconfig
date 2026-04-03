@@ -574,7 +574,7 @@ print(result)
           <div className="mb-4 pb-4 border-b" style={{ borderBottomColor: 'var(--color-border-dark)' }}>
             <div className="flex items-start gap-4">
               <div
-                className="w-16 h-16 rounded-xl flex items-center justify-center flex-shrink-0 shadow-sm"
+                className="w-16 h-16 rounded-md flex items-center justify-center flex-shrink-0 shadow-sm"
                 style={{ backgroundColor: 'var(--color-background-light)' }}
               >
                 <span className="material-symbols-outlined text-3xl" style={{ color: 'var(--color-primary)' }}>
@@ -587,7 +587,7 @@ print(result)
                   type="text"
                   value={agentName}
                   onChange={(e) => setAgentName(e.target.value)}
-                  className="text-xl font-bold w-full px-3 py-2 border border-gray-200 dark:border-border-dark bg-white dark:bg-panel-dark rounded-lg focus:outline-none focus:ring-2 focus:ring-primary mb-3"
+                  className="text-xl font-bold w-full px-3 py-2 border border-border bg-card rounded-md focus:outline-none focus:ring-2 focus:ring-primary mb-3"
                   style={{
                     color: 'var(--color-text-primary)'
                   }}
@@ -596,7 +596,7 @@ print(result)
                 <textarea
                   value={agentDescription}
                   onChange={(e) => setAgentDescription(e.target.value)}
-                  className="text-sm w-full px-3 py-2 border border-gray-200 dark:border-border-dark bg-white dark:bg-panel-dark rounded-lg focus:outline-none focus:ring-2 focus:ring-primary resize-none flex-1"
+                  className="text-sm w-full px-3 py-2 border border-border bg-card rounded-md focus:outline-none focus:ring-2 focus:ring-primary resize-none flex-1"
                   rows={4}
                   placeholder="Description..."
                   style={{
@@ -606,7 +606,7 @@ print(result)
                 />
 
                 {/* Agent Type Toggle - PROMINENT */}
-                <div className="mt-4 p-4 rounded-lg border-2" style={{
+                <div className="mt-4 p-4 rounded-md border-2" style={{
                   borderColor: config.use_deepagents ? 'var(--color-primary)' : 'var(--color-border-dark)',
                   backgroundColor: config.use_deepagents ? 'rgba(var(--color-primary-rgb), 0.05)' : 'var(--color-background-light)'
                 }}>
@@ -625,7 +625,7 @@ print(result)
                           middleware: isDeep ? (config.middleware || []) : []
                         });
                       }}
-                      className="px-4 py-2 rounded-lg text-sm font-semibold border-2 min-w-[180px]"
+                      className="px-4 py-2 rounded-md text-sm font-semibold border-2 min-w-[180px]"
                       style={{
                         backgroundColor: 'var(--color-background)',
                         borderColor: config.use_deepagents ? 'var(--color-primary)' : 'var(--color-border-dark)',
@@ -679,7 +679,7 @@ print(result)
                 <div className="flex items-center gap-2">
                   <button
                     onClick={handleViewCode}
-                    className="px-4 py-2 rounded-lg text-sm font-medium border border-gray-200 dark:border-border-dark bg-white dark:bg-panel-dark text-gray-700 dark:text-gray-200 flex items-center gap-2 hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors"
+                    className="px-4 py-2 rounded-md text-sm font-medium border border-border bg-card text-muted-foreground flex items-center gap-2 border-t border-border transition-colors"
                   >
                     <Code size={16} />
                     View Code
@@ -687,7 +687,7 @@ print(result)
                   <button
                     onClick={handleSave}
                     disabled={saveStatus === 'saving'}
-                    className="px-4 py-2 rounded-lg text-sm font-medium text-white hover:opacity-90 transition-opacity"
+                    className="px-4 py-2 rounded-md text-sm font-medium text-white hover:opacity-90 transition-opacity"
                     style={{
                       backgroundColor: saveStatus === 'saved' ? '#10b981' : 'var(--color-primary)',
                       opacity: saveStatus === 'saving' ? 0.5 : 1
@@ -697,7 +697,7 @@ print(result)
                   </button>
                   <button
                     onClick={onDelete}
-                    className="px-3 py-2 rounded-lg text-sm font-medium border hover:bg-red-50 dark:hover:bg-red-900/20 transition-colors"
+                    className="px-3 py-2 rounded-md text-sm font-medium border hover:bg-red-50 dark:hover:bg-red-900/20 transition-colors"
                     style={{
                       backgroundColor: 'rgba(239, 68, 68, 0.1)',
                       borderColor: 'rgba(239, 68, 68, 0.3)',
@@ -720,7 +720,7 @@ print(result)
                         const nextModel = findModelForProvider(providerGroups, e.target.value, config.model);
                         setConfig({ ...config, model: nextModel?.id || '' });
                       }}
-                      className="px-3 py-2 border border-gray-200 dark:border-border-dark bg-white dark:bg-panel-dark rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-primary disabled:opacity-50"
+                      className="px-3 py-2 border border-border bg-card rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-primary disabled:opacity-50"
                       disabled={isModelsLoading}
                       style={{
                         color: 'var(--color-text-primary)',
@@ -750,7 +750,7 @@ print(result)
                     <select
                       value={config.model || 'gpt-4o'}
                       onChange={(e) => setConfig({ ...config, model: e.target.value })}
-                      className="px-3 py-2 border border-gray-200 dark:border-border-dark bg-white dark:bg-panel-dark rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-primary disabled:opacity-50"
+                      className="px-3 py-2 border border-border bg-card rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-primary disabled:opacity-50"
                       disabled={isModelsLoading}
                       style={{
                         color: 'var(--color-text-primary)',
@@ -789,7 +789,7 @@ print(result)
                       step="0.1"
                       value={config.temperature ?? 0.7}
                       onChange={(e) => setConfig({ ...config, temperature: parseFloat(e.target.value) })}
-                      className="w-24 px-3 py-2 border border-gray-200 dark:border-border-dark bg-white dark:bg-panel-dark rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-primary"
+                      className="w-24 px-3 py-2 border border-border bg-card rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-primary"
                       style={{
                         color: 'var(--color-text-primary)'
                       }}
@@ -807,7 +807,7 @@ print(result)
                       step="100"
                       value={config.max_tokens || 4000}
                       onChange={(e) => setConfig({ ...config, max_tokens: parseInt(e.target.value) })}
-                      className="w-28 px-3 py-2 border border-gray-200 dark:border-border-dark bg-white dark:bg-panel-dark rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-primary"
+                      className="w-28 px-3 py-2 border border-border bg-card rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-primary"
                       style={{
                         color: 'var(--color-text-primary)'
                       }}
@@ -822,7 +822,7 @@ print(result)
           <div className="grid grid-cols-2 gap-6 mb-4">
             {/* Left Column - Agent Tools */}
             <div>
-              <div className="px-3 py-1.5 rounded-lg mb-2" style={{ backgroundColor: 'var(--color-primary)' }}>
+              <div className="px-3 py-1.5 rounded-md mb-2" style={{ backgroundColor: 'var(--color-primary)' }}>
                 <h3 className="text-sm font-semibold" style={{ color: 'white' }}>
                   Agent Tools
                 </h3>
@@ -832,7 +832,7 @@ print(result)
                 {AVAILABLE_TOOLS.map(tool => (
                   <label
                     key={tool.id}
-                    className="group relative flex items-start gap-2 px-3 py-2.5 rounded-xl cursor-pointer transition-all duration-200 border border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-900 hover:border-primary/50 hover:shadow-md"
+                    className="group relative flex items-start gap-2 px-3 py-2.5 rounded-md cursor-pointer transition-all duration-200 border border-border bg-card hover:border-primary/50 hover:shadow-md"
                     title={tool.id === 'enable_memory' || tool.id === 'enable_rag' ? undefined : tool.description}
                   >
                     <input
@@ -879,7 +879,7 @@ print(result)
                 {/* Custom Tools */}
                 {availableCustomTools.length > 0 && (
                   <>
-                    <div className="px-3 py-1.5 rounded-lg mb-2 mt-4" style={{ backgroundColor: 'var(--color-primary)' }}>
+                    <div className="px-3 py-1.5 rounded-md mb-2 mt-4" style={{ backgroundColor: 'var(--color-primary)' }}>
                       <h3 className="text-sm font-semibold" style={{ color: 'white' }}>
                         Custom Tools
                       </h3>
@@ -890,7 +890,7 @@ print(result)
                         return (
                           <div key={tool.tool_id} className="flex flex-col">
                             <label
-                              className="group relative flex items-start gap-2 px-3 py-2.5 rounded-xl cursor-pointer transition-all duration-200 border border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-900 hover:border-primary/50 hover:shadow-md"
+                              className="group relative flex items-start gap-2 px-3 py-2.5 rounded-md cursor-pointer transition-all duration-200 border border-border bg-card hover:border-primary/50 hover:shadow-md"
                             >
                               <input
                                 type="checkbox"
@@ -934,7 +934,7 @@ print(result)
                             </label>
 
                             {isExpanded && tool.implementation_config && (
-                              <div className="mt-1 px-3 py-2.5 border border-gray-200 dark:border-gray-800 rounded-xl bg-gray-50/50 dark:bg-gray-800/50">
+                              <div className="mt-1 px-3 py-2.5 border border-gray-200 border-border rounded-md bg-muted/50">
                                 <div className="text-xs space-y-1">
                                   <div className="font-semibold mb-1.5" style={{ color: 'var(--color-text-primary)' }}>Configuration:</div>
                                   {tool.implementation_config.provider && (
@@ -972,7 +972,7 @@ print(result)
             <div>
               {/* System Prompt */}
               <div>
-                <div className="px-3 py-1.5 rounded-lg mb-2" style={{ backgroundColor: 'var(--color-primary)' }}>
+                <div className="px-3 py-1.5 rounded-md mb-2" style={{ backgroundColor: 'var(--color-primary)' }}>
                   <h3 className="text-sm font-semibold" style={{ color: 'white' }}>
                     System Prompt
                   </h3>
@@ -981,7 +981,7 @@ print(result)
                   value={config.system_prompt || ''}
                   onChange={(e) => setConfig({ ...config, system_prompt: e.target.value })}
                   rows={30}
-                  className="w-full px-2 py-1.5 border border-gray-200 dark:border-border-dark bg-white dark:bg-panel-dark rounded-lg text-xs font-mono focus:outline-none focus:ring-1 focus:ring-primary resize-none"
+                  className="w-full px-2 py-1.5 border border-border bg-card rounded-md text-xs font-mono focus:outline-none focus:ring-1 focus:ring-primary resize-none"
                   placeholder="Enter system prompt..."
                   style={{
                     color: 'var(--color-text-primary)'
@@ -996,7 +996,7 @@ print(result)
 
           {/* Bottom Row: Middleware (Full Width) */}
           <div>
-            <div className="px-3 py-1.5 rounded-lg mb-2" style={{ backgroundColor: 'var(--color-primary)' }}>
+            <div className="px-3 py-1.5 rounded-md mb-2" style={{ backgroundColor: 'var(--color-primary)' }}>
               <h3 className="text-sm font-semibold" style={{ color: 'white' }}>
                 Middleware
               </h3>
@@ -1005,7 +1005,7 @@ print(result)
               {MIDDLEWARE_OPTIONS.map(middleware => (
                 <label
                   key={middleware.id}
-                  className="flex items-start gap-2 px-3 py-2.5 rounded cursor-pointer transition-colors border border-gray-200 dark:border-border-dark bg-white dark:bg-panel-dark hover:border-primary/50"
+                  className="flex items-start gap-2 px-3 py-2.5 rounded cursor-pointer transition-colors border border-border bg-card hover:border-primary/50"
                 >
                   <input
                     type="checkbox"
@@ -1029,13 +1029,13 @@ print(result)
           {/* Subagents Section - Only for Deep Agents */}
           {config.use_deepagents && (
             <div className="mt-6">
-              <div className="px-3 py-1.5 rounded-lg mb-2 flex items-center justify-between" style={{ backgroundColor: 'var(--color-primary)' }}>
+              <div className="px-3 py-1.5 rounded-md mb-2 flex items-center justify-between" style={{ backgroundColor: 'var(--color-primary)' }}>
                 <h3 className="text-sm font-semibold" style={{ color: 'white' }}>
                   Subagents
                 </h3>
                 <button
                   onClick={addSubagent}
-                  className="px-3 py-1 rounded text-xs font-medium bg-white text-primary hover:bg-opacity-90 transition-opacity flex items-center gap-1"
+                  className="px-3 py-1 rounded text-xs font-medium bg-primary text-primary-foreground hover:opacity-90 transition-opacity flex items-center gap-1"
                 >
                   <Plus size={14} />
                   Add Subagent
@@ -1043,7 +1043,7 @@ print(result)
               </div>
 
               {subagents.length === 0 ? (
-                <div className="text-center py-8 border rounded-lg" style={{
+                <div className="text-center py-8 border rounded-md" style={{
                   borderColor: 'var(--color-border-dark)',
                   backgroundColor: 'var(--color-background-light)'
                 }}>
@@ -1063,7 +1063,7 @@ print(result)
                     return (
                       <div
                         key={index}
-                        className="border rounded-lg"
+                        className="border rounded-md"
                         style={{
                           borderColor: hasErrors ? '#ef4444' : 'var(--color-border-dark)',
                           backgroundColor: 'var(--color-background-light)'
@@ -1076,7 +1076,7 @@ print(result)
                         >
                           <div className="flex items-center gap-3 flex-1">
                             <button
-                              className="text-gray-500 hover:text-gray-700 transition-colors"
+                              className="text-muted-foreground hover:text-foreground transition-colors"
                               onClick={(e) => {
                                 e.stopPropagation();
                                 toggleSubagentExpanded(index);
@@ -1121,7 +1121,7 @@ print(result)
                                 value={subagent.name}
                                 onChange={(e) => updateSubagent(index, 'name', e.target.value)}
                                 placeholder="e.g., research-agent"
-                                className="w-full px-3 py-2 border rounded-lg text-sm"
+                                className="w-full px-3 py-2 border rounded-md text-sm"
                                 style={{
                                   backgroundColor: 'var(--color-background-light)',
                                   borderColor: !subagent.name ? '#ef4444' : 'var(--color-border-dark)',
@@ -1143,7 +1143,7 @@ print(result)
                                 onChange={(e) => updateSubagent(index, 'description', e.target.value)}
                                 placeholder="What this subagent does (be specific and action-oriented)"
                                 rows={2}
-                                className="w-full px-3 py-2 border rounded-lg text-sm resize-none"
+                                className="w-full px-3 py-2 border rounded-md text-sm resize-none"
                                 style={{
                                   backgroundColor: 'var(--color-background-light)',
                                   borderColor: !subagent.description ? '#ef4444' : 'var(--color-border-dark)',
@@ -1163,7 +1163,7 @@ print(result)
                               <select
                                 value={subagent.type || 'dictionary'}
                                 onChange={(e) => updateSubagent(index, 'type', e.target.value)}
-                                className="w-full px-3 py-2 border rounded-lg text-sm"
+                                className="w-full px-3 py-2 border rounded-md text-sm"
                                 style={{
                                   backgroundColor: 'var(--color-background-light)',
                                   borderColor: 'var(--color-border-dark)',
@@ -1193,7 +1193,7 @@ print(result)
                                     onChange={(e) => updateSubagent(index, 'system_prompt', e.target.value)}
                                     placeholder="Instructions for the subagent (include tool usage guidance and output format)"
                                     rows={6}
-                                    className="w-full px-3 py-2 border rounded-lg text-sm font-mono resize-none"
+                                    className="w-full px-3 py-2 border rounded-md text-sm font-mono resize-none"
                                     style={{
                                       backgroundColor: 'var(--color-background-light)',
                                       borderColor: !subagent.system_prompt ? '#ef4444' : 'var(--color-border-dark)',
@@ -1266,7 +1266,7 @@ print(result)
                                   <select
                                     value={subagent.model || ''}
                                     onChange={(e) => updateSubagent(index, 'model', e.target.value)}
-                                    className="w-full px-3 py-2 border rounded-lg text-sm"
+                                    className="w-full px-3 py-2 border rounded-md text-sm"
                                     style={{
                                       backgroundColor: 'var(--color-background-light)',
                                       borderColor: 'var(--color-border-dark)',
@@ -1297,7 +1297,7 @@ print(result)
                                 <select
                                   value={subagent.workflow_id || ''}
                                   onChange={(e) => updateSubagent(index, 'workflow_id', parseInt(e.target.value))}
-                                  className="w-full px-3 py-2 border rounded-lg text-sm"
+                                  className="w-full px-3 py-2 border rounded-md text-sm"
                                   style={{
                                     backgroundColor: 'var(--color-background-light)',
                                     borderColor: !subagent.workflow_id ? '#ef4444' : 'var(--color-border-dark)',
@@ -1360,7 +1360,7 @@ print(result)
               <p className="text-[10px] mb-2" style={{ color: 'var(--color-text-muted)' }}>
                 {guardrailsDescription || 'Production-safety rules prepended to agent prompts. Controls stopping criteria and tool usage.'}
               </p>
-              <div className="p-2 rounded-lg mb-2" style={{ backgroundColor: 'rgba(245, 158, 11, 0.1)', border: '1px solid rgba(245, 158, 11, 0.3)' }}>
+              <div className="p-2 rounded-md mb-2" style={{ backgroundColor: 'rgba(245, 158, 11, 0.1)', border: '1px solid rgba(245, 158, 11, 0.3)' }}>
                 <p className="text-[10px] text-amber-600 dark:text-amber-400">
                   ⚠️ Modifying guardrails may cause unexpected agent behavior. Most users should leave this unchanged.
                 </p>
@@ -1370,7 +1370,7 @@ print(result)
                 onChange={(e) => setCustomGuardrails(e.target.value)}
                 rows={8}
                 placeholder="Agent guardrails..."
-                className="w-full px-3 py-2 text-xs rounded-lg border font-mono"
+                className="w-full px-3 py-2 text-xs rounded-md border font-mono"
                 style={{
                   backgroundColor: 'var(--color-background)',
                   borderColor: customGuardrails ? 'var(--color-accent)' : 'var(--color-border-dark)',
@@ -1385,7 +1385,7 @@ print(result)
                   <button
                     type="button"
                     onClick={() => setCustomGuardrails(null)}
-                    className="text-[10px] px-2 py-1 rounded hover:bg-gray-100 dark:hover:bg-gray-800"
+                    className="text-[10px] px-2 py-1 rounded hover:bg-muted"
                     style={{ color: 'var(--color-text-secondary)' }}
                   >
                     Reset to Default
@@ -1404,7 +1404,7 @@ print(result)
           onClick={() => setShowCodeModal(false)}
         >
           <div
-            className="bg-white dark:bg-panel-dark rounded-xl w-full max-w-4xl max-h-[90vh] flex flex-col shadow-2xl"
+            className="bg-card rounded-md w-full max-w-4xl max-h-[90vh] flex flex-col shadow-2xl"
             onClick={(e) => e.stopPropagation()}
             style={{ borderColor: 'var(--color-border-dark)' }}
           >
@@ -1424,7 +1424,7 @@ print(result)
                   onClick={() => {
                     navigator.clipboard.writeText(generatedCode);
                   }}
-                  className="px-3 py-1.5 rounded-lg text-xs font-medium flex items-center gap-1.5 transition-all"
+                  className="px-3 py-1.5 rounded-md text-xs font-medium flex items-center gap-1.5 transition-all"
                   style={{
                     backgroundColor: 'rgba(255, 255, 255, 0.2)',
                     border: '1px solid rgba(255, 255, 255, 0.3)',
@@ -1439,7 +1439,7 @@ print(result)
                 </button>
                 <button
                   onClick={() => setGeneratedCode(generateLangChainCode())}
-                  className="px-3 py-1.5 rounded-lg text-xs font-medium flex items-center gap-1.5 transition-all"
+                  className="px-3 py-1.5 rounded-md text-xs font-medium flex items-center gap-1.5 transition-all"
                   style={{
                     backgroundColor: 'rgba(255, 255, 255, 0.16)',
                     border: '1px solid rgba(255, 255, 255, 0.3)',
@@ -1453,7 +1453,7 @@ print(result)
                 </button>
                 <button
                   onClick={() => setShowCodeModal(false)}
-                  className="p-2 transition-all text-white/90 hover:text-white hover:bg-white/15 rounded-lg"
+                  className="p-2 transition-all text-white/90 hover:text-white hover:bg-white/15 rounded-md"
                   style={{ textShadow: '0 1px 2px rgba(0, 0, 0, 0.15)' }}
                   title="Close"
                 >
@@ -1465,7 +1465,7 @@ print(result)
             {/* Modal Content */}
             <div className="flex-1 overflow-y-auto p-4">
               <div
-                className="mb-4 rounded-xl border p-4"
+                className="mb-4 rounded-md border p-4"
                 style={{
                   backgroundColor: 'var(--color-panel-dark)',
                   borderColor: 'var(--color-border-dark)',
@@ -1485,7 +1485,7 @@ print(result)
                         void runEditorAssist(preset);
                       }}
                       disabled={isAiLoading}
-                      className="px-3 py-1.5 rounded-lg text-xs font-medium border transition-colors disabled:opacity-50"
+                      className="px-3 py-1.5 rounded-md text-xs font-medium border transition-colors disabled:opacity-50"
                       style={{
                         borderColor: 'var(--color-border-dark)',
                         color: 'var(--color-text-primary)',
@@ -1506,7 +1506,7 @@ print(result)
                       <select
                         value={assistAgentId}
                         onChange={(e) => setAssistAgentId(parseInt(e.target.value, 10))}
-                        className="w-full px-3 py-2 text-sm rounded-lg border"
+                        className="w-full px-3 py-2 text-sm rounded-md border"
                         style={{
                           backgroundColor: 'var(--color-background)',
                           borderColor: 'var(--color-border-dark)',
@@ -1525,7 +1525,7 @@ print(result)
                       onChange={(e) => setAiInstruction(e.target.value)}
                       rows={3}
                       placeholder="Ask AI to refactor, explain, tighten imports, add typing, or improve the selected block."
-                      className="w-full px-3 py-2 text-sm rounded-lg border resize-none"
+                      className="w-full px-3 py-2 text-sm rounded-md border resize-none"
                       style={{
                         backgroundColor: 'var(--color-background)',
                         borderColor: 'var(--color-border-dark)',
@@ -1536,7 +1536,7 @@ print(result)
                   <button
                     onClick={() => void runEditorAssist()}
                     disabled={isAiLoading}
-                    className="px-4 py-2 rounded-lg text-sm font-medium text-white disabled:opacity-60"
+                    className="px-4 py-2 rounded-md text-sm font-medium text-white disabled:opacity-60"
                     style={{ backgroundColor: 'var(--color-primary)' }}
                   >
                     {isAiLoading ? 'Thinking...' : 'Ask AI'}
@@ -1562,7 +1562,7 @@ print(result)
 
               {editorProposal && (
                 <div
-                  className="mt-4 rounded-xl border p-4"
+                  className="mt-4 rounded-md border p-4"
                   style={{
                     backgroundColor: 'var(--color-panel-dark)',
                     borderColor: 'var(--color-border-dark)',
@@ -1584,7 +1584,7 @@ print(result)
                       {editorProposal.applyTo !== 'none' && (
                         <button
                           onClick={applyEditorProposal}
-                          className="px-3 py-1.5 rounded-lg text-xs font-medium text-white"
+                          className="px-3 py-1.5 rounded-md text-xs font-medium text-white"
                           style={{ backgroundColor: 'var(--color-primary)' }}
                         >
                           Apply
@@ -1592,7 +1592,7 @@ print(result)
                       )}
                       <button
                         onClick={() => setEditorProposal(null)}
-                        className="px-3 py-1.5 rounded-lg text-xs font-medium border"
+                        className="px-3 py-1.5 rounded-md text-xs font-medium border"
                         style={{
                           borderColor: 'var(--color-border-dark)',
                           color: 'var(--color-text-primary)',
@@ -1762,7 +1762,7 @@ const ToolConfigView = ({ tool, onSave, onDelete, onClose }: ToolConfigViewProps
             <div className="flex items-start justify-between mb-4">
               <div className="flex items-start gap-4">
                 <div
-                  className="w-16 h-16 rounded-xl flex items-center justify-center flex-shrink-0 shadow-sm"
+                  className="w-16 h-16 rounded-md flex items-center justify-center flex-shrink-0 shadow-sm"
                   style={{ backgroundColor: 'var(--color-background-light)' }}
                 >
                   <span className="material-symbols-outlined text-3xl" style={{ color: 'var(--color-primary)' }}>
@@ -1798,7 +1798,7 @@ const ToolConfigView = ({ tool, onSave, onDelete, onClose }: ToolConfigViewProps
                 <button
                   onClick={handleSave}
                   disabled={saveStatus === 'saving'}
-                  className="px-4 py-2 rounded-lg text-sm font-medium text-white flex items-center gap-2"
+                  className="px-4 py-2 rounded-md text-sm font-medium text-white flex items-center gap-2"
                   style={{ backgroundColor: 'var(--color-primary)' }}
                   onMouseEnter={(e) => e.currentTarget.style.opacity = '0.9'}
                   onMouseLeave={(e) => e.currentTarget.style.opacity = '1'}
@@ -1808,7 +1808,7 @@ const ToolConfigView = ({ tool, onSave, onDelete, onClose }: ToolConfigViewProps
                 </button>
                 <button
                   onClick={onDelete}
-                  className="px-4 py-2 rounded-lg text-sm font-medium border flex items-center gap-2"
+                  className="px-4 py-2 rounded-md text-sm font-medium border flex items-center gap-2"
                   style={{
                     backgroundColor: 'rgba(239, 68, 68, 0.1)',
                     borderColor: 'rgba(239, 68, 68, 0.3)',
@@ -1823,7 +1823,7 @@ const ToolConfigView = ({ tool, onSave, onDelete, onClose }: ToolConfigViewProps
 
             {/* Stats */}
             <div className="grid grid-cols-3 gap-4">
-              <div className="p-4 rounded-lg border" style={{
+              <div className="p-4 rounded-md border" style={{
                 backgroundColor: 'var(--color-background-light)',
                 borderColor: 'var(--color-border-dark)'
               }}>
@@ -1832,7 +1832,7 @@ const ToolConfigView = ({ tool, onSave, onDelete, onClose }: ToolConfigViewProps
                   {tool.usage_count}
                 </div>
               </div>
-              <div className="p-4 rounded-lg border" style={{
+              <div className="p-4 rounded-md border" style={{
                 backgroundColor: 'var(--color-background-light)',
                 borderColor: 'var(--color-border-dark)'
               }}>
@@ -1841,7 +1841,7 @@ const ToolConfigView = ({ tool, onSave, onDelete, onClose }: ToolConfigViewProps
                   {tool.error_count}
                 </div>
               </div>
-              <div className="p-4 rounded-lg border" style={{
+              <div className="p-4 rounded-md border" style={{
                 backgroundColor: 'var(--color-background-light)',
                 borderColor: 'var(--color-border-dark)'
               }}>
@@ -1860,7 +1860,7 @@ const ToolConfigView = ({ tool, onSave, onDelete, onClose }: ToolConfigViewProps
             {/* Left Column - Basic Info & Implementation Config */}
             <div className="space-y-6">
               {/* Basic Information */}
-              <div className="p-6 rounded-lg border" style={{
+              <div className="p-6 rounded-md border" style={{
                 backgroundColor: 'var(--color-background-light)',
                 borderColor: 'var(--color-border-dark)'
               }}>
@@ -1880,7 +1880,7 @@ const ToolConfigView = ({ tool, onSave, onDelete, onClose }: ToolConfigViewProps
                       type="text"
                       value={tool.tool_id}
                       disabled
-                      className="w-full px-4 py-2 rounded-lg border text-sm font-mono"
+                      className="w-full px-4 py-2 rounded-md border text-sm font-mono"
                       style={{
                         backgroundColor: 'var(--color-background-dark)',
                         borderColor: 'var(--color-border-dark)',
@@ -1902,7 +1902,7 @@ const ToolConfigView = ({ tool, onSave, onDelete, onClose }: ToolConfigViewProps
                       onChange={(e) => setDescription(e.target.value)}
                       placeholder="Describe what this tool does..."
                       rows={4}
-                      className="w-full px-4 py-2 rounded-lg border text-sm transition-all"
+                      className="w-full px-4 py-2 rounded-md border text-sm transition-all"
                       style={{
                         backgroundColor: 'var(--color-input-background)',
                         borderColor: 'var(--color-border-dark)',
@@ -1925,7 +1925,7 @@ const ToolConfigView = ({ tool, onSave, onDelete, onClose }: ToolConfigViewProps
                       value={category}
                       onChange={(e) => setCategory(e.target.value)}
                       placeholder="e.g., notifications, integrations"
-                      className="w-full px-4 py-2 rounded-lg border text-sm transition-all"
+                      className="w-full px-4 py-2 rounded-md border text-sm transition-all"
                       style={{
                         backgroundColor: 'var(--color-input-background)',
                         borderColor: 'var(--color-border-dark)',
@@ -1945,7 +1945,7 @@ const ToolConfigView = ({ tool, onSave, onDelete, onClose }: ToolConfigViewProps
                       value={tags.join(', ')}
                       onChange={(e) => setTags(e.target.value.split(',').map(t => t.trim()).filter(Boolean))}
                       placeholder="slack, notification, alerts"
-                      className="w-full px-4 py-2 rounded-lg border text-sm transition-all"
+                      className="w-full px-4 py-2 rounded-md border text-sm transition-all"
                       style={{
                         backgroundColor: 'var(--color-input-background)',
                         borderColor: 'var(--color-border-dark)',
@@ -1959,7 +1959,7 @@ const ToolConfigView = ({ tool, onSave, onDelete, onClose }: ToolConfigViewProps
               </div>
 
               {/* Implementation Configuration */}
-              <div className="p-6 rounded-lg border" style={{
+              <div className="p-6 rounded-md border" style={{
                 backgroundColor: 'var(--color-background-light)',
                 borderColor: 'var(--color-border-dark)'
               }}>
@@ -1981,7 +1981,7 @@ const ToolConfigView = ({ tool, onSave, onDelete, onClose }: ToolConfigViewProps
                         <select
                           value={implementationConfig.provider || 'discord'}
                           onChange={(e) => setImplementationConfig({ ...implementationConfig, provider: e.target.value })}
-                          className="w-full px-4 py-2 rounded-lg border text-sm"
+                          className="w-full px-4 py-2 rounded-md border text-sm"
                           style={{
                             backgroundColor: 'var(--color-input-background)',
                             borderColor: 'var(--color-border-dark)',
@@ -2002,7 +2002,7 @@ const ToolConfigView = ({ tool, onSave, onDelete, onClose }: ToolConfigViewProps
                           value={implementationConfig.webhook_url || ''}
                           onChange={(e) => setImplementationConfig({ ...implementationConfig, webhook_url: e.target.value })}
                           placeholder="https://hooks.slack.com/services/..."
-                          className="w-full px-4 py-2 rounded-lg border text-sm transition-all"
+                          className="w-full px-4 py-2 rounded-md border text-sm transition-all"
                           style={{
                             backgroundColor: 'var(--color-input-background)',
                             borderColor: 'var(--color-border-dark)',
@@ -2023,7 +2023,7 @@ const ToolConfigView = ({ tool, onSave, onDelete, onClose }: ToolConfigViewProps
                             value={implementationConfig.channel || '#general'}
                             onChange={(e) => setImplementationConfig({ ...implementationConfig, channel: e.target.value })}
                             placeholder="#general"
-                            className="w-full px-4 py-2 rounded-lg border text-sm transition-all"
+                            className="w-full px-4 py-2 rounded-md border text-sm transition-all"
                             style={{
                               backgroundColor: 'var(--color-input-background)',
                               borderColor: 'var(--color-border-dark)',
@@ -2047,7 +2047,7 @@ const ToolConfigView = ({ tool, onSave, onDelete, onClose }: ToolConfigViewProps
                         <select
                           value={implementationConfig.method || 'GET'}
                           onChange={(e) => setImplementationConfig({ ...implementationConfig, method: e.target.value })}
-                          className="w-full px-4 py-2 rounded-lg border text-sm"
+                          className="w-full px-4 py-2 rounded-md border text-sm"
                           style={{
                             backgroundColor: 'var(--color-input-background)',
                             borderColor: 'var(--color-border-dark)',
@@ -2071,7 +2071,7 @@ const ToolConfigView = ({ tool, onSave, onDelete, onClose }: ToolConfigViewProps
                           value={implementationConfig.url || ''}
                           onChange={(e) => setImplementationConfig({ ...implementationConfig, url: e.target.value })}
                           placeholder="https://api.example.com/{endpoint}"
-                          className="w-full px-4 py-2 rounded-lg border text-sm transition-all"
+                          className="w-full px-4 py-2 rounded-md border text-sm transition-all"
                           style={{
                             backgroundColor: 'var(--color-input-background)',
                             borderColor: 'var(--color-border-dark)',
@@ -2093,7 +2093,7 @@ const ToolConfigView = ({ tool, onSave, onDelete, onClose }: ToolConfigViewProps
                           type="number"
                           value={implementationConfig.timeout || 30}
                           onChange={(e) => setImplementationConfig({ ...implementationConfig, timeout: parseInt(e.target.value) })}
-                          className="w-full px-4 py-2 rounded-lg border text-sm transition-all"
+                          className="w-full px-4 py-2 rounded-md border text-sm transition-all"
                           style={{
                             backgroundColor: 'var(--color-input-background)',
                             borderColor: 'var(--color-border-dark)',
@@ -2124,7 +2124,7 @@ const ToolConfigView = ({ tool, onSave, onDelete, onClose }: ToolConfigViewProps
                               model: defaultModel
                             });
                           }}
-                          className="w-full px-4 py-2 rounded-lg border text-sm"
+                          className="w-full px-4 py-2 rounded-md border text-sm"
                           style={{
                             backgroundColor: 'var(--color-input-background)',
                             borderColor: 'var(--color-border-dark)',
@@ -2143,7 +2143,7 @@ const ToolConfigView = ({ tool, onSave, onDelete, onClose }: ToolConfigViewProps
                         <select
                           value={implementationConfig.model || (implementationConfig.provider === 'google' ? 'gemini-3-pro-image-preview' : 'dall-e-3')}
                           onChange={(e) => setImplementationConfig({ ...implementationConfig, model: e.target.value })}
-                          className="w-full px-4 py-2 rounded-lg border text-sm"
+                          className="w-full px-4 py-2 rounded-md border text-sm"
                           style={{
                             backgroundColor: 'var(--color-input-background)',
                             borderColor: 'var(--color-border-dark)',
@@ -2177,7 +2177,7 @@ const ToolConfigView = ({ tool, onSave, onDelete, onClose }: ToolConfigViewProps
                           value={implementationConfig.api_key || ''}
                           onChange={(e) => setImplementationConfig({ ...implementationConfig, api_key: e.target.value })}
                           placeholder="sk-..."
-                          className="w-full px-4 py-2 rounded-lg border text-sm transition-all"
+                          className="w-full px-4 py-2 rounded-md border text-sm transition-all"
                           style={{
                             backgroundColor: 'var(--color-input-background)',
                             borderColor: 'var(--color-border-dark)',
@@ -2200,7 +2200,7 @@ const ToolConfigView = ({ tool, onSave, onDelete, onClose }: ToolConfigViewProps
                         <select
                           value={implementationConfig.db_type || 'postgresql'}
                           onChange={(e) => setImplementationConfig({ ...implementationConfig, db_type: e.target.value })}
-                          className="w-full px-4 py-2 rounded-lg border text-sm"
+                          className="w-full px-4 py-2 rounded-md border text-sm"
                           style={{
                             backgroundColor: 'var(--color-input-background)',
                             borderColor: 'var(--color-border-dark)',
@@ -2222,7 +2222,7 @@ const ToolConfigView = ({ tool, onSave, onDelete, onClose }: ToolConfigViewProps
                           value={implementationConfig.host || 'localhost'}
                           onChange={(e) => setImplementationConfig({ ...implementationConfig, host: e.target.value })}
                           placeholder="localhost"
-                          className="w-full px-4 py-2 rounded-lg border text-sm transition-all"
+                          className="w-full px-4 py-2 rounded-md border text-sm transition-all"
                           style={{
                             backgroundColor: 'var(--color-input-background)',
                             borderColor: 'var(--color-border-dark)',
@@ -2241,7 +2241,7 @@ const ToolConfigView = ({ tool, onSave, onDelete, onClose }: ToolConfigViewProps
                           type="number"
                           value={implementationConfig.port || 5432}
                           onChange={(e) => setImplementationConfig({ ...implementationConfig, port: parseInt(e.target.value) })}
-                          className="w-full px-4 py-2 rounded-lg border text-sm transition-all"
+                          className="w-full px-4 py-2 rounded-md border text-sm transition-all"
                           style={{
                             backgroundColor: 'var(--color-input-background)',
                             borderColor: 'var(--color-border-dark)',
@@ -2261,7 +2261,7 @@ const ToolConfigView = ({ tool, onSave, onDelete, onClose }: ToolConfigViewProps
                           value={implementationConfig.database || ''}
                           onChange={(e) => setImplementationConfig({ ...implementationConfig, database: e.target.value })}
                           placeholder="myapp_db"
-                          className="w-full px-4 py-2 rounded-lg border text-sm transition-all"
+                          className="w-full px-4 py-2 rounded-md border text-sm transition-all"
                           style={{
                             backgroundColor: 'var(--color-input-background)',
                             borderColor: 'var(--color-border-dark)',
@@ -2284,7 +2284,7 @@ const ToolConfigView = ({ tool, onSave, onDelete, onClose }: ToolConfigViewProps
                         <select
                           value={implementationConfig.input_format || 'json'}
                           onChange={(e) => setImplementationConfig({ ...implementationConfig, input_format: e.target.value })}
-                          className="w-full px-4 py-2 rounded-lg border text-sm"
+                          className="w-full px-4 py-2 rounded-md border text-sm"
                           style={{
                             backgroundColor: 'var(--color-input-background)',
                             borderColor: 'var(--color-border-dark)',
@@ -2305,7 +2305,7 @@ const ToolConfigView = ({ tool, onSave, onDelete, onClose }: ToolConfigViewProps
                         <select
                           value={implementationConfig.output_format || 'json'}
                           onChange={(e) => setImplementationConfig({ ...implementationConfig, output_format: e.target.value })}
-                          className="w-full px-4 py-2 rounded-lg border text-sm"
+                          className="w-full px-4 py-2 rounded-md border text-sm"
                           style={{
                             backgroundColor: 'var(--color-input-background)',
                             borderColor: 'var(--color-border-dark)',
@@ -2332,7 +2332,7 @@ const ToolConfigView = ({ tool, onSave, onDelete, onClose }: ToolConfigViewProps
 
             {/* Right Column - Input Schema */}
             <div>
-              <div className="p-6 rounded-lg border" style={{
+              <div className="p-6 rounded-md border" style={{
                 backgroundColor: 'var(--color-background-light)',
                 borderColor: 'var(--color-border-dark)'
               }}>
@@ -2364,7 +2364,7 @@ const ToolConfigView = ({ tool, onSave, onDelete, onClose }: ToolConfigViewProps
                       </p>
                       <button
                         onClick={addProperty}
-                        className="text-xs px-3 py-1.5 rounded-lg"
+                        className="text-xs px-3 py-1.5 rounded-md"
                         style={{ color: 'var(--color-primary)', backgroundColor: 'var(--color-background-dark)' }}
                       >
                         Add First Parameter
@@ -2372,7 +2372,7 @@ const ToolConfigView = ({ tool, onSave, onDelete, onClose }: ToolConfigViewProps
                     </div>
                   ) : (
                     Object.entries(properties).map(([propName, prop]: [string, any]) => (
-                      <div key={propName} className="p-4 rounded-lg border" style={{
+                      <div key={propName} className="p-4 rounded-md border" style={{
                         borderColor: 'var(--color-border-dark)',
                         backgroundColor: 'var(--color-panel-dark)'
                       }}>
@@ -2458,7 +2458,7 @@ const ToolConfigView = ({ tool, onSave, onDelete, onClose }: ToolConfigViewProps
                     <h4 className="text-sm font-medium mb-2" style={{ color: 'var(--color-text-primary)' }}>
                       Schema Preview
                     </h4>
-                    <div className="p-3 rounded-lg border font-mono text-xs whitespace-pre-wrap" style={{
+                    <div className="p-3 rounded-md border font-mono text-xs whitespace-pre-wrap" style={{
                       backgroundColor: 'var(--color-background-dark)',
                       borderColor: 'var(--color-border-dark)',
                       color: 'var(--color-text-muted)'
@@ -2556,7 +2556,7 @@ const SkillConfigView = ({ skill, onClose, onDelete }: SkillConfigViewProps) => 
             <div className="flex items-start justify-between mb-4">
               <div className="flex items-start gap-4">
                 <div
-                  className="w-16 h-16 rounded-xl flex items-center justify-center flex-shrink-0 shadow-sm"
+                  className="w-16 h-16 rounded-md flex items-center justify-center flex-shrink-0 shadow-sm"
                   style={{ backgroundColor: 'var(--color-background-light)' }}
                 >
                   <BookOpen className="w-8 h-8" style={{ color: 'var(--color-primary)' }} />
@@ -2594,7 +2594,7 @@ const SkillConfigView = ({ skill, onClose, onDelete }: SkillConfigViewProps) => 
                 {onDelete && skill.source_type !== 'builtin' && (
                   <button
                     onClick={() => setShowDeleteConfirm(true)}
-                    className="px-3 py-2 rounded-lg text-sm font-medium flex items-center gap-2 transition-colors"
+                    className="px-3 py-2 rounded-md text-sm font-medium flex items-center gap-2 transition-colors"
                     style={{
                       backgroundColor: 'var(--color-background-light)',
                       color: '#ef4444',
@@ -2609,7 +2609,7 @@ const SkillConfigView = ({ skill, onClose, onDelete }: SkillConfigViewProps) => 
                 <button
                   onClick={handleSave}
                   disabled={saveStatus === 'saving'}
-                  className="px-4 py-2 rounded-lg text-sm font-medium text-white flex items-center gap-2"
+                  className="px-4 py-2 rounded-md text-sm font-medium text-white flex items-center gap-2"
                   style={{ backgroundColor: 'var(--color-primary)' }}
                   onMouseEnter={(e) => e.currentTarget.style.opacity = '0.9'}
                   onMouseLeave={(e) => e.currentTarget.style.opacity = '1'}
@@ -2619,7 +2619,7 @@ const SkillConfigView = ({ skill, onClose, onDelete }: SkillConfigViewProps) => 
                 </button>
                 <button
                   onClick={onClose}
-                  className="p-2 rounded-lg border transition-colors"
+                  className="p-2 rounded-md border transition-colors"
                   style={{
                     backgroundColor: 'var(--color-background-light)',
                     borderColor: 'var(--color-border-dark)',
@@ -2633,7 +2633,7 @@ const SkillConfigView = ({ skill, onClose, onDelete }: SkillConfigViewProps) => 
               {/* Delete Confirmation Modal */}
               {showDeleteConfirm && (
                 <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50" onClick={() => setShowDeleteConfirm(false)}>
-                  <div className="bg-white dark:bg-panel-dark rounded-xl p-6 max-w-md shadow-xl" onClick={e => e.stopPropagation()}>
+                  <div className="bg-card rounded-md p-6 max-w-md shadow-xl" onClick={e => e.stopPropagation()}>
                     <h3 className="text-lg font-semibold mb-2" style={{ color: 'var(--color-text-primary)' }}>Delete Skill?</h3>
                     <p className="text-sm mb-4" style={{ color: 'var(--color-text-muted)' }}>
                       Are you sure you want to delete "{skill.name}"? This action cannot be undone.
@@ -2641,7 +2641,7 @@ const SkillConfigView = ({ skill, onClose, onDelete }: SkillConfigViewProps) => 
                     <div className="flex justify-end gap-2">
                       <button
                         onClick={() => setShowDeleteConfirm(false)}
-                        className="px-4 py-2 rounded-lg text-sm font-medium bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-300"
+                        className="px-4 py-2 rounded-md text-sm font-medium bg-muted text-muted-foreground"
                       >
                         Cancel
                       </button>
@@ -2650,7 +2650,7 @@ const SkillConfigView = ({ skill, onClose, onDelete }: SkillConfigViewProps) => 
                           if (onDelete) onDelete(skill.skill_id);
                           setShowDeleteConfirm(false);
                         }}
-                        className="px-4 py-2 rounded-lg text-sm font-medium text-white"
+                        className="px-4 py-2 rounded-md text-sm font-medium text-white"
                         style={{ backgroundColor: '#ef4444' }}
                       >
                         Delete
@@ -2663,7 +2663,7 @@ const SkillConfigView = ({ skill, onClose, onDelete }: SkillConfigViewProps) => 
 
             {/* Stats */}
             <div className="grid grid-cols-3 gap-4">
-              <div className="p-4 rounded-lg border" style={{
+              <div className="p-4 rounded-md border" style={{
                 backgroundColor: 'var(--color-background-light)',
                 borderColor: 'var(--color-border-dark)'
               }}>
@@ -2672,7 +2672,7 @@ const SkillConfigView = ({ skill, onClose, onDelete }: SkillConfigViewProps) => 
                   {skill.usage_count}
                 </div>
               </div>
-              <div className="p-4 rounded-lg border" style={{
+              <div className="p-4 rounded-md border" style={{
                 backgroundColor: 'var(--color-background-light)',
                 borderColor: 'var(--color-border-dark)'
               }}>
@@ -2681,7 +2681,7 @@ const SkillConfigView = ({ skill, onClose, onDelete }: SkillConfigViewProps) => 
                   {Math.round(skill.avg_success_rate * 100)}%
                 </div>
               </div>
-              <div className="p-4 rounded-lg border" style={{
+              <div className="p-4 rounded-md border" style={{
                 backgroundColor: 'var(--color-background-light)',
                 borderColor: 'var(--color-border-dark)'
               }}>
@@ -2732,7 +2732,7 @@ const SkillConfigView = ({ skill, onClose, onDelete }: SkillConfigViewProps) => 
             <h3 className="text-sm font-semibold mb-2" style={{ color: 'var(--color-text-primary)' }}>
               Auto-triggers
             </h3>
-            <div className="p-4 rounded-lg" style={{ backgroundColor: 'var(--color-background-light)' }}>
+            <div className="p-4 rounded-md" style={{ backgroundColor: 'var(--color-background-light)' }}>
               <ul className="space-y-2 mb-3">
                 {triggers.map((trigger, i) => (
                   <li key={i} className="flex items-center gap-2 text-sm group" style={{ color: 'var(--color-text-primary)' }}>
@@ -2754,7 +2754,7 @@ const SkillConfigView = ({ skill, onClose, onDelete }: SkillConfigViewProps) => 
                   onChange={(e) => setNewTrigger(e.target.value)}
                   onKeyDown={(e) => e.key === 'Enter' && addTrigger()}
                   placeholder="Add a trigger..."
-                  className="flex-1 px-3 py-2 rounded-lg text-sm border"
+                  className="flex-1 px-3 py-2 rounded-md text-sm border"
                   style={{
                     backgroundColor: 'var(--color-background-dark)',
                     borderColor: 'var(--color-border-dark)',
@@ -2763,7 +2763,7 @@ const SkillConfigView = ({ skill, onClose, onDelete }: SkillConfigViewProps) => 
                 />
                 <button
                   onClick={addTrigger}
-                  className="px-3 py-2 rounded-lg text-sm font-medium"
+                  className="px-3 py-2 rounded-md text-sm font-medium"
                   style={{ backgroundColor: 'var(--color-primary)', color: 'white' }}
                 >
                   <Plus size={16} />
@@ -2782,7 +2782,7 @@ const SkillConfigView = ({ skill, onClose, onDelete }: SkillConfigViewProps) => 
               value={instructions}
               onChange={(e) => setInstructions(e.target.value)}
               rows={20}
-              className="w-full p-4 rounded-lg font-mono text-xs border resize-y"
+              className="w-full p-4 rounded-md font-mono text-xs border resize-y"
               style={{
                 backgroundColor: 'white',
                 borderColor: 'var(--color-border-dark)',
@@ -2802,7 +2802,7 @@ const SkillConfigView = ({ skill, onClose, onDelete }: SkillConfigViewProps) => 
                 {skill.allowed_tools.map((tool) => (
                   <span
                     key={tool}
-                    className="text-xs px-2.5 py-1 rounded-lg font-mono"
+                    className="text-xs px-2.5 py-1 rounded-md font-mono"
                     style={{
                       backgroundColor: 'var(--color-primary)',
                       color: 'white',
@@ -3267,31 +3267,31 @@ const AgentLoadouts = () => {
 
 
   return (
-    <div className="h-full flex flex-col bg-gray-50 dark:bg-background-dark">
+    <div className="h-full flex flex-col bg-background">
       {/* Header */}
 
 
       {/* Three Column Layout */}
       <div className="flex-1 flex overflow-hidden">
         {/* Left Sidebar - Agent/Tool List (25%) */}
-        <div className="w-[25%] flex flex-col border-r border-gray-200 dark:border-border-dark bg-white dark:bg-panel-dark">
+        <div className="w-[25%] flex flex-col border-r border-border bg-card">
           {/* Sidebar Header */}
-          <div className="p-4 border-b border-gray-200 dark:border-border-dark bg-white/50 dark:bg-panel-dark/50 backdrop-blur-sm sticky top-0 z-10">
+          <div className="p-4 border-b border-border bg-card/50 backdrop-blur-sm sticky top-0 z-10">
             <div className="flex items-center justify-between mb-4">
-              <h2 className="text-lg font-bold text-gray-900 dark:text-white font-display">
+              <h2 className="text-lg font-bold text-foreground font-display">
                 Agent Loadouts
               </h2>
             </div>
 
             {/* Search Bar */}
             <div className="relative group">
-              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 group-focus-within:text-primary transition-colors" size={16} />
+              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground group-focus-within:text-primary transition-colors" size={16} />
               <input
                 type="text"
                 placeholder="Search agents..."
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
-                className="w-full pl-10 pr-4 py-2.5 bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-800 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all shadow-sm"
+                className="w-full pl-10 pr-4 py-2.5 bg-card border border-border rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all shadow-sm"
               />
             </div>
           </div>
@@ -3316,7 +3316,7 @@ const AgentLoadouts = () => {
                     setEditingAgent(null);
                     setShowTypeSelector(true);
                   }}
-                  className="px-3 py-1.5 rounded-lg text-xs font-medium text-white flex items-center gap-1.5"
+                  className="px-3 py-1.5 rounded-md text-xs font-medium text-white flex items-center gap-1.5"
                   style={{ backgroundColor: 'var(--color-primary)' }}
                   onMouseEnter={(e) => e.currentTarget.style.opacity = '0.9'}
                   onMouseLeave={(e) => e.currentTarget.style.opacity = '1'}
@@ -3340,7 +3340,7 @@ const AgentLoadouts = () => {
                   </p>
                   <button
                     onClick={() => setSelectedItem({ type: 'template', category: 'agent' })}
-                    className="text-xs px-3 py-1.5 rounded-lg"
+                    className="text-xs px-3 py-1.5 rounded-md"
                     style={{ color: 'var(--color-primary)', backgroundColor: 'var(--color-background-dark)' }}
                   >
                     View Templates
@@ -3377,16 +3377,16 @@ const AgentLoadouts = () => {
                             <div
                               key={agent.id}
                               onClick={() => setSelectedItem({ type: 'agent', data: agent })}
-                              className={`group p-3 rounded-xl border cursor-pointer transition-all duration-200 hover:shadow-md ${selectedItem?.type === 'agent' && selectedItem.data.id === agent.id
-                                ? 'bg-white dark:bg-gray-800 border-primary shadow-sm ring-1 ring-primary/20'
-                                : 'bg-white dark:bg-gray-900 border-gray-200 dark:border-gray-800 hover:border-primary/50'
+                              className={`group p-3 rounded-md border cursor-pointer transition-all duration-200 hover:shadow-md ${selectedItem?.type === 'agent' && selectedItem.data.id === agent.id
+                                ? 'bg-card border-primary shadow-sm ring-1 ring-primary/20'
+                                : 'bg-card border-border hover:border-primary/50'
                                 }`}
                             >
                               <div className="flex items-start gap-3">
                                 <div
-                                  className={`w-10 h-10 rounded-lg flex items-center justify-center flex-shrink-0 transition-colors ${selectedItem?.type === 'agent' && selectedItem.data.id === agent.id
+                                  className={`w-10 h-10 rounded-md flex items-center justify-center flex-shrink-0 transition-colors ${selectedItem?.type === 'agent' && selectedItem.data.id === agent.id
                                     ? 'bg-primary/10 text-primary'
-                                    : 'bg-gray-100 dark:bg-gray-800 text-gray-500 dark:text-gray-400 group-hover:text-primary group-hover:bg-primary/5'
+                                    : 'bg-muted text-muted-foreground group-hover:text-primary group-hover:bg-primary/5'
                                     }`}
                                 >
                                   <span className="material-symbols-outlined text-xl">
@@ -3395,11 +3395,11 @@ const AgentLoadouts = () => {
                                 </div>
                                 <div className="flex-1 min-w-0">
                                   <div className="flex items-center justify-between mb-0.5">
-                                    <h4 className="font-semibold text-sm truncate text-gray-900 dark:text-gray-100">
+                                    <h4 className="font-semibold text-sm truncate text-foreground">
                                       {agent.name}
                                     </h4>
                                   </div>
-                                  <p className="text-xs text-gray-500 dark:text-gray-400 line-clamp-2 leading-relaxed">
+                                  <p className="text-xs text-muted-foreground line-clamp-2 leading-relaxed">
                                     {agent.description}
                                   </p>
                                 </div>
@@ -3440,16 +3440,16 @@ const AgentLoadouts = () => {
                             <div
                               key={agent.id}
                               onClick={() => setSelectedItem({ type: 'agent', data: agent })}
-                              className={`group p-3 rounded-xl border cursor-pointer transition-all duration-200 hover:shadow-md ${selectedItem?.type === 'agent' && selectedItem.data.id === agent.id
-                                ? 'bg-white dark:bg-gray-800 border-primary shadow-sm ring-1 ring-primary/20'
-                                : 'bg-white dark:bg-gray-900 border-gray-200 dark:border-gray-800 hover:border-primary/50'
+                              className={`group p-3 rounded-md border cursor-pointer transition-all duration-200 hover:shadow-md ${selectedItem?.type === 'agent' && selectedItem.data.id === agent.id
+                                ? 'bg-card border-primary shadow-sm ring-1 ring-primary/20'
+                                : 'bg-card border-border hover:border-primary/50'
                                 }`}
                             >
                               <div className="flex items-start gap-3">
                                 <div
-                                  className={`w-10 h-10 rounded-lg flex items-center justify-center flex-shrink-0 transition-colors ${selectedItem?.type === 'agent' && selectedItem.data.id === agent.id
+                                  className={`w-10 h-10 rounded-md flex items-center justify-center flex-shrink-0 transition-colors ${selectedItem?.type === 'agent' && selectedItem.data.id === agent.id
                                     ? 'bg-primary/10 text-primary'
-                                    : 'bg-gray-100 dark:bg-gray-800 text-gray-500 dark:text-gray-400 group-hover:text-primary group-hover:bg-primary/5'
+                                    : 'bg-muted text-muted-foreground group-hover:text-primary group-hover:bg-primary/5'
                                     }`}
                                 >
                                   <span className="material-symbols-outlined text-xl">
@@ -3458,11 +3458,11 @@ const AgentLoadouts = () => {
                                 </div>
                                 <div className="flex-1 min-w-0">
                                   <div className="flex items-center justify-between mb-0.5">
-                                    <h4 className="font-semibold text-sm truncate text-gray-900 dark:text-gray-100">
+                                    <h4 className="font-semibold text-sm truncate text-foreground">
                                       {agent.name}
                                     </h4>
                                   </div>
-                                  <p className="text-xs text-gray-500 dark:text-gray-400 line-clamp-2 leading-relaxed">
+                                  <p className="text-xs text-muted-foreground line-clamp-2 leading-relaxed">
                                     {agent.description}
                                   </p>
                                 </div>
@@ -3481,7 +3481,7 @@ const AgentLoadouts = () => {
 
         {/* Center Panel - Preview (60%) */}
         {/* Center Panel - Preview (75%) */}
-        <div className="w-[75%] flex flex-col overflow-hidden bg-white dark:bg-panel-dark">
+        <div className="w-[75%] flex flex-col overflow-hidden bg-card">
           {selectedItem === null || selectedItem.type === 'template' ? (
             /* Template Gallery */
             <div className="flex-1 overflow-y-auto flex items-center justify-center p-12">
@@ -3545,7 +3545,7 @@ Always explain your code changes and provide context for your decisions.`,
                           setCameFromTypeSelector(false);
                           setShowAgentBuilder(true);
                         }}
-                        className="w-full p-5 rounded-xl border-2 border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-900 text-left transition-all duration-200 shadow-sm hover:border-primary hover:-translate-y-0.5 hover:shadow-lg"
+                        className="w-full p-5 rounded-md border-2 border-border bg-card text-left transition-all duration-200 shadow-sm hover:border-primary hover:-translate-y-0.5 hover:shadow-lg"
                       >
                         <div className="flex items-center gap-4">
                           <span className="material-symbols-outlined text-4xl" style={{ color: 'var(--color-primary)' }}>
@@ -3603,7 +3603,7 @@ Always provide balanced perspectives and acknowledge uncertainties when appropri
                           setCameFromTypeSelector(false);
                           setShowAgentBuilder(true);
                         }}
-                        className="w-full p-5 rounded-xl border-2 border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-900 text-left transition-all duration-200 shadow-sm hover:border-primary hover:-translate-y-0.5 hover:shadow-lg"
+                        className="w-full p-5 rounded-md border-2 border-border bg-card text-left transition-all duration-200 shadow-sm hover:border-primary hover:-translate-y-0.5 hover:shadow-lg"
                       >
                         <div className="flex items-center gap-4">
                           <span className="material-symbols-outlined text-4xl" style={{ color: 'var(--color-primary)' }}>
@@ -3661,7 +3661,7 @@ Focus on writing maintainable, reliable tests that catch real issues.`,
                           setCameFromTypeSelector(false);
                           setShowAgentBuilder(true);
                         }}
-                        className="w-full p-5 rounded-xl border-2 border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-900 text-left transition-all duration-200 shadow-sm hover:border-primary hover:-translate-y-0.5 hover:shadow-lg"
+                        className="w-full p-5 rounded-md border-2 border-border bg-card text-left transition-all duration-200 shadow-sm hover:border-primary hover:-translate-y-0.5 hover:shadow-lg"
                       >
                         <div className="flex items-center gap-4">
                           <span className="material-symbols-outlined text-4xl" style={{ color: 'var(--color-primary)' }}>
@@ -3686,7 +3686,7 @@ Focus on writing maintainable, reliable tests that catch real issues.`,
                           setEditingAgent(null);
                           setShowTypeSelector(true);
                         }}
-                        className="w-full py-3 rounded-xl text-sm font-semibold text-white flex items-center justify-center gap-2 transition-all shadow-lg"
+                        className="w-full py-3 rounded-md text-sm font-semibold text-white flex items-center justify-center gap-2 transition-all shadow-lg"
                         style={{ backgroundColor: 'var(--color-primary)' }}
                         onMouseEnter={(e) => {
                           e.currentTarget.style.transform = 'translateY(-2px)';
@@ -3753,7 +3753,7 @@ Focus on writing maintainable, reliable tests that catch real issues.`,
                           });
                           setShowToolBuilder(true);
                         }}
-                        className="w-full p-5 rounded-xl border-2 border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-900 text-left transition-all duration-200 shadow-sm hover:border-primary hover:-translate-y-0.5 hover:shadow-lg"
+                        className="w-full p-5 rounded-md border-2 border-border bg-card text-left transition-all duration-200 shadow-sm hover:border-primary hover:-translate-y-0.5 hover:shadow-lg"
                       >
                         <div className="flex items-center gap-4">
                           <span className="material-symbols-outlined text-4xl" style={{ color: 'var(--color-primary)' }}>
@@ -3810,7 +3810,7 @@ Focus on writing maintainable, reliable tests that catch real issues.`,
                           });
                           setShowToolBuilder(true);
                         }}
-                        className="w-full p-5 rounded-xl border-2 border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-900 text-left transition-all duration-200 shadow-sm hover:border-primary hover:-translate-y-0.5 hover:shadow-lg"
+                        className="w-full p-5 rounded-md border-2 border-border bg-card text-left transition-all duration-200 shadow-sm hover:border-primary hover:-translate-y-0.5 hover:shadow-lg"
                       >
                         <div className="flex items-center gap-4">
                           <span className="material-symbols-outlined text-4xl" style={{ color: 'var(--color-primary)' }}>
@@ -3870,7 +3870,7 @@ Focus on writing maintainable, reliable tests that catch real issues.`,
                           });
                           setShowToolBuilder(true);
                         }}
-                        className="w-full p-5 rounded-xl border-2 border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-900 text-left transition-all duration-200 shadow-sm hover:border-primary hover:-translate-y-0.5 hover:shadow-lg"
+                        className="w-full p-5 rounded-md border-2 border-border bg-card text-left transition-all duration-200 shadow-sm hover:border-primary hover:-translate-y-0.5 hover:shadow-lg"
                       >
                         <div className="flex items-center gap-4">
                           <span className="material-symbols-outlined text-4xl" style={{ color: 'var(--color-primary)' }}>
@@ -3897,7 +3897,7 @@ Focus on writing maintainable, reliable tests that catch real issues.`,
                           setSelectedItem({ type: 'template', category: 'tool' });
                           setShowToolBuilder(true);
                         }}
-                        className="w-full py-3 rounded-xl text-sm font-semibold text-white flex items-center justify-center gap-2 transition-all shadow-lg"
+                        className="w-full py-3 rounded-md text-sm font-semibold text-white flex items-center justify-center gap-2 transition-all shadow-lg"
                         style={{ backgroundColor: 'var(--color-primary)' }}
                         onMouseEnter={(e) => {
                           e.currentTarget.style.transform = 'translateY(-2px)';
@@ -3955,16 +3955,16 @@ Focus on writing maintainable, reliable tests that catch real issues.`,
         </div>
 
         {/* Right Sidebar - Custom Tools & Skills (25%) */}
-        <div className="w-[25%] flex flex-col border-l border-gray-200 dark:border-border-dark bg-white dark:bg-panel-dark">
+        <div className="w-[25%] flex flex-col border-l border-border bg-card">
           {/* Sidebar Header with Tabs */}
-          <div className="p-4 border-b border-gray-200 dark:border-border-dark bg-white/50 dark:bg-panel-dark/50 backdrop-blur-sm sticky top-0 z-10">
+          <div className="p-4 border-b border-border bg-card/50 backdrop-blur-sm sticky top-0 z-10">
             {/* Tab Headers */}
-            <div className="flex items-center gap-1 mb-4 p-1 rounded-lg" style={{ backgroundColor: 'var(--color-background-dark)' }}>
+            <div className="flex items-center gap-1 mb-4 p-1 rounded-md" style={{ backgroundColor: 'var(--color-background-dark)' }}>
               <button
                 onClick={() => setRightPanelTab('tools')}
                 className={`flex-1 px-3 py-2 rounded-md text-sm font-medium transition-all ${rightPanelTab === 'tools'
-                  ? 'bg-white dark:bg-gray-800 shadow-sm text-gray-900 dark:text-white'
-                  : 'text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300'
+                  ? 'bg-white dark:bg-gray-800 shadow-sm text-foreground'
+                  : 'text-muted-foreground hover:text-foreground'
                   }`}
               >
                 Custom Tools
@@ -3972,8 +3972,8 @@ Focus on writing maintainable, reliable tests that catch real issues.`,
               <button
                 onClick={() => setRightPanelTab('skills')}
                 className={`flex-1 px-3 py-2 rounded-md text-sm font-medium transition-all ${rightPanelTab === 'skills'
-                  ? 'bg-white dark:bg-gray-800 shadow-sm text-gray-900 dark:text-white'
-                  : 'text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300'
+                  ? 'bg-white dark:bg-gray-800 shadow-sm text-foreground'
+                  : 'text-muted-foreground hover:text-foreground'
                   }`}
               >
                 Claude Skills
@@ -3982,13 +3982,13 @@ Focus on writing maintainable, reliable tests that catch real issues.`,
 
             {/* Search Bar */}
             <div className="relative group">
-              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 group-focus-within:text-primary transition-colors" size={16} />
+              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground group-focus-within:text-primary transition-colors" size={16} />
               <input
                 type="text"
                 placeholder={rightPanelTab === 'tools' ? 'Search tools...' : 'Search skills...'}
                 value={rightPanelTab === 'tools' ? toolSearchQuery : skillSearchQuery}
                 onChange={(e) => rightPanelTab === 'tools' ? setToolSearchQuery(e.target.value) : setSkillSearchQuery(e.target.value)}
-                className="w-full pl-10 pr-4 py-2.5 bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-800 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all shadow-sm"
+                className="w-full pl-10 pr-4 py-2.5 bg-card border border-border rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all shadow-sm"
               />
             </div>
           </div>
@@ -4017,7 +4017,7 @@ Focus on writing maintainable, reliable tests that catch real issues.`,
                       setSelectedItem({ type: 'template', category: 'tool' });
                       setShowToolBuilder(true);
                     }}
-                    className="px-3 py-1.5 rounded-lg text-xs font-medium text-white flex items-center gap-1.5"
+                    className="px-3 py-1.5 rounded-md text-xs font-medium text-white flex items-center gap-1.5"
                     style={{ backgroundColor: 'var(--color-primary)' }}
                     onMouseEnter={(e) => e.currentTarget.style.opacity = '0.9'}
                     onMouseLeave={(e) => e.currentTarget.style.opacity = '1'}
@@ -4029,7 +4029,7 @@ Focus on writing maintainable, reliable tests that catch real issues.`,
 
                   {skillsWarning && (
                     <div
-                      className="mb-3 rounded-lg border px-3 py-2 text-xs flex items-start gap-2"
+                      className="mb-3 rounded-md border px-3 py-2 text-xs flex items-start gap-2"
                       style={{
                         borderColor: 'rgba(217, 119, 6, 0.28)',
                         backgroundColor: 'rgba(245, 158, 11, 0.10)',
@@ -4055,7 +4055,7 @@ Focus on writing maintainable, reliable tests that catch real issues.`,
                     </p>
                     <button
                       onClick={() => setSelectedItem({ type: 'template', category: 'tool' })}
-                      className="text-xs px-3 py-1.5 rounded-lg"
+                      className="text-xs px-3 py-1.5 rounded-md"
                       style={{ color: 'var(--color-primary)', backgroundColor: 'var(--color-background-dark)' }}
                     >
                       View Templates
@@ -4067,16 +4067,16 @@ Focus on writing maintainable, reliable tests that catch real issues.`,
                       <div
                         key={tool.tool_id}
                         onClick={() => setSelectedItem({ type: 'tool', data: tool })}
-                        className={`group p-3 rounded-xl border cursor-pointer transition-all duration-200 hover:shadow-md ${selectedItem?.type === 'tool' && selectedItem.data.tool_id === tool.tool_id
+                        className={`group p-3 rounded-md border cursor-pointer transition-all duration-200 hover:shadow-md ${selectedItem?.type === 'tool' && selectedItem.data.tool_id === tool.tool_id
                           ? 'bg-white dark:bg-gray-800 border-primary shadow-sm ring-1 ring-primary/20'
-                          : 'bg-white dark:bg-gray-900 border-gray-200 dark:border-gray-800 hover:border-primary/50'
+                          : 'bg-card border-border hover:border-primary/50'
                           }`}
                       >
                         <div className="flex items-start gap-3">
                           <div
-                            className={`w-10 h-10 rounded-lg flex items-center justify-center flex-shrink-0 transition-colors ${selectedItem?.type === 'tool' && selectedItem.data.tool_id === tool.tool_id
+                            className={`w-10 h-10 rounded-md flex items-center justify-center flex-shrink-0 transition-colors ${selectedItem?.type === 'tool' && selectedItem.data.tool_id === tool.tool_id
                               ? 'bg-primary/10 text-primary'
-                              : 'bg-gray-100 dark:bg-gray-800 text-gray-500 dark:text-gray-400 group-hover:text-primary group-hover:bg-primary/5'
+                              : 'bg-muted text-muted-foreground group-hover:text-primary group-hover:bg-primary/5'
                               }`}
                           >
                             <span className="material-symbols-outlined text-xl">
@@ -4085,11 +4085,11 @@ Focus on writing maintainable, reliable tests that catch real issues.`,
                           </div>
                           <div className="flex-1 min-w-0">
                             <div className="flex items-center justify-between mb-0.5">
-                              <h4 className="font-semibold text-sm truncate text-gray-900 dark:text-gray-100">
+                              <h4 className="font-semibold text-sm truncate text-foreground">
                                 {tool.name}
                               </h4>
                             </div>
-                            <p className="text-xs text-gray-500 dark:text-gray-400 line-clamp-2 leading-relaxed mb-1.5">
+                            <p className="text-xs text-muted-foreground line-clamp-2 leading-relaxed mb-1.5">
                               {tool.description}
                             </p>
                             <div className="flex items-center gap-1.5">
@@ -4097,7 +4097,7 @@ Focus on writing maintainable, reliable tests that catch real issues.`,
                                 {tool.tool_type}
                               </span>
                               {tool.usage_count > 0 && (
-                                <span className="text-xs text-gray-500 dark:text-gray-400 text-[0.65rem]">
+                                <span className="text-xs text-muted-foreground text-[0.65rem]">
                                   {tool.usage_count}x
                                 </span>
                               )}
@@ -4136,7 +4136,7 @@ Focus on writing maintainable, reliable tests that catch real issues.`,
                   </div>
                   <button
                     onClick={() => setShowSkillBuilder(true)}
-                    className="p-1.5 rounded-lg transition-colors flex items-center gap-1"
+                    className="p-1.5 rounded-md transition-colors flex items-center gap-1"
                     style={{ backgroundColor: 'var(--color-primary)', color: 'white' }}
                     title="New Skill"
                   >
@@ -4157,7 +4157,7 @@ Focus on writing maintainable, reliable tests that catch real issues.`,
                     </p>
                     <button
                       onClick={() => setShowSkillBuilder(true)}
-                      className="text-xs px-3 py-1.5 rounded-lg flex items-center gap-1 mx-auto"
+                      className="text-xs px-3 py-1.5 rounded-md flex items-center gap-1 mx-auto"
                       style={{ backgroundColor: 'var(--color-primary)', color: 'white' }}
                     >
                       <Plus size={12} />
@@ -4170,7 +4170,7 @@ Focus on writing maintainable, reliable tests that catch real issues.`,
                       <div key={category}>
                         {/* Category Header */}
                         <div className="flex items-center gap-2 mb-2 px-2">
-                          <span className="text-xs font-semibold uppercase tracking-wider text-gray-900 dark:text-gray-100">
+                          <span className="text-xs font-semibold uppercase tracking-wider text-foreground">
                             {category}
                           </span>
                           <span className="text-xs px-1.5 py-0.5 rounded" style={{
@@ -4186,31 +4186,31 @@ Focus on writing maintainable, reliable tests that catch real issues.`,
                             <div
                               key={skill.skill_id}
                               onClick={() => fetchSkillDetail(skill.skill_id)}
-                              className={`group p-3 rounded-xl border cursor-pointer transition-all duration-200 hover:shadow-md ${selectedItem?.type === 'skill' && selectedItem.data.skill_id === skill.skill_id
-                                ? 'bg-white dark:bg-gray-800 border-primary shadow-sm ring-1 ring-primary/20'
-                                : 'bg-white dark:bg-gray-900 border-gray-200 dark:border-gray-800 hover:border-primary/50'
+                              className={`group p-3 rounded-md border cursor-pointer transition-all duration-200 hover:shadow-md ${selectedItem?.type === 'skill' && selectedItem.data.skill_id === skill.skill_id
+                                ? 'bg-card border-primary shadow-sm ring-1 ring-primary/20'
+                                : 'bg-card border-border hover:border-primary/50'
                                 }`}
                             >
                               <div className="flex items-start gap-3">
                                 <div
-                                  className={`w-10 h-10 rounded-lg flex items-center justify-center flex-shrink-0 transition-colors ${selectedItem?.type === 'skill' && selectedItem.data.skill_id === skill.skill_id
+                                  className={`w-10 h-10 rounded-md flex items-center justify-center flex-shrink-0 transition-colors ${selectedItem?.type === 'skill' && selectedItem.data.skill_id === skill.skill_id
                                     ? 'bg-primary/10 text-primary'
-                                    : 'bg-gray-100 dark:bg-gray-800 text-gray-500 dark:text-gray-400 group-hover:text-primary group-hover:bg-primary/5'
+                                    : 'bg-muted text-muted-foreground group-hover:text-primary group-hover:bg-primary/5'
                                     }`}
                                 >
                                   <BookOpen className="w-5 h-5" />
                                 </div>
                                 <div className="flex-1 min-w-0">
                                   <div className="flex items-center justify-between mb-0.5">
-                                    <h4 className="font-semibold text-sm truncate text-gray-900 dark:text-gray-100">
+                                    <h4 className="font-semibold text-sm truncate text-foreground">
                                       {skill.name}
                                     </h4>
                                   </div>
-                                  <p className="text-xs text-gray-500 dark:text-gray-400 line-clamp-2 leading-relaxed mb-1.5">
+                                  <p className="text-xs text-muted-foreground line-clamp-2 leading-relaxed mb-1.5">
                                     {skill.description}
                                   </p>
                                   {skill.usage_count > 0 && (
-                                    <span className="text-xs text-gray-500 dark:text-gray-400 text-[0.65rem]">
+                                    <span className="text-xs text-muted-foreground text-[0.65rem]">
                                       {skill.usage_count} uses
                                     </span>
                                   )}
@@ -4233,7 +4233,7 @@ Focus on writing maintainable, reliable tests that catch real issues.`,
       {
         showTypeSelector && (
           <div className="fixed inset-0 bg-black/70 backdrop-blur-sm flex items-center justify-center z-50 p-4">
-            <div className="bg-white dark:bg-panel-dark border-2 rounded-xl w-full max-w-2xl shadow-2xl" style={{ borderColor: 'var(--color-primary)', boxShadow: '0 20px 25px -5px rgba(46, 92, 138, 0.3), 0 10px 10px -5px rgba(46, 92, 138, 0.15)' }}>
+            <div className="bg-card border-2 rounded-md w-full max-w-2xl shadow-2xl" style={{ borderColor: 'var(--color-primary)', boxShadow: '0 20px 25px -5px rgba(46, 92, 138, 0.3), 0 10px 10px -5px rgba(46, 92, 138, 0.15)' }}>
               {/* Header */}
               <div className="p-6 border-b" style={{
                 backgroundColor: 'var(--color-primary)',
@@ -4248,7 +4248,7 @@ Focus on writing maintainable, reliable tests that catch real issues.`,
                   </div>
                   <button
                     onClick={() => setShowTypeSelector(false)}
-                    className="p-2 transition-all text-white/90 hover:text-white hover:bg-white/15 rounded-lg"
+                    className="p-2 transition-all text-white/90 hover:text-white hover:bg-white/15 rounded-md"
                     style={{ textShadow: '0 1px 2px rgba(0, 0, 0, 0.15)' }}
                     title="Close"
                   >
@@ -4268,13 +4268,13 @@ Focus on writing maintainable, reliable tests that catch real issues.`,
                       setCameFromTypeSelector(true);
                       setShowAgentBuilder(true);
                     }}
-                    className="p-4 border-2 border-gray-200 dark:border-border-dark rounded-lg transition-all duration-200 text-left hover:border-primary hover:shadow-md hover:scale-[1.02]"
+                    className="p-4 border-2 border-border rounded-md transition-all duration-200 text-left hover:border-primary hover:shadow-md hover:scale-[1.02]"
                     style={{
                       backgroundColor: 'var(--color-panel-dark)'
                     }}
                   >
                     <div className="flex items-center gap-3 mb-3">
-                      <div className="p-2 rounded-lg" style={{ backgroundColor: 'var(--color-input-background)' }}>
+                      <div className="p-2 rounded-md" style={{ backgroundColor: 'var(--color-input-background)' }}>
                         <span className="material-symbols-outlined text-xl" style={{ color: 'var(--color-primary)' }}>terminal</span>
                       </div>
                       <h3 className="text-lg font-semibold" style={{ color: 'var(--color-text-primary)' }}>Regular Agent</h3>
@@ -4299,13 +4299,13 @@ Focus on writing maintainable, reliable tests that catch real issues.`,
                       setCameFromTypeSelector(true);
                       setShowAgentBuilder(true);
                     }}
-                    className="p-4 border-2 border-gray-200 dark:border-border-dark rounded-lg transition-all duration-200 text-left hover:border-primary hover:shadow-md hover:scale-[1.02]"
+                    className="p-4 border-2 border-border rounded-md transition-all duration-200 text-left hover:border-primary hover:shadow-md hover:scale-[1.02]"
                     style={{
                       backgroundColor: 'var(--color-panel-dark)'
                     }}
                   >
                     <div className="flex items-center gap-3 mb-3">
-                      <div className="p-2 rounded-lg" style={{ backgroundColor: 'var(--color-input-background)' }}>
+                      <div className="p-2 rounded-md" style={{ backgroundColor: 'var(--color-input-background)' }}>
                         <span className="material-symbols-outlined text-xl" style={{ color: 'var(--color-primary)' }}>psychology</span>
                       </div>
                       <h3 className="text-lg font-semibold" style={{ color: 'var(--color-text-primary)' }}>Deep Agent</h3>
@@ -4325,7 +4325,7 @@ Focus on writing maintainable, reliable tests that catch real issues.`,
               </div>
 
               {/* Footer */}
-              <div className="flex items-center justify-end gap-3 p-6 border-t border-gray-200 dark:border-border-dark">
+              <div className="flex items-center justify-end gap-3 p-6 border-t border-border">
                 <button
                   onClick={() => setShowTypeSelector(false)}
                   className="px-4 py-2 transition-colors"
@@ -4357,7 +4357,7 @@ Focus on writing maintainable, reliable tests that catch real issues.`,
             aria-modal="true"
           >
             <div
-              className="bg-white dark:bg-panel-dark border-2 rounded-xl w-full max-w-full md:max-w-6xl h-full md:h-[90vh] flex flex-col overflow-hidden"
+              className="bg-card border-2 rounded-md w-full max-w-full md:max-w-6xl h-full md:h-[90vh] flex flex-col overflow-hidden"
               style={{ borderColor: 'var(--color-primary)', boxShadow: '0 20px 25px -5px rgba(46, 92, 138, 0.3), 0 10px 10px -5px rgba(46, 92, 138, 0.15)' }}
               onClick={(e) => e.stopPropagation()}
             >
@@ -4418,7 +4418,7 @@ Focus on writing maintainable, reliable tests that catch real issues.`,
             aria-modal="true"
           >
             <div
-              className="bg-white dark:bg-panel-dark border-2 rounded-xl w-full max-w-full md:max-w-6xl h-full md:h-[90vh] flex flex-col overflow-hidden"
+              className="bg-card border-2 rounded-md w-full max-w-full md:max-w-6xl h-full md:h-[90vh] flex flex-col overflow-hidden"
               style={{ borderColor: 'var(--color-primary)', boxShadow: '0 20px 25px -5px rgba(46, 92, 138, 0.3), 0 10px 10px -5px rgba(46, 92, 138, 0.15)' }}
               onClick={(e) => e.stopPropagation()}
             >

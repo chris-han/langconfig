@@ -168,7 +168,7 @@ export const MemoryView: React.FC<MemoryViewProps> = ({ workflowId, nodes }) => 
                   <button
                     onClick={loadLongTermMemory}
                     disabled={loading}
-                    className="p-2 hover:bg-gray-100 dark:hover:bg-white/10 rounded-lg transition-colors"
+                    className="p-2 hover:bg-gray-100 dark:hover:bg-white/10 rounded-md transition-colors"
                     title="Refresh"
                   >
                     <RefreshCw className={`w-4 h-4 ${loading ? 'animate-spin' : ''}`} style={{ color: 'var(--color-text-muted)' }} />
@@ -185,7 +185,7 @@ export const MemoryView: React.FC<MemoryViewProps> = ({ workflowId, nodes }) => 
               {!showAddForm && (
                 <button
                   onClick={() => setShowAddForm(true)}
-                  className="w-full mb-4 p-4 border-2 border-dashed rounded-lg hover:border-primary transition-colors flex items-center justify-center gap-2"
+                  className="w-full mb-4 p-4 border-2 border-dashed rounded-md hover:border-primary transition-colors flex items-center justify-center gap-2"
                   style={{ borderColor: 'var(--color-border-dark)', color: 'var(--color-text-muted)' }}
                 >
                   <Plus className="w-4 h-4" />
@@ -195,7 +195,7 @@ export const MemoryView: React.FC<MemoryViewProps> = ({ workflowId, nodes }) => 
 
               {/* Add Memory Form */}
               {showAddForm && (
-                <div className="mb-4 p-4 border border-primary rounded-lg bg-white dark:bg-panel-dark">
+                <div className="mb-4 p-4 border border-primary rounded-md bg-white dark:bg-panel-dark">
                   <h4 className="font-semibold mb-3">Add Memory Item</h4>
                   <div className="space-y-3">
                     <div>
@@ -205,7 +205,7 @@ export const MemoryView: React.FC<MemoryViewProps> = ({ workflowId, nodes }) => 
                         value={newKey}
                         onChange={(e) => setNewKey(e.target.value)}
                         placeholder="e.g., user_preferences, api_config"
-                        className="w-full px-3 py-2 border border-gray-300 dark:border-border-dark rounded-lg focus:outline-none focus:ring-2 focus:ring-primary"
+                        className="w-full px-3 py-2 border border-gray-300 dark:border-border-dark rounded-md focus:outline-none focus:ring-2 focus:ring-primary"
                         style={{
                           backgroundColor: 'var(--color-input-background)',
                           color: 'var(--color-text-primary)'
@@ -219,7 +219,7 @@ export const MemoryView: React.FC<MemoryViewProps> = ({ workflowId, nodes }) => 
                         onChange={(e) => setNewValue(e.target.value)}
                         placeholder='{"key": "value"} or plain text'
                         rows={4}
-                        className="w-full px-3 py-2 border border-gray-300 dark:border-border-dark rounded-lg font-mono text-sm focus:outline-none focus:ring-2 focus:ring-primary"
+                        className="w-full px-3 py-2 border border-gray-300 dark:border-border-dark rounded-md font-mono text-sm focus:outline-none focus:ring-2 focus:ring-primary"
                         style={{
                           backgroundColor: 'var(--color-input-background)',
                           color: 'var(--color-text-primary)'
@@ -229,7 +229,7 @@ export const MemoryView: React.FC<MemoryViewProps> = ({ workflowId, nodes }) => 
                     <div className="flex gap-2">
                       <button
                         onClick={addMemoryItem}
-                        className="px-4 py-2 bg-primary text-white rounded-lg hover:opacity-90 transition-all font-semibold"
+                        className="px-4 py-2 bg-primary text-white rounded-md hover:opacity-90 transition-all font-semibold"
                       >
                         Add
                       </button>
@@ -239,7 +239,7 @@ export const MemoryView: React.FC<MemoryViewProps> = ({ workflowId, nodes }) => 
                           setNewKey('');
                           setNewValue('');
                         }}
-                        className="px-4 py-2 bg-white dark:bg-background-dark border border-gray-300 dark:border-border-dark rounded-lg hover:bg-gray-50 dark:hover:bg-white/5 transition-colors font-medium text-text-primary dark:text-text-primary"
+                        className="px-4 py-2 bg-white dark:bg-background-dark border border-gray-300 dark:border-border-dark rounded-md hover:bg-gray-50 dark:hover:bg-white/5 transition-colors font-medium text-text-primary dark:text-text-primary"
                       >
                         Cancel
                       </button>
@@ -258,7 +258,7 @@ export const MemoryView: React.FC<MemoryViewProps> = ({ workflowId, nodes }) => 
                   </div>
 
                   {/* Memory System Explanation - shown when empty */}
-                  <div className="max-w-2xl mx-auto p-4 rounded-lg bg-white dark:bg-panel-dark border border-gray-200 dark:border-border-dark">
+                  <div className="max-w-2xl mx-auto p-4 rounded-md bg-white dark:bg-panel-dark border border-gray-200 dark:border-border-dark">
                     <div className="flex items-start gap-3">
                       <Info className="w-5 h-5 text-primary flex-shrink-0 mt-0.5" />
                       <div className="text-sm text-text-primary dark:text-text-primary">
@@ -277,7 +277,7 @@ export const MemoryView: React.FC<MemoryViewProps> = ({ workflowId, nodes }) => 
               {longTermMemory.map((item, index) => (
                 <div
                   key={index}
-                  className="mb-3 p-4 border rounded-lg hover:border-primary transition-colors"
+                  className="mb-3 p-4 border rounded-md hover:border-primary transition-colors"
                   style={{ borderColor: 'var(--color-border-dark)' }}
                 >
                   <div className="flex items-start justify-between mb-2">
@@ -293,13 +293,13 @@ export const MemoryView: React.FC<MemoryViewProps> = ({ workflowId, nodes }) => 
                     </div>
                     <button
                       onClick={() => deleteMemoryItem(item.key)}
-                      className="p-2 hover:bg-red-100 dark:hover:bg-red-900/30 rounded-lg transition-colors"
+                      className="p-2 hover:bg-red-100 dark:hover:bg-red-900/30 rounded-md transition-colors"
                       title="Delete"
                     >
                       <Trash2 className="w-4 h-4 text-red-600 dark:text-red-400" />
                     </button>
                   </div>
-                  <div className="mt-2 p-3 rounded-lg bg-white dark:bg-panel-dark border border-gray-200 dark:border-border-dark">
+                  <div className="mt-2 p-3 rounded-md bg-white dark:bg-panel-dark border border-gray-200 dark:border-border-dark">
                     <pre className="text-xs overflow-x-auto whitespace-pre-wrap" style={{ color: 'var(--color-text-primary)' }}>
                       {JSON.stringify(item.value, null, 2)}
                     </pre>
@@ -327,7 +327,7 @@ export const MemoryView: React.FC<MemoryViewProps> = ({ workflowId, nodes }) => 
               {nodes.map((node) => (
                 <div
                   key={node.id}
-                  className="mb-3 p-4 border rounded-lg"
+                  className="mb-3 p-4 border rounded-md"
                   style={{ borderColor: 'var(--color-border-dark)' }}
                 >
                   <div className="flex items-start justify-between mb-3">
@@ -385,7 +385,7 @@ export const MemoryView: React.FC<MemoryViewProps> = ({ workflowId, nodes }) => 
 
               <div className="space-y-4">
                 {/* RAG Summary */}
-                <div className="p-4 border rounded-lg" style={{ borderColor: 'var(--color-border-dark)' }}>
+                <div className="p-4 border rounded-md" style={{ borderColor: 'var(--color-border-dark)' }}>
                   <h4 className="font-semibold mb-3">Agents with Codebase Search</h4>
                   {agentsWithRAG.length === 0 ? (
                     <p className="text-sm" style={{ color: 'var(--color-text-muted)' }}>
@@ -403,7 +403,7 @@ export const MemoryView: React.FC<MemoryViewProps> = ({ workflowId, nodes }) => 
                 </div>
 
                 {/* Memory Tools Summary */}
-                <div className="p-4 border rounded-lg" style={{ borderColor: 'var(--color-border-dark)' }}>
+                <div className="p-4 border rounded-md" style={{ borderColor: 'var(--color-border-dark)' }}>
                   <h4 className="font-semibold mb-3">Agents with Memory Tools</h4>
                   {agentsWithMemory.length === 0 ? (
                     <p className="text-sm" style={{ color: 'var(--color-text-muted)' }}>
@@ -421,7 +421,7 @@ export const MemoryView: React.FC<MemoryViewProps> = ({ workflowId, nodes }) => 
                 </div>
 
                 {/* Knowledge Management Link */}
-                <div className="p-4 rounded-lg bg-white dark:bg-panel-dark border border-gray-200 dark:border-border-dark">
+                <div className="p-4 rounded-md bg-white dark:bg-panel-dark border border-gray-200 dark:border-border-dark">
                   <div className="flex items-start gap-3">
                     <Info className="w-5 h-5 text-primary flex-shrink-0 mt-0.5" />
                     <div className="text-sm text-text-primary dark:text-text-primary">

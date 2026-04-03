@@ -619,7 +619,7 @@ function InspectorPane({ selectedItem, graphSelection }: { selectedItem: TreeNod
                 <CardContent className="space-y-3 px-4">
                   <div className="text-xs font-semibold uppercase tracking-[0.18em] text-muted-foreground">Fields</div>
                   {propertyRows.map((property: any) => (
-                    <div key={property.name} className="grid grid-cols-[1fr_auto] gap-3 rounded-lg border border-primary/20 bg-muted/40 px-3 py-3">
+                    <div key={property.name} className="grid grid-cols-[1fr_auto] gap-3 rounded-md border border-primary/20 bg-muted/40 px-3 py-3">
                       <div>
                         <div className="text-sm font-medium text-foreground">{property.name}</div>
                         <div className="mt-1 text-xs text-muted-foreground">{property.type}</div>

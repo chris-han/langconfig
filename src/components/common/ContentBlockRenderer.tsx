@@ -146,7 +146,7 @@ export const ContentBlockRenderer: React.FC<ContentBlockRendererProps> = ({
             <img
               src={fullscreenImage}
               alt="Fullscreen view"
-              className="max-w-full max-h-full object-contain rounded-lg flex-shrink"
+              className="max-w-full max-h-full object-contain rounded-md flex-shrink"
               style={{ minHeight: 0 }}
               onClick={(e) => e.stopPropagation()}
             />
@@ -160,7 +160,7 @@ export const ContentBlockRenderer: React.FC<ContentBlockRendererProps> = ({
                   {showToolInput ? 'Hide Tool Input' : 'View Tool Input'}
                 </button>
                 {showToolInput && (
-                  <pre className="mt-2 p-3 rounded-lg bg-black/60 text-gray-200 text-xs font-mono overflow-auto max-h-60 whitespace-pre-wrap break-words border border-white/10">
+                  <pre className="mt-2 p-3 rounded-md bg-black/60 text-gray-200 text-xs font-mono overflow-auto max-h-60 whitespace-pre-wrap break-words border border-white/10">
                     {toolInput}
                   </pre>
                 )}

@@ -102,7 +102,7 @@ export default function SessionDocumentsPanel({ sessionId, refreshTrigger }: Ses
           {documents.map(doc => (
             <div
               key={doc.id}
-              className="flex items-center justify-between p-3 rounded-lg border"
+              className="flex items-center justify-between p-3 rounded-md border"
               style={{
                 backgroundColor: 'white',
                 borderColor: 'var(--color-border-dark)'
@@ -151,7 +151,7 @@ export default function SessionDocumentsPanel({ sessionId, refreshTrigger }: Ses
               </div>
               <button
                 onClick={() => handleDelete(doc.id)}
-                className="p-2 rounded-lg transition-colors hover:bg-red-50 flex-shrink-0"
+                className="p-2 rounded-md transition-colors hover:bg-red-50 flex-shrink-0"
                 title="Delete document"
                 style={{ color: '#ef4444' }}
               >

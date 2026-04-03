@@ -263,7 +263,7 @@ interface MetricCardProps {
 function MetricCard({ icon, label, value, warning = false }: MetricCardProps) {
   return (
     <div
-      className="p-3 rounded-lg border"
+      className="p-3 rounded-md border"
       style={{
         backgroundColor: warning ? 'rgba(245, 158, 11, 0.05)' : 'white',
         borderColor: warning ? 'rgba(245, 158, 11, 0.3)' : 'var(--color-border-dark)',

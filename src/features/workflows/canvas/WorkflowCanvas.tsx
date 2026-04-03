@@ -1929,9 +1929,9 @@ if __name__ == "__main__":
   return (
     <SelectionProvider>
       <WorkflowCanvasContext.Provider value={{ updateNodeConfig, openNodeContextMenu }}>
-        <div className="flex-1 flex flex-col overflow-hidden">
-        {/* Workflow Toolbar - Always visible so users can select workflows even with empty canvas */}
-        <WorkflowToolbar
+        <div className="flex h-full min-h-0 flex-col overflow-hidden bg-background text-foreground">
+          {/* Workflow Toolbar - Always visible so users can select workflows even with empty canvas */}
+          <WorkflowToolbar
           workflowName={workflowName}
           editedName={editedName}
           setEditedName={setEditedName}
@@ -2041,7 +2041,7 @@ if __name__ == "__main__":
                   <Controls
                     showInteractive={false}
                     position="top-left"
-                    className="!bg-sidebar !border-sidebar-border !rounded-lg !shadow-lg"
+                    className="!bg-sidebar !border-sidebar-border !rounded-md !shadow-lg"
                   />
 
                   {/* Control Buttons - Top Right */}
@@ -2064,7 +2064,7 @@ if __name__ == "__main__":
                       nodeColor={() => 'var(--color-primary)'}
                       maskColor="rgba(0, 0, 0, 0.1)"
                       position="bottom-left"
-                      className="!bg-sidebar !border-sidebar-border !rounded-lg !shadow-lg"
+                      className="!bg-sidebar !border-sidebar-border !rounded-md !shadow-lg"
                       style={{
                         backgroundColor: 'var(--sidebar)',
                         width: '120px',
@@ -2272,6 +2272,35 @@ if __name__ == "__main__":
           />
 
         </div>
+
+        {/* Status Footer */}
+        <footer className="flex h-6 items-center justify-between border-t bg-card px-3 text-xs text-muted-foreground">
+          <div className="flex items-center gap-4">
+            <span>Workflow: {workflowName}</span>
+            {currentWorkflowId && <span>ID #{currentWorkflowId}</span>}
+            <span>{nodes.length} node{nodes.length !== 1 ? 's' : ''}</span>
+          </div>
+          <div className="flex items-center gap-4">
+            <span className="flex items-center gap-1">
+              <span className={`h-2 w-2 rounded-full ${
+                executionStatus.state === 'running'
+                  ? 'bg-emerald-400 animate-pulse'
+                  : executionStatus.state === 'completed'
+                  ? 'bg-emerald-400'
+                  : executionStatus.state === 'failed'
+                  ? 'bg-destructive'
+                  : 'bg-muted-foreground/30'
+              }`} />
+              {executionStatus.state === 'running'
+                ? 'Running'
+                : executionStatus.state === 'completed'
+                ? 'Completed'
+                : executionStatus.state === 'failed'
+                ? 'Failed'
+                : 'Idle'}
+            </span>
+          </div>
+        </footer>
 
         {/* Debug Workflow Modal */}
         <DebugWorkflowDialog

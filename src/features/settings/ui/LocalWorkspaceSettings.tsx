@@ -77,7 +77,7 @@ export default function LocalWorkspaceSettings({
             <button
               onClick={handleBrowse}
               disabled={isSelectingFolder}
-              className="rounded-lg border border-border bg-background px-4 py-2 text-sm font-medium transition-colors hover:bg-white/5 disabled:opacity-50"
+              className="rounded-md border border-border bg-background px-4 py-2 text-sm font-medium transition-colors hover:bg-white/5 disabled:opacity-50"
               style={{ color: 'var(--color-text-primary)' }}
             >
               {isSelectingFolder ? 'Selecting...' : 'Browse...'}
@@ -139,7 +139,7 @@ export default function LocalWorkspaceSettings({
 
         {/* Warning Notice */}
         {settings.allowWrite && !settings.requireApproval && (
-          <div className="flex gap-3 p-4 bg-yellow-50 dark:bg-yellow-500/10 border border-yellow-200 dark:border-yellow-500/30 rounded-lg">
+          <div className="flex gap-3 p-4 bg-yellow-50 dark:bg-yellow-500/10 border border-yellow-200 dark:border-yellow-500/30 rounded-md">
             <span className="material-symbols-outlined text-yellow-600 dark:text-yellow-400 text-xl">
               warning
             </span>

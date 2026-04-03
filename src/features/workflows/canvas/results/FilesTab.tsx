@@ -381,7 +381,7 @@ export default function FilesTab({
           </p>
           <button
             onClick={fetchFiles}
-            className="mt-4 px-4 py-2 rounded-lg bg-primary/10 hover:bg-primary/20 transition-colors text-sm font-medium"
+            className="mt-4 px-4 py-2 rounded-md bg-primary/10 hover:bg-primary/20 transition-colors text-sm font-medium"
             style={{ color: 'var(--color-primary)' }}
           >
             Retry
@@ -461,7 +461,7 @@ export default function FilesTab({
         <div className="flex items-center justify-between px-6 py-3 border-b" style={{ borderColor: 'var(--color-border-dark)' }}>
           <div className="flex items-center gap-4">
             {/* View Mode Tabs */}
-            <div className="flex rounded-lg overflow-hidden border" style={{ borderColor: 'var(--color-border-dark)' }}>
+            <div className="flex rounded-md overflow-hidden border" style={{ borderColor: 'var(--color-border-dark)' }}>
               <button
                 onClick={() => setViewMode('list')}
                 className={`px-3 py-1.5 text-sm transition-colors ${
@@ -518,7 +518,7 @@ export default function FilesTab({
                 {/* Select All */}
                 <button
                   onClick={handleSelectAll}
-                  className="px-3 py-1.5 text-sm flex items-center gap-1.5 rounded-lg border transition-colors hover:bg-white/5"
+                  className="px-3 py-1.5 text-sm flex items-center gap-1.5 rounded-md border transition-colors hover:bg-white/5"
                   style={{ borderColor: 'var(--color-border-dark)', color: 'var(--color-text-muted)' }}
                   title={selectedFileCount === files.length ? "Deselect All" : "Select All"}
                 >
@@ -534,7 +534,7 @@ export default function FilesTab({
                 {selectedCount > 0 && onCreatePresentation && (
                   <button
                     onClick={onCreatePresentation}
-                    className="px-3 py-1.5 text-sm flex items-center gap-1.5 rounded-lg transition-colors bg-primary hover:bg-primary/90"
+                    className="px-3 py-1.5 text-sm flex items-center gap-1.5 rounded-md transition-colors bg-primary hover:bg-primary/90"
                     style={{ color: 'white' }}
                     title="Create presentation from selected items"
                   >
@@ -546,7 +546,7 @@ export default function FilesTab({
                 {/* Cancel */}
                 <button
                   onClick={handleCancelSelection}
-                  className="px-3 py-1.5 text-sm flex items-center gap-1.5 rounded-lg border transition-colors hover:bg-white/5"
+                  className="px-3 py-1.5 text-sm flex items-center gap-1.5 rounded-md border transition-colors hover:bg-white/5"
                   style={{ borderColor: 'var(--color-border-dark)', color: 'var(--color-text-muted)' }}
                   title="Cancel selection"
                 >
@@ -559,7 +559,7 @@ export default function FilesTab({
                 {/* Enter Selection Mode */}
                 <button
                   onClick={handleEnterSelection}
-                  className="px-3 py-1.5 text-sm flex items-center gap-1.5 rounded-lg border transition-colors hover:bg-white/5"
+                  className="px-3 py-1.5 text-sm flex items-center gap-1.5 rounded-md border transition-colors hover:bg-white/5"
                   style={{ borderColor: 'var(--color-border-dark)', color: 'var(--color-text-muted)' }}
                   title="Select files for presentation"
                 >
@@ -582,7 +582,7 @@ export default function FilesTab({
           >
             <button
               onClick={handleCloseFilePreview}
-              className="w-10 h-10 rounded-lg flex items-center justify-center hover:bg-muted transition-colors"
+              className="w-10 h-10 rounded-md flex items-center justify-center hover:bg-muted transition-colors"
               title="Back to files"
             >
               <ChevronLeft className="w-5 h-5" style={{ color: 'var(--color-primary)' }} />
@@ -597,7 +597,7 @@ export default function FilesTab({
                   setSidebarCollapsed(false);
                 }
               }}
-              className={`w-10 h-10 rounded-lg flex items-center justify-center transition-colors ${
+              className={`w-10 h-10 rounded-md flex items-center justify-center transition-colors ${
                 !sidebarCollapsed && viewMode === 'tree' ? 'bg-primary/20' : 'hover:bg-muted'
               }`}
               title="Folder tree"
@@ -614,7 +614,7 @@ export default function FilesTab({
                     setSidebarCollapsed(false);
                   }
                 }}
-                className={`w-10 h-10 rounded-lg flex items-center justify-center transition-colors ${
+                className={`w-10 h-10 rounded-md flex items-center justify-center transition-colors ${
                   !sidebarCollapsed && viewMode === 'versions' ? 'bg-primary/20' : 'hover:bg-muted'
                 }`}
                 title="Version history"
@@ -624,7 +624,7 @@ export default function FilesTab({
             )}
             <button
               onClick={() => { setSidebarCollapsed(true); setViewMode('list'); }}
-              className={`w-10 h-10 rounded-lg flex items-center justify-center transition-colors ${
+              className={`w-10 h-10 rounded-md flex items-center justify-center transition-colors ${
                 viewMode === 'list' ? 'bg-primary/20' : 'hover:bg-muted'
               }`}
               title="List view"
@@ -708,7 +708,7 @@ export default function FilesTab({
                 </p>
                 <button
                   onClick={() => setViewMode('tree')}
-                  className="mt-6 px-4 py-2 rounded-lg bg-primary/10 hover:bg-primary/20 transition-colors text-sm font-medium"
+                  className="mt-6 px-4 py-2 rounded-md bg-primary/10 hover:bg-primary/20 transition-colors text-sm font-medium"
                   style={{ color: 'var(--color-primary)' }}
                 >
                   Browse Files in Tree View
@@ -804,7 +804,7 @@ export default function FilesTab({
                 <div
                   key={index}
                   onClick={() => effectiveIsSelecting ? handleToggleFileSelection(file, { stopPropagation: () => {} } as React.MouseEvent) : handleFileSelect(file)}
-                  className={`flex items-center justify-between p-4 rounded-lg border cursor-pointer transition-all ${
+                  className={`flex items-center justify-between p-4 rounded-md border cursor-pointer transition-all ${
                     isFileSelected(file)
                       ? 'border-primary/50 bg-primary/5 ring-2 ring-primary/20'
                       : 'hover:bg-muted'
@@ -857,7 +857,7 @@ export default function FilesTab({
                         e.stopPropagation();
                         handleDownloadFile(file.filename);
                       }}
-                      className="ml-4 px-3 py-2 rounded-lg bg-muted hover:bg-muted/80 transition-colors flex items-center gap-2 text-sm font-medium"
+                      className="ml-4 px-3 py-2 rounded-md bg-muted hover:bg-muted/80 transition-colors flex items-center gap-2 text-sm font-medium"
                       style={{ color: 'var(--color-text-muted)' }}
                       title="Download file"
                     >

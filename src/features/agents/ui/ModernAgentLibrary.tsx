@@ -6,7 +6,8 @@
  */
 
 import { useState, useEffect, useMemo, useCallback } from 'react';
-import { ChevronDown, ChevronRight, Plus, X, History, Bot, Trash2 } from 'lucide-react';
+import { Plus, X, History, Bot, Trash2 } from 'lucide-react';
+import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { getModelDisplayName } from '../../../lib/modelDisplayNames';
 import DeepAgentBuilder from './DeepAgentBuilder';
 import apiClient from '../../../lib/api-client';
@@ -575,32 +576,28 @@ export default function ModernAgentLibrary({
     <div className="w-80 flex flex-col bg-sidebar border-r border-sidebar-border overflow-hidden relative">
       {/* Header with Tabs */}
       <div className="border-b border-sidebar-border">
-        {/* Tab Buttons */}
-        <div className="flex gap-1 p-1">
-          <button
-            onClick={() => handlePanelChange('agents')}
-            className={`flex-1 flex items-center justify-center gap-2 px-4 py-2.5 text-sm font-semibold transition-all rounded-md ${activePanel === 'agents'
-                ? 'bg-primary text-white shadow-sm'
-                : 'text-gray-600 dark:text-text-muted hover:bg-gray-100 dark:hover:bg-white/10'
-              }`}
-          >
-            <Bot className="w-4 h-4" />
-            <span>Agents</span>
-          </button>
-          <button
-            onClick={() => handlePanelChange('history')}
-            className={`flex-1 flex items-center justify-center gap-2 px-4 py-2.5 text-sm font-semibold transition-all rounded-md ${activePanel === 'history'
-                ? 'bg-primary text-white shadow-sm'
-                : 'text-gray-600 dark:text-text-muted hover:bg-gray-100 dark:hover:bg-white/10'
-              }`}
-          >
-            <History className="w-4 h-4" />
-            <span>History</span>
-            {taskHistory.length > 0 && (
-              <span className={`text-xs ${activePanel === 'history' ? 'opacity-80' : 'opacity-70'}`}>({taskHistory.length})</span>
-            )}
-          </button>
-        </div>
+        {/* Tab Navigation - Styled like SemantierPage */}
+        <Tabs value={activePanel} onValueChange={(value) => handlePanelChange(value as SidebarPanel)} className="w-full">
+          <TabsList className="h-auto w-full justify-start rounded-none border-b border-sidebar-border bg-transparent p-0">
+            <TabsTrigger
+              value="agents"
+              className="flex-1 flex items-center justify-center gap-2 rounded-none border-x-0 border-t-0 border-b-2 border-transparent px-4 py-2.5 text-sm font-semibold text-muted-foreground shadow-none bg-transparent data-[state=active]:border-primary data-[state=active]:bg-transparent data-[state=active]:text-foreground data-[state=active]:shadow-none"
+            >
+              <Bot className="w-4 h-4" />
+              <span>Agents</span>
+            </TabsTrigger>
+            <TabsTrigger
+              value="history"
+              className="flex-1 flex items-center justify-center gap-2 rounded-none border-x-0 border-t-0 border-b-2 border-transparent px-4 py-2.5 text-sm font-semibold text-muted-foreground shadow-none bg-transparent data-[state=active]:border-primary data-[state=active]:bg-transparent data-[state=active]:text-foreground data-[state=active]:shadow-none"
+            >
+              <History className="w-4 h-4" />
+              <span>History</span>
+              {taskHistory.length > 0 && (
+                <span className="text-xs opacity-70">({taskHistory.length})</span>
+              )}
+            </TabsTrigger>
+          </TabsList>
+        </Tabs>
 
         {/* Search */}
         <div className="p-3 border-b border-sidebar-border">
@@ -613,7 +610,7 @@ export default function ModernAgentLibrary({
               placeholder={activePanel === 'agents' ? 'Search agents...' : 'Search tasks...'}
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              className="w-full pl-9 pr-3 py-2 bg-background border border-sidebar-border rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-primary transition-all"
+              className="w-full pl-9 pr-3 py-2 bg-background border border-sidebar-border rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-primary transition-all"
               style={{ color: 'var(--foreground)' }}
             />
           </div>
@@ -664,7 +661,7 @@ export default function ModernAgentLibrary({
                     <div
                       key={taskId}
                       onClick={() => onSelectHistoryTask?.(task)}
-                      className={`group p-3 rounded-lg border cursor-pointer transition-all ${isSelected
+                      className={`group p-3 rounded-md border cursor-pointer transition-all ${isSelected
                           ? 'border-primary bg-primary/5 ring-1 ring-primary/20'
                           : 'border-sidebar-border hover:border-primary/50 hover:bg-gray-50 dark:hover:bg-white/5'
                         }`}
@@ -717,63 +714,53 @@ export default function ModernAgentLibrary({
                 {/* Recipe Category Header */}
                 <button
                   onClick={() => toggleCategory('workflow-recipes')}
-                  className="w-full flex items-center justify-between px-3 py-2 transition-colors hover:opacity-90"
-                  style={{
-                    borderLeft: '3px solid var(--color-primary)',
-                    backgroundColor: 'var(--color-primary)',
-                    borderBottom: '1px solid var(--color-border-dark)',
-                  }}
+                  className="w-full flex items-center justify-between px-3 py-2 text-left transition-colors hover:bg-gray-50 dark:hover:bg-white/5"
                 >
                   <div className="flex items-center gap-2">
-                    <span className="material-symbols-outlined text-base text-white">
-                      auto_awesome
-                    </span>
-                    <span className="text-sm font-semibold text-white">
+                    <span className="text-sm font-semibold" style={{ color: 'var(--color-text-primary, #1a1a1a)' }}>
                       Workflow Recipes
                     </span>
-                    <span className="text-xs text-white/80">
-                      ({recipes.length})
+                    <span className="text-xs px-1.5 py-0.5 rounded bg-gray-100 dark:bg-white/10" style={{ color: 'var(--color-text-muted, #6b7280)' }}>
+                      {recipes.length}
                     </span>
-                    <span className="inline-flex items-center px-1.5 py-0.5 text-[9px] font-bold bg-white/20 text-white rounded uppercase">
-                      Experimental
+                    <span className="inline-flex items-center px-1.5 py-0.5 text-[9px] font-bold bg-primary/20 text-primary rounded uppercase">
+                      EXP
                     </span>
                   </div>
-                  {expandedCategories.has('workflow-recipes') ? (
-                    <ChevronDown className="w-4 h-4 text-white" />
-                  ) : (
-                    <ChevronRight className="w-4 h-4 text-white" />
-                  )}
+                  <span className={`material-symbols-outlined text-sm transition-transform ${expandedCategories.has('workflow-recipes') ? 'rotate-180' : ''}`} style={{ color: 'var(--color-text-muted, #6b7280)' }}>
+                    arrow_drop_down
+                  </span>
                 </button>
 
                 {/* Recipes List */}
                 {expandedCategories.has('workflow-recipes') && (
-                  <div className="bg-background divide-y divide-border p-2">
+                  <div className="p-2 space-y-2">
                     {recipes.map(recipe => (
                       <button
                         key={recipe.recipe_id}
                         onClick={() => handleRecipeClick(recipe)}
-                        className={`w-full px-4 py-3 text-left transition-all duration-200 border rounded-xl mb-2 ${selectedRecipe?.recipe_id === recipe.recipe_id
+                        className={`w-full flex items-start gap-3 p-3 rounded-md border text-left transition-all duration-200 ${selectedRecipe?.recipe_id === recipe.recipe_id
                           ? 'bg-card border-primary shadow-sm ring-1 ring-primary/20'
                           : 'bg-card border-border hover:border-primary/50 hover:shadow-md'
                           }`}
                       >
-                        <div className="flex items-start gap-3">
-                          <span className="material-symbols-outlined text-primary text-lg mt-0.5">
+                        <div className="w-10 h-10 rounded-md bg-gray-100 dark:bg-background-dark border border-sidebar-border flex items-center justify-center flex-shrink-0">
+                          <span className="material-symbols-outlined text-primary" style={{ fontSize: '20px' }}>
                             {recipe.icon}
                           </span>
-                          <div className="flex-1 min-w-0">
-                            <div className="flex items-center gap-2 mb-1">
-                              <p className="text-sm font-medium" style={{ color: 'var(--color-text-primary, #1a1a1a)' }}>
-                                {recipe.name}
-                              </p>
-                              <span className="inline-flex items-center px-1.5 py-0.5 text-[10px] font-medium bg-primary/10 text-primary rounded">
-                                {recipe.node_count} nodes
-                              </span>
-                            </div>
-                            <p className="text-xs line-clamp-2" style={{ color: 'var(--color-text-muted, #6b7280)' }}>
-                              {recipe.description}
+                        </div>
+                        <div className="flex-1 min-w-0">
+                          <div className="flex items-center gap-2 mb-0.5">
+                            <p className="text-sm font-medium" style={{ color: 'var(--color-text-primary, #1a1a1a)' }}>
+                              {recipe.name}
                             </p>
+                            <span className="inline-flex items-center px-1.5 py-0.5 text-[10px] font-medium bg-primary/10 text-primary rounded">
+                              {recipe.node_count} nodes
+                            </span>
                           </div>
+                          <p className="text-xs line-clamp-2" style={{ color: 'var(--color-text-muted, #6b7280)' }}>
+                            {recipe.description}
+                          </p>
                         </div>
                       </button>
                     ))}
@@ -787,55 +774,45 @@ export default function ModernAgentLibrary({
                 {/* Category Header */}
                 <button
                   onClick={() => toggleCategory(category.id)}
-                  className="w-full flex items-center justify-between px-3 py-2 transition-colors hover:opacity-90"
-                  style={{
-                    borderLeft: `3px solid var(--color-primary)`,
-                    backgroundColor: 'var(--color-primary)',
-                    borderBottom: '1px solid var(--color-border-dark)',
-                  }}
+                  className="w-full flex items-center justify-between px-3 py-2 text-left transition-colors hover:bg-gray-50 dark:hover:bg-white/5"
                 >
                   <div className="flex items-center gap-2">
-                    <span className="material-symbols-outlined text-base text-white">
-                      {category.icon}
-                    </span>
-                    <span className="text-sm font-semibold text-white">
+                    <span className="text-sm font-semibold" style={{ color: 'var(--color-text-primary, #1a1a1a)' }}>
                       {category.name}
                     </span>
-                    <span className="text-xs text-white/80">
-                      ({category.agents.length})
+                    <span className="text-xs px-1.5 py-0.5 rounded bg-gray-100 dark:bg-white/10" style={{ color: 'var(--color-text-muted, #6b7280)' }}>
+                      {category.agents.length}
                     </span>
                   </div>
-                  {expandedCategories.has(category.id) ? (
-                    <ChevronDown className="w-4 h-4 text-white" />
-                  ) : (
-                    <ChevronRight className="w-4 h-4 text-white" />
-                  )}
+                  <span className={`material-symbols-outlined text-sm transition-transform ${expandedCategories.has(category.id) ? 'rotate-180' : ''}`} style={{ color: 'var(--color-text-muted, #6b7280)' }}>
+                    arrow_drop_down
+                  </span>
                 </button>
 
-                {/* Agents List */}
+                {/* Agents List - Card Style */}
                 {expandedCategories.has(category.id) && (
-                  <div className="bg-background divide-y divide-border">
+                  <div className="p-2 space-y-2">
                     {category.agents.map(agent => (
                       <button
                         key={agent.id}
                         onClick={() => handleAgentClick(agent)}
-                        className={`w-full px-4 py-3 text-left transition-all duration-200 border rounded-xl mb-2 ${selectedAgent?.id === agent.id
+                        className={`w-full flex items-start gap-3 p-3 rounded-md border text-left transition-all duration-200 ${selectedAgent?.id === agent.id
                           ? 'bg-card border-primary shadow-sm ring-1 ring-primary/20'
                           : 'bg-card border-border hover:border-primary/50 hover:shadow-md'
                           }`}
                       >
-                        <div className="flex items-start gap-3">
-                          <span className="material-symbols-outlined text-primary text-lg mt-0.5">
+                        <div className="w-10 h-10 rounded-md bg-gray-100 dark:bg-background-dark border border-sidebar-border flex items-center justify-center flex-shrink-0">
+                          <span className="material-symbols-outlined text-primary" style={{ fontSize: '20px' }}>
                             {agent.icon}
                           </span>
-                          <div className="flex-1 min-w-0">
-                            <p className="text-sm font-medium mb-1" style={{ color: 'var(--color-text-primary, #1a1a1a)' }}>
-                              {agent.name}
-                            </p>
-                            <p className="text-xs line-clamp-2" style={{ color: 'var(--color-text-muted, #6b7280)' }}>
-                              {agent.description}
-                            </p>
-                          </div>
+                        </div>
+                        <div className="flex-1 min-w-0">
+                          <p className="text-sm font-medium mb-0.5" style={{ color: 'var(--color-text-primary, #1a1a1a)' }}>
+                            {agent.name}
+                          </p>
+                          <p className="text-xs line-clamp-2" style={{ color: 'var(--color-text-muted, #6b7280)' }}>
+                            {agent.description}
+                          </p>
                         </div>
                       </button>
                     ))}
@@ -872,7 +849,7 @@ export default function ModernAgentLibrary({
         )}
         <button
           onClick={() => setShowTypeSelector(true)}
-          className="w-full flex items-center justify-center gap-2 px-4 py-2.5 bg-primary text-white rounded-lg hover:opacity-90 transition-opacity mb-3"
+          className="w-full flex items-center justify-center gap-2 px-4 py-2.5 bg-primary text-white rounded-md hover:opacity-90 transition-opacity mb-3"
         >
           <Plus className="w-4 h-4" />
           Create Custom Agent
@@ -903,7 +880,7 @@ export default function ModernAgentLibrary({
           <div className="flex-1 overflow-y-auto bg-card p-4 space-y-4">
             {/* Icon & Name */}
             <div className="flex items-start gap-3">
-              <div className="w-12 h-12 rounded-lg bg-gray-100 dark:bg-background-dark border border-sidebar-border flex items-center justify-center flex-shrink-0">
+              <div className="w-12 h-12 rounded-md bg-gray-100 dark:bg-background-dark border border-sidebar-border flex items-center justify-center flex-shrink-0">
                 <span className="material-symbols-outlined text-primary" style={{ fontSize: '24px' }}>
                   {selectedAgent.icon}
                 </span>
@@ -999,7 +976,7 @@ export default function ModernAgentLibrary({
 
               <div>
                 <label className="block text-xs font-medium mb-2 uppercase" style={{ color: 'var(--color-text-primary, #1a1a1a)' }}>System Prompt</label>
-                <div className="mt-1 p-3 bg-gray-50 dark:bg-background-dark rounded-lg border border-sidebar-border">
+                <div className="mt-1 p-3 bg-gray-50 dark:bg-background-dark rounded-md border border-sidebar-border">
                   <pre className="text-xs whitespace-pre-wrap font-mono" style={{ color: 'var(--color-text-primary, #1a1a1a)' }}>
                     {selectedAgent.system_prompt}
                   </pre>
@@ -1012,7 +989,7 @@ export default function ModernAgentLibrary({
           <div className="p-4 border-t border-sidebar-border bg-gray-50 dark:bg-background-dark">
             <button
               onClick={handleAddToWorkflow}
-              className="w-full flex items-center justify-center gap-2 px-4 py-2.5 bg-primary rounded-lg hover:opacity-90 transition-opacity font-medium text-white"
+              className="w-full flex items-center justify-center gap-2 px-4 py-2.5 bg-primary rounded-md hover:opacity-90 transition-opacity font-medium text-white"
             >
               <Plus className="w-4 h-4" />
               Add to Workflow
@@ -1046,7 +1023,7 @@ export default function ModernAgentLibrary({
           <div className="flex-1 overflow-y-auto bg-card p-4 space-y-4">
             {/* Icon & Name */}
             <div className="flex items-start gap-3">
-              <div className="w-12 h-12 rounded-lg bg-gray-100 dark:bg-background-dark border border-sidebar-border flex items-center justify-center flex-shrink-0">
+              <div className="w-12 h-12 rounded-md bg-gray-100 dark:bg-background-dark border border-sidebar-border flex items-center justify-center flex-shrink-0">
                 <span className="material-symbols-outlined text-primary" style={{ fontSize: '24px' }}>
                   {selectedRecipe.icon}
                 </span>
@@ -1063,14 +1040,14 @@ export default function ModernAgentLibrary({
 
             {/* Recipe Stats */}
             <div className="grid grid-cols-2 gap-3">
-              <div className="p-3 rounded-lg bg-primary/5 dark:bg-primary/10 border border-primary/20">
+              <div className="p-3 rounded-md bg-primary/5 dark:bg-primary/10 border border-primary/20">
                 <div className="flex items-center gap-2 mb-1">
                   <span className="material-symbols-outlined text-primary" style={{ fontSize: '18px' }}>account_tree</span>
                   <span className="text-xs font-medium" style={{ color: 'var(--color-text-muted, #6b7280)' }}>NODES</span>
                 </div>
                 <p className="text-2xl font-bold text-primary">{selectedRecipe.node_count}</p>
               </div>
-              <div className="p-3 rounded-lg bg-primary/5 dark:bg-primary/10 border border-primary/20">
+              <div className="p-3 rounded-md bg-primary/5 dark:bg-primary/10 border border-primary/20">
                 <div className="flex items-center gap-2 mb-1">
                   <span className="material-symbols-outlined text-primary" style={{ fontSize: '18px' }}>arrow_forward</span>
                   <span className="text-xs font-medium" style={{ color: 'var(--color-text-muted, #6b7280)' }}>EDGES</span>
@@ -1103,7 +1080,7 @@ export default function ModernAgentLibrary({
                 {selectedRecipe.nodes.map((node: any) => (
                   <div
                     key={node.id}
-                    className="flex items-center gap-2 p-2 rounded-lg bg-gray-50 dark:bg-background-dark border border-sidebar-border"
+                    className="flex items-center gap-2 p-2 rounded-md bg-gray-50 dark:bg-background-dark border border-sidebar-border"
                   >
                     <span className="material-symbols-outlined text-sm text-primary">smart_toy</span>
                     <span className="text-sm font-medium" style={{ color: 'var(--color-text-primary, #1a1a1a)' }}>
@@ -1120,7 +1097,7 @@ export default function ModernAgentLibrary({
             </div>
 
             {/* Info Box */}
-            <div className="p-3 rounded-lg bg-primary/5 dark:bg-primary/10 border border-primary/20">
+            <div className="p-3 rounded-md bg-primary/5 dark:bg-primary/10 border border-primary/20">
               <div className="flex items-start gap-2">
                 <span className="material-symbols-outlined text-primary" style={{ fontSize: '18px' }}>science</span>
                 <div>
@@ -1139,7 +1116,7 @@ export default function ModernAgentLibrary({
             <button
               onClick={handleInsertRecipe}
               disabled={!onSelectRecipe}
-              className="w-full flex items-center justify-center gap-2 px-4 py-2.5 bg-primary rounded-lg hover:opacity-90 disabled:opacity-50 disabled:cursor-not-allowed transition-opacity font-medium text-white"
+              className="w-full flex items-center justify-center gap-2 px-4 py-2.5 bg-primary rounded-md hover:opacity-90 disabled:opacity-50 disabled:cursor-not-allowed transition-opacity font-medium text-white"
             >
               <Plus className="w-4 h-4" />
               Insert Recipe ({selectedRecipe.node_count} nodes)
@@ -1151,7 +1128,7 @@ export default function ModernAgentLibrary({
       {/* Agent Type Selector Modal */}
       {showTypeSelector && (
         <div className="fixed inset-0 flex items-center justify-center z-[60] p-4" style={{ backgroundColor: 'rgba(0, 0, 0, 0.7)' }}>
-          <div className="border border-sidebar-border rounded-xl w-full max-w-2xl shadow-2xl" style={{ backgroundColor: 'var(--color-panel-dark)' }}>
+          <div className="border border-sidebar-border rounded-md w-full max-w-2xl shadow-2xl" style={{ backgroundColor: 'var(--color-panel-dark)' }}>
 
             {/* Header */}
             <div className="p-6 border-b border-gray-200 dark:border-gray-800">
@@ -1171,10 +1148,10 @@ export default function ModernAgentLibrary({
                     setShowTypeSelector(false);
                     setShowAgentBuilder(true);
                   }}
-                  className="p-4 border-2 border-gray-200 dark:border-gray-700 rounded-lg hover:border-primary dark:hover:border-blue-500 hover:bg-gray-50 dark:hover:bg-blue-600/20 transition-all text-left"
+                  className="p-4 border-2 border-gray-200 dark:border-gray-700 rounded-md hover:border-primary dark:hover:border-blue-500 hover:bg-gray-50 dark:hover:bg-blue-600/20 transition-all text-left"
                 >
                   <div className="flex items-center gap-3 mb-3">
-                    <div className="p-2 bg-blue-100 dark:bg-blue-600/20 rounded-lg">
+                    <div className="p-2 bg-blue-100 dark:bg-blue-600/20 rounded-md">
                       <span className="material-symbols-outlined text-blue-600 dark:text-blue-400 text-xl">terminal</span>
                     </div>
                     <h3 className="text-lg font-semibold text-gray-900 dark:text-white">Regular Agent</h3>
@@ -1199,10 +1176,10 @@ export default function ModernAgentLibrary({
                     setShowTypeSelector(false);
                     setShowAgentBuilder(true);
                   }}
-                  className="p-4 border-2 border-gray-200 dark:border-gray-700 rounded-lg hover:border-primary dark:hover:border-purple-500 hover:bg-gray-50 dark:hover:bg-purple-600/20 transition-all text-left"
+                  className="p-4 border-2 border-gray-200 dark:border-gray-700 rounded-md hover:border-primary dark:hover:border-purple-500 hover:bg-gray-50 dark:hover:bg-purple-600/20 transition-all text-left"
                 >
                   <div className="flex items-center gap-3 mb-3">
-                    <div className="p-2 bg-purple-100 dark:bg-purple-600/20 rounded-lg">
+                    <div className="p-2 bg-purple-100 dark:bg-purple-600/20 rounded-md">
                       <span className="material-symbols-outlined text-purple-600 dark:text-purple-400 text-xl">psychology</span>
                     </div>
                     <h3 className="text-lg font-semibold text-gray-900 dark:text-white">Deep Agent</h3>
@@ -1238,7 +1215,7 @@ export default function ModernAgentLibrary({
       {/* Agent Builder Modal */}
       {showAgentBuilder && (
         <div className="fixed inset-0 flex items-center justify-center z-[60] p-4" style={{ backgroundColor: 'rgba(0, 0, 0, 0.7)' }}>
-          <div className="border border-sidebar-border rounded-xl w-full max-w-6xl h-[90vh] shadow-2xl flex flex-col" style={{ backgroundColor: 'var(--color-panel-dark)' }}>
+          <div className="border border-sidebar-border rounded-md w-full max-w-6xl h-[90vh] shadow-2xl flex flex-col" style={{ backgroundColor: 'var(--color-panel-dark)' }}>
             <DeepAgentBuilder
               initialConfig={undefined}
               agentType={agentType}
@@ -1256,7 +1233,7 @@ export default function ModernAgentLibrary({
       {/* Post-Creation Prompt Modal */}
       {newlyCreatedAgent && (
         <div className="fixed inset-0 flex items-center justify-center z-[60] p-4" style={{ backgroundColor: 'rgba(0, 0, 0, 0.7)' }}>
-          <div className="border border-sidebar-border rounded-xl w-full max-w-md shadow-2xl" style={{ backgroundColor: 'var(--color-panel-dark)' }}>
+          <div className="border border-sidebar-border rounded-md w-full max-w-md shadow-2xl" style={{ backgroundColor: 'var(--color-panel-dark)' }}>
 
             {/* Header */}
             <div className="p-6 border-b border-gray-200 dark:border-gray-800">
@@ -1283,7 +1260,7 @@ export default function ModernAgentLibrary({
               </button>
               <button
                 onClick={handleAddNewAgentToWorkflow}
-                className="px-4 py-2 bg-primary text-white rounded-lg hover:opacity-90 transition-opacity"
+                className="px-4 py-2 bg-primary text-white rounded-md hover:opacity-90 transition-opacity"
               >
                 Yes, Add to Workflow
               </button>

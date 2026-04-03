@@ -39,7 +39,7 @@ export default function RenameModal({ currentName, onRename, onClose }: RenameMo
 
   return (
     <div className="fixed inset-0 bg-black/70 backdrop-blur-sm flex items-center justify-center z-50 p-4">
-      <div className="bg-white dark:bg-panel-dark rounded-lg max-w-md w-full p-6 shadow-2xl">
+      <div className="bg-white dark:bg-panel-dark rounded-md max-w-md w-full p-6 shadow-2xl">
         <h3 className="text-lg font-bold mb-4" style={{ color: 'var(--color-text-primary)' }}>
           Rename Workflow
         </h3>
@@ -51,7 +51,7 @@ export default function RenameModal({ currentName, onRename, onClose }: RenameMo
             value={newName}
             onChange={(e) => setNewName(e.target.value)}
             onKeyDown={handleKeyDown}
-            className="w-full px-3 py-2 text-sm border border-gray-300 dark:border-border-dark rounded-lg focus:outline-none focus:ring-2 focus:ring-primary"
+            className="w-full px-3 py-2 text-sm border border-gray-300 dark:border-border-dark rounded-md focus:outline-none focus:ring-2 focus:ring-primary"
             style={{
               backgroundColor: 'var(--color-input-background)',
               color: 'var(--color-text-primary)'
@@ -63,7 +63,7 @@ export default function RenameModal({ currentName, onRename, onClose }: RenameMo
             <button
               type="button"
               onClick={onClose}
-              className="px-4 py-2 text-sm font-medium border border-gray-300 dark:border-border-dark rounded-lg hover:bg-gray-100 dark:hover:bg-white/10 hover:border-gray-400 dark:hover:border-border-light transition-all"
+              className="px-4 py-2 text-sm font-medium border border-gray-300 dark:border-border-dark rounded-md hover:bg-gray-100 dark:hover:bg-white/10 hover:border-gray-400 dark:hover:border-border-light transition-all"
               style={{ color: 'var(--color-text-primary)' }}
             >
               Cancel
@@ -71,7 +71,7 @@ export default function RenameModal({ currentName, onRename, onClose }: RenameMo
             <button
               type="submit"
               disabled={!newName.trim() || newName === currentName}
-              className="px-4 py-2 text-sm font-medium text-white bg-primary rounded-lg hover:brightness-110 hover:shadow-lg transition-all disabled:opacity-50"
+              className="px-4 py-2 text-sm font-medium text-white bg-primary rounded-md hover:brightness-110 hover:shadow-lg transition-all disabled:opacity-50"
             >
               Rename
             </button>

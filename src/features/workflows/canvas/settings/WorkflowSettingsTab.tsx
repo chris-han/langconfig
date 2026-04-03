@@ -262,7 +262,7 @@ export default function WorkflowSettingsTab({
             </div>
 
             {/* Custom Output Path Setting */}
-            <div className="rounded-lg border p-6" style={{ backgroundColor: 'var(--color-panel-dark)', borderColor: 'var(--color-border-dark)' }}>
+            <div className="rounded-md border p-6" style={{ backgroundColor: 'var(--color-panel-dark)', borderColor: 'var(--color-border-dark)' }}>
               <label className="text-sm font-medium block mb-1" style={{ color: 'var(--color-text-primary)' }}>
                 Custom Output Directory
               </label>
@@ -275,7 +275,7 @@ export default function WorkflowSettingsTab({
                   value={localPath}
                   onChange={handlePathChange}
                   placeholder="e.g., C:\Projects\MyApp\outputs"
-                  className="flex-1 px-3 py-2 rounded-lg text-sm font-mono"
+                  className="flex-1 px-3 py-2 rounded-md text-sm font-mono"
                   style={{
                     backgroundColor: 'var(--color-background-dark)',
                     border: '1px solid var(--color-border-dark)',
@@ -284,7 +284,7 @@ export default function WorkflowSettingsTab({
                 />
                 <button
                   onClick={() => setShowFolderBrowser(true)}
-                  className="px-3 py-2 rounded-lg text-sm font-medium transition-colors hover:bg-white/10 flex items-center gap-2"
+                  className="px-3 py-2 rounded-md text-sm font-medium transition-colors hover:bg-white/10 flex items-center gap-2"
                   style={{
                     backgroundColor: 'var(--color-background-dark)',
                     border: '1px solid var(--color-border-dark)',
@@ -349,7 +349,7 @@ export default function WorkflowSettingsTab({
             </div>
 
             {/* Checkpointer Setting */}
-            <div className="rounded-lg border p-6" style={{ backgroundColor: 'var(--color-panel-dark)', borderColor: 'var(--color-border-dark)' }}>
+            <div className="rounded-md border p-6" style={{ backgroundColor: 'var(--color-panel-dark)', borderColor: 'var(--color-border-dark)' }}>
               <div className="flex items-start gap-3">
                 <div className="flex-1">
                   <label className="text-sm font-medium block mb-1" style={{ color: 'var(--color-text-primary)' }}>
@@ -374,7 +374,7 @@ export default function WorkflowSettingsTab({
             </div>
 
             {/* Recursion Limit Setting */}
-            <div className="rounded-lg border p-6" style={{ backgroundColor: 'var(--color-panel-dark)', borderColor: 'var(--color-border-dark)' }}>
+            <div className="rounded-md border p-6" style={{ backgroundColor: 'var(--color-panel-dark)', borderColor: 'var(--color-border-dark)' }}>
               <label className="text-sm font-medium block mb-1" style={{ color: 'var(--color-text-primary)' }}>
                 Global Recursion Limit
               </label>
@@ -389,7 +389,7 @@ export default function WorkflowSettingsTab({
                   step="5"
                   value={globalRecursionLimit}
                   onChange={(e) => setGlobalRecursionLimit(parseInt(e.target.value))}
-                  className="flex-1 h-2 rounded-lg appearance-none cursor-pointer bg-gray-700"
+                  className="flex-1 h-2 rounded-md appearance-none cursor-pointer bg-gray-700"
                 />
                 <span className="text-sm font-mono w-12 text-right" style={{ color: 'var(--color-text-primary)' }}>
                   {globalRecursionLimit}
@@ -399,7 +399,7 @@ export default function WorkflowSettingsTab({
 
             {/* Scheduling Section */}
             {workflowId && (
-              <div className="rounded-lg border p-6" style={{ backgroundColor: 'var(--color-panel-dark)', borderColor: 'var(--color-border-dark)' }}>
+              <div className="rounded-md border p-6" style={{ backgroundColor: 'var(--color-panel-dark)', borderColor: 'var(--color-border-dark)' }}>
                 <div className="flex items-center justify-between mb-2">
                   <div className="flex items-center gap-2">
                     <Clock size={16} style={{ color: 'var(--color-primary)' }} />
@@ -433,7 +433,7 @@ export default function WorkflowSettingsTab({
                     {schedules.map((schedule) => (
                       <div
                         key={schedule.id}
-                        className="p-3 rounded-lg"
+                        className="p-3 rounded-md"
                         style={{
                           backgroundColor: 'var(--color-background-dark)',
                           border: '1px solid var(--color-border-dark)',
@@ -534,7 +534,7 @@ export default function WorkflowSettingsTab({
 
             {/* Event Triggers Section */}
             {workflowId && (
-              <div className="rounded-lg border p-6" style={{ backgroundColor: 'var(--color-panel-dark)', borderColor: 'var(--color-border-dark)' }}>
+              <div className="rounded-md border p-6" style={{ backgroundColor: 'var(--color-panel-dark)', borderColor: 'var(--color-border-dark)' }}>
                 <div className="flex items-center justify-between mb-2">
                   <div className="flex items-center gap-2">
                     <Webhook size={16} style={{ color: 'var(--color-primary)' }} />
@@ -568,7 +568,7 @@ export default function WorkflowSettingsTab({
                     {triggers.map((trigger) => (
                       <div
                         key={trigger.id}
-                        className="p-3 rounded-lg"
+                        className="p-3 rounded-md"
                         style={{
                           backgroundColor: 'var(--color-background-dark)',
                           border: '1px solid var(--color-border-dark)',

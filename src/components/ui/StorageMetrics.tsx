@@ -90,10 +90,10 @@ export default function StorageMetrics({ projectId, onRefresh }: StorageMetricsP
 
   const getStatusColor = (status: string) => {
     switch (status) {
-      case 'ready': return 'text-green-500';
-      case 'indexing': return 'text-blue-500';
-      case 'failed': return 'text-red-500';
-      default: return 'text-gray-500';
+      case 'ready': return 'text-status-success';
+      case 'indexing': return 'text-status-info';
+      case 'failed': return 'text-status-error';
+      default: return 'text-muted-foreground';
     }
   };
 
@@ -103,7 +103,7 @@ export default function StorageMetrics({ projectId, onRefresh }: StorageMetricsP
 
   if (loading) {
     return (
-      <div className="bg-white dark:bg-panel-dark rounded-lg border border-gray-200 dark:border-border-dark p-6">
+      <div className="bg-card rounded-md border border-border p-6">
         <div className="flex items-center justify-center">
           <RefreshCw className="w-6 h-6 animate-spin" style={{ color: 'var(--color-primary)' }} />
           <span className="ml-2" style={{ color: 'var(--color-text-muted)' }}>Loading storage stats...</span>
@@ -114,10 +114,10 @@ export default function StorageMetrics({ projectId, onRefresh }: StorageMetricsP
 
   if (error) {
     return (
-      <div className="bg-red-50 dark:bg-red-900/20 rounded-lg border border-red-200 dark:border-red-800 p-6">
+      <div className="bg-status-error/10 rounded-md border border-status-error/30 p-6">
         <div className="flex items-center">
-          <Info className="w-5 h-5 text-red-500 mr-2" />
-          <span className="text-red-700 dark:text-red-400" style={{ color: 'var(--color-text-primary)' }}>{error}</span>
+          <Info className="w-5 h-5 text-status-error mr-2" />
+          <span className="text-status-error" style={{ color: 'var(--color-text-primary)' }}>{error}</span>
         </div>
       </div>
     );
@@ -125,7 +125,7 @@ export default function StorageMetrics({ projectId, onRefresh }: StorageMetricsP
 
   if (!stats || !stats.actual_storage.exists) {
     return (
-      <div className="bg-white dark:bg-panel-dark rounded-lg border border-gray-200 dark:border-border-dark p-6">
+      <div className="bg-card rounded-md border border-border p-6">
         <div className="text-center">
           <Database className="w-12 h-12 mx-auto mb-3" style={{ color: 'var(--color-text-muted)' }} />
           <p style={{ color: 'var(--color-text-muted)' }}>No indexed data yet</p>
@@ -164,7 +164,7 @@ export default function StorageMetrics({ projectId, onRefresh }: StorageMetricsP
       </div>
 
       {/* Main Stats Card */}
-      <div className="bg-white dark:bg-panel-dark rounded-lg border border-gray-200 dark:border-border-dark p-6">
+      <div className="bg-card rounded-md border border-border p-6">
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
           {/* Total Storage */}
           <div>
@@ -203,18 +203,18 @@ export default function StorageMetrics({ projectId, onRefresh }: StorageMetricsP
         </div>
 
         {/* Storage Breakdown */}
-        <div className="mt-6 pt-6 border-t border-gray-200 dark:border-border-dark">
+        <div className="mt-6 pt-6 border-t border-border">
           <p className="text-sm font-medium mb-3" style={{ color: 'var(--color-text-primary)' }}>Storage Breakdown</p>
 
           {/* Progress Bar */}
-          <div className="w-full h-4 rounded-full overflow-hidden flex" style={{ backgroundColor: 'var(--color-background-dark)' }}>
+          <div className="w-full h-4 rounded-full overflow-hidden flex bg-muted">
             <div
-              className="bg-blue-500 transition-all duration-300"
+              className="bg-primary transition-all duration-300"
               style={{ width: `${dataPercent}%` }}
               title={`Data: ${formatBytes(actual_storage.table_bytes)}`}
             />
             <div
-              className="bg-purple-500 transition-all duration-300"
+              className="bg-secondary transition-all duration-300"
               style={{ width: `${vectorStorePercent}%` }}
               title={`Indexes: ${formatBytes(actual_storage.index_bytes)}`}
             />
@@ -223,14 +223,14 @@ export default function StorageMetrics({ projectId, onRefresh }: StorageMetricsP
           {/* Legend */}
           <div className="flex gap-4 mt-3 text-sm">
             <div className="flex items-center gap-2">
-              <div className="w-3 h-3 bg-blue-500 rounded"></div>
-              <span style={{ color: 'var(--color-text-muted)' }}>
+              <div className="w-3 h-3 bg-primary rounded"></div>
+              <span className="text-muted-foreground">
                 Data: {formatBytes(actual_storage.table_bytes)} ({dataPercent.toFixed(1)}%)
               </span>
             </div>
             <div className="flex items-center gap-2">
-              <div className="w-3 h-3 bg-purple-500 rounded"></div>
-              <span style={{ color: 'var(--color-text-muted)' }}>
+              <div className="w-3 h-3 bg-secondary rounded"></div>
+              <span className="text-muted-foreground">
                 Indexes: {formatBytes(actual_storage.index_bytes)} ({vectorStorePercent.toFixed(1)}%)
               </span>
             </div>
@@ -239,7 +239,7 @@ export default function StorageMetrics({ projectId, onRefresh }: StorageMetricsP
       </div>
 
       {/* Configuration Card */}
-      <div className="rounded-lg border border-gray-200 dark:border-border-dark p-4" style={{ backgroundColor: 'var(--color-background-dark)' }}>
+      <div className="rounded-md border border-border p-4 bg-muted">
         <p className="text-sm font-medium mb-3" style={{ color: 'var(--color-text-primary)' }}>Configuration</p>
         <div className="grid grid-cols-2 md:grid-cols-3 gap-4 text-sm">
           <div>

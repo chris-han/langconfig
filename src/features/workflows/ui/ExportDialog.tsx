@@ -155,7 +155,7 @@ docker run -p 8000:8000 ${agentName.toLowerCase().replace(/\s+/g, '-')}`
 
   return (
     <div className="fixed inset-0 z-50 bg-black/50 backdrop-blur-sm flex items-center justify-center p-4">
-      <div className="bg-[#0a0a0a] border border-gray-800 rounded-xl w-full max-w-4xl max-h-[90vh] overflow-hidden shadow-2xl">
+      <div className="bg-[#0a0a0a] border border-gray-800 rounded-md w-full max-w-4xl max-h-[90vh] overflow-hidden shadow-2xl">
 
         {/* Header */}
         <div className="flex items-center justify-between p-6 border-b border-gray-800">
@@ -183,7 +183,7 @@ docker run -p 8000:8000 ${agentName.toLowerCase().replace(/\s+/g, '-')}`
             <div className="grid grid-cols-2 gap-4">
               <button
                 onClick={() => setExportType('standalone')}
-                className={`p-4 rounded-lg border-2 transition-all ${exportType === 'standalone'
+                className={`p-4 rounded-md border-2 transition-all ${exportType === 'standalone'
                   ? 'border-blue-500 bg-blue-600/20'
                   : 'border-gray-700 hover:border-gray-600'
                   }`}
@@ -197,7 +197,7 @@ docker run -p 8000:8000 ${agentName.toLowerCase().replace(/\s+/g, '-')}`
 
               <button
                 onClick={() => setExportType('langconfig')}
-                className={`p-4 rounded-lg border-2 transition-all ${exportType === 'langconfig'
+                className={`p-4 rounded-md border-2 transition-all ${exportType === 'langconfig'
                   ? 'border-purple-500 bg-purple-600/20'
                   : 'border-gray-700 hover:border-gray-600'
                   }`}
@@ -217,7 +217,7 @@ docker run -p 8000:8000 ${agentName.toLowerCase().replace(/\s+/g, '-')}`
               <h3 className="text-lg font-semibold text-white mb-3">Include Options</h3>
 
               <div className="space-y-3">
-                <label className="flex items-center gap-3 p-3 bg-gray-900/50 rounded-lg cursor-pointer hover:bg-gray-900 transition-colors">
+                <label className="flex items-center gap-3 p-3 bg-gray-900/50 rounded-md cursor-pointer hover:bg-gray-900 transition-colors">
                   <input
                     type="checkbox"
                     checked={options.include_chat_ui}
@@ -231,7 +231,7 @@ docker run -p 8000:8000 ${agentName.toLowerCase().replace(/\s+/g, '-')}`
                   </div>
                 </label>
 
-                <label className="flex items-center gap-3 p-3 bg-gray-900/50 rounded-lg cursor-pointer hover:bg-gray-900 transition-colors">
+                <label className="flex items-center gap-3 p-3 bg-gray-900/50 rounded-md cursor-pointer hover:bg-gray-900 transition-colors">
                   <input
                     type="checkbox"
                     checked={options.include_docker}
@@ -245,7 +245,7 @@ docker run -p 8000:8000 ${agentName.toLowerCase().replace(/\s+/g, '-')}`
                   </div>
                 </label>
 
-                <label className="flex items-center gap-3 p-3 bg-gray-900/50 rounded-lg cursor-pointer hover:bg-gray-900 transition-colors">
+                <label className="flex items-center gap-3 p-3 bg-gray-900/50 rounded-md cursor-pointer hover:bg-gray-900 transition-colors">
                   <input
                     type="checkbox"
                     checked={options.include_tests}
@@ -264,7 +264,7 @@ docker run -p 8000:8000 ${agentName.toLowerCase().replace(/\s+/g, '-')}`
 
 
           {isExporting && taskId && (
-            <div className="mb-6 p-4 bg-blue-600/10 border border-blue-600/50 rounded-lg">
+            <div className="mb-6 p-4 bg-blue-600/10 border border-blue-600/50 rounded-md">
               <div className="flex items-center gap-3 mb-3">
                 <Loader className="w-5 h-5 text-blue-400 animate-spin" />
                 <div>
@@ -286,7 +286,7 @@ docker run -p 8000:8000 ${agentName.toLowerCase().replace(/\s+/g, '-')}`
 
           {/* Export Result */}
           {exportComplete && (
-            <div className="mb-6 p-4 bg-green-600/10 border border-green-600/50 rounded-lg">
+            <div className="mb-6 p-4 bg-green-600/10 border border-green-600/50 rounded-md">
               <div className="flex items-center gap-3 mb-3">
                 <Check className="w-5 h-5 text-green-400" />
                 <div>
@@ -297,7 +297,7 @@ docker run -p 8000:8000 ${agentName.toLowerCase().replace(/\s+/g, '-')}`
 
               <button
                 onClick={handleDownload}
-                className="w-full py-2 px-4 bg-green-600 hover:bg-green-700 rounded-lg transition-colors flex items-center justify-center gap-2 text-white font-medium"
+                className="w-full py-2 px-4 bg-green-600 hover:bg-green-700 rounded-md transition-colors flex items-center justify-center gap-2 text-white font-medium"
               >
                 <Download className="w-5 h-5" />
                 Download {exportType === 'standalone' ? 'ZIP File' : 'JSON File'}
@@ -307,7 +307,7 @@ docker run -p 8000:8000 ${agentName.toLowerCase().replace(/\s+/g, '-')}`
 
           {/* Error */}
           {error && (
-            <div className="mb-6 p-4 bg-red-600/10 border border-red-600/50 rounded-lg text-red-400">
+            <div className="mb-6 p-4 bg-red-600/10 border border-red-600/50 rounded-md text-red-400">
               {error}
             </div>
           )}
@@ -370,7 +370,7 @@ docker run -p 8000:8000 ${agentName.toLowerCase().replace(/\s+/g, '-')}`
 
           {/* LangConfig Info */}
           {exportType === 'langconfig' && !exportComplete && (
-            <div className="p-4 bg-purple-600/10 border border-purple-600/30 rounded-lg">
+            <div className="p-4 bg-purple-600/10 border border-purple-600/30 rounded-md">
               <h4 className="font-semibold text-purple-400 mb-2">About LangConfig Format</h4>
               <div className="text-sm text-gray-300 space-y-2">
                 <p>
@@ -404,7 +404,7 @@ docker run -p 8000:8000 ${agentName.toLowerCase().replace(/\s+/g, '-')}`
             <button
               onClick={handleExport}
               disabled={isExporting}
-              className="px-6 py-2 bg-blue-600 hover:bg-blue-700 disabled:bg-gray-700 disabled:cursor-not-allowed rounded-lg transition-colors flex items-center gap-2 text-white font-medium"
+              className="px-6 py-2 bg-blue-600 hover:bg-blue-700 disabled:bg-gray-700 disabled:cursor-not-allowed rounded-md transition-colors flex items-center gap-2 text-white font-medium"
             >
               {isExporting ? (
                 <>
@@ -442,7 +442,7 @@ function CodeSnippet({
   onCopy: () => void;
 }) {
   return (
-    <div className="border border-gray-800 rounded-lg overflow-hidden">
+    <div className="border border-gray-800 rounded-md overflow-hidden">
       <div className="flex items-center justify-between p-3 bg-gray-900/50 border-b border-gray-800">
         <div className="flex items-center gap-2 text-gray-300">
           {icon}

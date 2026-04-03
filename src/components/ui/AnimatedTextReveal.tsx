@@ -185,7 +185,7 @@ export function AnimatedTextReveal({
                   />
                 ) : (
                   <code 
-                    className="block p-4 rounded-lg overflow-x-auto text-sm font-mono my-4" 
+                    className="block p-4 rounded-md overflow-x-auto text-sm font-mono my-4" 
                     style={{ 
                       backgroundColor: '#1e1e1e', 
                       color: '#d4d4d4' 
@@ -195,7 +195,7 @@ export function AnimatedTextReveal({
                 ),
               pre: ({node, ...props}) => (
                 <pre 
-                  className="p-4 rounded-lg overflow-x-auto my-4" 
+                  className="p-4 rounded-md overflow-x-auto my-4" 
                   style={{ backgroundColor: '#1e1e1e' }} 
                   {...props} 
                 />

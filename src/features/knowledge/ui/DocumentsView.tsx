@@ -118,7 +118,7 @@ export default function DocumentsView({ projectId }: DocumentsViewProps) {
 
   if (!projectId) {
     return (
-      <section className="flex-1 flex flex-col rounded-xl frosted-glass overflow-hidden p-6">
+      <section className="flex-1 flex flex-col rounded-md frosted-glass overflow-hidden p-6">
         <div className="flex-1 flex flex-col items-center justify-center gap-4">
           <span className="material-symbols-outlined text-6xl text-[var(--text-light-secondary)] dark:text-[var(--text-dark-secondary)] opacity-50">
             folder_open
@@ -132,12 +132,12 @@ export default function DocumentsView({ projectId }: DocumentsViewProps) {
   }
 
   return (
-    <section className="flex-1 flex flex-col rounded-xl frosted-glass overflow-hidden p-6">
+    <section className="flex-1 flex flex-col rounded-md frosted-glass overflow-hidden p-6">
       <div className="flex items-center justify-between mb-6">
         <h2 className="text-2xl font-bold text-[var(--text-light-primary)] dark:text-[var(--text-dark-primary)]">
           Documents
         </h2>
-        <label className="flex items-center gap-2 px-4 py-2 rounded-lg bg-[var(--primary)] text-white hover:opacity-90 transition-all cursor-pointer button-90s">
+        <label className="flex items-center gap-2 px-4 py-2 rounded-md bg-[var(--primary)] text-white hover:opacity-90 transition-all cursor-pointer button-90s">
           <span className="material-symbols-outlined">upload_file</span>
           Upload Document
           <input
@@ -151,7 +151,7 @@ export default function DocumentsView({ projectId }: DocumentsViewProps) {
       </div>
 
       {uploading && (
-        <div className="mb-4 p-4 rounded-lg bg-[var(--primary)]/10 text-[var(--primary)] flex items-center gap-3">
+        <div className="mb-4 p-4 rounded-md bg-[var(--primary)]/10 text-[var(--primary)] flex items-center gap-3">
           <span className="material-symbols-outlined animate-spin">progress_activity</span>
           Uploading document...
         </div>
@@ -177,7 +177,7 @@ export default function DocumentsView({ projectId }: DocumentsViewProps) {
           {documents.map((doc) => (
             <div
               key={doc.id}
-              className="p-4 rounded-lg bg-[var(--background-light)] dark:bg-[var(--background-dark)]/50 hover:border-[var(--primary)] border border-transparent transition-all"
+              className="p-4 rounded-md bg-[var(--background-light)] dark:bg-[var(--background-dark)]/50 hover:border-[var(--primary)] border border-transparent transition-all"
             >
               <div className="flex items-start gap-3">
                 <span className="material-symbols-outlined text-[var(--primary)] text-2xl">description</span>
@@ -204,7 +204,7 @@ export default function DocumentsView({ projectId }: DocumentsViewProps) {
                 <button
                   onClick={() => handleManualIndex(doc.id, doc.name)}
                   disabled={doc.indexing_status === 'indexing' || indexingDocumentIds.has(doc.id)}
-                  className="px-3 py-2 rounded-lg hover:bg-[var(--primary)]/10 text-[var(--primary)] transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+                  className="px-3 py-2 rounded-md hover:bg-[var(--primary)]/10 text-[var(--primary)] transition-all disabled:opacity-50 disabled:cursor-not-allowed"
                   title={doc.indexing_status === 'indexed' ? 'Reindex document' : 'Start indexing'}
                 >
                   <span className="material-symbols-outlined text-lg">
@@ -213,7 +213,7 @@ export default function DocumentsView({ projectId }: DocumentsViewProps) {
                 </button>
                 <button
                   onClick={() => handleDeleteDocument(doc.id)}
-                  className="p-2 rounded-lg hover:bg-red-500/20 text-red-500 transition-all"
+                  className="p-2 rounded-md hover:bg-red-500/20 text-red-500 transition-all"
                 >
                   <span className="material-symbols-outlined text-lg">delete</span>
                 </button>

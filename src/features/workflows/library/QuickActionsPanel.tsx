@@ -44,7 +44,7 @@ export default function QuickActionsPanel({ actions }: QuickActionsPanelProps) {
   };
 
   return (
-    <div className="p-6 rounded-lg border border-gray-200 dark:border-border-dark bg-gradient-to-br from-primary/5 to-transparent">
+    <div className="p-6 rounded-md border border-gray-200 dark:border-border-dark bg-gradient-to-br from-primary/5 to-transparent">
       <h3 className="text-lg font-semibold mb-4" style={{ color: 'var(--color-text-primary)' }}>
         Quick Actions
       </h3>
@@ -55,9 +55,9 @@ export default function QuickActionsPanel({ actions }: QuickActionsPanelProps) {
             <button
               key={index}
               onClick={action.onClick}
-              className="flex items-center gap-3 p-4 rounded-lg border border-gray-200 dark:border-border-dark bg-white dark:bg-panel-dark hover:border-primary transition-colors group"
+              className="flex items-center gap-3 p-4 rounded-md border border-gray-200 dark:border-border-dark bg-white dark:bg-panel-dark hover:border-primary transition-colors group"
             >
-              <div className={`w-10 h-10 rounded-lg ${colors.bg} flex items-center justify-center transition-colors`}>
+              <div className={`w-10 h-10 rounded-md ${colors.bg} flex items-center justify-center transition-colors`}>
                 <span className={`material-symbols-outlined text-xl ${colors.icon}`}>
                   {action.icon}
                 </span>

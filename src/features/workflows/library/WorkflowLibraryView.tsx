@@ -345,7 +345,7 @@ export default function WorkflowLibraryView({
             </h2>
             <button
               onClick={handleCreateWorkflow}
-              className="px-3 py-1.5 text-sm font-medium text-white bg-primary rounded-lg hover:opacity-90 transition-opacity flex items-center gap-1"
+              className="px-3 py-1.5 text-sm font-medium text-white bg-primary rounded-md hover:opacity-90 transition-opacity flex items-center gap-1"
             >
               <span className="material-symbols-outlined text-sm">add</span>
               New
@@ -365,7 +365,7 @@ export default function WorkflowLibraryView({
               placeholder="Search workflows..."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              className="w-full rounded-lg border border-border py-2 pr-4 pl-10 text-sm focus:outline-none focus:ring-2 focus:ring-primary"
+              className="w-full rounded-md border border-border py-2 pr-4 pl-10 text-sm focus:outline-none focus:ring-2 focus:ring-primary"
               style={{
                 backgroundColor: 'var(--color-input-background)',
                 color: 'var(--color-text-primary)'
@@ -470,7 +470,7 @@ export default function WorkflowLibraryView({
       {/* Code Export Modal */}
       {showCodeModal && (
         <div className="fixed inset-0 bg-black/70 backdrop-blur-sm flex items-center justify-center z-50 p-4">
-          <div className="bg-white dark:bg-panel-dark rounded-lg max-w-4xl w-full max-h-[80vh] flex flex-col shadow-2xl">
+          <div className="bg-white dark:bg-panel-dark rounded-md max-w-4xl w-full max-h-[80vh] flex flex-col shadow-2xl">
             {/* Modal Header */}
             <div className="p-6 border-b border-gray-200 dark:border-border-dark flex items-center justify-between">
               <h3 className="text-xl font-bold" style={{ color: 'var(--color-text-primary)' }}>
@@ -478,7 +478,7 @@ export default function WorkflowLibraryView({
               </h3>
               <button
                 onClick={() => setShowCodeModal(false)}
-                className="p-2 hover:bg-gray-100 dark:hover:bg-white/10 rounded-lg transition-all"
+                className="p-2 hover:bg-gray-100 dark:hover:bg-white/10 rounded-md transition-all"
               >
                 <span className="material-symbols-outlined" style={{ color: 'var(--color-text-muted)' }}>
                   close
@@ -494,7 +494,7 @@ export default function WorkflowLibraryView({
                   <p className="text-sm" style={{ color: 'var(--color-text-muted)' }}>Generating code...</p>
                 </div>
               ) : (
-                <pre className="text-xs p-4 rounded-lg bg-gray-50 dark:bg-black/20 overflow-x-auto" style={{ color: 'var(--color-text-primary)' }}>
+                <pre className="text-xs p-4 rounded-md bg-gray-50 dark:bg-black/20 overflow-x-auto" style={{ color: 'var(--color-text-primary)' }}>
                   {generatedCode}
                 </pre>
               )}
@@ -504,7 +504,7 @@ export default function WorkflowLibraryView({
             <div className="p-6 border-t border-gray-200 dark:border-border-dark flex items-center justify-end gap-3">
               <button
                 onClick={() => setShowCodeModal(false)}
-                className="px-4 py-2 text-sm font-medium border border-gray-300 dark:border-border-dark rounded-lg hover:bg-gray-100 dark:hover:bg-white/10 hover:border-gray-400 dark:hover:border-border-light transition-all"
+                className="px-4 py-2 text-sm font-medium border border-gray-300 dark:border-border-dark rounded-md hover:bg-gray-100 dark:hover:bg-white/10 hover:border-gray-400 dark:hover:border-border-light transition-all"
                 style={{ color: 'var(--color-text-primary)' }}
               >
                 Close
@@ -512,7 +512,7 @@ export default function WorkflowLibraryView({
               <button
                 onClick={copyToClipboard}
                 disabled={loadingCode}
-                className="px-4 py-2 text-sm font-medium text-white bg-primary rounded-lg hover:brightness-110 hover:shadow-lg transition-all disabled:opacity-50 flex items-center gap-2"
+                className="px-4 py-2 text-sm font-medium text-white bg-primary rounded-md hover:brightness-110 hover:shadow-lg transition-all disabled:opacity-50 flex items-center gap-2"
               >
                 <span className="material-symbols-outlined text-sm">content_copy</span>
                 Copy to Clipboard
@@ -525,9 +525,9 @@ export default function WorkflowLibraryView({
       {/* Delete Confirmation Modal */}
       {showDeleteConfirm && (
         <div className="fixed inset-0 bg-black/70 backdrop-blur-sm flex items-center justify-center z-50 p-4">
-          <div className="bg-white dark:bg-panel-dark rounded-lg max-w-md w-full p-6 shadow-2xl">
+          <div className="bg-white dark:bg-panel-dark rounded-md max-w-md w-full p-6 shadow-2xl">
             <div className="flex items-center gap-3 mb-4">
-              <div className="w-12 h-12 rounded-lg bg-red-100 dark:bg-red-500/20 flex items-center justify-center">
+              <div className="w-12 h-12 rounded-md bg-red-100 dark:bg-red-500/20 flex items-center justify-center">
                 <span className="material-symbols-outlined text-red-600 dark:text-red-400 text-2xl">
                   warning
                 </span>
@@ -570,14 +570,14 @@ export default function WorkflowLibraryView({
                   setShowDeleteConfirm(false);
                   setWorkflowToDelete(null);
                 }}
-                className="px-4 py-2 text-sm font-medium border border-gray-300 dark:border-border-dark rounded-lg hover:bg-gray-100 dark:hover:bg-white/10 hover:border-gray-400 dark:hover:border-border-light transition-all"
+                className="px-4 py-2 text-sm font-medium border border-gray-300 dark:border-border-dark rounded-md hover:bg-gray-100 dark:hover:bg-white/10 hover:border-gray-400 dark:hover:border-border-light transition-all"
                 style={{ color: 'var(--color-text-primary)' }}
               >
                 Cancel
               </button>
               <button
                 onClick={confirmDelete}
-                className="px-4 py-2 text-sm font-medium text-white bg-red-600 rounded-lg hover:brightness-110 hover:shadow-lg transition-all"
+                className="px-4 py-2 text-sm font-medium text-white bg-red-600 rounded-md hover:brightness-110 hover:shadow-lg transition-all"
               >
                 Delete Workflow
               </button>
@@ -614,7 +614,7 @@ export default function WorkflowLibraryView({
       {/* Create Workflow Modal */}
       {showCreateModal && (
         <div className="fixed inset-0 bg-black/70 backdrop-blur-sm flex items-center justify-center z-50 p-4">
-          <div className="bg-white dark:bg-panel-dark rounded-lg max-w-md w-full p-6 shadow-2xl">
+          <div className="bg-white dark:bg-panel-dark rounded-md max-w-md w-full p-6 shadow-2xl">
             <h3 className="text-lg font-bold mb-4" style={{ color: 'var(--color-text-primary)' }}>
               Create New Workflow
             </h3>
@@ -631,7 +631,7 @@ export default function WorkflowLibraryView({
                   type="text"
                   value={newWorkflowName}
                   onChange={(e) => setNewWorkflowName(e.target.value)}
-                  className="w-full px-3 py-2 text-sm border border-gray-300 dark:border-border-dark rounded-lg focus:outline-none focus:ring-2 focus:ring-primary"
+                  className="w-full px-3 py-2 text-sm border border-gray-300 dark:border-border-dark rounded-md focus:outline-none focus:ring-2 focus:ring-primary"
                   style={{
                     backgroundColor: 'var(--color-input-background)',
                     color: 'var(--color-text-primary)'
@@ -642,7 +642,7 @@ export default function WorkflowLibraryView({
               </div>
 
               {activeProject && (
-                <div className="mb-4 p-3 rounded-lg bg-gray-50 dark:bg-white/5">
+                <div className="mb-4 p-3 rounded-md bg-gray-50 dark:bg-white/5">
                   <p className="text-xs" style={{ color: 'var(--color-text-muted)' }}>
                     Will be created in: <span className="font-medium" style={{ color: 'var(--color-text-primary)' }}>{activeProject.name}</span>
                   </p>
@@ -656,7 +656,7 @@ export default function WorkflowLibraryView({
                     setShowCreateModal(false);
                     setNewWorkflowName('');
                   }}
-                  className="px-4 py-2 text-sm font-medium border border-gray-300 dark:border-border-dark rounded-lg hover:bg-gray-100 dark:hover:bg-white/10 hover:border-gray-400 dark:hover:border-border-light transition-all"
+                  className="px-4 py-2 text-sm font-medium border border-gray-300 dark:border-border-dark rounded-md hover:bg-gray-100 dark:hover:bg-white/10 hover:border-gray-400 dark:hover:border-border-light transition-all"
                   style={{ color: 'var(--color-text-primary)' }}
                 >
                   Cancel
@@ -664,7 +664,7 @@ export default function WorkflowLibraryView({
                 <button
                   type="submit"
                   disabled={!newWorkflowName.trim()}
-                  className="px-4 py-2 text-sm font-medium text-white bg-primary rounded-lg hover:brightness-110 hover:shadow-lg transition-all disabled:opacity-50"
+                  className="px-4 py-2 text-sm font-medium text-white bg-primary rounded-md hover:brightness-110 hover:shadow-lg transition-all disabled:opacity-50"
                 >
                   Create Workflow
                 </button>

@@ -51,7 +51,7 @@ export default function SessionSelector({ onNewSession }: SessionSelectorProps) 
     <div className="relative">
       <button
         onClick={() => setIsOpen(!isOpen)}
-        className="flex items-center gap-2 px-3 py-2 rounded-lg border transition-colors hover:bg-gray-50"
+        className="flex items-center gap-2 px-3 py-2 rounded-md border transition-colors hover:bg-gray-50"
         style={{
           borderColor: 'var(--color-border-dark)',
           backgroundColor: 'white',
@@ -71,7 +71,7 @@ export default function SessionSelector({ onNewSession }: SessionSelectorProps) 
             onClick={() => setIsOpen(false)}
           />
           <div
-            className="absolute right-0 mt-2 w-80 rounded-lg shadow-lg border z-50 max-h-96 overflow-hidden flex flex-col"
+            className="absolute right-0 mt-2 w-80 rounded-md shadow-lg border z-50 max-h-96 overflow-hidden flex flex-col"
             style={{
               backgroundColor: 'white',
               borderColor: 'var(--color-border-dark)',

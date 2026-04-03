@@ -74,7 +74,7 @@ export default function NotificationModal({
       onClick={onClose}
     >
       <div
-        className="relative max-w-md w-full mx-4 rounded-lg shadow-2xl"
+        className="relative max-w-md w-full mx-4 rounded-md shadow-2xl"
         style={{
           backgroundColor: 'var(--color-panel-dark)',
           border: '1px solid var(--color-border-dark)',

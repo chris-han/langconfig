@@ -54,7 +54,7 @@ export const VideoBlock: React.FC<VideoBlockProps> = ({ block, className = '' })
   };
 
   return (
-    <div className={`my-4 p-4 bg-gray-100 dark:bg-gray-800 rounded-lg ${className}`}>
+    <div className={`my-4 p-4 bg-gray-100 dark:bg-gray-800 rounded-md ${className}`}>
       <div className="flex items-center gap-3 mb-3">
         <Video className="w-5 h-5 text-gray-600 dark:text-gray-400" />
         <span className="text-sm font-medium text-gray-700 dark:text-gray-300">Generated Video</span>
@@ -73,7 +73,7 @@ export const VideoBlock: React.FC<VideoBlockProps> = ({ block, className = '' })
       </div>
       <video
         controls
-        className="w-full max-h-[500px] rounded-lg shadow-lg"
+        className="w-full max-h-[500px] rounded-md shadow-lg"
         preload="metadata"
       >
         <source src={src} type={block.mimeType} />

@@ -128,7 +128,7 @@ const ToolTemplateGallery = ({ onSelectTemplate, onStartFromScratch }: ToolTempl
             placeholder="Search templates..."
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
-            className="w-full pl-10 pr-4 py-2 rounded-lg focus:ring-2"
+            className="w-full pl-10 pr-4 py-2 rounded-md focus:ring-2"
             style={{
               backgroundColor: 'var(--color-input-background)',
               color: 'var(--color-text-primary)',
@@ -142,7 +142,7 @@ const ToolTemplateGallery = ({ onSelectTemplate, onStartFromScratch }: ToolTempl
         <select
           value={selectedCategory}
           onChange={(e) => setSelectedCategory(e.target.value)}
-          className="px-4 py-2 rounded-lg focus:ring-2"
+          className="px-4 py-2 rounded-md focus:ring-2"
           style={{
             backgroundColor: 'var(--color-input-background)',
             color: 'var(--color-text-primary)',
@@ -162,7 +162,7 @@ const ToolTemplateGallery = ({ onSelectTemplate, onStartFromScratch }: ToolTempl
       {/* Start from Scratch Button */}
       <button
         onClick={onStartFromScratch}
-        className="w-full p-4 border-2 border-dashed rounded-lg transition-colors text-left group"
+        className="w-full p-4 border-2 border-dashed rounded-md transition-colors text-left group"
         style={{
           borderColor: 'var(--color-border-dark)',
           backgroundColor: 'var(--color-panel-dark)'
@@ -177,7 +177,7 @@ const ToolTemplateGallery = ({ onSelectTemplate, onStartFromScratch }: ToolTempl
         }}
       >
         <div className="flex items-center gap-3">
-          <div className="w-12 h-12 rounded-lg flex items-center justify-center transition-colors" style={{ backgroundColor: 'var(--color-input-background)' }}>
+          <div className="w-12 h-12 rounded-md flex items-center justify-center transition-colors" style={{ backgroundColor: 'var(--color-input-background)' }}>
             <span className="material-symbols-outlined text-xl" style={{ color: 'var(--color-primary)' }}>add_circle</span>
           </div>
           <div>
@@ -193,7 +193,7 @@ const ToolTemplateGallery = ({ onSelectTemplate, onStartFromScratch }: ToolTempl
           <button
             key={template.template_id}
             onClick={() => onSelectTemplate(template)}
-            className="p-4 border-2 rounded-lg hover:border-primary hover:shadow-lg transition-all duration-200 text-left"
+            className="p-4 border-2 rounded-md hover:border-primary hover:shadow-lg transition-all duration-200 text-left"
             style={{
               backgroundColor: 'var(--color-panel-dark)',
               borderColor: 'var(--color-border-dark)'

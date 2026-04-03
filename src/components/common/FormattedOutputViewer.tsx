@@ -212,7 +212,7 @@ export const FormattedOutputViewer: React.FC<FormattedOutputViewerProps> = ({
             style={vscDarkPlus}
             language={language}
             PreTag="div"
-            className="rounded-lg"
+            className="rounded-md"
             showLineNumbers
             {...props}
           >
@@ -298,7 +298,7 @@ export const FormattedOutputViewer: React.FC<FormattedOutputViewerProps> = ({
           <img
             src={src}
             alt={alt || 'Generated image'}
-            className="w-full h-auto rounded-lg shadow-lg cursor-pointer transition-transform hover:scale-[1.02] border border-gray-200 dark:border-gray-700"
+            className="w-full h-auto rounded-md shadow-lg cursor-pointer transition-transform hover:scale-[1.02] border border-gray-200 dark:border-gray-700"
             style={{ maxHeight: '500px', objectFit: 'contain' }}
             onClick={() => setFullscreenImage(src)}
             loading="lazy"
@@ -308,7 +308,7 @@ export const FormattedOutputViewer: React.FC<FormattedOutputViewerProps> = ({
               {alt}
             </p>
           )}
-          <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity bg-black/10 rounded-lg pointer-events-none">
+          <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity bg-black/10 rounded-md pointer-events-none">
             <span className="text-white bg-black/60 px-3 py-1 rounded-md text-sm font-medium">
               Click to view full size
             </span>
@@ -319,13 +319,13 @@ export const FormattedOutputViewer: React.FC<FormattedOutputViewerProps> = ({
   }), [copiedIndex, setFullscreenImage]);
 
   return (
-    <div className={`bg-white dark:bg-panel-dark rounded-lg shadow-sm border border-gray-200 dark:border-border-dark ${className}`}>
+    <div className={`bg-white dark:bg-panel-dark rounded-md shadow-sm border border-gray-200 dark:border-border-dark ${className}`}>
       {/* Header with metadata */}
       {showMetadata && (
         <div className="border-b border-gray-200 dark:border-border-dark px-6 py-4">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-3">
-              <div className={`p-2 rounded-lg ${getTypeColor(output.output_type)}`}>
+              <div className={`p-2 rounded-md ${getTypeColor(output.output_type)}`}>
                 {getTypeIcon(output.output_type)}
               </div>
               <div>
@@ -348,7 +348,7 @@ export const FormattedOutputViewer: React.FC<FormattedOutputViewerProps> = ({
               </div>
               <button
                 onClick={downloadOutput}
-                className="p-2 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-lg text-gray-500 dark:text-gray-400 transition-colors"
+                className="p-2 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-md text-gray-500 dark:text-gray-400 transition-colors"
                 title="Download Output"
               >
                 <Download className="w-5 h-5" />
@@ -456,7 +456,7 @@ export const FormattedOutputViewer: React.FC<FormattedOutputViewerProps> = ({
             <img
               src={fullscreenImage}
               alt="Fullscreen view"
-              className="max-w-full max-h-full object-contain rounded-lg"
+              className="max-w-full max-h-full object-contain rounded-md"
               onClick={(e) => e.stopPropagation()}
             />
           </div>

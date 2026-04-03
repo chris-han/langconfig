@@ -186,7 +186,7 @@ export default function SkillLibrary({
           <div className="mb-6 pb-4 border-b" style={{ borderBottomColor: 'var(--color-border-dark)' }}>
             <div className="flex items-start gap-4">
               <div
-                className="w-16 h-16 rounded-xl flex items-center justify-center flex-shrink-0 shadow-sm"
+                className="w-16 h-16 rounded-md flex items-center justify-center flex-shrink-0 shadow-sm"
                 style={{ backgroundColor: 'var(--color-background-light)' }}
               >
                 <Zap className="w-8 h-8" style={{ color: 'var(--color-primary)' }} />
@@ -217,7 +217,7 @@ export default function SkillLibrary({
               <button
                 onClick={handleReload}
                 disabled={loading}
-                className="px-4 py-2 rounded-lg text-sm font-medium border flex items-center gap-2 transition-colors"
+                className="px-4 py-2 rounded-md text-sm font-medium border flex items-center gap-2 transition-colors"
                 style={{
                   backgroundColor: 'var(--color-panel-dark)',
                   borderColor: 'var(--color-border-dark)',
@@ -239,7 +239,7 @@ export default function SkillLibrary({
                 placeholder="Search skills..."
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
-                className="w-full pl-10 pr-10 py-2.5 border rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-primary"
+                className="w-full pl-10 pr-10 py-2.5 border rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-primary"
                 style={{
                   backgroundColor: 'var(--color-input-background)',
                   borderColor: 'var(--color-border-dark)',
@@ -281,7 +281,7 @@ export default function SkillLibrary({
 
           {/* Error */}
           {error && (
-            <div className="p-4 rounded-lg mb-6 border" style={{
+            <div className="p-4 rounded-md mb-6 border" style={{
               backgroundColor: 'rgba(239, 68, 68, 0.1)',
               borderColor: 'rgba(239, 68, 68, 0.3)',
               color: '#ef4444'
@@ -303,7 +303,7 @@ export default function SkillLibrary({
                   {/* Section Header */}
                   <button
                     onClick={() => toggleSection(sourceType)}
-                    className="w-full px-3 py-2 rounded-lg flex items-center justify-between mb-2"
+                    className="w-full px-3 py-2 rounded-md flex items-center justify-between mb-2"
                     style={{ backgroundColor: 'var(--color-primary)' }}
                   >
                     <div className="flex items-center gap-2">
@@ -331,7 +331,7 @@ export default function SkillLibrary({
                           <div
                             key={skill.skill_id}
                             onClick={() => handleSkillClick(skill)}
-                            className="p-4 rounded-xl border cursor-pointer transition-all hover:shadow-md"
+                            className="p-4 rounded-md border cursor-pointer transition-all hover:shadow-md"
                             style={{
                               backgroundColor: selectedSkill?.skill_id === skill.skill_id
                                 ? 'var(--color-node-background-light)'
@@ -344,7 +344,7 @@ export default function SkillLibrary({
                             {/* Card Header */}
                             <div className="flex items-start gap-3 mb-2">
                               <div
-                                className="w-10 h-10 rounded-lg flex items-center justify-center flex-shrink-0"
+                                className="w-10 h-10 rounded-md flex items-center justify-center flex-shrink-0"
                                 style={{ backgroundColor: 'var(--color-background-light)' }}
                               >
                                 <Zap className="w-5 h-5" style={{ color: 'var(--color-primary)' }} />
@@ -475,7 +475,7 @@ export default function SkillLibrary({
                 Instructions
               </h4>
               <div
-                className="p-3 rounded-lg max-h-32 overflow-y-auto"
+                className="p-3 rounded-md max-h-32 overflow-y-auto"
                 style={{ backgroundColor: 'var(--color-background-dark)' }}
               >
                 <pre className="whitespace-pre-wrap font-mono text-xs" style={{ color: 'var(--color-text-primary)' }}>

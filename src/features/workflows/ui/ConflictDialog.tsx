@@ -61,7 +61,7 @@ export default function ConflictDialog({
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
-      <div className="bg-white rounded-lg shadow-xl max-w-3xl w-full mx-4 max-h-[90vh] overflow-hidden">
+      <div className="bg-white rounded-md shadow-xl max-w-3xl w-full mx-4 max-h-[90vh] overflow-hidden">
         {/* Header */}
         <div className="flex items-center justify-between p-6 border-b border-gray-200 bg-amber-50">
           <div className="flex items-center gap-3">
@@ -97,7 +97,7 @@ export default function ConflictDialog({
               {/* Option 1: Reload */}
               <button
                 onClick={handleReload}
-                className="flex items-start gap-3 p-4 border-2 border-blue-200 rounded-lg hover:border-blue-400 hover:bg-blue-50 transition-all text-left"
+                className="flex items-start gap-3 p-4 border-2 border-blue-200 rounded-md hover:border-blue-400 hover:bg-blue-50 transition-all text-left"
               >
                 <RefreshCw className="w-5 h-5 text-blue-600 mt-0.5 flex-shrink-0" />
                 <div>
@@ -114,7 +114,7 @@ export default function ConflictDialog({
               {/* Option 2: Force Save */}
               <button
                 onClick={handleForce}
-                className="flex items-start gap-3 p-4 border-2 border-orange-200 rounded-lg hover:border-orange-400 hover:bg-orange-50 transition-all text-left"
+                className="flex items-start gap-3 p-4 border-2 border-orange-200 rounded-md hover:border-orange-400 hover:bg-orange-50 transition-all text-left"
               >
                 <AlertTriangle className="w-5 h-5 text-orange-600 mt-0.5 flex-shrink-0" />
                 <div>
@@ -131,7 +131,7 @@ export default function ConflictDialog({
               {/* Option 3: Cancel */}
               <button
                 onClick={handleCancel}
-                className="flex items-start gap-3 p-4 border-2 border-gray-200 rounded-lg hover:border-gray-400 hover:bg-gray-50 transition-all text-left"
+                className="flex items-start gap-3 p-4 border-2 border-gray-200 rounded-md hover:border-gray-400 hover:bg-gray-50 transition-all text-left"
               >
                 <X className="w-5 h-5 text-gray-600 mt-0.5 flex-shrink-0" />
                 <div>
@@ -199,13 +199,13 @@ export default function ConflictDialog({
         <div className="flex items-center justify-end gap-3 p-4 border-t border-gray-200 bg-gray-50">
           <button
             onClick={handleCancel}
-            className="px-4 py-2 text-gray-700 hover:bg-gray-200 rounded-lg transition-colors"
+            className="px-4 py-2 text-gray-700 hover:bg-gray-200 rounded-md transition-colors"
           >
             Cancel
           </button>
           <button
             onClick={handleReload}
-            className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors flex items-center gap-2"
+            className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition-colors flex items-center gap-2"
           >
             <RefreshCw className="w-4 h-4" />
             Reload Latest

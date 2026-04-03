@@ -693,7 +693,7 @@ export default function SettingsView() {
                           autoSave('general');
                         }}
                         placeholder="C:\Users\YourName\Documents\LangConfig or ./data/documents"
-                        className="flex-1 px-3 py-1.5 text-sm border border-gray-300 dark:border-border-dark rounded-lg focus:outline-none focus:ring-2 focus:ring-primary font-mono"
+                        className="flex-1 px-3 py-1.5 text-sm border border-gray-300 dark:border-border-dark rounded-md focus:outline-none focus:ring-2 focus:ring-primary font-mono"
                         style={{
                           backgroundColor: 'var(--color-input-background)',
                           color: 'var(--color-text-primary)'
@@ -720,7 +720,7 @@ export default function SettingsView() {
                           }
                         }}
                         title={(window as typeof window & { __TAURI__?: unknown }).__TAURI__ ? 'Browse for folder' : 'Browse button only available in desktop app - enter path manually'}
-                        className="px-3 py-1.5 text-sm font-medium bg-white dark:bg-background-dark border border-gray-300 dark:border-border-dark rounded-lg hover:bg-gray-50 dark:hover:bg-white/5 transition-colors whitespace-nowrap disabled:opacity-50 disabled:cursor-not-allowed"
+                        className="px-3 py-1.5 text-sm font-medium bg-white dark:bg-background-dark border border-gray-300 dark:border-border-dark rounded-md hover:bg-gray-50 dark:hover:bg-white/5 transition-colors whitespace-nowrap disabled:opacity-50 disabled:cursor-not-allowed"
                         style={{ color: 'var(--color-text-primary)' }}
                       >
                         Browse
@@ -747,7 +747,7 @@ export default function SettingsView() {
                           setRagSettings({ ...ragSettings, embeddingModel: e.target.value });
                           autoSave('general');
                         }}
-                        className="w-full px-3 py-1.5 text-sm border border-gray-300 dark:border-border-dark rounded-lg focus:outline-none focus:ring-2 focus:ring-primary"
+                        className="w-full px-3 py-1.5 text-sm border border-gray-300 dark:border-border-dark rounded-md focus:outline-none focus:ring-2 focus:ring-primary"
                         style={{
                           backgroundColor: 'var(--color-input-background)',
                           color: 'var(--color-text-primary)'
@@ -762,7 +762,7 @@ export default function SettingsView() {
                       </p>
                     </div>
 
-                    <div className="border border-gray-200 dark:border-border-dark rounded-lg p-3">
+                    <div className="border border-gray-200 dark:border-border-dark rounded-md p-3">
                       <h5 className="text-sm font-medium mb-2" style={{ color: 'var(--color-text-primary)' }}>
                         Azure OpenAI Embedding Runtime
                       </h5>
@@ -779,7 +779,7 @@ export default function SettingsView() {
                               autoSave('general');
                             }}
                             placeholder="https://your-resource.openai.azure.com/"
-                            className="w-full px-3 py-1.5 text-sm border border-gray-300 dark:border-border-dark rounded-lg focus:outline-none focus:ring-2 focus:ring-primary"
+                            className="w-full px-3 py-1.5 text-sm border border-gray-300 dark:border-border-dark rounded-md focus:outline-none focus:ring-2 focus:ring-primary"
                             style={{
                               backgroundColor: 'var(--color-input-background)',
                               color: 'var(--color-text-primary)'
@@ -799,7 +799,7 @@ export default function SettingsView() {
                               autoSave('general');
                             }}
                             placeholder="2024-05-01-preview"
-                            className="w-full px-3 py-1.5 text-sm border border-gray-300 dark:border-border-dark rounded-lg focus:outline-none focus:ring-2 focus:ring-primary font-mono"
+                            className="w-full px-3 py-1.5 text-sm border border-gray-300 dark:border-border-dark rounded-md focus:outline-none focus:ring-2 focus:ring-primary font-mono"
                             style={{
                               backgroundColor: 'var(--color-input-background)',
                               color: 'var(--color-text-primary)'
@@ -819,7 +819,7 @@ export default function SettingsView() {
                               autoSave('general');
                             }}
                             placeholder="text-embedding-3-small"
-                            className="w-full px-3 py-1.5 text-sm border border-gray-300 dark:border-border-dark rounded-lg focus:outline-none focus:ring-2 focus:ring-primary font-mono"
+                            className="w-full px-3 py-1.5 text-sm border border-gray-300 dark:border-border-dark rounded-md focus:outline-none focus:ring-2 focus:ring-primary font-mono"
                             style={{
                               backgroundColor: 'var(--color-input-background)',
                               color: 'var(--color-text-primary)'
@@ -843,7 +843,7 @@ export default function SettingsView() {
                               });
                               autoSave('general');
                             }}
-                            className="w-full px-3 py-1.5 text-sm border border-gray-300 dark:border-border-dark rounded-lg focus:outline-none focus:ring-2 focus:ring-primary"
+                            className="w-full px-3 py-1.5 text-sm border border-gray-300 dark:border-border-dark rounded-md focus:outline-none focus:ring-2 focus:ring-primary"
                             style={{
                               backgroundColor: 'var(--color-input-background)',
                               color: 'var(--color-text-primary)'
@@ -873,7 +873,7 @@ export default function SettingsView() {
                             autoSave('general');
                           }
                         }}
-                        className="w-full px-3 py-1.5 text-sm border border-gray-300 dark:border-border-dark rounded-lg focus:outline-none focus:ring-2 focus:ring-primary"
+                        className="w-full px-3 py-1.5 text-sm border border-gray-300 dark:border-border-dark rounded-md focus:outline-none focus:ring-2 focus:ring-primary"
                         style={{
                           backgroundColor: 'var(--color-input-background)',
                           color: 'var(--color-text-primary)'
@@ -900,7 +900,7 @@ export default function SettingsView() {
                             autoSave('general');
                           }
                         }}
-                        className="w-full px-3 py-1.5 text-sm border border-gray-300 dark:border-border-dark rounded-lg focus:outline-none focus:ring-2 focus:ring-primary"
+                        className="w-full px-3 py-1.5 text-sm border border-gray-300 dark:border-border-dark rounded-md focus:outline-none focus:ring-2 focus:ring-primary"
                         style={{
                           backgroundColor: 'var(--color-input-background)',
                           color: 'var(--color-text-primary)'
@@ -996,7 +996,7 @@ export default function SettingsView() {
                       value={apiKeys.anthropic}
                       onChange={(e) => setApiKeys({ ...apiKeys, anthropic: e.target.value })}
                       placeholder={apiKeyStatus.anthropic ? "Enter new key to replace existing" : "sk-ant-..."}
-                      className="w-full px-3 py-2 text-sm border border-gray-300 dark:border-border-dark rounded-lg focus:outline-none focus:ring-2 focus:ring-primary font-mono"
+                      className="w-full px-3 py-2 text-sm border border-gray-300 dark:border-border-dark rounded-md focus:outline-none focus:ring-2 focus:ring-primary font-mono"
                       style={{
                         backgroundColor: 'var(--color-input-background)',
                         color: 'var(--color-text-primary)'
@@ -1006,7 +1006,7 @@ export default function SettingsView() {
                       type="button"
                       onClick={() => setApiKeyVisibility({ ...apiKeyVisibility, anthropic: !apiKeyVisibility.anthropic })}
                       disabled={isStoredMaskedValue('anthropic')}
-                      className="px-3 py-2 text-sm border border-gray-300 dark:border-border-dark rounded-lg hover:bg-gray-50 dark:hover:bg-panel-dark/80 transition-colors"
+                      className="px-3 py-2 text-sm border border-gray-300 dark:border-border-dark rounded-md hover:bg-gray-50 dark:hover:bg-panel-dark/80 transition-colors"
                       style={{ color: 'var(--color-text-primary)' }}
                     >
                       {isStoredMaskedValue('anthropic') ? 'Stored' : (apiKeyVisibility.anthropic ? 'Hide' : 'Show')}
@@ -1015,7 +1015,7 @@ export default function SettingsView() {
                       <button
                         type="button"
                         onClick={() => clearStoredApiKey('anthropic', 'built-in')}
-                        className="px-3 py-2 text-sm border border-red-200 rounded-lg text-red-600 hover:bg-red-50 dark:hover:bg-red-900/20 transition-colors"
+                        className="px-3 py-2 text-sm border border-red-200 rounded-md text-red-600 hover:bg-red-50 dark:hover:bg-red-900/20 transition-colors"
                       >
                         Clear
                       </button>
@@ -1049,7 +1049,7 @@ export default function SettingsView() {
                       value={apiKeys.openai}
                       onChange={(e) => setApiKeys({ ...apiKeys, openai: e.target.value })}
                       placeholder={apiKeyStatus.openai ? "Enter new key to replace existing" : "sk-..."}
-                      className="w-full px-3 py-2 text-sm border border-gray-300 dark:border-border-dark rounded-lg focus:outline-none focus:ring-2 focus:ring-primary font-mono"
+                      className="w-full px-3 py-2 text-sm border border-gray-300 dark:border-border-dark rounded-md focus:outline-none focus:ring-2 focus:ring-primary font-mono"
                       style={{
                         backgroundColor: 'var(--color-input-background)',
                         color: 'var(--color-text-primary)'
@@ -1059,7 +1059,7 @@ export default function SettingsView() {
                       type="button"
                       onClick={() => setApiKeyVisibility({ ...apiKeyVisibility, openai: !apiKeyVisibility.openai })}
                       disabled={isStoredMaskedValue('openai')}
-                      className="px-3 py-2 text-sm border border-gray-300 dark:border-border-dark rounded-lg hover:bg-gray-50 dark:hover:bg-panel-dark/80 transition-colors"
+                      className="px-3 py-2 text-sm border border-gray-300 dark:border-border-dark rounded-md hover:bg-gray-50 dark:hover:bg-panel-dark/80 transition-colors"
                       style={{ color: 'var(--color-text-primary)' }}
                     >
                       {isStoredMaskedValue('openai') ? 'Stored' : (apiKeyVisibility.openai ? 'Hide' : 'Show')}
@@ -1068,7 +1068,7 @@ export default function SettingsView() {
                       <button
                         type="button"
                         onClick={() => clearStoredApiKey('openai', 'built-in')}
-                        className="px-3 py-2 text-sm border border-red-200 rounded-lg text-red-600 hover:bg-red-50 dark:hover:bg-red-900/20 transition-colors"
+                        className="px-3 py-2 text-sm border border-red-200 rounded-md text-red-600 hover:bg-red-50 dark:hover:bg-red-900/20 transition-colors"
                       >
                         Clear
                       </button>
@@ -1102,7 +1102,7 @@ export default function SettingsView() {
                       value={apiKeys.google}
                       onChange={(e) => setApiKeys({ ...apiKeys, google: e.target.value })}
                       placeholder={apiKeyStatus.google ? "Enter new key to replace existing" : "AIza..."}
-                      className="w-full px-3 py-2 text-sm border border-gray-300 dark:border-border-dark rounded-lg focus:outline-none focus:ring-2 focus:ring-primary font-mono"
+                      className="w-full px-3 py-2 text-sm border border-gray-300 dark:border-border-dark rounded-md focus:outline-none focus:ring-2 focus:ring-primary font-mono"
                       style={{
                         backgroundColor: 'var(--color-input-background)',
                         color: 'var(--color-text-primary)'
@@ -1112,7 +1112,7 @@ export default function SettingsView() {
                       type="button"
                       onClick={() => setApiKeyVisibility({ ...apiKeyVisibility, google: !apiKeyVisibility.google })}
                       disabled={isStoredMaskedValue('google')}
-                      className="px-3 py-2 text-sm border border-gray-300 dark:border-border-dark rounded-lg hover:bg-gray-50 dark:hover:bg-panel-dark/80 transition-colors"
+                      className="px-3 py-2 text-sm border border-gray-300 dark:border-border-dark rounded-md hover:bg-gray-50 dark:hover:bg-panel-dark/80 transition-colors"
                       style={{ color: 'var(--color-text-primary)' }}
                     >
                       {isStoredMaskedValue('google') ? 'Stored' : (apiKeyVisibility.google ? 'Hide' : 'Show')}
@@ -1121,7 +1121,7 @@ export default function SettingsView() {
                       <button
                         type="button"
                         onClick={() => clearStoredApiKey('google', 'built-in')}
-                        className="px-3 py-2 text-sm border border-red-200 rounded-lg text-red-600 hover:bg-red-50 dark:hover:bg-red-900/20 transition-colors"
+                        className="px-3 py-2 text-sm border border-red-200 rounded-md text-red-600 hover:bg-red-50 dark:hover:bg-red-900/20 transition-colors"
                       >
                         Clear
                       </button>
@@ -1179,7 +1179,7 @@ export default function SettingsView() {
                         && (!apiKeys.openai || apiKeys.openai === storedMaskedApiKeys.openai)
                         && (!apiKeys.google || apiKeys.google === storedMaskedApiKeys.google)
                       )}
-                      className="px-4 py-2 text-sm font-medium bg-primary text-white rounded-lg hover:bg-primary/90 transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2"
+                      className="px-4 py-2 text-sm font-medium bg-primary text-white rounded-md hover:bg-primary/90 transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2"
                     >
                       {apiKeySaving ? (
                         <>
@@ -1204,7 +1204,7 @@ export default function SettingsView() {
                   </p>
                 </div>
 
-                <div className="rounded-lg border border-gray-200 dark:border-border-dark p-4 space-y-4 bg-gray-50/60 dark:bg-panel-dark/60">
+                <div className="rounded-md border border-gray-200 dark:border-border-dark p-4 space-y-4 bg-gray-50/60 dark:bg-panel-dark/60">
                   <div className="flex items-center justify-between gap-3">
                     <div>
                       <h3 className="text-sm font-semibold" style={{ color: 'var(--color-text-primary)' }}>
@@ -1218,7 +1218,7 @@ export default function SettingsView() {
                       <select
                         value={providerToAdd}
                         onChange={(e) => setProviderToAdd(e.target.value)}
-                        className="px-3 py-2 text-sm border border-gray-300 dark:border-border-dark rounded-lg focus:outline-none focus:ring-2 focus:ring-primary"
+                        className="px-3 py-2 text-sm border border-gray-300 dark:border-border-dark rounded-md focus:outline-none focus:ring-2 focus:ring-primary"
                         style={{
                           backgroundColor: 'var(--color-input-background)',
                           color: 'var(--color-text-primary)'
@@ -1251,14 +1251,14 @@ export default function SettingsView() {
                           });
                         }}
                         disabled={!ADDITIONAL_PROVIDER_CATALOG[providerToAdd] || !!providerConfigs[providerToAdd]}
-                        className="px-3 py-2 text-sm font-medium bg-primary text-white rounded-lg hover:bg-primary/90 transition-colors disabled:opacity-50"
+                        className="px-3 py-2 text-sm font-medium bg-primary text-white rounded-md hover:bg-primary/90 transition-colors disabled:opacity-50"
                       >
                         Add Provider
                       </button>
                     </div>
                   </div>
 
-                  <div className="rounded-lg border border-gray-200 dark:border-border-dark p-4 space-y-3">
+                  <div className="rounded-md border border-gray-200 dark:border-border-dark p-4 space-y-3">
                     <div className="flex items-center gap-2">
                       <span className="material-symbols-outlined text-base" style={{ color: 'var(--color-primary)' }}>
                         settings
@@ -1292,7 +1292,7 @@ export default function SettingsView() {
                           value={apiKeys.azureOpenAI}
                           onChange={(e) => setApiKeys({ ...apiKeys, azureOpenAI: e.target.value })}
                           placeholder={apiKeyStatus.azureOpenAI ? "Enter new key to replace existing" : "Azure OpenAI key"}
-                          className="w-full px-3 py-2 text-sm border border-gray-300 dark:border-border-dark rounded-lg focus:outline-none focus:ring-2 focus:ring-primary font-mono"
+                          className="w-full px-3 py-2 text-sm border border-gray-300 dark:border-border-dark rounded-md focus:outline-none focus:ring-2 focus:ring-primary font-mono"
                           style={{
                             backgroundColor: 'var(--color-input-background)',
                             color: 'var(--color-text-primary)'
@@ -1302,7 +1302,7 @@ export default function SettingsView() {
                           type="button"
                           onClick={() => setApiKeyVisibility({ ...apiKeyVisibility, azureOpenAI: !apiKeyVisibility.azureOpenAI })}
                           disabled={isStoredMaskedValue('azureOpenAI')}
-                          className="px-3 py-2 text-sm border border-gray-300 dark:border-border-dark rounded-lg hover:bg-gray-50 dark:hover:bg-panel-dark/80 transition-colors"
+                          className="px-3 py-2 text-sm border border-gray-300 dark:border-border-dark rounded-md hover:bg-gray-50 dark:hover:bg-panel-dark/80 transition-colors"
                           style={{ color: 'var(--color-text-primary)' }}
                         >
                           {isStoredMaskedValue('azureOpenAI') ? 'Stored' : (apiKeyVisibility.azureOpenAI ? 'Hide' : 'Show')}
@@ -1311,7 +1311,7 @@ export default function SettingsView() {
                           <button
                             type="button"
                             onClick={() => clearStoredApiKey('azureOpenAI', 'provider')}
-                            className="px-3 py-2 text-sm border border-red-200 rounded-lg text-red-600 hover:bg-red-50 dark:hover:bg-red-900/20 transition-colors"
+                            className="px-3 py-2 text-sm border border-red-200 rounded-md text-red-600 hover:bg-red-50 dark:hover:bg-red-900/20 transition-colors"
                           >
                             Clear
                           </button>
@@ -1332,7 +1332,7 @@ export default function SettingsView() {
                             setRagSettings({ ...ragSettings, embeddingModel: e.target.value });
                             autoSave('general');
                           }}
-                          className="mt-1 w-full px-3 py-2 text-sm border border-gray-300 dark:border-border-dark rounded-lg focus:outline-none focus:ring-2 focus:ring-primary"
+                          className="mt-1 w-full px-3 py-2 text-sm border border-gray-300 dark:border-border-dark rounded-md focus:outline-none focus:ring-2 focus:ring-primary"
                           style={{
                             backgroundColor: 'var(--color-input-background)',
                             color: 'var(--color-text-primary)'
@@ -1354,7 +1354,7 @@ export default function SettingsView() {
                             setRagSettings({ ...ragSettings, azureOpenAIApiVersion: e.target.value });
                             autoSave('general');
                           }}
-                          className="mt-1 w-full px-3 py-2 text-sm border border-gray-300 dark:border-border-dark rounded-lg focus:outline-none focus:ring-2 focus:ring-primary"
+                          className="mt-1 w-full px-3 py-2 text-sm border border-gray-300 dark:border-border-dark rounded-md focus:outline-none focus:ring-2 focus:ring-primary"
                           style={{
                             backgroundColor: 'var(--color-input-background)',
                             color: 'var(--color-text-primary)'
@@ -1373,7 +1373,7 @@ export default function SettingsView() {
                             autoSave('general');
                           }}
                           placeholder="https://your-resource.openai.azure.com/"
-                          className="mt-1 w-full px-3 py-2 text-sm border border-gray-300 dark:border-border-dark rounded-lg focus:outline-none focus:ring-2 focus:ring-primary"
+                          className="mt-1 w-full px-3 py-2 text-sm border border-gray-300 dark:border-border-dark rounded-md focus:outline-none focus:ring-2 focus:ring-primary"
                           style={{
                             backgroundColor: 'var(--color-input-background)',
                             color: 'var(--color-text-primary)'
@@ -1392,7 +1392,7 @@ export default function SettingsView() {
                             autoSave('general');
                           }}
                           placeholder="text-embedding-3-small"
-                          className="mt-1 w-full px-3 py-2 text-sm border border-gray-300 dark:border-border-dark rounded-lg focus:outline-none focus:ring-2 focus:ring-primary"
+                          className="mt-1 w-full px-3 py-2 text-sm border border-gray-300 dark:border-border-dark rounded-md focus:outline-none focus:ring-2 focus:ring-primary"
                           style={{
                             backgroundColor: 'var(--color-input-background)',
                             color: 'var(--color-text-primary)'
@@ -1414,7 +1414,7 @@ export default function SettingsView() {
                             autoSave('general');
                           }}
                           min={1}
-                          className="mt-1 w-full px-3 py-2 text-sm border border-gray-300 dark:border-border-dark rounded-lg focus:outline-none focus:ring-2 focus:ring-primary"
+                          className="mt-1 w-full px-3 py-2 text-sm border border-gray-300 dark:border-border-dark rounded-md focus:outline-none focus:ring-2 focus:ring-primary"
                           style={{
                             backgroundColor: 'var(--color-input-background)',
                             color: 'var(--color-text-primary)'
@@ -1434,7 +1434,7 @@ export default function SettingsView() {
                         const providerMeta = ADDITIONAL_PROVIDER_CATALOG[providerKey];
                         const providerApiStateKey = getProviderApiStateKey(providerKey);
                         return (
-                          <div key={providerKey} className="rounded-lg border border-gray-200 dark:border-border-dark p-4 space-y-3">
+                          <div key={providerKey} className="rounded-md border border-gray-200 dark:border-border-dark p-4 space-y-3">
                             <div className="flex items-start justify-between gap-3">
                               <div>
                                 <h4 className="text-sm font-semibold" style={{ color: 'var(--color-text-primary)' }}>
@@ -1451,7 +1451,7 @@ export default function SettingsView() {
                                   delete nextConfigs[providerKey];
                                   setProviderConfigs(nextConfigs);
                                 }}
-                                className="px-3 py-2 text-xs font-medium border border-red-200 rounded-lg text-red-600 hover:bg-red-50 dark:hover:bg-red-900/20"
+                                className="px-3 py-2 text-xs font-medium border border-red-200 rounded-md text-red-600 hover:bg-red-50 dark:hover:bg-red-900/20"
                               >
                                 Remove
                               </button>
@@ -1494,7 +1494,7 @@ export default function SettingsView() {
                                             reasoningEffort: e.target.value === 'kimi' ? (providerConfig.reasoningEffort || 'medium') : providerConfig.reasoningEffort,
                                           },
                                         })}
-                                        className="mt-1 w-full px-3 py-2 text-sm border border-gray-300 dark:border-border-dark rounded-lg focus:outline-none focus:ring-2 focus:ring-primary"
+                                        className="mt-1 w-full px-3 py-2 text-sm border border-gray-300 dark:border-border-dark rounded-md focus:outline-none focus:ring-2 focus:ring-primary"
                                         style={{
                                           backgroundColor: 'var(--color-input-background)',
                                           color: 'var(--color-text-primary)'
@@ -1515,7 +1515,7 @@ export default function SettingsView() {
                                     value={apiKeys[providerApiStateKey]}
                                     onChange={(e) => setApiKeys({ ...apiKeys, [providerApiStateKey]: e.target.value })}
                                     placeholder={apiKeyStatus[providerApiStateKey] ? 'Enter new key to replace existing' : `${providerMeta?.label || providerKey} API key`}
-                                    className="w-full px-3 py-2 text-sm border border-gray-300 dark:border-border-dark rounded-lg focus:outline-none focus:ring-2 focus:ring-primary font-mono"
+                                    className="w-full px-3 py-2 text-sm border border-gray-300 dark:border-border-dark rounded-md focus:outline-none focus:ring-2 focus:ring-primary font-mono"
                                     style={{
                                       backgroundColor: 'var(--color-input-background)',
                                       color: 'var(--color-text-primary)'
@@ -1525,7 +1525,7 @@ export default function SettingsView() {
                                     type="button"
                                     onClick={() => setApiKeyVisibility({ ...apiKeyVisibility, [providerApiStateKey]: !apiKeyVisibility[providerApiStateKey] })}
                                     disabled={isStoredMaskedValue(providerApiStateKey)}
-                                    className="px-3 py-2 text-sm border border-gray-300 dark:border-border-dark rounded-lg hover:bg-gray-50 dark:hover:bg-panel-dark/80 transition-colors"
+                                    className="px-3 py-2 text-sm border border-gray-300 dark:border-border-dark rounded-md hover:bg-gray-50 dark:hover:bg-panel-dark/80 transition-colors"
                                     style={{ color: 'var(--color-text-primary)' }}
                                   >
                                     {isStoredMaskedValue(providerApiStateKey)
@@ -1536,7 +1536,7 @@ export default function SettingsView() {
                                     <button
                                       type="button"
                                       onClick={() => clearStoredApiKey(providerApiStateKey, 'provider')}
-                                      className="px-3 py-2 text-sm border border-red-200 rounded-lg text-red-600 hover:bg-red-50 dark:hover:bg-red-900/20 transition-colors"
+                                      className="px-3 py-2 text-sm border border-red-200 rounded-md text-red-600 hover:bg-red-50 dark:hover:bg-red-900/20 transition-colors"
                                     >
                                       Clear
                                     </button>
@@ -1558,7 +1558,7 @@ export default function SettingsView() {
                                     ...providerConfigs,
                                     [providerKey]: { ...providerConfig, baseUrl: e.target.value },
                                   })}
-                                  className="mt-1 w-full px-3 py-2 text-sm border border-gray-300 dark:border-border-dark rounded-lg focus:outline-none focus:ring-2 focus:ring-primary"
+                                  className="mt-1 w-full px-3 py-2 text-sm border border-gray-300 dark:border-border-dark rounded-md focus:outline-none focus:ring-2 focus:ring-primary"
                                   style={{
                                     backgroundColor: 'var(--color-input-background)',
                                     color: 'var(--color-text-primary)'
@@ -1581,7 +1581,7 @@ export default function SettingsView() {
                                   })}
                                   rows={3}
                                   placeholder={(providerMeta?.placeholderModels || []).join('\n')}
-                                  className="mt-1 w-full px-3 py-2 text-sm border border-gray-300 dark:border-border-dark rounded-lg focus:outline-none focus:ring-2 focus:ring-primary font-mono"
+                                  className="mt-1 w-full px-3 py-2 text-sm border border-gray-300 dark:border-border-dark rounded-md focus:outline-none focus:ring-2 focus:ring-primary font-mono"
                                   style={{
                                     backgroundColor: 'var(--color-input-background)',
                                     color: 'var(--color-text-primary)'
@@ -1604,7 +1604,7 @@ export default function SettingsView() {
                                         ...providerConfigs,
                                         [providerKey]: { ...providerConfig, reasoningEffort: e.target.value },
                                       })}
-                                      className="mt-1 w-full px-3 py-2 text-sm border border-gray-300 dark:border-border-dark rounded-lg focus:outline-none focus:ring-2 focus:ring-primary"
+                                      className="mt-1 w-full px-3 py-2 text-sm border border-gray-300 dark:border-border-dark rounded-md focus:outline-none focus:ring-2 focus:ring-primary"
                                       style={{
                                         backgroundColor: 'var(--color-input-background)',
                                         color: 'var(--color-text-primary)'
@@ -1630,7 +1630,7 @@ export default function SettingsView() {
                                         ...providerConfigs,
                                         [providerKey]: { ...providerConfig, temperature: Number(e.target.value) },
                                       })}
-                                      className="mt-1 w-full px-3 py-2 text-sm border border-gray-300 dark:border-border-dark rounded-lg focus:outline-none focus:ring-2 focus:ring-primary"
+                                      className="mt-1 w-full px-3 py-2 text-sm border border-gray-300 dark:border-border-dark rounded-md focus:outline-none focus:ring-2 focus:ring-primary"
                                       style={{
                                         backgroundColor: 'var(--color-input-background)',
                                         color: 'var(--color-text-primary)'
@@ -1650,7 +1650,7 @@ export default function SettingsView() {
                                         ...providerConfigs,
                                         [providerKey]: { ...providerConfig, maxTokens: Number(e.target.value) },
                                       })}
-                                      className="mt-1 w-full px-3 py-2 text-sm border border-gray-300 dark:border-border-dark rounded-lg focus:outline-none focus:ring-2 focus:ring-primary"
+                                      className="mt-1 w-full px-3 py-2 text-sm border border-gray-300 dark:border-border-dark rounded-md focus:outline-none focus:ring-2 focus:ring-primary"
                                       style={{
                                         backgroundColor: 'var(--color-input-background)',
                                         color: 'var(--color-text-primary)'
@@ -1671,7 +1671,7 @@ export default function SettingsView() {
                       type="button"
                       onClick={handleSaveAdditionalProviders}
                       disabled={providerConfigSaving}
-                      className="px-4 py-2 text-sm font-medium bg-primary text-white rounded-lg hover:bg-primary/90 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                      className="px-4 py-2 text-sm font-medium bg-primary text-white rounded-md hover:bg-primary/90 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
                     >
                       {providerConfigSaving ? 'Saving...' : 'Save Additional Providers'}
                     </button>
@@ -1692,7 +1692,7 @@ export default function SettingsView() {
               title="Security Notice"
               icon="warning"
             >
-              <div className="flex gap-3 p-4 bg-yellow-50 dark:bg-yellow-500/10 border border-yellow-200 dark:border-yellow-500/30 rounded-lg">
+              <div className="flex gap-3 p-4 bg-yellow-50 dark:bg-yellow-500/10 border border-yellow-200 dark:border-yellow-500/30 rounded-md">
                 <span className="material-symbols-outlined text-yellow-600 dark:text-yellow-400 text-xl">
                   lock
                 </span>
@@ -1740,7 +1740,7 @@ export default function SettingsView() {
               title="Override Behavior"
               icon="info"
             >
-              <div className="flex gap-3 p-4 bg-blue-50 dark:bg-blue-500/10 border border-blue-200 dark:border-blue-500/30 rounded-lg">
+              <div className="flex gap-3 p-4 bg-blue-50 dark:bg-blue-500/10 border border-blue-200 dark:border-blue-500/30 rounded-md">
                 <span className="material-symbols-outlined text-blue-600 dark:text-blue-400 text-xl">
                   info
                 </span>
@@ -1766,7 +1766,7 @@ export default function SettingsView() {
             icon="palette"
           >
             <div className="space-y-4">
-              <div className="rounded-lg border border-gray-200 dark:border-border-dark bg-white/70 dark:bg-white/[0.03] p-3">
+              <div className="rounded-md border border-gray-200 dark:border-border-dark bg-white/70 dark:bg-white/[0.03] p-3">
                 <div className="flex items-center gap-2">
                   <span className="material-symbols-outlined text-base text-primary">deployed_code</span>
                   <span className="text-sm font-medium" style={{ color: 'var(--color-text-primary)' }}>
@@ -1785,7 +1785,7 @@ export default function SettingsView() {
                   <button
                     key={theme.name}
                     onClick={() => handleThemeChange(theme.name)}
-                    className="p-4 rounded-lg border-2 transition-all text-left hover:border-primary/50"
+                    className="p-4 rounded-md border-2 transition-all text-left hover:border-primary/50"
                     style={{
                       borderColor: currentTheme === theme.name
                         ? 'var(--color-primary)'
@@ -1830,8 +1830,8 @@ export default function SettingsView() {
             >
               <div className="space-y-4">
                 {/* App Header */}
-                <div className="flex items-center gap-4 p-4 bg-white dark:bg-background-dark border border-gray-200 dark:border-border-dark rounded-lg">
-                  <div className="w-16 h-16 bg-primary/10 rounded-lg flex items-center justify-center">
+                <div className="flex items-center gap-4 p-4 bg-white dark:bg-background-dark border border-gray-200 dark:border-border-dark rounded-md">
+                  <div className="w-16 h-16 bg-primary/10 rounded-md flex items-center justify-center">
                     <span className="material-symbols-outlined text-3xl text-primary">account_tree</span>
                   </div>
                   <div className="flex-1">
@@ -1848,7 +1848,7 @@ export default function SettingsView() {
                 </div>
 
                 {/* Built With */}
-                <div className="p-4 bg-white dark:bg-background-dark border border-gray-200 dark:border-border-dark rounded-lg">
+                <div className="p-4 bg-white dark:bg-background-dark border border-gray-200 dark:border-border-dark rounded-md">
                   <h4 className="text-sm font-semibold mb-3" style={{ color: 'var(--color-text-primary)' }}>
                     Built with LangChain & LangGraph
                   </h4>
@@ -1860,7 +1860,7 @@ export default function SettingsView() {
                       href="https://www.langchain.com"
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="inline-flex items-center gap-2 px-3 py-1.5 text-xs font-medium bg-white dark:bg-panel-dark border border-gray-300 dark:border-border-dark rounded-lg hover:bg-gray-50 dark:hover:bg-white/5 transition-colors"
+                      className="inline-flex items-center gap-2 px-3 py-1.5 text-xs font-medium bg-white dark:bg-panel-dark border border-gray-300 dark:border-border-dark rounded-md hover:bg-gray-50 dark:hover:bg-white/5 transition-colors"
                       style={{ color: 'var(--color-text-primary)' }}
                     >
                       <span className="material-symbols-outlined text-sm">open_in_new</span>
@@ -1870,7 +1870,7 @@ export default function SettingsView() {
                       href="https://langchain-ai.github.io/langgraph/"
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="inline-flex items-center gap-2 px-3 py-1.5 text-xs font-medium bg-white dark:bg-panel-dark border border-gray-300 dark:border-border-dark rounded-lg hover:bg-gray-50 dark:hover:bg-white/5 transition-colors"
+                      className="inline-flex items-center gap-2 px-3 py-1.5 text-xs font-medium bg-white dark:bg-panel-dark border border-gray-300 dark:border-border-dark rounded-md hover:bg-gray-50 dark:hover:bg-white/5 transition-colors"
                       style={{ color: 'var(--color-text-primary)' }}
                     >
                       <span className="material-symbols-outlined text-sm">open_in_new</span>
@@ -1881,7 +1881,7 @@ export default function SettingsView() {
 
                 {/* What You're Building With */}
                 <div className="grid grid-cols-2 gap-3">
-                  <div className="p-3 bg-white dark:bg-background-dark border border-gray-200 dark:border-border-dark rounded-lg">
+                  <div className="p-3 bg-white dark:bg-background-dark border border-gray-200 dark:border-border-dark rounded-md">
                     <div className="flex items-center gap-2 mb-2">
                       <span className="material-symbols-outlined text-lg text-primary">settings_suggest</span>
                       <h5 className="text-xs font-bold" style={{ color: 'var(--color-text-primary)' }}>LangGraph Workflows</h5>
@@ -1891,7 +1891,7 @@ export default function SettingsView() {
                     </p>
                   </div>
 
-                  <div className="p-3 bg-white dark:bg-background-dark border border-gray-200 dark:border-border-dark rounded-lg">
+                  <div className="p-3 bg-white dark:bg-background-dark border border-gray-200 dark:border-border-dark rounded-md">
                     <div className="flex items-center gap-2 mb-2">
                       <span className="material-symbols-outlined text-lg text-primary">smart_toy</span>
                       <h5 className="text-xs font-bold" style={{ color: 'var(--color-text-primary)' }}>LangChain Agents</h5>
@@ -1901,7 +1901,7 @@ export default function SettingsView() {
                     </p>
                   </div>
 
-                  <div className="p-3 bg-white dark:bg-background-dark border border-gray-200 dark:border-border-dark rounded-lg">
+                  <div className="p-3 bg-white dark:bg-background-dark border border-gray-200 dark:border-border-dark rounded-md">
                     <div className="flex items-center gap-2 mb-2">
                       <span className="material-symbols-outlined text-lg text-primary">description</span>
                       <h5 className="text-xs font-bold" style={{ color: 'var(--color-text-primary)' }}>LangChain RAG</h5>
@@ -1911,7 +1911,7 @@ export default function SettingsView() {
                     </p>
                   </div>
 
-                  <div className="p-3 bg-white dark:bg-background-dark border border-gray-200 dark:border-border-dark rounded-lg">
+                  <div className="p-3 bg-white dark:bg-background-dark border border-gray-200 dark:border-border-dark rounded-md">
                     <div className="flex items-center gap-2 mb-2">
                       <span className="material-symbols-outlined text-lg text-primary">code</span>
                       <h5 className="text-xs font-bold" style={{ color: 'var(--color-text-primary)' }}>Export to Code</h5>
@@ -1954,7 +1954,7 @@ export default function SettingsView() {
             >
               <div className="space-y-4">
                 <div className="flex gap-2 flex-wrap">
-                  <button className="inline-flex items-center gap-2 px-4 py-2 text-sm font-medium bg-white dark:bg-background-dark border border-gray-300 dark:border-border-dark rounded-lg hover:bg-gray-50 dark:hover:bg-white/5 transition-colors" style={{ color: 'var(--color-text-primary)' }}>
+                  <button className="inline-flex items-center gap-2 px-4 py-2 text-sm font-medium bg-white dark:bg-background-dark border border-gray-300 dark:border-border-dark rounded-md hover:bg-gray-50 dark:hover:bg-white/5 transition-colors" style={{ color: 'var(--color-text-primary)' }}>
                     <span className="material-symbols-outlined text-base">code</span>
                     GitHub
                   </button>

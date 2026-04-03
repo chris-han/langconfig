@@ -76,7 +76,7 @@ export default function ChatSettingsMenu({
     <div className="relative">
       <button
         onClick={() => setIsOpen(!isOpen)}
-        className="p-2 rounded-lg transition-colors hover:bg-gray-100"
+        className="p-2 rounded-md transition-colors hover:bg-gray-100"
         style={{ color: 'var(--color-text-muted)' }}
         title="Settings"
       >
@@ -90,7 +90,7 @@ export default function ChatSettingsMenu({
             onClick={() => setIsOpen(false)}
           />
           <div
-            className="absolute right-0 mt-2 w-64 rounded-lg shadow-lg border z-50"
+            className="absolute right-0 mt-2 w-64 rounded-md shadow-lg border z-50"
             style={{
               backgroundColor: 'white',
               borderColor: 'var(--color-border-dark)',

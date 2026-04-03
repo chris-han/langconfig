@@ -60,7 +60,7 @@ export default function FileUploadButton({ sessionId, onFileUploaded, disabled }
       <button
         onClick={() => fileInputRef.current?.click()}
         disabled={disabled || uploading || !sessionId}
-        className="p-2 rounded-lg transition-colors disabled:opacity-50"
+        className="p-2 rounded-md transition-colors disabled:opacity-50"
         style={{
           backgroundColor: 'transparent',
           color: 'var(--color-text-muted)'

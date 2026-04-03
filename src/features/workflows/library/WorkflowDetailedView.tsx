@@ -205,7 +205,7 @@ export default function WorkflowDetailedView({
               <button
                 onClick={() => setShowExportMenu(!showExportMenu)}
                 disabled={exportLoading}
-                className="px-3 py-2 text-sm font-medium rounded-lg border border-gray-300 dark:border-border-dark hover:bg-gray-50 dark:hover:bg-white/5 transition-colors flex items-center gap-2 disabled:opacity-50"
+                className="px-3 py-2 text-sm font-medium rounded-md border border-gray-300 dark:border-border-dark hover:bg-gray-50 dark:hover:bg-white/5 transition-colors flex items-center gap-2 disabled:opacity-50"
                 style={{ color: 'var(--color-text-primary)' }}
               >
                 {exportLoading ? (
@@ -224,7 +224,7 @@ export default function WorkflowDetailedView({
 
               {/* Export Menu Dropdown */}
               {showExportMenu && (
-                <div className="absolute right-0 mt-1 w-64 rounded-lg border border-gray-200 dark:border-border-dark bg-white dark:bg-panel-dark shadow-xl z-50">
+                <div className="absolute right-0 mt-1 w-64 rounded-md border border-gray-200 dark:border-border-dark bg-white dark:bg-panel-dark shadow-xl z-50">
                   <div className="p-1">
                     <button
                       onClick={() => handleExportPackage('standard')}
@@ -292,7 +292,7 @@ export default function WorkflowDetailedView({
             </div>
             <button
               onClick={onDuplicate}
-              className="px-3 py-2 text-sm font-medium rounded-lg border border-gray-300 dark:border-border-dark hover:bg-gray-50 dark:hover:bg-white/5 transition-colors flex items-center gap-2"
+              className="px-3 py-2 text-sm font-medium rounded-md border border-gray-300 dark:border-border-dark hover:bg-gray-50 dark:hover:bg-white/5 transition-colors flex items-center gap-2"
               style={{ color: 'var(--color-text-primary)' }}
             >
               <span className="material-symbols-outlined text-base">content_copy</span>
@@ -300,14 +300,14 @@ export default function WorkflowDetailedView({
             </button>
             <button
               onClick={onDelete}
-              className="px-3 py-2 text-sm font-medium rounded-lg border border-red-300 dark:border-red-500/30 text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-500/10 transition-colors flex items-center gap-2"
+              className="px-3 py-2 text-sm font-medium rounded-md border border-red-300 dark:border-red-500/30 text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-500/10 transition-colors flex items-center gap-2"
             >
               <span className="material-symbols-outlined text-base">delete</span>
               Delete
             </button>
             <button
               onClick={onOpenStudio}
-              className="px-4 py-2 text-sm font-medium text-white bg-primary rounded-lg hover:opacity-90 transition-opacity flex items-center gap-2"
+              className="px-4 py-2 text-sm font-medium text-white bg-primary rounded-md hover:opacity-90 transition-opacity flex items-center gap-2"
             >
               <span className="material-symbols-outlined text-base">edit</span>
               Open in Studio
@@ -320,9 +320,9 @@ export default function WorkflowDetailedView({
       <div className="flex-1 overflow-y-auto px-6 py-6 space-y-6">
         {/* High-Level Overview */}
         <div className="grid grid-cols-3 gap-4">
-          <div className="p-4 rounded-lg border border-gray-200 dark:border-border-dark bg-white dark:bg-panel-dark">
+          <div className="p-4 rounded-md border border-gray-200 dark:border-border-dark bg-white dark:bg-panel-dark">
             <div className="flex items-center gap-3">
-              <div className="w-10 h-10 rounded-lg bg-gray-100 dark:bg-background-dark border border-gray-200 dark:border-border-dark flex items-center justify-center">
+              <div className="w-10 h-10 rounded-md bg-gray-100 dark:bg-background-dark border border-gray-200 dark:border-border-dark flex items-center justify-center">
                 <span className="material-symbols-outlined text-primary">hub</span>
               </div>
               <div>
@@ -336,9 +336,9 @@ export default function WorkflowDetailedView({
             </div>
           </div>
 
-          <div className="p-4 rounded-lg border border-gray-200 dark:border-border-dark bg-white dark:bg-panel-dark">
+          <div className="p-4 rounded-md border border-gray-200 dark:border-border-dark bg-white dark:bg-panel-dark">
             <div className="flex items-center gap-3">
-              <div className="w-10 h-10 rounded-lg bg-gray-100 dark:bg-background-dark border border-gray-200 dark:border-border-dark flex items-center justify-center">
+              <div className="w-10 h-10 rounded-md bg-gray-100 dark:bg-background-dark border border-gray-200 dark:border-border-dark flex items-center justify-center">
                 <span className="material-symbols-outlined text-primary">cable</span>
               </div>
               <div>
@@ -352,9 +352,9 @@ export default function WorkflowDetailedView({
             </div>
           </div>
 
-          <div className="p-4 rounded-lg border border-gray-200 dark:border-border-dark bg-white dark:bg-panel-dark">
+          <div className="p-4 rounded-md border border-gray-200 dark:border-border-dark bg-white dark:bg-panel-dark">
             <div className="flex items-center gap-3">
-              <div className="w-10 h-10 rounded-lg bg-gray-100 dark:bg-background-dark border border-gray-200 dark:border-border-dark flex items-center justify-center">
+              <div className="w-10 h-10 rounded-md bg-gray-100 dark:bg-background-dark border border-gray-200 dark:border-border-dark flex items-center justify-center">
                 <span className="material-symbols-outlined text-primary">category</span>
               </div>
               <div>
@@ -370,7 +370,7 @@ export default function WorkflowDetailedView({
         </div>
 
         {/* Cost Metrics Section */}
-        <div className="border border-gray-200 dark:border-border-dark rounded-lg overflow-hidden bg-white dark:bg-panel-dark">
+        <div className="border border-gray-200 dark:border-border-dark rounded-md overflow-hidden bg-white dark:bg-panel-dark">
           <button
             onClick={() => toggleSection('metrics')}
             className="w-full flex items-center justify-between p-4 hover:bg-gray-50 dark:hover:bg-white/5 transition-colors"
@@ -394,7 +394,7 @@ export default function WorkflowDetailedView({
             <div className="border-t border-gray-200 dark:border-border-dark p-4">
               {/* Overall Cost Summary */}
               <div className="grid grid-cols-3 gap-4 mb-6">
-                <div className="p-4 rounded-lg border border-gray-200 dark:border-border-dark bg-white dark:bg-panel-dark">
+                <div className="p-4 rounded-md border border-gray-200 dark:border-border-dark bg-white dark:bg-panel-dark">
                   <p className="text-xs font-medium mb-1" style={{ color: 'var(--color-text-muted)' }}>
                     Total Cost
                   </p>
@@ -406,7 +406,7 @@ export default function WorkflowDetailedView({
                   </p>
                 </div>
 
-                <div className="p-4 rounded-lg border border-gray-200 dark:border-border-dark bg-white dark:bg-panel-dark">
+                <div className="p-4 rounded-md border border-gray-200 dark:border-border-dark bg-white dark:bg-panel-dark">
                   <p className="text-xs font-medium mb-1" style={{ color: 'var(--color-text-muted)' }}>
                     Total Tokens
                   </p>
@@ -418,7 +418,7 @@ export default function WorkflowDetailedView({
                   </p>
                 </div>
 
-                <div className="p-4 rounded-lg border border-gray-200 dark:border-border-dark bg-white dark:bg-panel-dark">
+                <div className="p-4 rounded-md border border-gray-200 dark:border-border-dark bg-white dark:bg-panel-dark">
                   <p className="text-xs font-medium mb-1" style={{ color: 'var(--color-text-muted)' }}>
                     Executions
                   </p>
@@ -442,10 +442,10 @@ export default function WorkflowDetailedView({
                     costMetrics.agents.map((agent: { name: string; cost: number; tokens: number }, index: number) => (
                       <div
                         key={index}
-                        className="flex items-center justify-between p-3 rounded-lg border border-gray-200 dark:border-border-dark bg-white dark:bg-panel-dark"
+                        className="flex items-center justify-between p-3 rounded-md border border-gray-200 dark:border-border-dark bg-white dark:bg-panel-dark"
                       >
                         <div className="flex items-center gap-3">
-                          <div className="w-8 h-8 rounded-lg bg-gray-100 dark:bg-background-dark border border-gray-200 dark:border-border-dark flex items-center justify-center">
+                          <div className="w-8 h-8 rounded-md bg-gray-100 dark:bg-background-dark border border-gray-200 dark:border-border-dark flex items-center justify-center">
                             <span className="material-symbols-outlined text-primary text-sm">smart_toy</span>
                           </div>
                           <div>
@@ -481,7 +481,7 @@ export default function WorkflowDetailedView({
                 {costMetrics.tools.length > 0 ? (
                   <div className="grid grid-cols-2 gap-3">
                     {costMetrics.tools.map((tool: { name: string; count: number }, index: number) => (
-                      <div key={index} className="flex items-center gap-2 p-2 rounded-lg border border-gray-200 dark:border-border-dark bg-white dark:bg-panel-dark">
+                      <div key={index} className="flex items-center gap-2 p-2 rounded-md border border-gray-200 dark:border-border-dark bg-white dark:bg-panel-dark">
                         <span className="material-symbols-outlined text-primary text-sm">build</span>
                         <div className="flex-1">
                           <p className="text-xs font-medium" style={{ color: 'var(--color-text-primary)' }}>{tool.name}</p>
@@ -500,7 +500,7 @@ export default function WorkflowDetailedView({
               {/* View Full Report Link */}
               <div className="pt-4 border-t border-gray-200 dark:border-border-dark">
                 <button
-                  className="w-full py-2.5 text-sm font-medium rounded-lg transition-colors flex items-center justify-center gap-2"
+                  className="w-full py-2.5 text-sm font-medium rounded-md transition-colors flex items-center justify-center gap-2"
                   style={{
                     backgroundColor: 'var(--color-primary)',
                     color: 'white'
@@ -516,7 +516,7 @@ export default function WorkflowDetailedView({
         </div>
 
         {/* Visual Preview Section */}
-        <div className="border border-gray-200 dark:border-border-dark rounded-lg overflow-hidden bg-white dark:bg-panel-dark">
+        <div className="border border-gray-200 dark:border-border-dark rounded-md overflow-hidden bg-white dark:bg-panel-dark">
           <button
             onClick={() => toggleSection('preview')}
             className="w-full flex items-center justify-between p-4 hover:bg-gray-50 dark:hover:bg-white/5 transition-colors"
@@ -594,7 +594,7 @@ export default function WorkflowDetailedView({
                       return (
                         <div key={node.id || index} className="flex items-center gap-4">
                           {/* Agent Node Card */}
-                          <div className="w-64 p-4 rounded-lg border-2 border-primary bg-white dark:bg-panel-dark shadow-lg flex-shrink-0">
+                          <div className="w-64 p-4 rounded-md border-2 border-primary bg-white dark:bg-panel-dark shadow-lg flex-shrink-0">
                             {/* Header */}
                             <div className="flex items-center gap-2 mb-3 pb-2 border-b border-gray-200 dark:border-border-dark">
                               <div className="w-8 h-8 rounded bg-primary/10 flex items-center justify-center">
@@ -665,7 +665,7 @@ export default function WorkflowDetailedView({
         </div>
 
         {/* Agents in Workflow Section */}
-        <div className="border border-gray-200 dark:border-border-dark rounded-lg overflow-hidden bg-white dark:bg-panel-dark">
+        <div className="border border-gray-200 dark:border-border-dark rounded-md overflow-hidden bg-white dark:bg-panel-dark">
           <button
             onClick={() => toggleSection('agents')}
             className="w-full flex items-center justify-between p-4 hover:bg-gray-50 dark:hover:bg-white/5 transition-colors"
@@ -710,11 +710,11 @@ export default function WorkflowDetailedView({
                     return (
                       <div
                         key={node.id || index}
-                        className="p-4 rounded-lg border border-gray-200 dark:border-border-dark bg-white dark:bg-panel-dark"
+                        className="p-4 rounded-md border border-gray-200 dark:border-border-dark bg-white dark:bg-panel-dark"
                       >
                         {/* Agent Header */}
                         <div className="flex items-start gap-3 mb-3">
-                          <div className="w-10 h-10 rounded-lg bg-gray-100 dark:bg-background-dark border border-gray-200 dark:border-border-dark flex items-center justify-center flex-shrink-0">
+                          <div className="w-10 h-10 rounded-md bg-gray-100 dark:bg-background-dark border border-gray-200 dark:border-border-dark flex items-center justify-center flex-shrink-0">
                             <span className="material-symbols-outlined text-primary text-xl">smart_toy</span>
                           </div>
                           <div className="flex-1 min-w-0">
@@ -800,7 +800,7 @@ export default function WorkflowDetailedView({
         </div>
 
         {/* Configuration Details Section */}
-        <div className="border border-gray-200 dark:border-border-dark rounded-lg overflow-hidden bg-white dark:bg-panel-dark">
+        <div className="border border-gray-200 dark:border-border-dark rounded-md overflow-hidden bg-white dark:bg-panel-dark">
           <button
             onClick={() => toggleSection('config')}
             className="w-full flex items-center justify-between p-4 hover:bg-gray-50 dark:hover:bg-white/5 transition-colors"
@@ -822,7 +822,7 @@ export default function WorkflowDetailedView({
 
           {expandedSections.has('config') && (
             <div className="border-t border-gray-200 dark:border-border-dark p-4">
-              <pre className="text-xs p-4 rounded-lg bg-gray-50 dark:bg-white/5 overflow-x-auto" style={{ color: 'var(--color-text-primary)' }}>
+              <pre className="text-xs p-4 rounded-md bg-gray-50 dark:bg-white/5 overflow-x-auto" style={{ color: 'var(--color-text-primary)' }}>
                 {JSON.stringify(workflow.configuration, null, 2)}
               </pre>
             </div>

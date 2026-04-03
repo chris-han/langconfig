@@ -274,7 +274,7 @@ export default function DiffViewer({
 
         {/* View mode toggle */}
         <div
-          className="flex rounded-lg overflow-hidden border"
+          className="flex rounded-md overflow-hidden border"
           style={{ borderColor: 'var(--color-border-dark)' }}
         >
           <button

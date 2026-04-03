@@ -89,7 +89,7 @@ export function ProgressCard({ event, compact = false }: ProgressCardProps) {
   }
 
   return (
-    <div className={`flex flex-col gap-1.5 p-2.5 rounded-lg border ${getBorderColor()} ${getBackgroundColor()}`}>
+    <div className={`flex flex-col gap-1.5 p-2.5 rounded-md border ${getBorderColor()} ${getBackgroundColor()}`}>
       <div className="flex items-center gap-2">
         {isComplete ? (
           <CheckCircle className="w-4 h-4 text-green-500 shrink-0" />
@@ -228,7 +228,7 @@ export function StatusBadge({ event, compact = false }: StatusBadgeProps) {
   }
 
   return (
-    <div className={`flex flex-col gap-1 p-2 rounded-lg border ${getBorderColor()} ${getBackgroundColor()}`}>
+    <div className={`flex flex-col gap-1 p-2 rounded-md border ${getBorderColor()} ${getBackgroundColor()}`}>
       <div className="flex items-center gap-2">
         {getIcon()}
         <span className={`text-xs font-medium ${getStatusTextColor()}`}>
@@ -347,7 +347,7 @@ export function FileOperationCard({ event, compact = false }: FileOperationCardP
   }
 
   return (
-    <div className={`flex flex-col gap-1 p-2 rounded-lg border ${getBorderColor()} bg-gray-50 dark:bg-gray-950/30`}>
+    <div className={`flex flex-col gap-1 p-2 rounded-md border ${getBorderColor()} bg-gray-50 dark:bg-gray-950/30`}>
       <div className="flex items-center gap-2">
         {getIcon()}
         <span className="text-xs font-medium text-gray-700 dark:text-gray-300 truncate flex-1">
@@ -413,7 +413,7 @@ export function GenericEventCard({ event, compact = false }: GenericEventCardPro
 
   return (
     <div
-      className="flex flex-col gap-1 p-2 rounded-lg border"
+      className="flex flex-col gap-1 p-2 rounded-md border"
       style={{
         borderColor: 'var(--color-border-dark)',
         backgroundColor: 'var(--color-background-light)',

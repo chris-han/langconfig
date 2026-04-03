@@ -21,7 +21,7 @@ export default function SettingsSection({
   icon
 }: SettingsSectionProps) {
   return (
-    <section className="mb-4 rounded-lg border border-border bg-card p-5">
+    <section className="mb-4 rounded-md border border-border bg-card p-5">
       {/* Section Header */}
       <div className="mb-4">
         <div className="flex items-center gap-2 mb-1">
@@ -83,7 +83,7 @@ export function SettingsInput({
         onChange={(e) => onChange(e.target.value)}
         placeholder={placeholder}
         disabled={disabled}
-        className="rounded-lg border border-border px-3 py-1.5 text-sm focus:outline-none focus:ring-2 focus:ring-primary disabled:cursor-not-allowed disabled:opacity-50"
+        className="rounded-md border border-border px-3 py-1.5 text-sm focus:outline-none focus:ring-2 focus:ring-primary disabled:cursor-not-allowed disabled:opacity-50"
         style={{
           backgroundColor: 'var(--color-input-background)',
           color: 'var(--color-text-primary)'
@@ -128,7 +128,7 @@ export function SettingsSelect({
         value={value}
         onChange={(e) => onChange(e.target.value)}
         disabled={disabled}
-        className="rounded-lg border border-border px-3 py-2 focus:outline-none focus:ring-2 focus:ring-primary disabled:cursor-not-allowed disabled:opacity-50"
+        className="rounded-md border border-border px-3 py-2 focus:outline-none focus:ring-2 focus:ring-primary disabled:cursor-not-allowed disabled:opacity-50"
         style={{
           backgroundColor: 'var(--color-input-background)',
           color: 'var(--color-text-primary)'

@@ -53,7 +53,7 @@ const DebugWorkflowDialog = memo(function DebugWorkflowDialog({
       onClick={onClose}
     >
       <div
-        className="rounded-lg shadow-xl p-6 max-w-4xl w-full mx-4 max-h-[80vh] overflow-y-auto"
+        className="rounded-md shadow-xl p-6 max-w-4xl w-full mx-4 max-h-[80vh] overflow-y-auto"
         style={{
           backgroundColor: 'var(--color-panel-dark)',
           border: '1px solid var(--color-border-dark)',
@@ -160,7 +160,7 @@ const DebugWorkflowDialog = memo(function DebugWorkflowDialog({
         <div className="mt-4 flex justify-end">
           <button
             onClick={onCopyJson}
-            className="px-4 py-2 rounded-lg transition-colors"
+            className="px-4 py-2 rounded-md transition-colors"
             style={{
               backgroundColor: 'var(--color-primary)',
               color: 'white'

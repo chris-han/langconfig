@@ -103,7 +103,7 @@ export function ToolProgressIndicator({ event, compact = false }: ToolProgressIn
   }
 
   return (
-    <div className={`flex flex-col gap-1.5 p-2.5 rounded-lg border ${getBorderColor()} ${getBackgroundColor()}`}>
+    <div className={`flex flex-col gap-1.5 p-2.5 rounded-md border ${getBorderColor()} ${getBackgroundColor()}`}>
       <div className="flex items-center gap-2">
         {getIcon()}
         <div className="flex-1 min-w-0">

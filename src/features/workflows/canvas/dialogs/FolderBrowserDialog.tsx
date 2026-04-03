@@ -81,7 +81,7 @@ const FolderBrowserDialog = memo(function FolderBrowserDialog({
   return (
     <div className="fixed inset-0 z-[110] flex items-center justify-center bg-black/50 backdrop-blur-sm">
       <div
-        className="w-full max-w-lg rounded-xl shadow-2xl overflow-hidden"
+        className="w-full max-w-lg rounded-md shadow-2xl overflow-hidden"
         style={{
           backgroundColor: 'var(--color-panel-dark)',
           border: '1px solid var(--color-border-dark)'
@@ -139,7 +139,7 @@ const FolderBrowserDialog = memo(function FolderBrowserDialog({
                 <button
                   key={entry.path}
                   onClick={() => handleNavigate(entry.path)}
-                  className="w-full flex items-center gap-3 px-3 py-2 rounded-lg hover:bg-white/5 transition-colors text-left"
+                  className="w-full flex items-center gap-3 px-3 py-2 rounded-md hover:bg-white/5 transition-colors text-left"
                 >
                   <Folder size={18} style={{ color: 'var(--color-primary)' }} />
                   <span className="text-sm truncate" style={{ color: 'var(--color-text-primary)' }}>
@@ -155,7 +155,7 @@ const FolderBrowserDialog = memo(function FolderBrowserDialog({
         <div className="px-6 py-4 border-t flex justify-between" style={{ borderColor: 'var(--color-border-dark)', backgroundColor: 'var(--color-background-dark)' }}>
           <button
             onClick={onClose}
-            className="px-4 py-2 rounded-lg text-sm font-medium transition-colors hover:bg-white/10"
+            className="px-4 py-2 rounded-md text-sm font-medium transition-colors hover:bg-white/10"
             style={{ color: 'var(--color-text-muted)' }}
           >
             Cancel
@@ -163,7 +163,7 @@ const FolderBrowserDialog = memo(function FolderBrowserDialog({
           <button
             onClick={handleSelectCurrent}
             disabled={!currentPath || loading}
-            className="px-4 py-2 rounded-lg text-sm font-medium transition-colors bg-primary text-white hover:bg-primary/90 disabled:opacity-50 disabled:cursor-not-allowed"
+            className="px-4 py-2 rounded-md text-sm font-medium transition-colors bg-primary text-white hover:bg-primary/90 disabled:opacity-50 disabled:cursor-not-allowed"
           >
             Select This Folder
           </button>

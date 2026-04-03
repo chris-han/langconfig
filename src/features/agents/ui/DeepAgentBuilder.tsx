@@ -293,7 +293,7 @@ interface ToolCheckboxProps {
 }
 
 const ToolCheckbox = React.memo(({ tool, checked, onChange }: ToolCheckboxProps) => (
-  <label className="flex items-start gap-3 p-3 bg-gray-50 dark:bg-background-dark border border-gray-200 dark:border-border-dark rounded-lg cursor-pointer hover:bg-gray-100 dark:hover:bg-white/5 transition-colors">
+  <label className="flex items-start gap-3 p-3 bg-gray-50 dark:bg-background-dark border border-gray-200 dark:border-border-dark rounded-md cursor-pointer hover:bg-gray-100 dark:hover:bg-white/5 transition-colors">
     <input
       type="checkbox"
       checked={checked}
@@ -685,7 +685,7 @@ export default function DeepAgentBuilder({
             <div className="flex items-start gap-3 flex-1">
               <button
                 onClick={() => handleCloseAttempt(onBack ? 'back' : 'close')}
-                className="p-2 transition-all text-white/90 hover:text-white hover:bg-white/15 rounded-lg"
+                className="p-2 transition-all text-white/90 hover:text-white hover:bg-white/15 rounded-md"
                 style={{ textShadow: '0 1px 2px rgba(0, 0, 0, 0.15)' }}
                 title="Back"
               >
@@ -706,7 +706,7 @@ export default function DeepAgentBuilder({
             <div className="flex items-center gap-2">
               <button
                 onClick={() => handleCloseAttempt('close')}
-                className="p-2 transition-all text-white/90 hover:text-white hover:bg-white/15 rounded-lg"
+                className="p-2 transition-all text-white/90 hover:text-white hover:bg-white/15 rounded-md"
                 style={{ textShadow: '0 1px 2px rgba(0, 0, 0, 0.15)' }}
                 title="Close"
               >
@@ -737,7 +737,7 @@ export default function DeepAgentBuilder({
                 value={config.name || ''}
                 onChange={(e) => updateConfig('name', e.target.value)}
                 placeholder="e.g., Code Researcher, Bug Hunter"
-                className="w-full px-3 py-2 bg-white dark:bg-background-dark border border-gray-200 dark:border-border-dark rounded-lg text-sm text-gray-900 dark:text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent"
+                className="w-full px-3 py-2 bg-white dark:bg-background-dark border border-gray-200 dark:border-border-dark rounded-md text-sm text-gray-900 dark:text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent"
               />
             </div>
 
@@ -750,7 +750,7 @@ export default function DeepAgentBuilder({
                 value={config.description || ''}
                 onChange={(e) => updateConfig('description', e.target.value)}
                 placeholder="Brief description of what this agent does"
-                className="w-full px-3 py-2 bg-white dark:bg-background-dark border border-gray-200 dark:border-border-dark rounded-lg text-sm text-gray-900 dark:text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent"
+                className="w-full px-3 py-2 bg-white dark:bg-background-dark border border-gray-200 dark:border-border-dark rounded-md text-sm text-gray-900 dark:text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent"
               />
               <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">
                 💡 Fill out Name & Description, then click "AI Generate" to auto-fill the rest using the currently selected provider/model
@@ -762,7 +762,7 @@ export default function DeepAgentBuilder({
                 <label className="block text-xs font-medium text-gray-700 dark:text-gray-300 mb-2 uppercase">
                   Agent Type
                 </label>
-                <div className="w-full px-3 py-2 bg-gray-100 dark:bg-panel-dark border border-gray-200 dark:border-border-dark rounded-lg text-sm text-gray-900 dark:text-white">
+                <div className="w-full px-3 py-2 bg-gray-100 dark:bg-panel-dark border border-gray-200 dark:border-border-dark rounded-md text-sm text-gray-900 dark:text-white">
                   {agentType === 'regular' ? 'Regular Agent' : 'Deep Agent'}
                 </div>
                 <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">
@@ -777,7 +777,7 @@ export default function DeepAgentBuilder({
                 <select
                   value={config.category || 'Custom'}
                   onChange={(e) => updateConfig('category', e.target.value)}
-                  className="w-full px-3 py-2 bg-white dark:bg-background-dark border border-gray-200 dark:border-border-dark rounded-lg text-sm text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent"
+                  className="w-full px-3 py-2 bg-white dark:bg-background-dark border border-gray-200 dark:border-border-dark rounded-md text-sm text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent"
                 >
                   <option value="Code Generation">Code Generation</option>
                   <option value="Research">Research</option>
@@ -826,7 +826,7 @@ export default function DeepAgentBuilder({
                     value={config.max_tokens || ''}
                     onChange={(e) => updateConfig('max_tokens', e.target.value ? parseInt(e.target.value) : undefined)}
                     placeholder="Leave empty for default"
-                    className="w-full px-3 py-2 bg-white dark:bg-background-dark border border-gray-200 dark:border-border-dark rounded-lg text-sm text-gray-900 dark:text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent"
+                    className="w-full px-3 py-2 bg-white dark:bg-background-dark border border-gray-200 dark:border-border-dark rounded-md text-sm text-gray-900 dark:text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent"
                   />
                 </div>
               </div>
@@ -834,7 +834,7 @@ export default function DeepAgentBuilder({
               <button
                 onClick={handleAIGenerate}
                 disabled={aiLoading}
-                className="flex items-center gap-2 px-4 py-2 rounded-lg transition-all disabled:opacity-50 disabled:cursor-not-allowed whitespace-nowrap"
+                className="flex items-center gap-2 px-4 py-2 rounded-md transition-all disabled:opacity-50 disabled:cursor-not-allowed whitespace-nowrap"
                 style={{
                   backgroundColor: 'var(--color-primary)',
                   color: 'white',
@@ -872,12 +872,12 @@ export default function DeepAgentBuilder({
                 onChange={(e) => updateConfig('system_prompt', e.target.value)}
                 rows={6}
                 placeholder="Enter the system prompt that defines the agent's behavior and capabilities... (or use AI Generate to auto-fill)"
-                className="w-full px-3 py-2 bg-white dark:bg-background-dark border border-gray-200 dark:border-border-dark rounded-lg text-sm text-gray-900 dark:text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent resize-none"
+                className="w-full px-3 py-2 bg-white dark:bg-background-dark border border-gray-200 dark:border-border-dark rounded-md text-sm text-gray-900 dark:text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent resize-none"
               />
 
               {/* Warning badge for missing file tools */}
               {fileToolWarning && (
-                <div className="mt-3 flex items-start gap-2 p-3 bg-amber-50 dark:bg-amber-900/20 border border-amber-200 dark:border-amber-800 rounded-lg">
+                <div className="mt-3 flex items-start gap-2 p-3 bg-amber-50 dark:bg-amber-900/20 border border-amber-200 dark:border-amber-800 rounded-md">
                   <AlertTriangle className="w-4 h-4 text-amber-600 dark:text-amber-400 mt-0.5 flex-shrink-0" />
                   <p className="text-xs text-amber-700 dark:text-amber-300">
                     {fileToolWarning}
@@ -911,7 +911,7 @@ export default function DeepAgentBuilder({
 
               {/* Action Presets Toggle - Prominent Feature Highlight */}
               <div
-                className={`mt-4 p-4 rounded-lg border transition-all ${config.enforce_tool_constraints ? 'bg-primary/10' : 'bg-white dark:bg-panel-dark'}`}
+                className={`mt-4 p-4 rounded-md border transition-all ${config.enforce_tool_constraints ? 'bg-primary/10' : 'bg-white dark:bg-panel-dark'}`}
                 style={{
                   borderColor: config.enforce_tool_constraints
                     ? 'var(--color-primary)'
@@ -1042,9 +1042,9 @@ export default function DeepAgentBuilder({
                     onChange={(e) => updateConfig('max_iterations', parseInt(e.target.value))}
                     min="1"
                     max="100"
-                    className="w-full px-3 py-2 bg-white dark:bg-background-dark border border-gray-200 dark:border-border-dark rounded-lg text-sm text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent"
+                    className="w-full px-3 py-2 bg-white dark:bg-background-dark border border-gray-200 dark:border-border-dark rounded-md text-sm text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent"
                   />
-                  <div className="mt-2 p-3 rounded-lg bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800">
+                  <div className="mt-2 p-3 rounded-md bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800">
                     <p className="text-xs text-gray-700 dark:text-gray-300 font-medium mb-2">
                       💡 Each tool call = 1 iteration. Default: 15 (good for most tasks)
                     </p>
@@ -1069,7 +1069,7 @@ export default function DeepAgentBuilder({
                   <select
                     value={config.early_stopping_method || 'force'}
                     onChange={(e) => updateConfig('early_stopping_method', e.target.value as 'force' | 'generate')}
-                    className="w-full px-3 py-2 bg-white dark:bg-background-dark border border-gray-200 dark:border-border-dark rounded-lg text-sm text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent"
+                    className="w-full px-3 py-2 bg-white dark:bg-background-dark border border-gray-200 dark:border-border-dark rounded-md text-sm text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent"
                   >
                     <option value="force">Force - Return incomplete answer</option>
                     <option value="generate">Generate - Continue to generate answer</option>
@@ -1155,7 +1155,7 @@ export default function DeepAgentBuilder({
                     <select
                       value={config.memory_type || 'buffer'}
                       onChange={(e) => updateConfig('memory_type', e.target.value as 'buffer' | 'summary' | 'buffer_window')}
-                      className="w-full px-3 py-2 bg-white dark:bg-background-dark border border-gray-200 dark:border-border-dark rounded-lg text-sm text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent"
+                      className="w-full px-3 py-2 bg-white dark:bg-background-dark border border-gray-200 dark:border-border-dark rounded-md text-sm text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent"
                     >
                       <option value="buffer">Buffer - Keep all messages in memory</option>
                       <option value="buffer_window">Buffer Window - Keep last N messages</option>
@@ -1193,7 +1193,7 @@ export default function DeepAgentBuilder({
                   <div className="grid grid-cols-1 gap-2">
                     <button
                       onClick={() => addRegularAgentMiddleware('logging', { log_inputs: true, log_outputs: true, max_log_length: 500 })}
-                      className="flex items-start gap-3 p-3 text-left bg-gray-50 dark:bg-background-dark border border-gray-200 dark:border-border-dark rounded-lg hover:bg-gray-100 dark:hover:bg-white/5 transition-colors"
+                      className="flex items-start gap-3 p-3 text-left bg-gray-50 dark:bg-background-dark border border-gray-200 dark:border-border-dark rounded-md hover:bg-gray-100 dark:hover:bg-white/5 transition-colors"
                     >
                       <Plus className="w-4 h-4 mt-0.5 flex-shrink-0 text-gray-500" />
                       <div className="flex-1">
@@ -1203,7 +1203,7 @@ export default function DeepAgentBuilder({
                     </button>
                     <button
                       onClick={() => addRegularAgentMiddleware('cost_tracking', {})}
-                      className="flex items-start gap-3 p-3 text-left bg-gray-50 dark:bg-background-dark border border-gray-200 dark:border-border-dark rounded-lg hover:bg-gray-100 dark:hover:bg-white/5 transition-colors"
+                      className="flex items-start gap-3 p-3 text-left bg-gray-50 dark:bg-background-dark border border-gray-200 dark:border-border-dark rounded-md hover:bg-gray-100 dark:hover:bg-white/5 transition-colors"
                     >
                       <Plus className="w-4 h-4 mt-0.5 flex-shrink-0 text-gray-500" />
                       <div className="flex-1">
@@ -1213,7 +1213,7 @@ export default function DeepAgentBuilder({
                     </button>
                     <button
                       onClick={() => addRegularAgentMiddleware('validation', { min_length: null, max_length: null })}
-                      className="flex items-start gap-3 p-3 text-left bg-gray-50 dark:bg-background-dark border border-gray-200 dark:border-border-dark rounded-lg hover:bg-gray-100 dark:hover:bg-white/5 transition-colors"
+                      className="flex items-start gap-3 p-3 text-left bg-gray-50 dark:bg-background-dark border border-gray-200 dark:border-border-dark rounded-md hover:bg-gray-100 dark:hover:bg-white/5 transition-colors"
                     >
                       <Plus className="w-4 h-4 mt-0.5 flex-shrink-0 text-gray-500" />
                       <div className="flex-1">
@@ -1223,7 +1223,7 @@ export default function DeepAgentBuilder({
                     </button>
                     <button
                       onClick={() => addRegularAgentMiddleware('summarization', { model: 'gpt-4o-mini', max_tokens_before_summary: 1000, keep_last_n_messages: 5 })}
-                      className="flex items-start gap-3 p-3 text-left bg-gray-50 dark:bg-background-dark border border-gray-200 dark:border-border-dark rounded-lg hover:bg-gray-100 dark:hover:bg-white/5 transition-colors"
+                      className="flex items-start gap-3 p-3 text-left bg-gray-50 dark:bg-background-dark border border-gray-200 dark:border-border-dark rounded-md hover:bg-gray-100 dark:hover:bg-white/5 transition-colors"
                     >
                       <Plus className="w-4 h-4 mt-0.5 flex-shrink-0 text-gray-500" />
                       <div className="flex-1">
@@ -1233,7 +1233,7 @@ export default function DeepAgentBuilder({
                     </button>
                     <button
                       onClick={() => addRegularAgentMiddleware('hitl', { interrupt_on: {}, description: 'Human approval required' })}
-                      className="flex items-start gap-3 p-3 text-left bg-gray-50 dark:bg-background-dark border border-gray-200 dark:border-border-dark rounded-lg hover:bg-gray-100 dark:hover:bg-white/5 transition-colors"
+                      className="flex items-start gap-3 p-3 text-left bg-gray-50 dark:bg-background-dark border border-gray-200 dark:border-border-dark rounded-md hover:bg-gray-100 dark:hover:bg-white/5 transition-colors"
                     >
                       <Plus className="w-4 h-4 mt-0.5 flex-shrink-0 text-gray-500" />
                       <div className="flex-1">
@@ -1243,7 +1243,7 @@ export default function DeepAgentBuilder({
                     </button>
                     <button
                       onClick={() => addRegularAgentMiddleware('tool_retry', { max_retries: 3, backoff_factor: 2.0 })}
-                      className="flex items-start gap-3 p-3 text-left bg-gray-50 dark:bg-background-dark border border-gray-200 dark:border-border-dark rounded-lg hover:bg-gray-100 dark:hover:bg-white/5 transition-colors"
+                      className="flex items-start gap-3 p-3 text-left bg-gray-50 dark:bg-background-dark border border-gray-200 dark:border-border-dark rounded-md hover:bg-gray-100 dark:hover:bg-white/5 transition-colors"
                     >
                       <Plus className="w-4 h-4 mt-0.5 flex-shrink-0 text-gray-500" />
                       <div className="flex-1">
@@ -1253,7 +1253,7 @@ export default function DeepAgentBuilder({
                     </button>
                     <button
                       onClick={() => addRegularAgentMiddleware('pii', { patterns: null, replacement: '[REDACTED]', store_mappings: false })}
-                      className="flex items-start gap-3 p-3 text-left bg-gray-50 dark:bg-background-dark border border-gray-200 dark:border-border-dark rounded-lg hover:bg-gray-100 dark:hover:bg-white/5 transition-colors"
+                      className="flex items-start gap-3 p-3 text-left bg-gray-50 dark:bg-background-dark border border-gray-200 dark:border-border-dark rounded-md hover:bg-gray-100 dark:hover:bg-white/5 transition-colors"
                     >
                       <Plus className="w-4 h-4 mt-0.5 flex-shrink-0 text-gray-500" />
                       <div className="flex-1">
@@ -1263,7 +1263,7 @@ export default function DeepAgentBuilder({
                     </button>
                     <button
                       onClick={() => addRegularAgentMiddleware('timestamp', { timezone: 'UTC', format: '%Y-%m-%d %H:%M:%S' })}
-                      className="flex items-start gap-3 p-3 text-left bg-gray-50 dark:bg-background-dark border border-gray-200 dark:border-border-dark rounded-lg hover:bg-gray-100 dark:hover:bg-white/5 transition-colors"
+                      className="flex items-start gap-3 p-3 text-left bg-gray-50 dark:bg-background-dark border border-gray-200 dark:border-border-dark rounded-md hover:bg-gray-100 dark:hover:bg-white/5 transition-colors"
                     >
                       <Plus className="w-4 h-4 mt-0.5 flex-shrink-0 text-gray-500" />
                       <div className="flex-1">
@@ -1273,7 +1273,7 @@ export default function DeepAgentBuilder({
                     </button>
                     <button
                       onClick={() => addRegularAgentMiddleware('project_context', {})}
-                      className="flex items-start gap-3 p-3 text-left bg-gray-50 dark:bg-background-dark border border-gray-200 dark:border-border-dark rounded-lg hover:bg-gray-100 dark:hover:bg-white/5 transition-colors"
+                      className="flex items-start gap-3 p-3 text-left bg-gray-50 dark:bg-background-dark border border-gray-200 dark:border-border-dark rounded-md hover:bg-gray-100 dark:hover:bg-white/5 transition-colors"
                     >
                       <Plus className="w-4 h-4 mt-0.5 flex-shrink-0 text-gray-500" />
                       <div className="flex-1">
@@ -1293,7 +1293,7 @@ export default function DeepAgentBuilder({
                     {(config.middleware || []).map((mw: MiddlewareConfig, index: number) => (
                       <div
                         key={index}
-                        className="border border-gray-200 dark:border-border-dark rounded-lg overflow-hidden"
+                        className="border border-gray-200 dark:border-border-dark rounded-md overflow-hidden"
                       >
                         {/* Header */}
                         <div className="flex items-center justify-between p-3 bg-gray-50 dark:bg-background-dark">
@@ -1363,7 +1363,7 @@ export default function DeepAgentBuilder({
                                       middleware[index].config.max_log_length = parseInt(e.target.value);
                                       setConfig(prev => ({ ...prev, middleware }));
                                     }}
-                                    className="w-full px-3 py-2 bg-white dark:bg-background-dark border border-gray-200 dark:border-border-dark rounded-lg text-sm"
+                                    className="w-full px-3 py-2 bg-white dark:bg-background-dark border border-gray-200 dark:border-border-dark rounded-md text-sm"
                                   />
                                 </div>
                               </>
@@ -1392,7 +1392,7 @@ export default function DeepAgentBuilder({
                                       setConfig(prev => ({ ...prev, middleware }));
                                     }}
                                     placeholder="Leave empty for no minimum"
-                                    className="w-full px-3 py-2 bg-white dark:bg-background-dark border border-gray-200 dark:border-border-dark rounded-lg text-sm"
+                                    className="w-full px-3 py-2 bg-white dark:bg-background-dark border border-gray-200 dark:border-border-dark rounded-md text-sm"
                                   />
                                 </div>
                                 <div>
@@ -1408,7 +1408,7 @@ export default function DeepAgentBuilder({
                                       setConfig(prev => ({ ...prev, middleware }));
                                     }}
                                     placeholder="Leave empty for no maximum"
-                                    className="w-full px-3 py-2 bg-white dark:bg-background-dark border border-gray-200 dark:border-border-dark rounded-lg text-sm"
+                                    className="w-full px-3 py-2 bg-white dark:bg-background-dark border border-gray-200 dark:border-border-dark rounded-md text-sm"
                                   />
                                 </div>
                               </>
@@ -1429,7 +1429,7 @@ export default function DeepAgentBuilder({
                                       middleware[index].config.model = e.target.value;
                                       setConfig(prev => ({ ...prev, middleware }));
                                     }}
-                                    className="w-full px-3 py-2 bg-white dark:bg-background-dark border border-gray-200 dark:border-border-dark rounded-lg text-sm"
+                                    className="w-full px-3 py-2 bg-white dark:bg-background-dark border border-gray-200 dark:border-border-dark rounded-md text-sm"
                                   />
                                 </div>
                                 <div>
@@ -1444,7 +1444,7 @@ export default function DeepAgentBuilder({
                                       middleware[index].config.max_tokens_before_summary = parseInt(e.target.value);
                                       setConfig(prev => ({ ...prev, middleware }));
                                     }}
-                                    className="w-full px-3 py-2 bg-white dark:bg-background-dark border border-gray-200 dark:border-border-dark rounded-lg text-sm"
+                                    className="w-full px-3 py-2 bg-white dark:bg-background-dark border border-gray-200 dark:border-border-dark rounded-md text-sm"
                                   />
                                 </div>
                                 <div>
@@ -1459,7 +1459,7 @@ export default function DeepAgentBuilder({
                                       middleware[index].config.keep_last_n_messages = parseInt(e.target.value);
                                       setConfig(prev => ({ ...prev, middleware }));
                                     }}
-                                    className="w-full px-3 py-2 bg-white dark:bg-background-dark border border-gray-200 dark:border-border-dark rounded-lg text-sm"
+                                    className="w-full px-3 py-2 bg-white dark:bg-background-dark border border-gray-200 dark:border-border-dark rounded-md text-sm"
                                   />
                                 </div>
                               </>
@@ -1480,7 +1480,7 @@ export default function DeepAgentBuilder({
                                       middleware[index].config.description = e.target.value;
                                       setConfig(prev => ({ ...prev, middleware }));
                                     }}
-                                    className="w-full px-3 py-2 bg-white dark:bg-background-dark border border-gray-200 dark:border-border-dark rounded-lg text-sm"
+                                    className="w-full px-3 py-2 bg-white dark:bg-background-dark border border-gray-200 dark:border-border-dark rounded-md text-sm"
                                   />
                                 </div>
                                 <p className="text-xs text-gray-600 dark:text-gray-400">
@@ -1506,7 +1506,7 @@ export default function DeepAgentBuilder({
                                     }}
                                     min="1"
                                     max="10"
-                                    className="w-full px-3 py-2 bg-white dark:bg-background-dark border border-gray-200 dark:border-border-dark rounded-lg text-sm"
+                                    className="w-full px-3 py-2 bg-white dark:bg-background-dark border border-gray-200 dark:border-border-dark rounded-md text-sm"
                                   />
                                 </div>
                                 <div>
@@ -1524,7 +1524,7 @@ export default function DeepAgentBuilder({
                                     step="0.1"
                                     min="1"
                                     max="5"
-                                    className="w-full px-3 py-2 bg-white dark:bg-background-dark border border-gray-200 dark:border-border-dark rounded-lg text-sm"
+                                    className="w-full px-3 py-2 bg-white dark:bg-background-dark border border-gray-200 dark:border-border-dark rounded-md text-sm"
                                   />
                                 </div>
                               </>
@@ -1545,7 +1545,7 @@ export default function DeepAgentBuilder({
                                       middleware[index].config.replacement = e.target.value;
                                       setConfig(prev => ({ ...prev, middleware }));
                                     }}
-                                    className="w-full px-3 py-2 bg-white dark:bg-background-dark border border-gray-200 dark:border-border-dark rounded-lg text-sm"
+                                    className="w-full px-3 py-2 bg-white dark:bg-background-dark border border-gray-200 dark:border-border-dark rounded-md text-sm"
                                   />
                                 </div>
                                 <div>
@@ -1586,7 +1586,7 @@ export default function DeepAgentBuilder({
                                       middleware[index].config.timezone = e.target.value;
                                       setConfig(prev => ({ ...prev, middleware }));
                                     }}
-                                    className="w-full px-3 py-2 bg-white dark:bg-background-dark border border-gray-200 dark:border-border-dark rounded-lg text-sm"
+                                    className="w-full px-3 py-2 bg-white dark:bg-background-dark border border-gray-200 dark:border-border-dark rounded-md text-sm"
                                   />
                                 </div>
                                 <div>
@@ -1601,7 +1601,7 @@ export default function DeepAgentBuilder({
                                       middleware[index].config.format = e.target.value;
                                       setConfig(prev => ({ ...prev, middleware }));
                                     }}
-                                    className="w-full px-3 py-2 bg-white dark:bg-background-dark border border-gray-200 dark:border-border-dark rounded-lg text-sm"
+                                    className="w-full px-3 py-2 bg-white dark:bg-background-dark border border-gray-200 dark:border-border-dark rounded-md text-sm"
                                   />
                                   <p className="text-xs text-gray-600 dark:text-gray-400 mt-1">
                                     Python strftime format
@@ -1638,7 +1638,7 @@ export default function DeepAgentBuilder({
                 {config.middleware.map((mw, index) => (
                   <div
                     key={index}
-                    className="border border-gray-200 dark:border-border-dark rounded-lg overflow-hidden"
+                    className="border border-gray-200 dark:border-border-dark rounded-md overflow-hidden"
                   >
                     {/* Header with toggle */}
                     <div className="flex items-center justify-between p-3 bg-gray-50 dark:bg-background-dark">
@@ -1723,7 +1723,7 @@ export default function DeepAgentBuilder({
                                 }}
                                 min="0"
                                 step="100000"
-                                className="w-full px-3 py-2 bg-white dark:bg-background-dark border border-gray-200 dark:border-border-dark rounded-lg text-sm text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent"
+                                className="w-full px-3 py-2 bg-white dark:bg-background-dark border border-gray-200 dark:border-border-dark rounded-md text-sm text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent"
                               />
                               <p className="text-xs text-gray-600 dark:text-gray-400 mt-1">
                                 Tool outputs larger than this will be saved to disk (Default: 1MB)
@@ -1749,7 +1749,7 @@ export default function DeepAgentBuilder({
                                 }}
                                 min="1"
                                 max="10"
-                                className="w-full px-3 py-2 bg-white dark:bg-background-dark border border-gray-200 dark:border-border-dark rounded-lg text-sm text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent"
+                                className="w-full px-3 py-2 bg-white dark:bg-background-dark border border-gray-200 dark:border-border-dark rounded-md text-sm text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent"
                               />
                               <div className="mt-2 p-2 rounded bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700">
                                 <p className="text-xs text-gray-600 dark:text-gray-400">
@@ -1774,7 +1774,7 @@ export default function DeepAgentBuilder({
                                 }}
                                 min="1"
                                 max="20"
-                                className="w-full px-3 py-2 bg-white dark:bg-background-dark border border-gray-200 dark:border-border-dark rounded-lg text-sm text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent"
+                                className="w-full px-3 py-2 bg-white dark:bg-background-dark border border-gray-200 dark:border-border-dark rounded-md text-sm text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent"
                               />
                               <div className="mt-2 p-2 rounded bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700">
                                 <p className="text-xs text-gray-600 dark:text-gray-400">
@@ -1804,7 +1804,7 @@ export default function DeepAgentBuilder({
               onToggle={() => toggleSection('tools')}
             >
               <div className="space-y-4">
-                <div className="flex items-start gap-2 p-3 bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 rounded-lg">
+                <div className="flex items-start gap-2 p-3 bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 rounded-md">
                   <Info className="w-4 h-4 text-blue-600 dark:text-blue-400 mt-0.5 flex-shrink-0" />
                   <p className="text-xs text-blue-700 dark:text-blue-300">
                     DeepAgents have access to the tools below based on enabled middleware. If your agent tries to call a tool that isn't available, enable the corresponding middleware.
@@ -1916,7 +1916,7 @@ export default function DeepAgentBuilder({
                     return (
                       <label
                         key={backend.id}
-                        className={`flex items-start gap-3 p-3 border rounded-lg cursor-pointer transition-colors ${isSelected
+                        className={`flex items-start gap-3 p-3 border rounded-md cursor-pointer transition-colors ${isSelected
                           ? 'bg-primary/10 border-primary dark:border-primary'
                           : 'bg-gray-50 dark:bg-background-dark border-gray-200 dark:border-border-dark hover:bg-gray-100 dark:hover:bg-white/5'
                           }`}
@@ -1938,7 +1938,7 @@ export default function DeepAgentBuilder({
 
                 {/* Show composite info if multiple selected */}
                 {config.backend.type === 'composite' && config.backend.mappings && (
-                  <div className="mt-4 p-3 bg-blue-50 dark:bg-blue-500/10 border border-blue-200 dark:border-blue-500/30 rounded-lg">
+                  <div className="mt-4 p-3 bg-blue-50 dark:bg-blue-500/10 border border-blue-200 dark:border-blue-500/30 rounded-md">
                     <div className="flex items-start gap-2 mb-2">
                       <Database className="w-4 h-4 text-blue-600 dark:text-blue-400 mt-0.5" />
                       <div className="flex-1">
@@ -2038,7 +2038,7 @@ export default function DeepAgentBuilder({
                         max_total_tokens: parseInt(e.target.value)
                       }
                     })}
-                    className="w-full px-3 py-2 bg-white dark:bg-background-dark border border-gray-200 dark:border-border-dark rounded-lg text-sm text-gray-900 dark:text-white"
+                    className="w-full px-3 py-2 bg-white dark:bg-background-dark border border-gray-200 dark:border-border-dark rounded-md text-sm text-gray-900 dark:text-white"
                   />
                 </div>
 
@@ -2067,7 +2067,7 @@ export default function DeepAgentBuilder({
                         preserve_recent_messages: presets[mode].preserve_recent_messages
                       });
                     }}
-                    className="w-full px-3 py-2 bg-white dark:bg-background-dark border border-gray-200 dark:border-border-dark rounded-lg text-sm text-gray-900 dark:text-white"
+                    className="w-full px-3 py-2 bg-white dark:bg-background-dark border border-gray-200 dark:border-border-dark rounded-md text-sm text-gray-900 dark:text-white"
                   >
                     <option value="rapid">Rapid Prototyping (50K tokens, faster)</option>
                     <option value="balanced">Balanced Testing (100K tokens, moderate)</option>
@@ -2089,7 +2089,7 @@ export default function DeepAgentBuilder({
                       ...config.guardrails,
                       compaction_strategy: e.target.value as 'none' | 'trim_messages' | 'summarization' | 'filter_custom'
                     })}
-                    className="w-full px-3 py-2 bg-white dark:bg-background-dark border border-gray-200 dark:border-border-dark rounded-lg text-sm text-gray-900 dark:text-white"
+                    className="w-full px-3 py-2 bg-white dark:bg-background-dark border border-gray-200 dark:border-border-dark rounded-md text-sm text-gray-900 dark:text-white"
                   >
                     <option value="none">None - Keep all messages</option>
                     <option value="trim_messages">Trim Messages - Remove old messages (LangGraph trim_messages)</option>
@@ -2113,7 +2113,7 @@ export default function DeepAgentBuilder({
                         ...config.guardrails,
                         trim_strategy: e.target.value as 'first' | 'last' | 'oldest'
                       })}
-                      className="w-full px-3 py-2 bg-white dark:bg-background-dark border border-gray-200 dark:border-border-dark rounded-lg text-sm text-gray-900 dark:text-white"
+                      className="w-full px-3 py-2 bg-white dark:bg-background-dark border border-gray-200 dark:border-border-dark rounded-md text-sm text-gray-900 dark:text-white"
                     >
                       <option value="oldest">Remove Oldest - FIFO (first in, first out)</option>
                       <option value="first">Remove First - Keep most recent only</option>
@@ -2151,11 +2151,11 @@ export default function DeepAgentBuilder({
           )}
 
           {/* Action Buttons */}
-          <div className="flex items-center justify-end gap-3 p-6 bg-white dark:bg-panel-dark border border-gray-200 dark:border-border-dark rounded-lg">
+          <div className="flex items-center justify-end gap-3 p-6 bg-white dark:bg-panel-dark border border-gray-200 dark:border-border-dark rounded-md">
             {onTest && (
               <button
                 onClick={handleTest}
-                className="flex items-center gap-2 px-4 py-2 bg-blue-600 dark:bg-blue-500 text-white rounded-lg hover:bg-blue-700 dark:hover:bg-blue-600 transition-colors"
+                className="flex items-center gap-2 px-4 py-2 bg-blue-600 dark:bg-blue-500 text-white rounded-md hover:bg-blue-700 dark:hover:bg-blue-600 transition-colors"
               >
                 <Play className="w-4 h-4" />
                 Test Chat
@@ -2165,7 +2165,7 @@ export default function DeepAgentBuilder({
             {onExport && (
               <button
                 onClick={handleExport}
-                className="flex items-center gap-2 px-4 py-2 bg-green-600 dark:bg-green-500 text-white rounded-lg hover:bg-green-700 dark:hover:bg-green-600 transition-colors"
+                className="flex items-center gap-2 px-4 py-2 bg-green-600 dark:bg-green-500 text-white rounded-md hover:bg-green-700 dark:hover:bg-green-600 transition-colors"
               >
                 <Download className="w-4 h-4" />
                 Export
@@ -2175,7 +2175,7 @@ export default function DeepAgentBuilder({
             {onSave && (
               <button
                 onClick={handleSave}
-                className="flex items-center gap-2 px-4 py-2 bg-primary text-white rounded-lg hover:opacity-90 transition-opacity"
+                className="flex items-center gap-2 px-4 py-2 bg-primary text-white rounded-md hover:opacity-90 transition-opacity"
               >
                 <Save className="w-4 h-4" />
                 Save Agent
@@ -2187,7 +2187,7 @@ export default function DeepAgentBuilder({
 
       {/* Unsaved Changes Indicator */}
       {hasUnsavedChanges && (
-        <div className="fixed bottom-4 left-4 flex items-center gap-2 px-3 py-2 bg-yellow-100 dark:bg-yellow-900/30 border border-yellow-300 dark:border-yellow-700 rounded-lg shadow-lg z-50">
+        <div className="fixed bottom-4 left-4 flex items-center gap-2 px-3 py-2 bg-yellow-100 dark:bg-yellow-900/30 border border-yellow-300 dark:border-yellow-700 rounded-md shadow-lg z-50">
           <AlertTriangle className="w-4 h-4 text-yellow-600 dark:text-yellow-500" />
           <span className="text-sm font-medium text-yellow-700 dark:text-yellow-400">
             Unsaved changes
@@ -2198,7 +2198,7 @@ export default function DeepAgentBuilder({
       {/* Discard Changes Confirmation Dialog */}
       {showDiscardDialog && (
         <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-[100]">
-          <div className="bg-white dark:bg-panel-dark rounded-xl shadow-2xl max-w-md w-full mx-4 overflow-hidden">
+          <div className="bg-white dark:bg-panel-dark rounded-md shadow-2xl max-w-md w-full mx-4 overflow-hidden">
             <div className="p-6">
               <div className="flex items-center gap-3 mb-4">
                 <div className="p-2 bg-yellow-100 dark:bg-yellow-900/30 rounded-full">
@@ -2214,13 +2214,13 @@ export default function DeepAgentBuilder({
               <div className="flex justify-end gap-3">
                 <button
                   onClick={handleCancelDiscard}
-                  className="px-4 py-2 text-gray-700 dark:text-gray-300 bg-gray-100 dark:bg-gray-800 hover:bg-gray-200 dark:hover:bg-gray-700 rounded-lg transition-colors"
+                  className="px-4 py-2 text-gray-700 dark:text-gray-300 bg-gray-100 dark:bg-gray-800 hover:bg-gray-200 dark:hover:bg-gray-700 rounded-md transition-colors"
                 >
                   Keep Editing
                 </button>
                 <button
                   onClick={handleConfirmDiscard}
-                  className="px-4 py-2 text-white bg-red-600 hover:bg-red-700 rounded-lg transition-colors"
+                  className="px-4 py-2 text-white bg-red-600 hover:bg-red-700 rounded-md transition-colors"
                 >
                   Discard Changes
                 </button>
@@ -2247,7 +2247,7 @@ interface ConfigSectionProps {
 
 function ConfigSection({ title, icon, expanded, onToggle, children }: ConfigSectionProps) {
   return (
-    <div className="border border-gray-200 dark:border-border-dark rounded-lg overflow-hidden bg-white dark:bg-panel-dark">
+    <div className="border border-gray-200 dark:border-border-dark rounded-md overflow-hidden bg-white dark:bg-panel-dark">
       <button
         onClick={onToggle}
         className="w-full flex items-center justify-between p-4 hover:bg-gray-50 dark:hover:bg-white/5 transition-colors"

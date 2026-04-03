@@ -26,7 +26,7 @@ export const ResourceBlock: React.FC<ResourceBlockProps> = ({ block, className =
   const isLink = block.uri.startsWith('http://') || block.uri.startsWith('https://');
 
   return (
-    <div className={`my-4 p-4 bg-gray-100 dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700 ${className}`}>
+    <div className={`my-4 p-4 bg-gray-100 dark:bg-gray-800 rounded-md border border-gray-200 dark:border-gray-700 ${className}`}>
       <div className="flex items-center gap-3">
         <Link2 className="w-5 h-5 text-gray-600 dark:text-gray-400" />
         <div className="flex-1 min-w-0">

@@ -140,7 +140,7 @@ const PresentationDialog = memo(function PresentationDialog({
       onClick={handleClose}
     >
       <div
-        className="rounded-lg shadow-xl p-6 max-w-lg w-full mx-4 max-h-[90vh] overflow-y-auto"
+        className="rounded-md shadow-xl p-6 max-w-lg w-full mx-4 max-h-[90vh] overflow-y-auto"
         style={{
           backgroundColor: 'var(--color-panel-dark)',
           border: '1px solid var(--color-border-dark)'
@@ -168,7 +168,7 @@ const PresentationDialog = memo(function PresentationDialog({
 
         {/* Selected Items Summary */}
         <div
-          className="mb-4 p-3 rounded-lg"
+          className="mb-4 p-3 rounded-md"
           style={{ backgroundColor: 'var(--color-background-secondary)' }}
         >
           <div className="flex items-center gap-2 mb-2">
@@ -208,7 +208,7 @@ const PresentationDialog = memo(function PresentationDialog({
             onChange={(e) => setTitle(e.target.value)}
             placeholder="Enter presentation title..."
             disabled={isLoading}
-            className="w-full px-3 py-2 rounded-lg border focus:outline-none focus:ring-2 focus:ring-primary disabled:opacity-50"
+            className="w-full px-3 py-2 rounded-md border focus:outline-none focus:ring-2 focus:ring-primary disabled:opacity-50"
             style={{
               backgroundColor: 'var(--color-input-background)',
               borderColor: 'var(--color-border-dark)',
@@ -231,7 +231,7 @@ const PresentationDialog = memo(function PresentationDialog({
                 key={format.id}
                 onClick={() => setOutputFormat(format.id as PresentationFormat)}
                 disabled={isLoading || (format.id === 'google_slides' && !googleConnected)}
-                className={`p-3 rounded-lg border-2 text-left transition-all ${
+                className={`p-3 rounded-md border-2 text-left transition-all ${
                   outputFormat === format.id
                     ? 'border-primary bg-primary/10'
                     : 'border-transparent hover:border-gray-300 dark:hover:border-gray-600'
@@ -260,7 +260,7 @@ const PresentationDialog = memo(function PresentationDialog({
 
         {/* Google OAuth - Show when Google Slides selected or needed */}
         {(outputFormat === 'google_slides' || !googleConnected) && (
-          <div className="mb-4 p-4 rounded-lg" style={{ backgroundColor: 'var(--color-background-secondary)' }}>
+          <div className="mb-4 p-4 rounded-md" style={{ backgroundColor: 'var(--color-background-secondary)' }}>
             <div className="text-sm font-medium mb-2" style={{ color: 'var(--color-text-primary)' }}>
               Google Account
             </div>
@@ -282,7 +282,7 @@ const PresentationDialog = memo(function PresentationDialog({
                 key={t.id}
                 onClick={() => setTheme(t.id as PresentationTheme)}
                 disabled={isLoading}
-                className={`flex-1 px-3 py-2 rounded-lg border-2 text-sm transition-all ${
+                className={`flex-1 px-3 py-2 rounded-md border-2 text-sm transition-all ${
                   theme === t.id
                     ? 'border-primary bg-primary/10'
                     : 'border-transparent hover:border-gray-300 dark:hover:border-gray-600'
@@ -320,14 +320,14 @@ const PresentationDialog = memo(function PresentationDialog({
 
         {/* Error Display */}
         {error && (
-          <div className="mb-4 p-3 bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-lg">
+          <div className="mb-4 p-3 bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-md">
             <p className="text-sm text-red-600 dark:text-red-400">{error}</p>
           </div>
         )}
 
         {/* Success State */}
         {status === 'completed' && job && (
-          <div className="mb-4 p-4 bg-green-50 dark:bg-green-900/20 border border-green-200 dark:border-green-800 rounded-lg">
+          <div className="mb-4 p-4 bg-green-50 dark:bg-green-900/20 border border-green-200 dark:border-green-800 rounded-md">
             <div className="flex items-center gap-2 mb-2">
               <svg className="w-5 h-5 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
@@ -338,7 +338,7 @@ const PresentationDialog = memo(function PresentationDialog({
             </div>
             <button
               onClick={openResult}
-              className="w-full mt-2 px-4 py-2 bg-green-600 hover:bg-green-700 text-white rounded-lg transition-colors"
+              className="w-full mt-2 px-4 py-2 bg-green-600 hover:bg-green-700 text-white rounded-md transition-colors"
             >
               {job.result_url ? 'Open in Google Slides' : 'Download Presentation'}
             </button>
@@ -350,7 +350,7 @@ const PresentationDialog = memo(function PresentationDialog({
           <button
             onClick={handleClose}
             disabled={isLoading}
-            className="px-4 py-2 rounded-lg border transition-colors disabled:opacity-50"
+            className="px-4 py-2 rounded-md border transition-colors disabled:opacity-50"
             style={{
               borderColor: 'var(--color-border-dark)',
               color: 'var(--color-text-muted)'
@@ -362,7 +362,7 @@ const PresentationDialog = memo(function PresentationDialog({
             <button
               onClick={handleGenerate}
               disabled={!canGenerate}
-              className="px-4 py-2 rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+              className="px-4 py-2 rounded-md transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
               style={{
                 background: 'linear-gradient(135deg, #6366F1 0%, #8B5CF6 50%, #D946EF 100%)',
                 color: 'white'

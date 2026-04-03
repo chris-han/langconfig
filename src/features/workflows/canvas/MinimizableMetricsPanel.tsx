@@ -64,7 +64,7 @@ export default function MinimizableMetricsPanel({ workflowId }: MetricsPanelProp
   if (isMinimized) {
     return (
       <div
-        className="fixed top-4 left-4 z-40 bg-white dark:bg-panel-dark border-2 rounded-lg shadow-xl"
+        className="fixed top-4 left-4 z-40 bg-white dark:bg-panel-dark border-2 rounded-md shadow-xl"
         style={{ borderColor: 'var(--color-primary)' }}
       >
         <button
@@ -98,7 +98,7 @@ export default function MinimizableMetricsPanel({ workflowId }: MetricsPanelProp
 
   return (
     <div
-      className="fixed top-4 left-4 z-40 bg-white dark:bg-panel-dark border-2 rounded-lg shadow-xl"
+      className="fixed top-4 left-4 z-40 bg-white dark:bg-panel-dark border-2 rounded-md shadow-xl"
       style={{ borderColor: 'var(--color-primary)', width: '380px', maxHeight: '600px' }}
     >
       {/* Header */}
@@ -127,7 +127,7 @@ export default function MinimizableMetricsPanel({ workflowId }: MetricsPanelProp
       {/* Content */}
       <div className="p-4 space-y-4 overflow-y-auto" style={{ maxHeight: '540px' }}>
         {/* Total Cost Display */}
-        <div className="text-center py-4 rounded-lg border" style={{
+        <div className="text-center py-4 rounded-md border" style={{
           backgroundColor: 'var(--color-background-light)',
           borderColor: 'var(--color-border-dark)'
         }}>

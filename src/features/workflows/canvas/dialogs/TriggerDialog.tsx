@@ -275,7 +275,7 @@ const TriggerDialog = memo(function TriggerDialog({
   return (
     <div className="fixed inset-0 z-[100] flex items-center justify-center bg-black/50 backdrop-blur-sm">
       <div
-        className="w-full max-w-lg rounded-xl shadow-2xl overflow-hidden max-h-[90vh] flex flex-col"
+        className="w-full max-w-lg rounded-md shadow-2xl overflow-hidden max-h-[90vh] flex flex-col"
         style={{
           backgroundColor: 'var(--color-panel-dark)',
           border: '1px solid var(--color-border-dark)',
@@ -320,7 +320,7 @@ const TriggerDialog = memo(function TriggerDialog({
                     <button
                       key={type.value}
                       onClick={() => setTriggerType(type.value)}
-                      className={`p-3 rounded-lg text-left transition-colors ${
+                      className={`p-3 rounded-md text-left transition-colors ${
                         triggerType === type.value
                           ? 'bg-primary/20 border-primary'
                           : 'hover:bg-white/5'
@@ -355,7 +355,7 @@ const TriggerDialog = memo(function TriggerDialog({
               value={name}
               onChange={(e) => setName(e.target.value)}
               placeholder="e.g., GitHub Push Webhook"
-              className="w-full px-3 py-2 rounded-lg text-sm"
+              className="w-full px-3 py-2 rounded-md text-sm"
               style={{
                 backgroundColor: 'var(--color-background-dark)',
                 border: '1px solid var(--color-border-dark)',
@@ -378,7 +378,7 @@ const TriggerDialog = memo(function TriggerDialog({
                       type="text"
                       value={existingTrigger.webhook_url}
                       readOnly
-                      className="flex-1 px-3 py-2 rounded-lg text-sm font-mono"
+                      className="flex-1 px-3 py-2 rounded-md text-sm font-mono"
                       style={{
                         backgroundColor: 'var(--color-background-dark)',
                         border: '1px solid var(--color-border-dark)',
@@ -387,7 +387,7 @@ const TriggerDialog = memo(function TriggerDialog({
                     />
                     <button
                       onClick={() => copyToClipboard(existingTrigger.webhook_url!)}
-                      className="px-3 py-2 rounded-lg hover:bg-white/10"
+                      className="px-3 py-2 rounded-md hover:bg-white/10"
                       style={{ border: '1px solid var(--color-border-dark)' }}
                       title="Copy URL"
                     >
@@ -408,7 +408,7 @@ const TriggerDialog = memo(function TriggerDialog({
                       type={showSecret ? 'text' : 'password'}
                       value={existingTrigger.webhook_secret}
                       readOnly
-                      className="flex-1 px-3 py-2 rounded-lg text-sm font-mono"
+                      className="flex-1 px-3 py-2 rounded-md text-sm font-mono"
                       style={{
                         backgroundColor: 'var(--color-background-dark)',
                         border: '1px solid var(--color-border-dark)',
@@ -417,7 +417,7 @@ const TriggerDialog = memo(function TriggerDialog({
                     />
                     <button
                       onClick={() => setShowSecret(!showSecret)}
-                      className="px-3 py-2 rounded-lg hover:bg-white/10"
+                      className="px-3 py-2 rounded-md hover:bg-white/10"
                       style={{ border: '1px solid var(--color-border-dark)' }}
                       title={showSecret ? 'Hide' : 'Show'}
                     >
@@ -429,7 +429,7 @@ const TriggerDialog = memo(function TriggerDialog({
                     </button>
                     <button
                       onClick={() => copyToClipboard(existingTrigger.webhook_secret!)}
-                      className="px-3 py-2 rounded-lg hover:bg-white/10"
+                      className="px-3 py-2 rounded-md hover:bg-white/10"
                       style={{ border: '1px solid var(--color-border-dark)' }}
                       title="Copy Secret"
                     >
@@ -437,7 +437,7 @@ const TriggerDialog = memo(function TriggerDialog({
                     </button>
                     <button
                       onClick={handleRegenerateSecret}
-                      className="px-3 py-2 rounded-lg hover:bg-white/10"
+                      className="px-3 py-2 rounded-md hover:bg-white/10"
                       style={{ border: '1px solid var(--color-border-dark)' }}
                       title="Regenerate"
                     >
@@ -481,7 +481,7 @@ const TriggerDialog = memo(function TriggerDialog({
                   value={allowedIps}
                   onChange={(e) => setAllowedIps(e.target.value)}
                   placeholder="e.g., 192.168.1.0/24, 10.0.0.1"
-                  className="w-full px-3 py-2 rounded-lg text-sm font-mono"
+                  className="w-full px-3 py-2 rounded-md text-sm font-mono"
                   style={{
                     backgroundColor: 'var(--color-background-dark)',
                     border: '1px solid var(--color-border-dark)',
@@ -508,7 +508,7 @@ const TriggerDialog = memo(function TriggerDialog({
                   value={watchPath}
                   onChange={(e) => setWatchPath(e.target.value)}
                   placeholder="e.g., C:\Users\Cade\Downloads"
-                  className="w-full px-3 py-2 rounded-lg text-sm font-mono"
+                  className="w-full px-3 py-2 rounded-md text-sm font-mono"
                   style={{
                     backgroundColor: 'var(--color-background-dark)',
                     border: '1px solid var(--color-border-dark)',
@@ -542,7 +542,7 @@ const TriggerDialog = memo(function TriggerDialog({
                   value={patterns}
                   onChange={(e) => setPatterns(e.target.value)}
                   placeholder="e.g., *.pdf, *.docx, report_*.xlsx"
-                  className="w-full px-3 py-2 rounded-lg text-sm font-mono"
+                  className="w-full px-3 py-2 rounded-md text-sm font-mono"
                   style={{
                     backgroundColor: 'var(--color-background-dark)',
                     border: '1px solid var(--color-border-dark)',
@@ -616,7 +616,7 @@ const TriggerDialog = memo(function TriggerDialog({
                   max={300}
                   value={debounceSeconds}
                   onChange={(e) => setDebounceSeconds(parseInt(e.target.value) || 5)}
-                  className="w-24 px-3 py-2 rounded-lg text-sm"
+                  className="w-24 px-3 py-2 rounded-md text-sm"
                   style={{
                     backgroundColor: 'var(--color-background-dark)',
                     border: '1px solid var(--color-border-dark)',
@@ -651,7 +651,7 @@ const TriggerDialog = memo(function TriggerDialog({
 
           {/* Error */}
           {error && (
-            <div className="p-3 rounded-lg" style={{ backgroundColor: 'rgba(239, 68, 68, 0.15)' }}>
+            <div className="p-3 rounded-md" style={{ backgroundColor: 'rgba(239, 68, 68, 0.15)' }}>
               <p className="text-sm" style={{ color: '#ef4444' }}>{error}</p>
             </div>
           )}
@@ -727,7 +727,7 @@ const TriggerDialog = memo(function TriggerDialog({
               <>
                 <button
                   onClick={handleTest}
-                  className="px-3 py-2 rounded-lg text-sm font-medium transition-colors flex items-center gap-2 hover:bg-white/10"
+                  className="px-3 py-2 rounded-md text-sm font-medium transition-colors flex items-center gap-2 hover:bg-white/10"
                   style={{ border: '1px solid var(--color-border-dark)', color: 'var(--color-text-primary)' }}
                 >
                   <Play size={14} />
@@ -735,7 +735,7 @@ const TriggerDialog = memo(function TriggerDialog({
                 </button>
                 <button
                   onClick={handleDelete}
-                  className="px-3 py-2 rounded-lg text-sm font-medium transition-colors flex items-center gap-2 hover:bg-red-500/20"
+                  className="px-3 py-2 rounded-md text-sm font-medium transition-colors flex items-center gap-2 hover:bg-red-500/20"
                   style={{ color: '#ef4444' }}
                 >
                   <Trash2 size={14} />
@@ -747,7 +747,7 @@ const TriggerDialog = memo(function TriggerDialog({
           <div className="flex gap-2">
             <button
               onClick={onClose}
-              className="px-4 py-2 rounded-lg text-sm font-medium transition-colors hover:bg-white/10"
+              className="px-4 py-2 rounded-md text-sm font-medium transition-colors hover:bg-white/10"
               style={{ color: 'var(--color-text-muted)' }}
             >
               Cancel
@@ -755,7 +755,7 @@ const TriggerDialog = memo(function TriggerDialog({
             <button
               onClick={handleSave}
               disabled={saving || (triggerType === 'file_watch' && (!pathValidation?.valid || !watchPath.trim()))}
-              className="px-4 py-2 rounded-lg text-sm font-medium transition-colors bg-primary text-white hover:bg-primary/90 disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2"
+              className="px-4 py-2 rounded-md text-sm font-medium transition-colors bg-primary text-white hover:bg-primary/90 disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2"
             >
               {saving && <Loader2 size={14} className="animate-spin" />}
               {isEditing ? 'Save Changes' : 'Create Trigger'}

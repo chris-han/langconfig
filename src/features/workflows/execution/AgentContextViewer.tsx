@@ -70,7 +70,7 @@ export function AgentContextViewer({ context, isExpanded = false }: AgentContext
   };
 
   return (
-    <div className="border border-purple-300/30 dark:border-purple-700/30 rounded-lg bg-purple-50/50 dark:bg-purple-900/20 mt-2 mb-2">
+    <div className="border border-purple-300/30 dark:border-purple-700/30 rounded-md bg-purple-50/50 dark:bg-purple-900/20 mt-2 mb-2">
       {/* Header */}
       <button
         onClick={() => setExpanded(!expanded)}

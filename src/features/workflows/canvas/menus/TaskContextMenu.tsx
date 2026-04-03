@@ -26,7 +26,7 @@ const TaskContextMenu = memo(function TaskContextMenu({
 }: TaskContextMenuProps) {
   return (
     <div
-      className="fixed z-[9999] bg-white dark:bg-panel-dark border border-gray-200 dark:border-border-dark rounded-lg shadow-lg py-1 min-w-[160px]"
+      className="fixed z-[9999] bg-white dark:bg-panel-dark border border-gray-200 dark:border-border-dark rounded-md shadow-lg py-1 min-w-[160px]"
       style={{
         left: `${x}px`,
         top: `${y}px`,

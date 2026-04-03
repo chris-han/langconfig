@@ -27,7 +27,7 @@ const ChatWarningModal = memo(function ChatWarningModal({
       onClick={onClose}
     >
       <div
-        className="rounded-lg shadow-xl p-6 max-w-md w-full mx-4"
+        className="rounded-md shadow-xl p-6 max-w-md w-full mx-4"
         style={{
           backgroundColor: 'var(--color-panel-dark)',
           border: '1px solid var(--color-border-dark)',
@@ -65,7 +65,7 @@ const ChatWarningModal = memo(function ChatWarningModal({
         <div className="flex gap-2 justify-end">
           <button
             onClick={onClose}
-            className="px-4 py-2 rounded-lg transition-colors"
+            className="px-4 py-2 rounded-md transition-colors"
             style={{
               backgroundColor: 'var(--color-primary)',
               color: 'white',

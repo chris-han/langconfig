@@ -117,7 +117,7 @@ export default function WorkflowContextMenu({
   return (
     <div
       ref={menuRef}
-      className="fixed z-50 w-56 rounded-lg shadow-xl border py-1"
+      className="fixed z-50 w-56 rounded-md shadow-xl border py-1"
       style={{
         left: `${x}px`,
         top: `${y}px`,

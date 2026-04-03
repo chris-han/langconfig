@@ -36,7 +36,7 @@ export default function CollapsibleSection({
   };
 
   return (
-    <div className="border rounded-lg overflow-hidden shadow-sm" style={{
+    <div className="border rounded-md overflow-hidden shadow-sm" style={{
       borderColor: 'var(--color-border-dark)',
       backgroundColor: 'var(--color-panel-dark)'
     }}>

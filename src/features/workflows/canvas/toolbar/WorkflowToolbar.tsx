@@ -102,13 +102,13 @@ const WorkflowToolbar = memo(function WorkflowToolbar({
   hasUnsavedChanges,
 }: WorkflowToolbarProps) {
   const tabClass = (tab: Tab) =>
-    `px-4 py-2 text-xs font-semibold uppercase tracking-wider border-b-2 transition-all ${
+    `flex-none rounded-none border-x-0 border-t-0 border-b-2 border-transparent px-4 py-2.5 text-sm transition-colors bg-transparent ${
       activeTab === tab
-        ? 'border-primary text-primary bg-transparent'
-        : 'border-transparent text-muted-foreground hover:text-foreground'
+        ? 'border-primary text-foreground'
+        : 'text-muted-foreground hover:text-foreground'
     }`;
   return (
-    <div className="bg-card border-b border-sidebar-border px-4 py-1.5">
+    <div className="bg-card border-b border-sidebar-border px-4 py-0">
       <div className="flex items-center">
         {/* LEFT SECTION: Workflow Switcher + Save + Versions + Settings */}
         <div className="flex items-center gap-2">
@@ -213,7 +213,7 @@ const WorkflowToolbar = memo(function WorkflowToolbar({
           {/* Save Button */}
           <button
             onClick={() => handleSave(false)}
-            className="px-3 py-1.5 rounded-lg transition-all hover:opacity-90 bg-primary text-primary-foreground flex items-center gap-1.5 text-sm font-medium"
+            className="px-3 py-1.5 rounded-md transition-all hover:opacity-90 bg-primary text-primary-foreground flex items-center gap-1.5 text-sm font-medium"
             title="Save workflow"
           >
             <Save className="w-4 h-4" />
@@ -225,7 +225,7 @@ const WorkflowToolbar = memo(function WorkflowToolbar({
             <div className="relative">
               <button
                 onClick={() => setShowVersionDropdown(!showVersionDropdown)}
-                className="inline-flex items-center gap-1.5 px-2 py-1.5 text-sm font-medium bg-card border border-border rounded-lg hover:bg-muted transition-colors"
+                className="inline-flex items-center gap-1.5 px-2 py-1.5 text-sm font-medium bg-card border border-border rounded-md hover:bg-muted transition-colors"
                 title="Versions"
               >
                 <HistoryIcon className="w-4 h-4" />
@@ -236,12 +236,12 @@ const WorkflowToolbar = memo(function WorkflowToolbar({
               {showVersionDropdown && (
                 <>
                   <div className="fixed inset-0 z-40" onClick={() => setShowVersionDropdown(false)} />
-                  <div className="absolute top-full mt-1 left-0 w-72 bg-card border-2 border-primary/50 rounded-lg shadow-xl z-50 max-h-80 overflow-hidden flex flex-col">
+                  <div className="absolute top-full mt-1 left-0 w-72 bg-card border-2 border-primary/50 rounded-md shadow-xl z-50 max-h-80 overflow-hidden flex flex-col">
                     {/* Create Snapshot at top */}
                     <div className="p-2 border-b border-border">
                       <button
                         onClick={() => { handleSaveVersion(); setShowVersionDropdown(false); }}
-                        className="w-full px-3 py-2 text-sm font-medium text-card-foreground bg-card rounded-lg hover:bg-muted transition-colors flex items-center justify-center gap-2 border border-border"
+                        className="w-full px-3 py-2 text-sm font-medium text-card-foreground bg-card rounded-md hover:bg-muted transition-colors flex items-center justify-center gap-2 border border-border"
                       >
                         <Camera className="w-4 h-4" />
                         Create Snapshot

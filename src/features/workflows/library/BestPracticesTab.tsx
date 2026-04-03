@@ -30,7 +30,7 @@ export default function BestPracticesTab() {
         {/* Best Practice Sections */}
         <div className="space-y-3">
           {/* Section 1: Agent Design Principles */}
-          <div className="border border-gray-200 dark:border-border-dark rounded-lg overflow-hidden bg-white dark:bg-panel-dark">
+          <div className="border border-gray-200 dark:border-border-dark rounded-md overflow-hidden bg-white dark:bg-panel-dark">
             <button
               onClick={() => toggleSection('agent-design')}
               className="w-full flex items-center justify-between p-4 hover:bg-gray-50 dark:hover:bg-white/5 transition-colors"
@@ -122,7 +122,7 @@ ai_bot                        # Vague purpose`}</pre>
           </div>
 
           {/* Section 2: System Prompt Patterns */}
-          <div className="border border-gray-200 dark:border-border-dark rounded-lg overflow-hidden bg-white dark:bg-panel-dark">
+          <div className="border border-gray-200 dark:border-border-dark rounded-md overflow-hidden bg-white dark:bg-panel-dark">
             <button
               onClick={() => toggleSection('prompts')}
               className="w-full flex items-center justify-between p-4 hover:bg-gray-50 dark:hover:bg-white/5 transition-colors"
@@ -231,7 +231,7 @@ Review Python code for:
           </div>
 
           {/* Section 3: Error Handling & Retries */}
-          <div className="border border-gray-200 dark:border-border-dark rounded-lg overflow-hidden bg-white dark:bg-panel-dark">
+          <div className="border border-gray-200 dark:border-border-dark rounded-md overflow-hidden bg-white dark:bg-panel-dark">
             <button
               onClick={() => toggleSection('errors')}
               className="w-full flex items-center justify-between p-4 hover:bg-gray-50 dark:hover:bg-white/5 transition-colors"
@@ -328,7 +328,7 @@ def call_llm_with_retry(prompt: str):
           </div>
 
           {/* Section 4: Testing Strategies */}
-          <div className="border border-gray-200 dark:border-border-dark rounded-lg overflow-hidden bg-white dark:bg-panel-dark">
+          <div className="border border-gray-200 dark:border-border-dark rounded-md overflow-hidden bg-white dark:bg-panel-dark">
             <button
               onClick={() => toggleSection('testing')}
               className="w-full flex items-center justify-between p-4 hover:bg-gray-50 dark:hover:bg-white/5 transition-colors"
@@ -456,7 +456,7 @@ def evaluate_agent(agent, test_cases):
           </div>
 
           {/* Section 5: Production Deployment */}
-          <div className="border border-gray-200 dark:border-border-dark rounded-lg overflow-hidden bg-white dark:bg-panel-dark">
+          <div className="border border-gray-200 dark:border-border-dark rounded-md overflow-hidden bg-white dark:bg-panel-dark">
             <button
               onClick={() => toggleSection('production')}
               className="w-full flex items-center justify-between p-4 hover:bg-gray-50 dark:hover:bg-white/5 transition-colors"
@@ -615,7 +615,7 @@ cost = cost_tracker.track_run("gpt-4o", input_tokens=1000, output_tokens=500)`}<
           </div>
 
           {/* Section 6: Performance Optimization */}
-          <div className="border border-gray-200 dark:border-border-dark rounded-lg overflow-hidden bg-white dark:bg-panel-dark">
+          <div className="border border-gray-200 dark:border-border-dark rounded-md overflow-hidden bg-white dark:bg-panel-dark">
             <button
               onClick={() => toggleSection('performance')}
               className="w-full flex items-center justify-between p-4 hover:bg-gray-50 dark:hover:bg-white/5 transition-colors"
@@ -740,7 +740,7 @@ agent = Agent(llm=llm, callbacks=[CustomStreamHandler()])`}</pre>
           </div>
 
           {/* Section 7: Implementing Middleware */}
-          <div className="border border-gray-200 dark:border-border-dark rounded-lg overflow-hidden bg-white dark:bg-panel-dark">
+          <div className="border border-gray-200 dark:border-border-dark rounded-md overflow-hidden bg-white dark:bg-panel-dark">
             <button
               onClick={() => toggleSection('middleware')}
               className="w-full flex items-center justify-between p-4 hover:bg-gray-50 dark:hover:bg-white/5 transition-colors"
@@ -809,7 +809,7 @@ class LoggingMiddleware(RunnableBinding):
                       <span className="material-symbols-outlined text-sm">content_copy</span>
                     </button>
                   </div>
-                  <pre className="p-4 rounded-lg bg-gray-900 text-gray-100 overflow-x-auto font-mono text-xs leading-relaxed border border-gray-800">
+                  <pre className="p-4 rounded-md bg-gray-900 text-gray-100 overflow-x-auto font-mono text-xs leading-relaxed border border-gray-800">
                     <code>{`from langchain_core.runnables import RunnableBinding
 from langchain_core.messages import BaseMessage
 import structlog
@@ -862,7 +862,7 @@ class LoggingMiddleware(RunnableBinding):
         </div>
 
         {/* Additional Tips */}
-        <div className="mt-8 p-4 rounded-lg border border-gray-200 dark:border-border-dark bg-gradient-to-br from-primary/5 to-transparent">
+        <div className="mt-8 p-4 rounded-md border border-gray-200 dark:border-border-dark bg-gradient-to-br from-primary/5 to-transparent">
           <h3 className="font-semibold mb-3" style={{ color: 'var(--color-text-primary)' }}>
             Quick Reference
           </h3>

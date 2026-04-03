@@ -96,7 +96,7 @@ export default function FloatingCostPanel({
       {/* Floating Panel */}
       <div
         ref={panelRef}
-        className="fixed z-50 bg-white dark:bg-panel-dark border-2 rounded-lg shadow-2xl"
+        className="fixed z-50 bg-white dark:bg-panel-dark border-2 rounded-md shadow-2xl"
         style={{
           left: `${currentPosition.x}px`,
           top: `${currentPosition.y}px`,
@@ -131,7 +131,7 @@ export default function FloatingCostPanel({
         {/* Content */}
         <div className="p-4 space-y-4" style={{ cursor: 'default' }}>
           {/* Total Cost - Big Display */}
-          <div className="text-center py-4 rounded-lg border" style={{
+          <div className="text-center py-4 rounded-md border" style={{
             backgroundColor: 'var(--color-background-light)',
             borderColor: 'var(--color-border-dark)'
           }}>

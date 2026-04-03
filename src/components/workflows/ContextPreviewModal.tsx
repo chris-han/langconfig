@@ -91,7 +91,7 @@ export default function ContextPreviewModal({
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black bg-opacity-50">
       <div
-        className="bg-white rounded-lg shadow-xl max-w-4xl w-full max-h-[80vh] flex flex-col"
+        className="bg-white rounded-md shadow-xl max-w-4xl w-full max-h-[80vh] flex flex-col"
         style={{
           backgroundColor: 'var(--color-background-light)',
           borderColor: 'var(--color-border-dark)'
@@ -118,7 +118,7 @@ export default function ContextPreviewModal({
           </div>
           <button
             onClick={onClose}
-            className="p-2 rounded-lg hover:bg-gray-100 transition-colors"
+            className="p-2 rounded-md hover:bg-gray-100 transition-colors"
             style={{ color: 'var(--color-text-muted)' }}
           >
             <X className="w-5 h-5" />
@@ -135,7 +135,7 @@ export default function ContextPreviewModal({
 
           {error && (
             <div
-              className="p-4 rounded-lg border"
+              className="p-4 rounded-md border"
               style={{
                 backgroundColor: 'rgba(239, 68, 68, 0.1)',
                 borderColor: '#ef4444',
@@ -152,7 +152,7 @@ export default function ContextPreviewModal({
               {/* Stats */}
               <div className="grid grid-cols-3 gap-4">
                 <div
-                  className="p-4 rounded-lg border"
+                  className="p-4 rounded-md border"
                   style={{
                     backgroundColor: 'var(--color-panel-dark)',
                     borderColor: 'var(--color-border-dark)'
@@ -170,7 +170,7 @@ export default function ContextPreviewModal({
                 </div>
 
                 <div
-                  className="p-4 rounded-lg border"
+                  className="p-4 rounded-md border"
                   style={{
                     backgroundColor: 'var(--color-panel-dark)',
                     borderColor: 'var(--color-border-dark)'
@@ -188,7 +188,7 @@ export default function ContextPreviewModal({
                 </div>
 
                 <div
-                  className="p-4 rounded-lg border"
+                  className="p-4 rounded-md border"
                   style={{
                     backgroundColor: 'var(--color-panel-dark)',
                     borderColor: 'var(--color-border-dark)'
@@ -208,7 +208,7 @@ export default function ContextPreviewModal({
 
               {/* Breakdown */}
               <div
-                className="p-4 rounded-lg border"
+                className="p-4 rounded-md border"
                 style={{
                   backgroundColor: 'var(--color-panel-dark)',
                   borderColor: 'var(--color-border-dark)'
@@ -248,7 +248,7 @@ export default function ContextPreviewModal({
                   {preview.messages.map((msg, idx) => (
                     <div
                       key={idx}
-                      className="p-3 rounded-lg border"
+                      className="p-3 rounded-md border"
                       style={{
                         backgroundColor: msg.role === 'user' ? 'var(--color-background-light)' : 'var(--color-panel-dark)',
                         borderColor: 'var(--color-border-dark)'
@@ -297,7 +297,7 @@ export default function ContextPreviewModal({
         >
           <button
             onClick={onClose}
-            className="px-4 py-2 rounded-lg font-medium transition-colors"
+            className="px-4 py-2 rounded-md font-medium transition-colors"
             style={{
               backgroundColor: 'var(--color-primary)',
               color: '#ffffff'

@@ -105,7 +105,7 @@ const CustomNode = memo(function CustomNode({ id, data, selected }: NodeProps) {
   return (
     <div
       ref={nodeRef}
-      className={`group px-5 py-6 shadow-xl ${agentType === 'TOOL_NODE' ? 'rounded-lg' : 'rounded-xl'
+      className={`group px-5 py-6 shadow-xl ${agentType === 'TOOL_NODE' ? 'rounded-md' : 'rounded-md'
         } relative min-w-[220px] max-w-[220px] border-2 ${selected ? '' : 'hover:border-primary/50 hover:shadow-2xl'
         }`}
       style={{
@@ -127,7 +127,7 @@ const CustomNode = memo(function CustomNode({ id, data, selected }: NodeProps) {
       {/* Simple decorative overlay - no animation */}
       {!isControlNode && (
         <div
-          className="absolute inset-0 rounded-xl pointer-events-none"
+          className="absolute inset-0 rounded-md pointer-events-none"
           style={{
             background: isDarkTheme
               ? 'linear-gradient(135deg, var(--color-primary) 0%, transparent 100%)'
@@ -285,7 +285,7 @@ const CustomNode = memo(function CustomNode({ id, data, selected }: NodeProps) {
             {/* Model Dropdown */}
             {showModelDropdown && (
               <div
-                className="absolute bottom-full mb-2 left-1/2 transform -translate-x-1/2 rounded-lg shadow-xl nodrag nopan"
+                className="absolute bottom-full mb-2 left-1/2 transform -translate-x-1/2 rounded-md shadow-xl nodrag nopan"
                 style={{
                   backgroundColor: 'var(--color-background-dark)',
                   border: '2px solid var(--color-border-dark)',
@@ -427,7 +427,7 @@ const CustomNode = memo(function CustomNode({ id, data, selected }: NodeProps) {
 
       {/* Selection indicator */}
       {selected && !isControlNode && (
-        <div className="absolute -inset-1 bg-primary/10 rounded-xl -z-10 animate-pulse" />
+        <div className="absolute -inset-1 bg-primary/10 rounded-md -z-10 animate-pulse" />
       )}
 
       {/* Expand/Collapse Button - Only for regular agent nodes */}
@@ -467,7 +467,7 @@ const CustomNode = memo(function CustomNode({ id, data, selected }: NodeProps) {
       {/* Expandable Panel - Positioned below node */}
       {!isControlNode && isPanelExpanded && (
         <div
-          className="absolute top-full mt-4 left-1/2 transform -translate-x-1/2 nodrag nopan z-30 rounded-lg shadow-2xl border-2 overflow-hidden"
+          className="absolute top-full mt-4 left-1/2 transform -translate-x-1/2 nodrag nopan z-30 rounded-md shadow-2xl border-2 overflow-hidden"
           style={{
             backgroundColor: 'var(--color-panel-dark)',
             borderColor: 'var(--color-border-dark)',
@@ -549,7 +549,7 @@ const CustomNode = memo(function CustomNode({ id, data, selected }: NodeProps) {
                   };
                   updateNodeConfig(id, newConfig);
                 }}
-                className="w-full h-1.5 rounded-lg appearance-none cursor-pointer"
+                className="w-full h-1.5 rounded-md appearance-none cursor-pointer"
                 style={{
                   backgroundColor: 'var(--color-border-dark)',
                   accentColor: 'var(--color-primary)'
