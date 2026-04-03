@@ -353,12 +353,398 @@ const NodeConfigPanel = ({
         </div>
 
         {/* Form Content */}
-        <div className="flex-1 overflow-y-auto p-4 space-y-6">
-          {/* Node specifics go here... truncated for brevity in write_file, ideally we use replace for surgical edits */}
-          <div className="text-center py-20 opacity-50">
-            <Settings className="w-12 h-12 mx-auto mb-2" />
-            <p className="text-sm">Node Configuration Details</p>
+        <div className="flex-1 overflow-y-auto p-4 space-y-5">
+
+          {/* System Prompt — agent nodes only */}
+          {!['START_NODE', 'END_NODE', 'CONDITIONAL_NODE', 'TOOL_NODE'].includes(config.agentType) && (
+            <div>
+              <label className="text-xs font-semibold text-muted-foreground uppercase tracking-wide mb-1.5 block">
+                System Prompt
+              </label>
+              <textarea
+                value={config.system_prompt || ''}
+                onChange={(e) => updateConfig({ system_prompt: e.target.value })}
+                placeholder="You are a helpful AI assistant..."
+                rows={6}
+                className="w-full text-sm bg-muted border border-border rounded-md px-3 py-2 text-foreground placeholder:text-muted-foreground resize-none focus:outline-none focus:border-primary/50"
+              />
+            </div>
+          )}
+
+          {/* Condition — CONDITIONAL nodes */}
+          {config.agentType === 'CONDITIONAL_NODE' && (
+            <div>
+              <label className="text-xs font-semibold text-muted-foreground uppercase tracking-wide mb-1.5 block">
+                Condition Expression
+              </label>
+              <textarea
+                value={config.condition || ''}
+                onChange={(e) => updateConfig({ condition: e.target.value })}
+                placeholder="state.get('approved') == True"
+                rows={3}
+                className="w-full text-sm bg-muted border border-border rounded-md px-3 py-2 text-foreground placeholder:text-muted-foreground resize-none focus:outline-none focus:border-primary/50 font-mono"
+              />
+              <div className="mt-2 space-y-2">
+                <div>
+                  <label className="text-xs text-muted-foreground mb-1 block">Max Iterations</label>
+                  <input
+                    type="number"
+                    value={config.max_iterations ?? 10}
+                    onChange={(e) => updateConfig({ max_iterations: parseInt(e.target.value) || 10 })}
+                    min={1}
+                    max={100}
+                    className="w-full text-sm bg-muted border border-border rounded-md px-3 py-1.5 text-foreground focus:outline-none focus:border-primary/50"
+                  />
+                </div>
+                <div>
+                  <label className="text-xs text-muted-foreground mb-1 block">Exit Condition</label>
+                  <input
+                    type="text"
+                    value={config.exit_condition || ''}
+                    onChange={(e) => updateConfig({ exit_condition: e.target.value })}
+                    placeholder="done"
+                    className="w-full text-sm bg-muted border border-border rounded-md px-3 py-1.5 text-foreground placeholder:text-muted-foreground focus:outline-none focus:border-primary/50 font-mono"
+                  />
+                </div>
+              </div>
+            </div>
+          )}
+
+          {/* Temperature + Max Tokens — agent nodes */}
+          {!['START_NODE', 'END_NODE', 'TOOL_NODE'].includes(config.agentType) && (
+            <div className="grid grid-cols-2 gap-3">
+              <div>
+                <label className="text-xs font-semibold text-muted-foreground uppercase tracking-wide mb-1.5 block">
+                  Temperature
+                </label>
+                <div className="flex items-center gap-2">
+                  <input
+                    type="range"
+                    min={0}
+                    max={1}
+                    step={0.05}
+                    value={config.temperature ?? 0.7}
+                    onChange={(e) => updateConfig({ temperature: parseFloat(e.target.value) })}
+                    className="flex-1 accent-primary"
+                  />
+                  <span className="text-xs text-muted-foreground w-8 text-right">
+                    {(config.temperature ?? 0.7).toFixed(2)}
+                  </span>
+                </div>
+              </div>
+              <div>
+                <label className="text-xs font-semibold text-muted-foreground uppercase tracking-wide mb-1.5 block">
+                  Max Tokens
+                </label>
+                <input
+                  type="number"
+                  value={config.max_tokens ?? 4000}
+                  onChange={(e) => updateConfig({ max_tokens: parseInt(e.target.value) || 4000 })}
+                  min={256}
+                  max={200000}
+                  className="w-full text-sm bg-muted border border-border rounded-md px-3 py-1.5 text-foreground focus:outline-none focus:border-primary/50"
+                />
+              </div>
+            </div>
+          )}
+
+          {/* Native Tools */}
+          {!['START_NODE', 'END_NODE', 'TOOL_NODE'].includes(config.agentType) && (
+            <div>
+              <button
+                onClick={() => setToolsCollapsed(!toolsCollapsed)}
+                className="w-full flex items-center justify-between text-xs font-semibold text-muted-foreground uppercase tracking-wide mb-2"
+              >
+                <span className="flex items-center gap-1.5">
+                  <Zap className="w-3.5 h-3.5 text-primary" />
+                  Native Tools
+                  {(config.native_tools || []).length > 0 && (
+                    <span className="bg-primary/10 text-primary px-1.5 rounded text-[10px] font-medium normal-case tracking-normal">
+                      {(config.native_tools || []).length} enabled
+                    </span>
+                  )}
+                </span>
+                {toolsCollapsed ? <ChevronRight className="w-3.5 h-3.5" /> : <ChevronDown className="w-3.5 h-3.5" />}
+              </button>
+              {!toolsCollapsed && (
+                <div className="space-y-1.5">
+                  {[
+                    { id: 'web_search', name: 'Web Search', description: 'Search the web (DuckDuckGo)', icon: Search },
+                    { id: 'web_fetch', name: 'Web Fetch', description: 'Fetch webpage content', icon: Globe },
+                    { id: 'read_file', name: 'Read File', description: 'Read file with line numbers', icon: BookOpen },
+                    { id: 'write_file', name: 'Write File', description: 'Create / overwrite files', icon: Save },
+                    { id: 'edit_file', name: 'Edit File', description: 'String-replace in files', icon: Code },
+                    { id: 'ls', name: 'List Directory', description: 'List directory contents', icon: Database },
+                    { id: 'glob', name: 'Glob', description: 'Find files by pattern', icon: Search },
+                    { id: 'grep', name: 'Grep', description: 'Regex search in files', icon: Search },
+                    { id: 'reasoning_chain', name: 'Reasoning Chain', description: 'Multi-step reasoning', icon: GitBranch },
+                    { id: 'memory_store', name: 'Store Memory', description: 'Save to long-term memory', icon: Layers3 },
+                    { id: 'memory_recall', name: 'Recall Memory', description: 'Retrieve from memory', icon: Layers3 },
+                  ].map(({ id, name, description, icon: Icon }) => {
+                    const active = (config.native_tools || []).includes(id);
+                    return (
+                      <button
+                        key={id}
+                        onClick={() => toggleNativeTool(id)}
+                        className={`w-full flex items-center gap-2.5 px-3 py-2 rounded-md text-left transition-colors ${
+                          active ? 'bg-primary/10 border border-primary/30' : 'bg-muted border border-transparent hover:border-border'
+                        }`}
+                      >
+                        <Icon className={`w-3.5 h-3.5 shrink-0 ${active ? 'text-primary' : 'text-muted-foreground'}`} />
+                        <div className="min-w-0">
+                          <div className={`text-xs font-medium ${active ? 'text-primary' : 'text-foreground'}`}>{name}</div>
+                          <div className="text-[10px] text-muted-foreground truncate">{description}</div>
+                        </div>
+                        {active && <CheckCircle2 className="w-3.5 h-3.5 text-primary ml-auto shrink-0" />}
+                      </button>
+                    );
+                  })}
+                </div>
+              )}
+            </div>
+          )}
+
+          {/* Custom Tools */}
+          {!['START_NODE', 'END_NODE', 'TOOL_NODE'].includes(config.agentType) && availableCustomTools.length > 0 && (
+            <div>
+              <label className="text-xs font-semibold text-muted-foreground uppercase tracking-wide mb-2 flex items-center gap-1.5">
+                <Code className="w-3.5 h-3.5 text-primary" />
+                Custom Tools
+                {(config.custom_tools || []).length > 0 && (
+                  <span className="bg-primary/10 text-primary px-1.5 rounded text-[10px] font-medium normal-case tracking-normal">
+                    {(config.custom_tools || []).length} enabled
+                  </span>
+                )}
+              </label>
+              <div className="space-y-1.5">
+                {availableCustomTools.map((tool: any) => {
+                  const active = (config.custom_tools || []).includes(tool.tool_id);
+                  return (
+                    <button
+                      key={tool.tool_id}
+                      onClick={() => {
+                        const cur = config.custom_tools || [];
+                        updateConfig({ custom_tools: active ? cur.filter((id: string) => id !== tool.tool_id) : [...cur, tool.tool_id] });
+                      }}
+                      className={`w-full flex items-center gap-2.5 px-3 py-2 rounded-md text-left transition-colors ${
+                        active ? 'bg-primary/10 border border-primary/30' : 'bg-muted border border-transparent hover:border-border'
+                      }`}
+                    >
+                      <Code className={`w-3.5 h-3.5 shrink-0 ${active ? 'text-primary' : 'text-muted-foreground'}`} />
+                      <div className="min-w-0 flex-1">
+                        <div className={`text-xs font-medium ${active ? 'text-primary' : 'text-foreground'}`}>{tool.name}</div>
+                        {tool.description && (
+                          <div className="text-[10px] text-muted-foreground truncate">{tool.description}</div>
+                        )}
+                      </div>
+                      {active && (
+                        <div className="flex items-center gap-1 shrink-0">
+                          <button
+                            onClick={(e) => { e.stopPropagation(); setSelectedToolId(tool.tool_id); setShowToolConfigModal(true); }}
+                            className="p-1 hover:bg-muted rounded"
+                            title="Configure tool"
+                          >
+                            <Settings className="w-3 h-3 text-muted-foreground" />
+                          </button>
+                          <CheckCircle2 className="w-3.5 h-3.5 text-primary" />
+                        </div>
+                      )}
+                    </button>
+                  );
+                })}
+              </div>
+            </div>
+          )}
+
+          {/* Skills */}
+          {!['START_NODE', 'END_NODE', 'TOOL_NODE'].includes(config.agentType) && availableSkills.length > 0 && (
+            <div>
+              <button
+                onClick={() => {}}
+                className="w-full flex items-center justify-between text-xs font-semibold text-muted-foreground uppercase tracking-wide mb-2"
+              >
+                <span className="flex items-center gap-1.5">
+                  <Bot className="w-3.5 h-3.5 text-primary" />
+                  Skills
+                  {selectedSkills.length > 0 && (
+                    <span className="bg-primary/10 text-primary px-1.5 rounded text-[10px] font-medium normal-case tracking-normal">
+                      {selectedSkills.length} active
+                    </span>
+                  )}
+                </span>
+              </button>
+              <div className="space-y-1.5">
+                {availableSkills.map((skill: Skill) => {
+                  const active = selectedSkills.includes(skill.skill_id);
+                  return (
+                    <button
+                      key={skill.skill_id}
+                      onClick={() => toggleSkill(skill.skill_id)}
+                      className={`w-full flex items-center gap-2.5 px-3 py-2 rounded-md text-left transition-colors ${
+                        active ? 'bg-primary/10 border border-primary/30' : 'bg-muted border border-transparent hover:border-border'
+                      }`}
+                    >
+                      <Layers3 className={`w-3.5 h-3.5 shrink-0 ${active ? 'text-primary' : 'text-muted-foreground'}`} />
+                      <div className="min-w-0">
+                        <div className={`text-xs font-medium ${active ? 'text-primary' : 'text-foreground'}`}>{skill.name}</div>
+                        <div className="text-[10px] text-muted-foreground truncate">{skill.description}</div>
+                      </div>
+                      {active && <CheckCircle2 className="w-3.5 h-3.5 text-primary ml-auto shrink-0" />}
+                    </button>
+                  );
+                })}
+              </div>
+            </div>
+          )}
+
+          {/* Middleware */}
+          {!['START_NODE', 'END_NODE', 'TOOL_NODE'].includes(config.agentType) && (
+            <div>
+              <button
+                className="w-full flex items-center justify-between text-xs font-semibold text-muted-foreground uppercase tracking-wide mb-2"
+              >
+                <span className="flex items-center gap-1.5">
+                  <Shield className="w-3.5 h-3.5 text-primary" />
+                  Middleware
+                  {enabledMiddleware.length > 0 && (
+                    <span className="bg-primary/10 text-primary px-1.5 rounded text-[10px] font-medium normal-case tracking-normal">
+                      {enabledMiddleware.length} active
+                    </span>
+                  )}
+                </span>
+              </button>
+              <div className="space-y-1.5">
+                {[
+                  { id: 'timestamp', name: 'Timestamp Injection', description: 'Inject current time into context' },
+                  { id: 'logging', name: 'Request Logging', description: 'Log inputs and outputs' },
+                  { id: 'cost_tracking', name: 'Cost Tracking', description: 'Track token usage / costs' },
+                  { id: 'tool_retry', name: 'Tool Retry Logic', description: 'Auto-retry failed tool calls' },
+                  { id: 'pii', name: 'PII Detection', description: 'Redact sensitive data from logs' },
+                  { id: 'hitl', name: 'Human-in-Loop', description: 'Require human approval for actions' },
+                ].map(({ id, name, description }) => {
+                  const active = enabledMiddleware.includes(id);
+                  return (
+                    <button
+                      key={id}
+                      onClick={() => toggleMiddleware(id)}
+                      className={`w-full flex items-center gap-2.5 px-3 py-2 rounded-md text-left transition-colors ${
+                        active ? 'bg-primary/10 border border-primary/30' : 'bg-muted border border-transparent hover:border-border'
+                      }`}
+                    >
+                      <Shield className={`w-3.5 h-3.5 shrink-0 ${active ? 'text-primary' : 'text-muted-foreground'}`} />
+                      <div className="min-w-0">
+                        <div className={`text-xs font-medium ${active ? 'text-primary' : 'text-foreground'}`}>{name}</div>
+                        <div className="text-[10px] text-muted-foreground truncate">{description}</div>
+                      </div>
+                      {active && <CheckCircle2 className="w-3.5 h-3.5 text-primary ml-auto shrink-0" />}
+                    </button>
+                  );
+                })}
+              </div>
+            </div>
+          )}
+
+          {/* Advanced Settings */}
+          <div>
+            <button
+              onClick={() => setShowAdvancedSettings(!showAdvancedSettings)}
+              className="w-full flex items-center justify-between text-xs font-semibold text-muted-foreground uppercase tracking-wide mb-2"
+            >
+              <span className="flex items-center gap-1.5">
+                <Settings className="w-3.5 h-3.5" />
+                Advanced
+              </span>
+              {showAdvancedSettings ? <ChevronDown className="w-3.5 h-3.5" /> : <ChevronRight className="w-3.5 h-3.5" />}
+            </button>
+            {showAdvancedSettings && (
+              <div className="space-y-3 bg-muted rounded-md p-3 border border-border">
+                <div className="grid grid-cols-2 gap-3">
+                  <div>
+                    <label className="text-[10px] text-muted-foreground mb-1 block">Max Retries</label>
+                    <input
+                      type="number"
+                      value={config.max_retries ?? 3}
+                      onChange={(e) => updateConfig({ max_retries: parseInt(e.target.value) || 3 })}
+                      min={0}
+                      max={10}
+                      className="w-full text-xs bg-card border border-border rounded px-2 py-1.5 text-foreground focus:outline-none focus:border-primary/50"
+                    />
+                  </div>
+                  <div>
+                    <label className="text-[10px] text-muted-foreground mb-1 block">Recursion Limit</label>
+                    <input
+                      type="number"
+                      value={config.recursion_limit ?? 300}
+                      onChange={(e) => updateConfig({ recursion_limit: parseInt(e.target.value) || 300 })}
+                      min={10}
+                      max={1000}
+                      className="w-full text-xs bg-card border border-border rounded px-2 py-1.5 text-foreground focus:outline-none focus:border-primary/50"
+                    />
+                  </div>
+                </div>
+                {/* Conversation Context toggle */}
+                <div className="flex items-center justify-between">
+                  <div>
+                    <div className="text-xs font-medium text-foreground">Conversation Context</div>
+                    <div className="text-[10px] text-muted-foreground">Maintain cross-node message history</div>
+                  </div>
+                  <button
+                    onClick={() => updateConfig({ enable_conversation_context: !config.enable_conversation_context })}
+                    className={`w-9 h-5 rounded-full transition-colors relative ${config.enable_conversation_context ? 'bg-primary' : 'bg-border'}`}
+                  >
+                    <span className={`absolute top-0.5 left-0.5 w-4 h-4 rounded-full bg-white transition-transform ${config.enable_conversation_context ? 'translate-x-4' : 'translate-x-0'}`} />
+                  </button>
+                </div>
+              </div>
+            )}
           </div>
+
+          {/* Token Cost Info */}
+          {tokenCostInfo && (
+            <div className="bg-muted rounded-md p-3 border border-border">
+              <div className="text-xs font-semibold text-muted-foreground uppercase tracking-wide mb-2 flex items-center gap-1.5">
+                <Cpu className="w-3.5 h-3.5 text-primary" />
+                Token Usage
+              </div>
+              <div className="grid grid-cols-2 gap-x-4 gap-y-1 text-xs">
+                <span className="text-muted-foreground">Prompt</span>
+                <span className="text-right text-foreground font-mono">{tokenCostInfo.prompt_tokens?.toLocaleString?.() ?? '—'}</span>
+                <span className="text-muted-foreground">Completion</span>
+                <span className="text-right text-foreground font-mono">{tokenCostInfo.completion_tokens?.toLocaleString?.() ?? '—'}</span>
+                <span className="text-muted-foreground">Total</span>
+                <span className="text-right text-foreground font-mono">{tokenCostInfo.total_tokens?.toLocaleString?.() ?? '—'}</span>
+              </div>
+            </div>
+          )}
+
+          {/* Delete Node */}
+          <div className="pt-1">
+            {!showDeleteConfirm ? (
+              <button
+                onClick={() => setShowDeleteConfirm(true)}
+                className="w-full flex items-center justify-center gap-2 px-3 py-2 rounded-md text-sm text-destructive border border-destructive/30 hover:bg-destructive/10 transition-colors"
+              >
+                <Trash2 className="w-4 h-4" />
+                Delete Node
+              </button>
+            ) : (
+              <div className="flex items-center gap-2">
+                <button
+                  onClick={() => onDelete(config.id)}
+                  className="flex-1 px-3 py-2 rounded-md text-sm bg-destructive text-white hover:opacity-90 transition-opacity"
+                >
+                  Confirm Delete
+                </button>
+                <button
+                  onClick={() => setShowDeleteConfirm(false)}
+                  className="flex-1 px-3 py-2 rounded-md text-sm bg-muted text-foreground hover:bg-card transition-colors border border-border"
+                >
+                  Cancel
+                </button>
+              </div>
+            )}
+          </div>
+
         </div>
 
         {/* Footer */}
