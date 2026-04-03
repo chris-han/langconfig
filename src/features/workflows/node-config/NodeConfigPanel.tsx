@@ -33,6 +33,7 @@ import {
 } from 'lucide-react';
 import apiClient from '../../../lib/api-client';
 import { getModelDisplayName } from '../../../lib/modelDisplayNames';
+import ModelSelector from '../../../components/common/ModelSelector';
 import CustomToolBuilder from '../../tools/ui/CustomToolBuilder';
 import ContextPreviewModal from '../../../components/workflows/ContextPreviewModal';
 
@@ -341,16 +342,22 @@ const NodeConfigPanel = ({
             </button>
           </div>
           <div className="flex items-center gap-2">
-            <span className="text-xs px-2 py-0.5 rounded-full bg-primary/10 text-primary font-medium">
+            <span className="text-xs px-2 py-0.5 rounded-full bg-primary/10 text-primary font-medium shrink-0">
               {config.agentType}
             </span>
-            {config.model && (
-              <span className="text-xs text-muted-foreground flex items-center gap-1">
-                <Cpu className="w-3 h-3" />
-                {getModelDisplayName(config.model)}
-              </span>
-            )}
           </div>
+          {!['START_NODE', 'END_NODE', 'CONDITIONAL_NODE', 'TOOL_NODE'].includes(config.agentType) && (
+            <div className="mt-2">
+              <ModelSelector
+                value={config.model || ''}
+                onChange={(modelId) => updateConfig({ model: modelId })}
+                label=""
+                includeLocal={true}
+                onlyValidated={true}
+                showProviderLabels={true}
+              />
+            </div>
+          )}
         </div>
 
         {/* Form Content */}
