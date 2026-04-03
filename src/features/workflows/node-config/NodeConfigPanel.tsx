@@ -106,8 +106,9 @@ const NodeConfigPanel = ({
 
   // State for collapsible sections
   const [toolsCollapsed, setToolsCollapsed] = useState(false);
-  const [skillsCollapsed] = useState(true); // Default collapsed
-  const [middlewareCollapsed] = useState(true); // Default collapsed
+  const [skillsCollapsed, setSkillsCollapsed] = useState(true);
+  const [middlewareCollapsed, setMiddlewareCollapsed] = useState(true);
+  const [tokenUsageCollapsed, setTokenUsageCollapsed] = useState(true);
   const [subagentsCollapsed] = useState(false);
   const [advancedCollapsed] = useState(true);
 
@@ -560,7 +561,7 @@ const NodeConfigPanel = ({
           {!['START_NODE', 'END_NODE', 'TOOL_NODE'].includes(config.agentType) && availableSkills.length > 0 && (
             <div>
               <button
-                onClick={() => {}}
+                onClick={() => setSkillsCollapsed(!skillsCollapsed)}
                 className="w-full flex items-center justify-between text-xs font-semibold text-muted-foreground uppercase tracking-wide mb-2"
               >
                 <span className="flex items-center gap-1.5">
@@ -572,28 +573,31 @@ const NodeConfigPanel = ({
                     </span>
                   )}
                 </span>
+                {skillsCollapsed ? <ChevronRight className="w-3.5 h-3.5" /> : <ChevronDown className="w-3.5 h-3.5" />}
               </button>
-              <div className="space-y-1.5">
-                {availableSkills.map((skill: Skill) => {
-                  const active = selectedSkills.includes(skill.skill_id);
-                  return (
-                    <button
-                      key={skill.skill_id}
-                      onClick={() => toggleSkill(skill.skill_id)}
-                      className={`w-full flex items-center gap-2.5 px-3 py-2 rounded-md text-left transition-colors ${
-                        active ? 'bg-primary/10 border border-primary/30' : 'bg-muted border border-transparent hover:border-border'
-                      }`}
-                    >
-                      <Layers3 className={`w-3.5 h-3.5 shrink-0 ${active ? 'text-primary' : 'text-muted-foreground'}`} />
-                      <div className="min-w-0">
-                        <div className={`text-xs font-medium ${active ? 'text-primary' : 'text-foreground'}`}>{skill.name}</div>
-                        <div className="text-[10px] text-muted-foreground truncate">{skill.description}</div>
-                      </div>
-                      {active && <CheckCircle2 className="w-3.5 h-3.5 text-primary ml-auto shrink-0" />}
-                    </button>
-                  );
-                })}
-              </div>
+              {!skillsCollapsed && (
+                <div className="space-y-1.5">
+                  {availableSkills.map((skill: Skill) => {
+                    const active = selectedSkills.includes(skill.skill_id);
+                    return (
+                      <button
+                        key={skill.skill_id}
+                        onClick={() => toggleSkill(skill.skill_id)}
+                        className={`w-full flex items-center gap-2.5 px-3 py-2 rounded-md text-left transition-colors ${
+                          active ? 'bg-primary/10 border border-primary/30' : 'bg-muted border border-transparent hover:border-border'
+                        }`}
+                      >
+                        <Layers3 className={`w-3.5 h-3.5 shrink-0 ${active ? 'text-primary' : 'text-muted-foreground'}`} />
+                        <div className="min-w-0">
+                          <div className={`text-xs font-medium ${active ? 'text-primary' : 'text-foreground'}`}>{skill.name}</div>
+                          <div className="text-[10px] text-muted-foreground truncate">{skill.description}</div>
+                        </div>
+                        {active && <CheckCircle2 className="w-3.5 h-3.5 text-primary ml-auto shrink-0" />}
+                      </button>
+                    );
+                  })}
+                </div>
+              )}
             </div>
           )}
 
@@ -601,6 +605,7 @@ const NodeConfigPanel = ({
           {!['START_NODE', 'END_NODE', 'TOOL_NODE'].includes(config.agentType) && (
             <div>
               <button
+                onClick={() => setMiddlewareCollapsed(!middlewareCollapsed)}
                 className="w-full flex items-center justify-between text-xs font-semibold text-muted-foreground uppercase tracking-wide mb-2"
               >
                 <span className="flex items-center gap-1.5">
@@ -612,35 +617,38 @@ const NodeConfigPanel = ({
                     </span>
                   )}
                 </span>
+                {middlewareCollapsed ? <ChevronRight className="w-3.5 h-3.5" /> : <ChevronDown className="w-3.5 h-3.5" />}
               </button>
-              <div className="space-y-1.5">
-                {[
-                  { id: 'timestamp', name: 'Timestamp Injection', description: 'Inject current time into context' },
-                  { id: 'logging', name: 'Request Logging', description: 'Log inputs and outputs' },
-                  { id: 'cost_tracking', name: 'Cost Tracking', description: 'Track token usage / costs' },
-                  { id: 'tool_retry', name: 'Tool Retry Logic', description: 'Auto-retry failed tool calls' },
-                  { id: 'pii', name: 'PII Detection', description: 'Redact sensitive data from logs' },
-                  { id: 'hitl', name: 'Human-in-Loop', description: 'Require human approval for actions' },
-                ].map(({ id, name, description }) => {
-                  const active = enabledMiddleware.includes(id);
-                  return (
-                    <button
-                      key={id}
-                      onClick={() => toggleMiddleware(id)}
-                      className={`w-full flex items-center gap-2.5 px-3 py-2 rounded-md text-left transition-colors ${
-                        active ? 'bg-primary/10 border border-primary/30' : 'bg-muted border border-transparent hover:border-border'
-                      }`}
-                    >
-                      <Shield className={`w-3.5 h-3.5 shrink-0 ${active ? 'text-primary' : 'text-muted-foreground'}`} />
-                      <div className="min-w-0">
-                        <div className={`text-xs font-medium ${active ? 'text-primary' : 'text-foreground'}`}>{name}</div>
-                        <div className="text-[10px] text-muted-foreground truncate">{description}</div>
-                      </div>
-                      {active && <CheckCircle2 className="w-3.5 h-3.5 text-primary ml-auto shrink-0" />}
-                    </button>
-                  );
-                })}
-              </div>
+              {!middlewareCollapsed && (
+                <div className="space-y-1.5">
+                  {[
+                    { id: 'timestamp', name: 'Timestamp Injection', description: 'Inject current time into context' },
+                    { id: 'logging', name: 'Request Logging', description: 'Log inputs and outputs' },
+                    { id: 'cost_tracking', name: 'Cost Tracking', description: 'Track token usage / costs' },
+                    { id: 'tool_retry', name: 'Tool Retry Logic', description: 'Auto-retry failed tool calls' },
+                    { id: 'pii', name: 'PII Detection', description: 'Redact sensitive data from logs' },
+                    { id: 'hitl', name: 'Human-in-Loop', description: 'Require human approval for actions' },
+                  ].map(({ id, name, description }) => {
+                    const active = enabledMiddleware.includes(id);
+                    return (
+                      <button
+                        key={id}
+                        onClick={() => toggleMiddleware(id)}
+                        className={`w-full flex items-center gap-2.5 px-3 py-2 rounded-md text-left transition-colors ${
+                          active ? 'bg-primary/10 border border-primary/30' : 'bg-muted border border-transparent hover:border-border'
+                        }`}
+                      >
+                        <Shield className={`w-3.5 h-3.5 shrink-0 ${active ? 'text-primary' : 'text-muted-foreground'}`} />
+                        <div className="min-w-0">
+                          <div className={`text-xs font-medium ${active ? 'text-primary' : 'text-foreground'}`}>{name}</div>
+                          <div className="text-[10px] text-muted-foreground truncate">{description}</div>
+                        </div>
+                        {active && <CheckCircle2 className="w-3.5 h-3.5 text-primary ml-auto shrink-0" />}
+                      </button>
+                    );
+                  })}
+                </div>
+              )}
             </div>
           )}
 
@@ -651,7 +659,7 @@ const NodeConfigPanel = ({
               className="w-full flex items-center justify-between text-xs font-semibold text-muted-foreground uppercase tracking-wide mb-2"
             >
               <span className="flex items-center gap-1.5">
-                <Settings className="w-3.5 h-3.5" />
+                <Settings className="w-3.5 h-3.5 text-primary" />
                 Advanced
               </span>
               {showAdvancedSettings ? <ChevronDown className="w-3.5 h-3.5" /> : <ChevronRight className="w-3.5 h-3.5" />}
@@ -701,19 +709,29 @@ const NodeConfigPanel = ({
 
           {/* Token Cost Info */}
           {tokenCostInfo && (
-            <div className="bg-muted rounded-md p-3 border border-border">
-              <div className="text-xs font-semibold text-muted-foreground uppercase tracking-wide mb-2 flex items-center gap-1.5">
-                <Cpu className="w-3.5 h-3.5 text-primary" />
-                Token Usage
-              </div>
-              <div className="grid grid-cols-2 gap-x-4 gap-y-1 text-xs">
-                <span className="text-muted-foreground">Prompt</span>
-                <span className="text-right text-foreground font-mono">{tokenCostInfo.prompt_tokens?.toLocaleString?.() ?? '—'}</span>
-                <span className="text-muted-foreground">Completion</span>
-                <span className="text-right text-foreground font-mono">{tokenCostInfo.completion_tokens?.toLocaleString?.() ?? '—'}</span>
-                <span className="text-muted-foreground">Total</span>
-                <span className="text-right text-foreground font-mono">{tokenCostInfo.total_tokens?.toLocaleString?.() ?? '—'}</span>
-              </div>
+            <div>
+              <button
+                onClick={() => setTokenUsageCollapsed(!tokenUsageCollapsed)}
+                className="w-full flex items-center justify-between text-xs font-semibold text-muted-foreground uppercase tracking-wide mb-2"
+              >
+                <span className="flex items-center gap-1.5">
+                  <Cpu className="w-3.5 h-3.5 text-primary" />
+                  Token Usage
+                </span>
+                {tokenUsageCollapsed ? <ChevronRight className="w-3.5 h-3.5" /> : <ChevronDown className="w-3.5 h-3.5" />}
+              </button>
+              {!tokenUsageCollapsed && (
+                <div className="bg-muted rounded-md p-3 border border-border">
+                  <div className="grid grid-cols-2 gap-x-4 gap-y-1 text-xs">
+                    <span className="text-muted-foreground">Prompt</span>
+                    <span className="text-right text-foreground font-mono">{tokenCostInfo.prompt_tokens?.toLocaleString?.() ?? '—'}</span>
+                    <span className="text-muted-foreground">Completion</span>
+                    <span className="text-right text-foreground font-mono">{tokenCostInfo.completion_tokens?.toLocaleString?.() ?? '—'}</span>
+                    <span className="text-muted-foreground">Total</span>
+                    <span className="text-right text-foreground font-mono">{tokenCostInfo.total_tokens?.toLocaleString?.() ?? '—'}</span>
+                  </div>
+                </div>
+              )}
             </div>
           )}
 
