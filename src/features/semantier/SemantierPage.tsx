@@ -9,7 +9,6 @@ import {
   GitBranch,
   History,
   Info,
-  Layers3,
   Link2,
   Ratio,
   RefreshCw,
@@ -468,23 +467,22 @@ function ExplorerPane({
             }
           }}
           className={[
-            "group flex w-full items-center gap-2 rounded-md px-3 py-2 text-left text-sm transition-colors",
-            selected ? "bg-accent text-accent-foreground" : "hover:bg-accent/60",
+            "group flex w-full items-center gap-1.5 rounded-sm border px-3 py-2 text-left text-sm transition-colors",
+            selected ? "border-primary/60 bg-transparent text-foreground" : "border-transparent hover:border-primary/30 hover:bg-transparent",
             !isFolder ? "cursor-grab active:cursor-grabbing" : "",
           ].join(" ")}
-          style={{ paddingLeft: `${12 + level * 16}px` }}
+          style={{ paddingLeft: `${2 + level * 16}px` }}
         >
           {hasChildren ? (
-            <span className={`material-symbols-outlined text-base text-muted-foreground transition-transform ${expanded ? "rotate-90" : ""}`}>
+            <span className={`material-symbols-outlined text-base text-primary transition-transform ${expanded ? "rotate-90" : ""}`}>
               chevron_right
             </span>
           ) : (
-            <span className="w-4 shrink-0" aria-hidden />
+            <span className="w-2 shrink-0" aria-hidden />
           )}
           {!isFolder && node.type === "ontology" && <Box className="h-4 w-4 text-primary" />}
           {!isFolder && node.type === "dimension" && <Ratio className="h-4 w-4 text-sky-400" />}
           {!isFolder && node.type === "rule" && <Workflow className="h-4 w-4 text-amber-400" />}
-          {isFolder && <Layers3 className="h-4 w-4 text-primary" />}
           <div className="min-w-0 flex-1 flex items-center justify-between gap-2">
             <span className={`truncate ${isFolder ? "font-semibold text-muted-foreground" : "font-medium text-foreground"}`}>{node.name}</span>
             {!isFolder && node.version && (
