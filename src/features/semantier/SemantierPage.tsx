@@ -18,6 +18,7 @@ import {
   Settings2,
   Sparkles,
   Workflow,
+  Zap,
 } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
@@ -538,6 +539,10 @@ function ExplorerPane({
 }
 
 function InspectorPane({ selectedItem, graphSelection }: { selectedItem: TreeNode | null; graphSelection: GraphSelection }) {
+  const [fieldsCollapsed, setFieldsCollapsed] = useState(false);
+  const [actionsCollapsed, setActionsCollapsed] = useState(false);
+  const [relationshipCollapsed, setRelationshipCollapsed] = useState(false);
+
   const graphData = graphSelection?.type === "node" ? graphSelection.data?.data : graphSelection?.data?.data;
   const edgeData = graphSelection?.type === "edge" ? graphSelection.data : null;
   const propertyRows = graphData?.properties || selectedItem?.properties || [];
@@ -606,93 +611,124 @@ function InspectorPane({ selectedItem, graphSelection }: { selectedItem: TreeNod
             {/* Relationship — edge only */}
             {graphSelection?.type === "edge" && (
               <div>
-                <label className="text-xs font-semibold text-muted-foreground uppercase tracking-wide mb-2 flex items-center gap-1.5">
-                  <Link2 className="w-3.5 h-3.5 text-primary" />
-                  Relationship
-                </label>
-                <div className="bg-muted border border-border rounded-md px-3 py-2">
-                  <div className="text-sm font-medium text-foreground">{edgeData?.source} → {edgeData?.target}</div>
-                  {edgeData?.data?.category && (
-                    <div className="mt-0.5 text-xs text-muted-foreground">{edgeData.data.category}</div>
-                  )}
-                </div>
+                <button
+                  onClick={() => setRelationshipCollapsed(!relationshipCollapsed)}
+                  className="w-full flex items-center justify-between text-xs font-semibold text-muted-foreground uppercase tracking-wide mb-2"
+                >
+                  <span className="flex items-center gap-1.5">
+                    <Link2 className="w-3.5 h-3.5 text-primary" />
+                    Relationship
+                  </span>
+                  {relationshipCollapsed ? <ChevronRight className="w-3.5 h-3.5" /> : <ChevronDown className="w-3.5 h-3.5" />}
+                </button>
+                {!relationshipCollapsed && (
+                  <div className="bg-muted border border-border rounded-md px-3 py-2">
+                    <div className="text-sm font-medium text-foreground">{edgeData?.source} → {edgeData?.target}</div>
+                    {edgeData?.data?.category && (
+                      <div className="mt-0.5 text-xs text-muted-foreground">{edgeData.data.category}</div>
+                    )}
+                  </div>
+                )}
               </div>
             )}
 
             {/* Fields */}
             {propertyRows.length > 0 && (
               <div>
-                <label className="text-xs font-semibold text-muted-foreground uppercase tracking-wide mb-2 block">
-                  Fields
-                </label>
-                <div className="space-y-1.5">
-                  {propertyRows.map((property: any) => (
-                    <div key={property.name} className="flex items-center gap-2.5 px-3 py-2 rounded-md bg-muted border border-transparent">
-                      <div className="min-w-0 flex-1">
-                        <div className="text-xs font-medium text-foreground">{property.name}</div>
-                        <div className="text-[10px] text-muted-foreground">{property.type}</div>
+                <button
+                  onClick={() => setFieldsCollapsed(!fieldsCollapsed)}
+                  className="w-full flex items-center justify-between text-xs font-semibold text-muted-foreground uppercase tracking-wide mb-2"
+                >
+                  <span className="flex items-center gap-1.5">
+                    <Settings2 className="w-3.5 h-3.5 text-primary" />
+                    Fields
+                    <span className="bg-primary/10 text-primary px-1.5 rounded text-[10px] font-medium normal-case tracking-normal">
+                      {propertyRows.length}
+                    </span>
+                  </span>
+                  {fieldsCollapsed ? <ChevronRight className="w-3.5 h-3.5" /> : <ChevronDown className="w-3.5 h-3.5" />}
+                </button>
+                {!fieldsCollapsed && (
+                  <div className="space-y-1.5">
+                    {propertyRows.map((property: any) => (
+                      <div key={property.name} className="flex items-center gap-2.5 px-3 py-2 rounded-md bg-muted border border-transparent">
+                        <div className="min-w-0 flex-1">
+                          <div className="text-xs font-medium text-foreground">{property.name}</div>
+                          <div className="text-[10px] text-muted-foreground">{property.type}</div>
+                        </div>
+                        <span className={`shrink-0 rounded-full px-2 py-0.5 text-[10px] font-semibold ${
+                          property.required ? "bg-amber-500/15 text-amber-300" : "bg-emerald-500/15 text-emerald-300"
+                        }`}>
+                          {property.required ? "required" : "optional"}
+                        </span>
                       </div>
-                      <span className={`shrink-0 rounded-full px-2 py-0.5 text-[10px] font-semibold ${
-                        property.required ? "bg-amber-500/15 text-amber-300" : "bg-emerald-500/15 text-emerald-300"
-                      }`}>
-                        {property.required ? "required" : "optional"}
-                      </span>
-                    </div>
-                  ))}
-                </div>
+                    ))}
+                  </div>
+                )}
               </div>
             )}
 
             {/* Actions */}
             {actions.length > 0 && (
               <div>
-                <label className="text-xs font-semibold text-muted-foreground uppercase tracking-wide mb-2 block">
-                  Actions
-                </label>
-                <div className="flex flex-wrap gap-2">
-                  {actions.map((action: string) => (
-                    <div key={action} className="rounded-full bg-primary/10 px-3 py-1 text-xs font-medium text-primary">
-                      {action}
-                    </div>
-                  ))}
-                </div>
+                <button
+                  onClick={() => setActionsCollapsed(!actionsCollapsed)}
+                  className="w-full flex items-center justify-between text-xs font-semibold text-muted-foreground uppercase tracking-wide mb-2"
+                >
+                  <span className="flex items-center gap-1.5">
+                    <Zap className="w-3.5 h-3.5 text-primary" />
+                    Actions
+                    <span className="bg-primary/10 text-primary px-1.5 rounded text-[10px] font-medium normal-case tracking-normal">
+                      {actions.length}
+                    </span>
+                  </span>
+                  {actionsCollapsed ? <ChevronRight className="w-3.5 h-3.5" /> : <ChevronDown className="w-3.5 h-3.5" />}
+                </button>
+                {!actionsCollapsed && (
+                  <div className="flex flex-wrap gap-2">
+                    {actions.map((action: string) => (
+                      <div key={action} className="rounded-full bg-primary/10 px-3 py-1 text-xs font-medium text-primary">
+                        {action}
+                      </div>
+                    ))}
+                  </div>
+                )}
               </div>
             )}
           </div>
         </TabsContent>
 
-        <TabsContent value="reconciliation" className="m-0 flex-1 overflow-auto">
-          <div className="border-b border-border bg-card/50 p-3">
-            <h3 className="text-sm font-medium">实时勾稽检查</h3>
-            <p className="mt-1 text-xs text-muted-foreground">监测跨域数据一致性，确保业财税三位一体</p>
-          </div>
-          <div className="space-y-3 p-3">
+        <TabsContent value="reconciliation" className="m-0 flex-1 overflow-auto flex flex-col">
+          <div className="flex-1 overflow-auto p-4 space-y-2">
+            <label className="text-xs font-semibold text-muted-foreground uppercase tracking-wide mb-3 flex items-center gap-1.5">
+              <Link2 className="w-3.5 h-3.5 text-primary" />
+              实时勾稽检查
+            </label>
+            <p className="text-xs text-muted-foreground mb-3">监测跨域数据一致性，确保业财税三位一体</p>
             {reconciliationAlerts.map((alert) => (
-                <div
-                  key={alert.id}
-                  className={[
-                    "rounded-md border p-3",
+              <div
+                key={alert.id}
+                className={[
+                  "flex items-start gap-2.5 px-3 py-2.5 rounded-md border",
                   alert.type === "warning" ? "border-[var(--status-warning)]/40 bg-[var(--status-warning)]/8" : "",
                   alert.type === "error" ? "border-destructive/40 bg-destructive/8" : "",
                   alert.type === "info" ? "border-[var(--status-info)]/40 bg-[var(--status-info)]/8" : "",
                 ].join(" ")}
               >
-                <div className="flex items-start gap-2">
-                  {alert.type === "warning" && <AlertTriangle className="mt-0.5 h-4 w-4 shrink-0 text-[var(--status-warning)]" />}
-                  {alert.type === "error" && <AlertTriangle className="mt-0.5 h-4 w-4 shrink-0 text-destructive" />}
-                  {alert.type === "info" && <Info className="mt-0.5 h-4 w-4 shrink-0 text-[var(--status-info)]" />}
-                  <div className="min-w-0 flex-1">
-                    <div className="mb-1 flex items-center gap-2">
-                      <span className="rounded border px-1.5 py-0 text-[10px] text-muted-foreground">{alert.domain}</span>
-                    </div>
-                    <p className="text-xs leading-relaxed text-foreground">{alert.message}</p>
-                    {alert.delta && <p className="mt-2 text-sm font-semibold text-[var(--status-warning)]">差额: {alert.delta}</p>}
+                {alert.type === "warning" && <AlertTriangle className="mt-0.5 h-3.5 w-3.5 shrink-0 text-[var(--status-warning)]" />}
+                {alert.type === "error" && <AlertTriangle className="mt-0.5 h-3.5 w-3.5 shrink-0 text-destructive" />}
+                {alert.type === "info" && <Info className="mt-0.5 h-3.5 w-3.5 shrink-0 text-[var(--status-info)]" />}
+                <div className="min-w-0 flex-1">
+                  <div className="mb-1">
+                    <span className="rounded border border-border px-1.5 py-0 text-[10px] text-muted-foreground">{alert.domain}</span>
                   </div>
+                  <p className="text-xs leading-relaxed text-foreground">{alert.message}</p>
+                  {alert.delta && <p className="mt-1 text-xs font-semibold text-[var(--status-warning)]">差额: {alert.delta}</p>}
                 </div>
               </div>
             ))}
           </div>
-          <div className="border-t border-sidebar-border p-3">
+          <div className="border-t border-sidebar-border p-3 flex-shrink-0">
             <Button variant="outline" size="sm" className="w-full text-xs">
               <RefreshCw className="h-3.5 w-3.5" />
               重新检查全部
@@ -700,31 +736,36 @@ function InspectorPane({ selectedItem, graphSelection }: { selectedItem: TreeNod
           </div>
         </TabsContent>
 
-        <TabsContent value="versions" className="m-0 flex-1 overflow-auto p-3">
-          <div className="space-y-3">
+        <TabsContent value="versions" className="m-0 flex-1 overflow-auto p-4">
+          <div className="space-y-5">
             <div className="flex items-center justify-between">
-              <span className="text-sm font-medium">版本历史</span>
-              <span className="rounded bg-secondary px-2 py-0.5 text-[10px] font-medium text-secondary-foreground">语义版本控制</span>
+              <label className="text-xs font-semibold text-muted-foreground uppercase tracking-wide flex items-center gap-1.5">
+                <History className="w-3.5 h-3.5 text-primary" />
+                版本历史
+              </label>
+              <span className="text-xs px-2 py-0.5 rounded-full bg-primary/10 text-primary font-medium">语义版本控制</span>
             </div>
-            <div className="space-y-2">
+            <div className="space-y-1.5">
               {versionHistory.map((entry, index) => (
-                <div
+                <button
                   key={entry.version}
                   className={[
-                    "rounded-md border p-3",
-                    index === 0 ? "border-primary/40 bg-primary/6" : "border-border",
+                    "w-full flex items-center gap-2.5 px-3 py-2 rounded-md text-left border transition-colors",
+                    index === 0 ? "bg-primary/10 border-primary/30" : "bg-muted border-transparent hover:border-border",
                   ].join(" ")}
                 >
-                  <div className="mb-1 flex items-center gap-2">
-                    <span className={`rounded px-2 py-0.5 text-xs font-medium ${index === 0 ? "bg-primary text-primary-foreground" : "border border-border text-foreground"}`}>
-                      {entry.version}
-                    </span>
-                    {index === 0 && <CheckCircle2 className="h-3.5 w-3.5 text-primary" />}
-                    <span className="ml-auto text-xs text-muted-foreground">{entry.date}</span>
+                  <div className="min-w-0 flex-1">
+                    <div className="flex items-center gap-2">
+                      <span className={`text-xs font-medium ${index === 0 ? "text-primary" : "text-foreground"}`}>{entry.version}</span>
+                      {index === 0 && <CheckCircle2 className="h-3.5 w-3.5 text-primary shrink-0" />}
+                    </div>
+                    <div className="text-[10px] text-muted-foreground truncate">{entry.changes}</div>
                   </div>
-                  <p className="text-xs text-foreground">{entry.changes}</p>
-                  <p className="mt-1 text-xs text-muted-foreground">by {entry.author}</p>
-                </div>
+                  <div className="shrink-0 text-right">
+                    <div className="text-[10px] text-muted-foreground">{entry.date}</div>
+                    <div className="text-[10px] text-muted-foreground">{entry.author}</div>
+                  </div>
+                </button>
               ))}
             </div>
           </div>
