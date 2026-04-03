@@ -27,6 +27,8 @@ import ReactFlow, {
 } from "reactflow";
 import dagre from "dagre";
 import { ArrowRight, Box, CircleDot, Grip, LayoutTemplate } from "lucide-react";
+import { useToast } from "../../hooks/useToast";
+import NodeContextMenu from "../workflows/canvas/menus/NodeContextMenu";
 import { SEMANTIER_NODE_DRAG_MIME } from "./dragDropContract";
 
 type NodeType = "entity" | "dimension" | "event";
@@ -49,6 +51,13 @@ interface TreeDropNode {
   name: string;
   type: string;
   prefix?: string;
+}
+
+interface SemantierNodeContextMenu {
+  nodeId: string;
+  nodeData: NodeData;
+  x: number;
+  y: number;
 }
 
 const resolveDroppedTreeNode = (event: React.DragEvent): TreeDropNode | null => {
@@ -322,6 +331,38 @@ function getTypeIcon(type: NodeType) {
     return <CircleDot className="h-3.5 w-3.5 text-primary" />;
   }
   return <ArrowRight className="h-3.5 w-3.5 text-primary" />;
+}
+
+function getNextDuplicateNodeId(baseId: string, existingIds: Set<string>): string {
+  if (!existingIds.has(baseId)) {
+    return baseId;
+  }
+
+  let counter = 2;
+  while (existingIds.has(`${baseId}-${counter}`)) {
+    counter += 1;
+  }
+  return `${baseId}-${counter}`;
+}
+
+function buildSemantierSnippet(data: NodeData): string {
+  if (data.type === "event") {
+    return [
+      `WHEN ${data.label}.status CHANGES TO \"completed\":`,
+      "  TRIGGER fin:WorkflowAction {",
+      `    sourceId: \"${data.id}\"`,
+      "  }",
+    ].join("\n");
+  }
+
+  const keyword = data.type === "dimension" ? "DIMENSION" : "MAP";
+  const props = data.properties.length > 0
+    ? data.properties
+        .map((property) => `  ${property.name}: ${property.type}${property.required ? "" : "?"}`)
+        .join("\n")
+    : "  id: string";
+
+  return `${keyword} ${data.label} {\n${props}\n}`;
 }
 
 function PortHandle({
@@ -675,8 +716,10 @@ function OntologyGraphInner({ onSelectItem }: { onSelectItem?: (type: "node" | "
   }, []);
   const [nodes, setNodes] = useState<Node<NodeData>[]>(initialGraph.nodes);
   const [edges, setEdges] = useState<Edge[]>(initialGraph.edges);
+  const [nodeContextMenu, setNodeContextMenu] = useState<SemantierNodeContextMenu | null>(null);
   const edgeReconnectSuccessful = useRef(true);
   const { fitView, screenToFlowPosition } = useReactFlow();
+  const { showToast } = useToast();
 
   useEffect(() => {
     setNodes((current) => syncPortStates(current, edges));
@@ -789,6 +832,7 @@ function OntologyGraphInner({ onSelectItem }: { onSelectItem?: (type: "node" | "
   }, []);
 
   const onNodeClick = useCallback((_: React.MouseEvent, node: Node<NodeData>) => {
+    setNodeContextMenu(null);
     const related = getRelatedNodeIds(node.id);
     setNodes((current) =>
       current.map((item) => ({
@@ -801,7 +845,29 @@ function OntologyGraphInner({ onSelectItem }: { onSelectItem?: (type: "node" | "
     onSelectItem?.("node", node);
   }, [onSelectItem]);
 
+  const onNodeContextMenu = useCallback((event: React.MouseEvent, node: Node<NodeData>) => {
+    event.preventDefault();
+
+    const related = getRelatedNodeIds(node.id);
+    setNodes((current) =>
+      current.map((item) => ({
+        ...item,
+        selected: item.id === node.id,
+        data: { ...item.data, isRelated: related.includes(item.id), connectState: null },
+      })),
+    );
+    setEdges((current) => current.map((edge) => ({ ...edge, selected: false, zIndex: 0 })));
+    setNodeContextMenu({
+      nodeId: node.id,
+      nodeData: node.data,
+      x: event.clientX,
+      y: event.clientY,
+    });
+    onSelectItem?.("node", node);
+  }, [onSelectItem]);
+
   const onEdgeClick = useCallback((_: React.MouseEvent, clickedEdge: Edge) => {
+    setNodeContextMenu(null);
     setNodes((current) => current.map((node) => ({ ...node, selected: false, data: { ...node.data, isRelated: false } })));
     setTimeout(() => {
       setEdges((current) => {
@@ -820,6 +886,7 @@ function OntologyGraphInner({ onSelectItem }: { onSelectItem?: (type: "node" | "
   }, [onSelectItem]);
 
   const onPaneClick = useCallback(() => {
+    setNodeContextMenu(null);
     setNodes((current) =>
       current.map((node) => ({
         ...node,
@@ -836,6 +903,104 @@ function OntologyGraphInner({ onSelectItem }: { onSelectItem?: (type: "node" | "
     setNodes(syncPortStates(layout.nodes, layout.edges));
     setEdges(layout.edges);
   }, [edges, nodes]);
+
+  const onConfigureNode = useCallback((nodeId: string) => {
+    setNodeContextMenu(null);
+
+    const selectedNode = nodes.find((node) => node.id === nodeId);
+    if (!selectedNode) {
+      return;
+    }
+
+    const related = getRelatedNodeIds(selectedNode.id);
+    setNodes((current) =>
+      current.map((item) => ({
+        ...item,
+        selected: item.id === selectedNode.id,
+        data: { ...item.data, isRelated: related.includes(item.id), connectState: null },
+      })),
+    );
+    setEdges((current) => current.map((edge) => ({ ...edge, selected: false, zIndex: 0 })));
+    onSelectItem?.("node", selectedNode);
+  }, [nodes, onSelectItem]);
+
+  const onDeleteNode = useCallback((nodeId: string) => {
+    setNodeContextMenu(null);
+    setNodes((current) => current.filter((node) => node.id !== nodeId));
+    setEdges((current) => current.filter((edge) => edge.source !== nodeId && edge.target !== nodeId));
+    onSelectItem?.("node", null);
+    showToast("Node deleted", "success");
+  }, [onSelectItem, showToast]);
+
+  const onDuplicateNode = useCallback((nodeId: string) => {
+    setNodeContextMenu(null);
+
+    let duplicatedNode: Node<NodeData> | null = null;
+    setNodes((current) => {
+      const sourceNode = current.find((node) => node.id === nodeId);
+      if (!sourceNode) {
+        return current;
+      }
+
+      const allIds = new Set(current.map((node) => node.id));
+      const duplicateId = getNextDuplicateNodeId(nodeId, allIds);
+      duplicatedNode = {
+        ...sourceNode,
+        id: duplicateId,
+        selected: true,
+        position: {
+          x: sourceNode.position.x + 48,
+          y: sourceNode.position.y + 48,
+        },
+        data: {
+          ...sourceNode.data,
+          id: duplicateId,
+        },
+      };
+
+      const clearedNodes: Node<NodeData>[] = current.map((node) => ({
+        ...node,
+        selected: false,
+        data: { ...node.data, isRelated: false, connectState: null },
+      }));
+
+      return [...clearedNodes, duplicatedNode];
+    });
+
+    setEdges((current) => current.map((edge) => ({ ...edge, selected: false, zIndex: 0 })));
+
+    if (duplicatedNode) {
+      onSelectItem?.("node", duplicatedNode);
+      showToast("Node duplicated", "success");
+      return;
+    }
+    showToast("Unable to duplicate node", "warning");
+  }, [onSelectItem, showToast]);
+
+  const onCopyLangChainCode = useCallback(async (nodeId: string, nodeData: NodeData) => {
+    setNodeContextMenu(null);
+
+    const selectedNode = nodes.find((node) => node.id === nodeId);
+    const snippet = buildSemantierSnippet(selectedNode?.data ?? nodeData);
+
+    try {
+      await navigator.clipboard.writeText(snippet);
+      showToast("Semantier snippet copied", "success");
+    } catch {
+      showToast("Unable to copy snippet", "error");
+    }
+  }, [nodes, showToast]);
+
+  const onChatWithAgent = useCallback((nodeId: string) => {
+    setNodeContextMenu(null);
+    onConfigureNode(nodeId);
+    showToast("Semantier chat integration is not wired yet", "info");
+  }, [onConfigureNode, showToast]);
+
+  const onSaveToLibrary = useCallback((nodeId: string, nodeData: NodeData) => {
+    void onCopyLangChainCode(nodeId, nodeData);
+    showToast("Copied snippet as a library seed", "info");
+  }, [onCopyLangChainCode, showToast]);
 
   const onDragOver = useCallback((event: React.DragEvent) => {
     event.preventDefault();
@@ -912,6 +1077,7 @@ function OntologyGraphInner({ onSelectItem }: { onSelectItem?: (type: "node" | "
         onConnectEnd={onConnectEnd}
         isValidConnection={isValidConnection}
         onNodeClick={onNodeClick}
+        onNodeContextMenu={onNodeContextMenu}
         onEdgeClick={onEdgeClick}
         onPaneClick={onPaneClick}
         nodeTypes={nodeTypes}
@@ -923,6 +1089,23 @@ function OntologyGraphInner({ onSelectItem }: { onSelectItem?: (type: "node" | "
         <Background variant={BackgroundVariant.Dots} color="var(--color-border)" gap={24} size={1} />
         <Controls showInteractive={false} />
       </ReactFlow>
+      {nodeContextMenu && (
+        <NodeContextMenu
+          x={nodeContextMenu.x}
+          y={nodeContextMenu.y}
+          nodeId={nodeContextMenu.nodeId}
+          nodeData={nodeContextMenu.nodeData}
+          onClose={() => setNodeContextMenu(null)}
+          onChatWithAgent={(nodeId) => onChatWithAgent(nodeId)}
+          onSaveToLibrary={(nodeId, nodeData) => onSaveToLibrary(nodeId, nodeData)}
+          onCopyLangChainCode={(nodeId, nodeData) => {
+            void onCopyLangChainCode(nodeId, nodeData);
+          }}
+          onDuplicateNode={(nodeId) => onDuplicateNode(nodeId)}
+          onConfigureNode={(nodeId) => onConfigureNode(nodeId)}
+          onDeleteNode={(nodeId) => onDeleteNode(nodeId)}
+        />
+      )}
       <RelationLegend />
       <div className="absolute bottom-5 left-1/2 -translate-x-1/2 z-10">
         <button
