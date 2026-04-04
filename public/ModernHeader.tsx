@@ -43,7 +43,7 @@ export default function ModernHeader({
       >
         <img
           src="/semantier.png"
-          alt="semantier"
+          alt="semantier.png"
           className="h-7 w-7"
           
         />
