@@ -42,13 +42,13 @@ export default function ModernHeader({
         className="flex items-center gap-2 shrink-0 focus:outline-none"
       >
         <img
-          src="/GhostPeony.png"
+          src="/semantier.png"
           alt="GhostPeony"
           className="h-7 w-7 rounded-md object-cover"
           style={{ transform: 'rotate(-45deg)' }}
         />
         <img
-          src="/langconfignewlogo.png"
+          src="/semantier-logo-text.png"
           alt="LangConfig"
           className="h-5 w-auto"
         />

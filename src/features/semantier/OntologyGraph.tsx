@@ -1084,6 +1084,9 @@ function OntologyGraphInner({ onSelectItem }: { onSelectItem?: (type: "node" | "
         edgeTypes={edgeTypes}
         connectionMode={ConnectionMode.Loose}
         connectionLineComponent={MagneticConnectionLine as any}
+        panOnScroll={true}
+        zoomOnScroll={true}
+        zoomActivationKeyCode="Control"
         fitView
       >
         <Background variant={BackgroundVariant.Dots} color="var(--color-border)" gap={24} size={1} />

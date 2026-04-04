@@ -67,7 +67,7 @@ export default function MessagesPanel({
           >
             <div className="text-center max-w-2xl px-6">
               <img
-                src="/GhostPeony.png"
+                src="/semantier.png"
                 alt="Agent"
                 className="w-24 h-24 mx-auto mb-6 opacity-20"
                 style={{ filter: 'grayscale(100%)' }}
@@ -138,7 +138,7 @@ export default function MessagesPanel({
                     <User className="w-5 h-5" />
                   ) : (
                     <img
-                      src="/GhostPeony.png"
+                      src="/semantier.png"
                       alt="Agent"
                       className="w-6 h-6"
                       style={{ filter: 'grayscale(100%) brightness(0.7)' }}
@@ -357,7 +357,7 @@ export default function MessagesPanel({
                 style={{ backgroundColor: '#e5e7eb', color: '#6b7280' }}
               >
                 <img
-                  src="/GhostPeony.png"
+                  src="/semantier.png"
                   alt="Agent"
                   className="w-6 h-6"
                   style={{ filter: 'grayscale(100%) brightness(0.7)' }}

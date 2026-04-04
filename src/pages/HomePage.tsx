@@ -102,7 +102,7 @@ export default function HomePage() {
           className="text-5xl font-bold mb-4 text-center tracking-tight"
           style={{ color: 'var(--color-text-primary)' }}
         >
-          LangConfig Studio
+          Semantier Studio
         </h1>
         <p
           className="text-base mb-16 text-center max-w-lg"
